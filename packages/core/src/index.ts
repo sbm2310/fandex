@@ -5,3 +5,5 @@ export * from './collection-item';
 export * from './collection-repository';
 export * from './isbn';
 export * from './catalogs';
+export * from './key-value-collection-repository';
+export * from './same-book';

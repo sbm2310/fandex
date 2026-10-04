@@ -2,10 +2,18 @@ import { CatalogError } from '@fandex/core';
 import { act, fireEvent, render, screen } from '@testing-library/react-native';
 
 import AddScreen from '@/app/add';
-import { createFakeCatalog, createWrapper, hobbit } from '@/test-utils/providers';
+import {
+  createFakeCatalog,
+  createMemoryCollection,
+  createWrapper,
+  hobbit,
+} from '@/test-utils/providers';
 
-async function renderAddScreen(catalog = createFakeCatalog()) {
-  await render(<AddScreen />, { wrapper: createWrapper(catalog) });
+async function renderAddScreen(
+  catalog = createFakeCatalog(),
+  collection = createMemoryCollection(),
+) {
+  await render(<AddScreen />, { wrapper: createWrapper({ catalog, collection }) });
   return catalog;
 }
 
@@ -29,6 +37,7 @@ describe('Add screen search', () => {
     await typeQuery('hobbit');
 
     expect(await screen.findByText('The Hobbit')).toBeOnTheScreen();
+    expect(await screen.findByRole('button', { name: 'Add The Hobbit' })).toBeOnTheScreen();
     expect(screen.getByText('J.R.R. Tolkien')).toBeOnTheScreen();
     expect(screen.getByText('2001 · Ballantine Books')).toBeOnTheScreen();
     expect(screen.getByText('Book data from Open Library')).toBeOnTheScreen();
@@ -43,7 +52,7 @@ describe('Add screen search', () => {
     await typeQuery('ho');
     await typeQuery('hob');
     await typeQuery('hobbit');
-    await screen.findByText('The Hobbit');
+    await screen.findByRole('button', { name: 'Add The Hobbit' });
 
     expect(catalog.search).toHaveBeenCalledTimes(1);
     expect(catalog.search).toHaveBeenCalledWith('hobbit', expect.anything());
@@ -75,6 +84,7 @@ describe('Add screen search', () => {
     await typeQuery('hobbit');
 
     expect(await screen.findByTestId('book-cover-placeholder')).toBeOnTheScreen();
+    await screen.findByRole('button', { name: 'Add The Hobbit' });
   });
 
   it('explains errors and retries on request', async () => {
@@ -89,7 +99,48 @@ describe('Add screen search', () => {
 
     await fireEvent.press(screen.getByRole('button', { name: 'Try again' }));
 
-    expect(await screen.findByText('The Hobbit')).toBeOnTheScreen();
+    expect(await screen.findByRole('button', { name: 'Add The Hobbit' })).toBeOnTheScreen();
     expect(search).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('Add screen adding to the collection', () => {
+  const searchFindsHobbit = () =>
+    createFakeCatalog({ search: jest.fn(() => Promise.resolve([hobbit])) });
+
+  it('adds a result to the collection and marks it as owned', async () => {
+    const collection = createMemoryCollection();
+    await renderAddScreen(searchFindsHobbit(), collection);
+    await typeQuery('hobbit');
+
+    await fireEvent.press(await screen.findByRole('button', { name: 'Add The Hobbit' }));
+
+    expect(await screen.findByText('✓ Owned')).toBeOnTheScreen();
+    await expect(collection.list()).resolves.toMatchObject([{ catalog: hobbit }]);
+  });
+
+  it('shows books you already own as owned', async () => {
+    const collection = createMemoryCollection();
+    await collection.add(hobbit);
+    await renderAddScreen(searchFindsHobbit(), collection);
+
+    await typeQuery('hobbit');
+
+    expect(await screen.findByLabelText('The Hobbit is in your collection')).toBeOnTheScreen();
+    expect(screen.queryByRole('button', { name: 'Add The Hobbit' })).toBeNull();
+  });
+
+  it('offers a retry when saving fails', async () => {
+    const collection = createMemoryCollection();
+    jest.spyOn(collection, 'add').mockRejectedValueOnce(new Error('disk full'));
+    await renderAddScreen(searchFindsHobbit(), collection);
+    await typeQuery('hobbit');
+
+    await fireEvent.press(await screen.findByRole('button', { name: 'Add The Hobbit' }));
+    await fireEvent.press(
+      await screen.findByRole('button', { name: "Couldn't add The Hobbit. Try again" }),
+    );
+
+    expect(await screen.findByText('✓ Owned')).toBeOnTheScreen();
   });
 });

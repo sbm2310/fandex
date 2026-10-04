@@ -14,14 +14,14 @@ describe('app navigation', () => {
     await app;
 
     expect(app.getPathname()).toBe('/');
-    expect(screen.getByText('Your collection is empty')).toBeOnTheScreen();
+    expect(await screen.findByText('Your collection is empty')).toBeOnTheScreen();
   });
 
   it('goes to the Add screen from the empty-state button', async () => {
     const app = renderRouter(routes, { initialUrl: '/', wrapper: createWrapper() });
     await app;
 
-    await fireEvent.press(screen.getByRole('link', { name: 'Add your first book' }));
+    await fireEvent.press(await screen.findByRole('link', { name: 'Add your first book' }));
 
     expect(app.getPathname()).toBe('/add');
     expect(screen.getByText('Add a book')).toBeOnTheScreen();

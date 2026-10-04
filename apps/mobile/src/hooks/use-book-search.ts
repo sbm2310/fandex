@@ -2,7 +2,7 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 import { useDebouncedValue } from './use-debounced-value';
 
-import { useCatalog } from '@/services/catalog-context';
+import { useCatalog } from '@/services/app-services';
 
 export const MIN_QUERY_LENGTH = 2;
 const DEBOUNCE_MS = 400;

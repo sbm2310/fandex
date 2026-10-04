@@ -1,0 +1,35 @@
+import type { BookCatalog, CollectionRepository } from '@fandex/core';
+import { createContext, use, type ReactNode } from 'react';
+
+/** The app's external dependencies. The root layout provides real ones; tests provide fakes. */
+export type AppServices = {
+  catalog: BookCatalog;
+  collection: CollectionRepository;
+};
+
+const AppServicesContext = createContext<AppServices | null>(null);
+
+/** Supplies services to screens, like registering them in a DI container. */
+export function AppServicesProvider({
+  services,
+  children,
+}: {
+  services: AppServices;
+  children: ReactNode;
+}) {
+  return <AppServicesContext value={services}>{children}</AppServicesContext>;
+}
+
+function useAppServices(): AppServices {
+  const services = use(AppServicesContext);
+  if (!services) throw new Error('App services are missing: wrap the app in <AppServicesProvider>');
+  return services;
+}
+
+export function useCatalog(): BookCatalog {
+  return useAppServices().catalog;
+}
+
+export function useCollectionRepository(): CollectionRepository {
+  return useAppServices().collection;
+}

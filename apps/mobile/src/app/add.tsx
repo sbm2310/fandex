@@ -2,6 +2,7 @@ import type { CatalogBook } from '@fandex/core';
 import { useState, type ReactNode } from 'react';
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, View } from 'react-native';
 
+import { AddBookButton } from '@/components/add-book-button';
 import { BookRow } from '@/components/book-row';
 import { Screen } from '@/components/screen';
 import { SearchField } from '@/components/search-field';
@@ -56,7 +57,7 @@ function SearchResults({ search }: { search: ReturnType<typeof useBookSearch> })
     <FlatList<CatalogBook>
       data={search.data}
       keyExtractor={(book) => `${book.source}:${book.externalId}`}
-      renderItem={({ item }) => <BookRow book={item} />}
+      renderItem={({ item }) => <BookRow book={item} accessory={<AddBookButton book={item} />} />}
       keyboardShouldPersistTaps="handled"
       keyboardDismissMode="on-drag"
       ListFooterComponent={

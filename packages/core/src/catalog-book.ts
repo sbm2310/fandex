@@ -19,3 +19,8 @@ export type CatalogBook = {
   isbn13?: Isbn13;
   coverUrl?: string;
 };
+
+/** The display title including the subtitle, e.g. "Mistborn: The Final Empire". */
+export function formatTitle(book: Pick<CatalogBook, 'title' | 'subtitle'>): string {
+  return book.subtitle ? `${book.title}: ${book.subtitle}` : book.title;
+}

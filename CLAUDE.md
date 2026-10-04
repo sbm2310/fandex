@@ -74,6 +74,7 @@ Verify current terms, rate limits and attribution requirements for each API befo
 - **`<Link asChild>`:** the child must get a single flattened style object (`StyleSheet.flatten`), not an array or style function — otherwise it throws on web.
 - **Expected `npm ls` warning:** `react-reconciler` (from RNTL's `test-renderer`) wants React ^19.3 and flags our pinned 19.2.3 as "invalid". Test-only and harmless; revisit when Expo moves to React 19.3.
 - **App services via context:** screens get the `BookCatalog` from `CatalogProvider` (`useCatalog()`); tests wrap screens with `createWrapper(fakeCatalog)` from `src/test-utils/providers.tsx`. Never hit real APIs in tests.
+- **`act(...)` warnings usually mean a real UI flash:** twice in Task 5 the warning came from a component rendering an interim state (e.g. "Add" before ownership was known). Fix the component (don't render until the data is known; update the query cache in `onSuccess`) rather than silencing the test.
 - **Web focus rings:** RN style types can't express `outline-style: none`; web-only CSS lives in `src/global.css`.
 - **Read the versioned Expo docs** before touching Expo APIs (see `apps/mobile/AGENTS.md`).
 
