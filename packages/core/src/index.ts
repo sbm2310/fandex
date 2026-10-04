@@ -4,3 +4,4 @@ export * from './category';
 export * from './collection-item';
 export * from './collection-repository';
 export * from './isbn';
+export * from './catalogs';

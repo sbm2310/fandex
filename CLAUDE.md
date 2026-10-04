@@ -39,6 +39,8 @@ Nobody connects a collection the way fans think about it: "everything I own from
 
 Verify current terms, rate limits and attribution requirements for each API before integrating.
 
+**Open Library (verified 2026-10-04):** 1 req/s by default, 3 req/s with an identifying `User-Agent` (`Fandex/0.1 (https://github.com/sbm2310/fandex)`; native only, browsers can't set it). Cache responses; requests only on behalf of a person, no bulk crawling. Cover URLs by ISBN are limited to 100/IP/5 min — always build covers from cover IDs (`/b/id/{id}-M.jpg`), which are unlimited. No formal attribution requirement; we credit Open Library in the app and README anyway.
+
 ## Roadmap
 
 | Stage                    | Target    | Demo at the end                                                                                  |
