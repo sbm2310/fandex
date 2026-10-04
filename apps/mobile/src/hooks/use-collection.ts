@@ -15,6 +15,12 @@ export function useCollection() {
   });
 }
 
+/** One item by id; `undefined` while loading or if it isn't in the collection. */
+export function useCollectionItem(id: string) {
+  const collection = useCollection();
+  return { ...collection, item: collection.data?.find((item) => item.id === id) };
+}
+
 /** Whether this edition is already in the collection; `undefined` until the collection has loaded. */
 export function useIsInCollection(book: CatalogBook): boolean | undefined {
   const { data } = useCollection();

@@ -1,5 +1,6 @@
 import { formatTitle, type CollectionItem } from '@fandex/core';
-import { FlatList, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { Link } from 'expo-router';
+import { FlatList, Pressable, StyleSheet, useWindowDimensions } from 'react-native';
 
 import { BookCover } from './book-cover';
 import { ThemedText } from './themed-text';
@@ -33,27 +34,29 @@ export function CollectionGrid({ items }: { items: CollectionItem[] }) {
 
 function GridItem({ item, width }: { item: CollectionItem; width: number }) {
   const { title, authors } = item.catalog;
+  // Link asChild needs a single style object on its child (no arrays or style functions).
   return (
-    <View
-      style={[styles.item, { width }]}
-      accessible
-      accessibilityLabel={[
-        formatTitle(item.catalog),
-        authors.length > 0 && `by ${authors.join(', ')}`,
-      ]
-        .filter(Boolean)
-        .join(', ')}
-    >
-      <BookCover coverUrl={item.catalog.coverUrl} title={title} width={width} />
-      <ThemedText type="smallBold" numberOfLines={2}>
-        {title}
-      </ThemedText>
-      {authors.length > 0 && (
-        <ThemedText type="small" themeColor="textSecondary" numberOfLines={1}>
-          {authors[0]}
+    <Link href={{ pathname: '/book/[id]', params: { id: item.id } }} asChild>
+      <Pressable
+        style={StyleSheet.flatten([styles.item, { width }])}
+        accessibilityLabel={[
+          formatTitle(item.catalog),
+          authors.length > 0 && `by ${authors.join(', ')}`,
+        ]
+          .filter(Boolean)
+          .join(', ')}
+      >
+        <BookCover coverUrl={item.catalog.coverUrl} title={title} width={width} />
+        <ThemedText type="smallBold" numberOfLines={2}>
+          {title}
         </ThemedText>
-      )}
-    </View>
+        {authors.length > 0 && (
+          <ThemedText type="small" themeColor="textSecondary" numberOfLines={1}>
+            {authors[0]}
+          </ThemedText>
+        )}
+      </Pressable>
+    </Link>
   );
 }
 

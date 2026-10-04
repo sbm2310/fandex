@@ -1,7 +1,7 @@
 import { fireEvent, renderRouter, screen } from 'expo-router/testing-library';
 
-import AddScreen from '@/app/add';
-import CollectionScreen from '@/app/index';
+import AddScreen from '@/app/(tabs)/add';
+import CollectionScreen from '@/app/(tabs)/index';
 import { createWrapper } from '@/test-utils/providers';
 
 const routes = { index: CollectionScreen, add: AddScreen };

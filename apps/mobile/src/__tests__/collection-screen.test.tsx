@@ -1,7 +1,7 @@
 import { CollectionStorageError } from '@fandex/core';
 import { render, screen } from '@testing-library/react-native';
 
-import CollectionScreen from '@/app/index';
+import CollectionScreen from '@/app/(tabs)/index';
 import { createMemoryCollection, createWrapper, dune, hobbit } from '@/test-utils/providers';
 
 async function renderCollection(collection = createMemoryCollection()) {

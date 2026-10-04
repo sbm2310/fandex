@@ -24,7 +24,7 @@ export function createFakeCatalog(overrides: Partial<BookCatalog> = {}) {
 }
 
 /** The real repository over an in-memory store, so tests exercise actual collection logic. */
-export function createMemoryCollection(): CollectionRepository {
+export function createMemoryCollection({ now }: { now?: () => Date } = {}): CollectionRepository {
   const data = new Map<string, string>();
   const store: KeyValueStore = {
     getItem: (key) => Promise.resolve(data.get(key) ?? null),
@@ -34,7 +34,11 @@ export function createMemoryCollection(): CollectionRepository {
     },
   };
   let nextId = 1;
-  return new KeyValueCollectionRepository({ store, generateId: () => `item-${nextId++}` });
+  return new KeyValueCollectionRepository({
+    store,
+    generateId: () => `item-${nextId++}`,
+    ...(now && { now }),
+  });
 }
 
 /**

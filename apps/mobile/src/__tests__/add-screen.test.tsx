@@ -1,7 +1,7 @@
 import { CatalogError } from '@fandex/core';
 import { act, fireEvent, render, screen } from '@testing-library/react-native';
 
-import AddScreen from '@/app/add';
+import AddScreen from '@/app/(tabs)/add';
 import {
   createFakeCatalog,
   createMemoryCollection,
