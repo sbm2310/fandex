@@ -1,5 +1,6 @@
 import { CatalogError } from '@fandex/core';
 import { act, fireEvent, render, screen } from '@testing-library/react-native';
+import { renderRouter } from 'expo-router/testing-library';
 
 import AddScreen from '@/app/(tabs)/add';
 import {
@@ -200,5 +201,32 @@ describe('Add screen ISBN lookup', () => {
 
     expect(await screen.findByText('✓ Owned')).toBeOnTheScreen();
     await expect(collection.list()).resolves.toMatchObject([{ catalog: hobbit }]);
+  });
+});
+
+describe('Add screen with the barcode scanner', () => {
+  it('looks up an ISBN handed back by the scanner', async () => {
+    const catalog = createFakeCatalog({ lookupIsbn: jest.fn(() => Promise.resolve(hobbit)) });
+    const app = renderRouter(
+      { add: AddScreen },
+      { initialUrl: '/add?isbn=9780345445605&scan=1', wrapper: createWrapper({ catalog }) },
+    );
+    await app;
+
+    expect(await screen.findByRole('button', { name: 'Add The Hobbit' })).toBeOnTheScreen();
+    expect(screen.getByLabelText('Search books').props.value).toBe('9780345445605');
+    expect(catalog.lookupIsbn).toHaveBeenCalledWith('9780345445605', expect.anything());
+  });
+
+  it('opens the scanner from the Scan button', async () => {
+    const app = renderRouter(
+      { add: AddScreen, scan: () => null },
+      { initialUrl: '/add', wrapper: createWrapper() },
+    );
+    await app;
+
+    await fireEvent.press(screen.getByLabelText('Scan a barcode'));
+
+    expect(app.getPathname()).toBe('/scan');
   });
 });

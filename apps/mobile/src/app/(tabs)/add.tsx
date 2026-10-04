@@ -1,6 +1,8 @@
 import type { CatalogBook } from '@fandex/core';
+import { Link, useLocalSearchParams } from 'expo-router';
+import { SymbolView } from 'expo-symbols';
 import { useState, type ReactNode } from 'react';
-import { ActivityIndicator, FlatList, Pressable, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, FlatList, Platform, Pressable, StyleSheet, View } from 'react-native';
 
 import { AddBookButton } from '@/components/add-book-button';
 import { BookRow } from '@/components/book-row';
@@ -13,19 +15,34 @@ import { useTheme } from '@/hooks/use-theme';
 import { catalogErrorMessage } from '@/services/catalog-error-message';
 
 export default function AddScreen() {
-  const [input, setInput] = useState('');
+  // The scanner returns here with ?isbn=…&scan=<timestamp>; `scan` changes on every scan.
+  const { isbn: scannedIsbn, scan } = useLocalSearchParams<{ isbn?: string; scan?: string }>();
+  const [input, setInput] = useState(scannedIsbn ?? '');
+  const [appliedScan, setAppliedScan] = useState(scan);
+  // Put a new scan into the search field (adjusting state during render, as React recommends
+  // over an effect: https://react.dev/learn/you-might-not-need-an-effect).
+  if (scan !== appliedScan) {
+    setAppliedScan(scan);
+    if (scannedIsbn) setInput(scannedIsbn);
+  }
   const search = useBookSearch(input);
 
   return (
     <Screen>
       <ThemedText type="subtitle">Add a book</ThemedText>
-      <SearchField
-        value={input}
-        onChangeText={setInput}
-        placeholder="Title, author or ISBN"
-        accessibilityLabel="Search books"
-        busy={search.isFetching && !search.isPending}
-      />
+      <View style={styles.searchRow}>
+        <View style={styles.searchField}>
+          <SearchField
+            value={input}
+            onChangeText={setInput}
+            placeholder="Title, author or ISBN"
+            accessibilityLabel="Search books"
+            busy={search.isFetching && !search.isPending}
+          />
+        </View>
+        {/* Camera barcode scanning is unreliable in browsers; on web, type the ISBN instead. */}
+        {Platform.OS !== 'web' && <ScanButton />}
+      </View>
       <SearchResults search={search} />
     </Screen>
   );
@@ -104,6 +121,25 @@ function Message({ text, children }: { text: string; children?: ReactNode }) {
   );
 }
 
+function ScanButton() {
+  const colors = useTheme();
+  // Link asChild needs a single style object on its child (no arrays or style functions).
+  return (
+    <Link href="/scan" asChild>
+      <Pressable
+        accessibilityLabel="Scan a barcode"
+        style={StyleSheet.flatten([styles.scanButton, { backgroundColor: colors.accent }])}
+      >
+        <SymbolView
+          name={{ ios: 'barcode.viewfinder', android: 'barcode_scanner', web: 'barcode_scanner' }}
+          tintColor={colors.onAccent}
+          size={24}
+        />
+      </Pressable>
+    </Link>
+  );
+}
+
 function RetryButton({ onPress }: { onPress: () => void }) {
   const colors = useTheme();
   return (
@@ -122,6 +158,21 @@ function RetryButton({ onPress }: { onPress: () => void }) {
 }
 
 const styles = StyleSheet.create({
+  searchRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.two,
+  },
+  searchField: {
+    flex: 1,
+  },
+  scanButton: {
+    width: 52,
+    height: 52,
+    borderRadius: Spacing.three,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   centered: {
     flex: 1,
     alignItems: 'center',

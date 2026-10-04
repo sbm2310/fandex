@@ -79,6 +79,7 @@ Verify current terms, rate limits and attribution requirements for each API befo
 - **`act(...)` warnings usually mean a real UI flash:** twice in Task 5 the warning came from a component rendering an interim state (e.g. "Add" before ownership was known). Fix the component (don't render until the data is known; update the query cache in `onSuccess`) rather than silencing the test.
 - **Routing:** root `Stack` (in `src/app/_layout.tsx`) holds the `(tabs)` group plus screens that slide over the tabs (e.g. `book/[id]`). Groups don't change URLs.
 - **Platform-specific files:** `foo.web.ts` replaces `foo.ts` on web (e.g. `utils/confirm.web.ts`, since RN's `Alert` is a no-op in browsers).
+- **Camera / barcode scanning** (`src/app/scan.tsx`) only runs on a real device; tests mock `expo-camera`. In Expo Go the iOS permission prompt shows Expo Go's text; our `cameraPermission` string in `app.json` applies to our own builds (dev build / TestFlight). React Native 0.86 removed `StyleSheet.absoluteFillObject`; spread `StyleSheet.absoluteFill`.
 - **Web focus rings:** RN style types can't express `outline-style: none`; web-only CSS lives in `src/global.css`.
 - **Read the versioned Expo docs** before touching Expo APIs (see `apps/mobile/AGENTS.md`).
 
