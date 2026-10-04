@@ -72,6 +72,9 @@ Verify current terms, rate limits and attribution requirements for each API befo
 - **Two Jest versions:** `core` uses Jest 30 (ts-jest); the app uses Jest 29 (`jest-expo`). Each workspace runs its own.
 - **App tests:** use `renderRouter` from `expo-router/testing-library`; it returns a promise with `getPathname()` etc. attached — keep the reference, then `await` it. Tests live in `src/__tests__/`, never in `src/app/`.
 - **`<Link asChild>`:** the child must get a single flattened style object (`StyleSheet.flatten`), not an array or style function — otherwise it throws on web.
+- **Expected `npm ls` warning:** `react-reconciler` (from RNTL's `test-renderer`) wants React ^19.3 and flags our pinned 19.2.3 as "invalid". Test-only and harmless; revisit when Expo moves to React 19.3.
+- **App services via context:** screens get the `BookCatalog` from `CatalogProvider` (`useCatalog()`); tests wrap screens with `createWrapper(fakeCatalog)` from `src/test-utils/providers.tsx`. Never hit real APIs in tests.
+- **Web focus rings:** RN style types can't express `outline-style: none`; web-only CSS lives in `src/global.css`.
 - **Read the versioned Expo docs** before touching Expo APIs (see `apps/mobile/AGENTS.md`).
 
 ## Open questions (deferred to later stages)

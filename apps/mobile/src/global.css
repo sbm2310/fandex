@@ -7,3 +7,8 @@
   --font-rounded: 'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif;
   --font-serif: Georgia, 'Times New Roman', serif;
 }
+
+/* SearchField shows focus with an accent border on its container, so hide the input's own ring. */
+input[type='search']:focus-visible {
+  outline: none;
+}
