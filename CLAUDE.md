@@ -62,6 +62,16 @@ Verify current terms, rate limits and attribution requirements for each API befo
 - **Tooling:** TypeScript pinned to **6.0.x** (matches Expo SDK 57; ts-jest and typescript-eslint don't support TS 7 yet). Jest (ts-jest in `core`, `jest-expo` in the app), ESLint flat config + Prettier, GitHub Actions CI (format, typecheck, lint, test). Each workspace owns its `typecheck`/`lint`/`test` scripts; the root runs them across workspaces.
 - **Git:** public GitHub repo, one commit per task.
 
+### Monorepo / tooling gotchas (learned in Task 1)
+
+- **Single React version:** root `package.json` has `overrides` pinning `react`/`react-dom` to the app's versions. Without it npm hoists a newer React (peer `"*"`) to the root → duplicate React at runtime. Update the overrides whenever the Expo SDK bumps React. Check with `npm ls react`.
+- **Add app dependencies with `npx expo install <pkg>`** (from `apps/mobile`) to get SDK-compatible versions; for dev deps, move them into `devDependencies` afterwards (its `-- --save-dev` passthrough is unreliable).
+- **ESLint 9, not 10:** `eslint-config-expo` → `eslint-plugin-react` doesn't support ESLint 10 yet. `eslint-import-resolver-typescript` is a direct app devDependency so `eslint-plugin-import` can find it (npm nests it otherwise).
+- **Two Jest versions:** `core` uses Jest 30 (ts-jest); the app uses Jest 29 (`jest-expo`). Each workspace runs its own.
+- **App tests:** use `renderRouter` from `expo-router/testing-library`; it returns a promise with `getPathname()` etc. attached — keep the reference, then `await` it. Tests live in `src/__tests__/`, never in `src/app/`.
+- **`<Link asChild>`:** the child must get a single flattened style object (`StyleSheet.flatten`), not an array or style function — otherwise it throws on web.
+- **Read the versioned Expo docs** before touching Expo APIs (see `apps/mobile/AGENTS.md`).
+
 ## Open questions (deferred to later stages)
 
 - Backend framework (NestJS vs. lighter options) and hosting — Stage 2 planning

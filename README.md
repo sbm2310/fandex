@@ -10,7 +10,7 @@ Fandex is a collection app for fans who collect comics, manga, fantasy books, pr
 
 ```
 apps/
-  mobile/        Expo app — iOS, Android and web from one codebase (Stage 1, Task 1)
+  mobile/        Expo app (Expo Router) — iOS, Android and web from one codebase
 packages/
   core/          Platform-agnostic TypeScript: domain model, ISBN utilities, catalog adapters
 ```
@@ -25,6 +25,15 @@ Requirements: Node 24+ (see `.nvmrc`) and npm.
 npm install
 npm test
 ```
+
+### Run the app
+
+```bash
+npm run start -w @fandex/mobile
+```
+
+- **iPhone:** install [Expo Go](https://apps.apple.com/app/expo-go/id982107779), make sure the phone is on the same Wi-Fi as your computer, and scan the QR code with the Camera app.
+- **Web:** press `w` in the terminal (or run `npm run web -w @fandex/mobile`).
 
 | Script              | What it does                        |
 | ------------------- | ----------------------------------- |
