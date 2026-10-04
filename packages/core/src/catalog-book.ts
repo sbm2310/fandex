@@ -1,7 +1,10 @@
 import type { Isbn13 } from './isbn';
 
-/** External catalogs Fandex reads book data from. */
-export type CatalogSource = 'openlibrary' | 'googlebooks';
+/**
+ * External catalogs Fandex reads book data from. Open Library only for now: Google Books was
+ * considered and rejected (its terms forbid storing results and charging users).
+ */
+export type CatalogSource = 'openlibrary';
 
 /**
  * A book as a catalog describes it: something that exists, whether or not the user owns it.
@@ -9,7 +12,7 @@ export type CatalogSource = 'openlibrary' | 'googlebooks';
  */
 export type CatalogBook = {
   source: CatalogSource;
-  /** The book's id in its source, e.g. an Open Library edition key or a Google Books volume id. */
+  /** The book's id in its source, e.g. an Open Library edition key (`OL22039557M`). */
   externalId: string;
   title: string;
   subtitle?: string;

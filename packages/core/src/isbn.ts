@@ -51,6 +51,14 @@ export function isbn10To13(input: string): Isbn13 {
 }
 
 /**
+ * True if the input has the shape of an ISBN (10 or 13 characters once separators are removed),
+ * whether or not its check digit is right. Lets the UI tell "typo in an ISBN" from "a title".
+ */
+export function looksLikeIsbn(input: string): boolean {
+  return /^(\d{9}[\dX]|\d{13})$/.test(normalizeIsbn(input));
+}
+
+/**
  * Parses user input or scanned barcode data into a normalized ISBN-13.
  * Accepts ISBN-10 or ISBN-13, with or without hyphens/spaces. Returns `null` if invalid.
  */

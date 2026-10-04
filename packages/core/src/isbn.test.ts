@@ -3,6 +3,7 @@ import {
   isValidIsbn10,
   isValidIsbn13,
   isbn10To13,
+  looksLikeIsbn,
   normalizeIsbn,
   parseIsbn,
 } from './isbn';
@@ -110,4 +111,20 @@ describe('isBookBarcode', () => {
   ])('rejects %s', (_, data) => {
     expect(isBookBarcode(data)).toBe(false);
   });
+});
+
+describe('looksLikeIsbn', () => {
+  it.each([ISBN13, '9780306406158', ISBN10, '080442957x', ' 978 0306406157 '])(
+    'is true for ISBN-shaped input %s (valid or not)',
+    (input) => {
+      expect(looksLikeIsbn(input)).toBe(true);
+    },
+  );
+
+  it.each(['The Hobbit', '1984', '978030640615', '97803064061577', '0306X06152', ''])(
+    'is false for %s',
+    (input) => {
+      expect(looksLikeIsbn(input)).toBe(false);
+    },
+  );
 });

@@ -31,7 +31,7 @@ Nobody connects a collection the way fans think about it: "everything I own from
 
 | Category                   | Source                     | Notes                                                                                                     |
 | -------------------------- | -------------------------- | --------------------------------------------------------------------------------------------------------- |
-| Books / fantasy            | Open Library, Google Books | ISBN barcode scanning                                                                                     |
+| Books / fantasy            | Open Library               | ISBN barcode scanning. Google Books rejected (see below)                                                  |
 | Comics                     | Comic Vine API             | Free API key; 200 requests per resource per hour → must cache in our own DB                               |
 | Manga                      | AniList (GraphQL)          | Free                                                                                                      |
 | LEGO                       | Rebrickable, Brickset APIs |                                                                                                           |
@@ -39,7 +39,9 @@ Nobody connects a collection the way fans think about it: "everything I own from
 
 Verify current terms, rate limits and attribution requirements for each API before integrating.
 
-**Open Library (verified 2026-10-04):** 1 req/s by default, 3 req/s with an identifying `User-Agent` (`Fandex/0.1 (https://github.com/sbm2310/fandex)`; native only, browsers can't set it). Cache responses; requests only on behalf of a person, no bulk crawling. Cover URLs by ISBN are limited to 100/IP/5 min — always build covers from cover IDs (`/b/id/{id}-M.jpg`), which are unlimited. No formal attribution requirement; we credit Open Library in the app and README anyway.
+**Open Library (verified 2026-10-04):** 1 req/s by default, 3 req/s with an identifying `User-Agent` (`Fandex/0.1 (https://github.com/sbm2310/fandex)`; native only, browsers can't set it). Cache responses; requests only on behalf of a person, no bulk crawling. Cover URLs by ISBN are limited to 100/IP/5 min — always build covers from cover IDs (`/b/id/{id}-M.jpg`), which are unlimited. No formal attribution requirement; we credit Open Library in the app and README anyway. Coverage check (2026-10-04): 10/10 sample ISBNs found with covers, incl. 2025 releases, manga and comics.
+
+**Google Books — rejected (2026-10-04):** the Google APIs Terms forbid creating "permanent copies" of content or caching beyond cache headers (saving to a collection or our DB is a permanent copy); the Books terms forbid charging users without a separate agreement; display requires a "Powered by Google" logo and a link per result. Revisit only with a Google agreement.
 
 ## Roadmap
 
@@ -54,7 +56,7 @@ Verify current terms, rate limits and attribution requirements for each API befo
 
 ## Stage 1 decisions (settled 2026-10-04)
 
-- **Scope:** books only (Open Library primary, Google Books fallback for ISBN lookups). Both are keyless and CORS-friendly, so the app calls them directly. Manga, comics and LEGO wait for the Stage 2 backend (Comic Vine/Rebrickable keys can't live in the client; Comic Vine has no CORS).
+- **Scope:** books only, from Open Library (keyless and CORS-friendly, so the app calls it directly). ISBN misses show a not-found message suggesting a title search; manual entry may come later. Manga, comics and LEGO wait for the Stage 2 backend (Comic Vine/Rebrickable keys can't live in the client; Comic Vine has no CORS).
 - **Repo:** npm-workspaces monorepo — `apps/mobile` (Expo), `packages/core` (pure TS: domain types, ISBN utils, catalog adapters; consumed as TS source via `main: src/index.ts`). Stage 2 adds `apps/api`.
 - **Client:** latest stable Expo SDK (57 at time of writing), TypeScript strict, Expo Router, `StyleSheet` + a small theme file (light/dark), TanStack Query for both catalog search and the collection.
 - **Persistence:** local only, behind a `CollectionRepository` interface; Stage 1 implementation uses AsyncStorage. Stage 2 swaps in an API-backed repository.

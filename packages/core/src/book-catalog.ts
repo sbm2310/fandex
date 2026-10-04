@@ -6,7 +6,7 @@ export type CatalogRequestOptions = {
   signal?: AbortSignal;
 };
 
-/** A searchable source of book data (Open Library, Google Books, ...). */
+/** A searchable source of book data (Open Library today; more sources in later stages). */
 export interface BookCatalog {
   /** Free-text search by title, author, etc. */
   search(query: string, options?: CatalogRequestOptions): Promise<CatalogBook[]>;

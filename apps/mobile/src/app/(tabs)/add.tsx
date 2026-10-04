@@ -22,9 +22,9 @@ export default function AddScreen() {
       <SearchField
         value={input}
         onChangeText={setInput}
-        placeholder="Search by title or author"
+        placeholder="Title, author or ISBN"
         accessibilityLabel="Search books"
-        busy={search.enabled && search.isFetching && !search.isPending}
+        busy={search.isFetching && !search.isPending}
       />
       <SearchResults search={search} />
     </Screen>
@@ -32,8 +32,17 @@ export default function AddScreen() {
 }
 
 function SearchResults({ search }: { search: ReturnType<typeof useBookSearch> }) {
-  if (!search.enabled) {
-    return <Message text="Search Open Library's catalog by title or author." />;
+  const { mode } = search;
+
+  if (mode.kind === 'idle') {
+    return <Message text="Search Open Library by title, author or ISBN." />;
+  }
+  if (mode.kind === 'invalid-isbn') {
+    return (
+      <Message
+        text={`“${mode.input}” isn't a valid ISBN. Check the digits: the last one is a check digit, so a single typo makes it invalid.`}
+      />
+    );
   }
   if (search.isPending) {
     return (
@@ -50,7 +59,15 @@ function SearchResults({ search }: { search: ReturnType<typeof useBookSearch> })
     );
   }
   if (search.data.length === 0) {
-    return <Message text={`No books found for “${search.query}”.`} />;
+    return (
+      <Message
+        text={
+          mode.kind === 'isbn'
+            ? `No book found for ISBN ${mode.isbn}. Open Library doesn't have this edition yet. Try searching by title instead.`
+            : `No books found for “${mode.query}”.`
+        }
+      />
+    );
   }
 
   return (
@@ -60,6 +77,13 @@ function SearchResults({ search }: { search: ReturnType<typeof useBookSearch> })
       renderItem={({ item }) => <BookRow book={item} accessory={<AddBookButton book={item} />} />}
       keyboardShouldPersistTaps="handled"
       keyboardDismissMode="on-drag"
+      ListHeaderComponent={
+        mode.kind === 'isbn' ? (
+          <ThemedText type="small" themeColor="textSecondary">
+            Exact match for ISBN {mode.isbn}
+          </ThemedText>
+        ) : null
+      }
       ListFooterComponent={
         <ThemedText type="small" themeColor="textSecondary" style={styles.attribution}>
           Book data from Open Library

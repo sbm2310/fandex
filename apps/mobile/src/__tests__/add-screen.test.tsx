@@ -25,7 +25,7 @@ describe('Add screen search', () => {
   it('starts with a hint and makes no request', async () => {
     const catalog = await renderAddScreen();
 
-    expect(screen.getByText(/Search Open Library's catalog/)).toBeOnTheScreen();
+    expect(screen.getByText(/Search Open Library by title, author or ISBN/)).toBeOnTheScreen();
     expect(catalog.search).not.toHaveBeenCalled();
   });
 
@@ -66,7 +66,7 @@ describe('Add screen search', () => {
     // Wait past the debounce delay; act() lets React apply the timer's state update.
     await act(() => new Promise((resolve) => setTimeout(resolve, 500)));
     expect(catalog.search).not.toHaveBeenCalled();
-    expect(screen.getByText(/Search Open Library's catalog/)).toBeOnTheScreen();
+    expect(screen.getByText(/Search Open Library by title, author or ISBN/)).toBeOnTheScreen();
   });
 
   it('says when nothing matches', async () => {
@@ -142,5 +142,63 @@ describe('Add screen adding to the collection', () => {
     );
 
     expect(await screen.findByText('✓ Owned')).toBeOnTheScreen();
+  });
+});
+
+describe('Add screen ISBN lookup', () => {
+  it('looks up an ISBN exactly instead of running a text search', async () => {
+    const catalog = await renderAddScreen(
+      createFakeCatalog({ lookupIsbn: jest.fn(() => Promise.resolve(hobbit)) }),
+    );
+
+    await typeQuery('978-0-345-44560-5');
+
+    expect(await screen.findByText('Exact match for ISBN 9780345445605')).toBeOnTheScreen();
+    expect(await screen.findByRole('button', { name: 'Add The Hobbit' })).toBeOnTheScreen();
+    expect(catalog.lookupIsbn).toHaveBeenCalledWith('9780345445605', expect.anything());
+    expect(catalog.search).not.toHaveBeenCalled();
+  });
+
+  it('converts an ISBN-10 before looking it up', async () => {
+    const catalog = await renderAddScreen();
+
+    await typeQuery('0345445600');
+
+    await screen.findByText(/No book found for ISBN 9780345445605/);
+    expect(catalog.lookupIsbn).toHaveBeenCalledWith('9780345445605', expect.anything());
+  });
+
+  it('flags a mistyped ISBN without making a request', async () => {
+    const catalog = await renderAddScreen();
+
+    await typeQuery('9780345445606');
+
+    expect(await screen.findByText(/isn't a valid ISBN/)).toBeOnTheScreen();
+    expect(catalog.lookupIsbn).not.toHaveBeenCalled();
+    expect(catalog.search).not.toHaveBeenCalled();
+  });
+
+  it('explains when Open Library does not have the ISBN', async () => {
+    await renderAddScreen();
+
+    await typeQuery('9791999999994');
+
+    expect(
+      await screen.findByText(/No book found for ISBN 9791999999994.*Try searching by title/),
+    ).toBeOnTheScreen();
+  });
+
+  it('adds the looked-up book to the collection', async () => {
+    const collection = createMemoryCollection();
+    await renderAddScreen(
+      createFakeCatalog({ lookupIsbn: jest.fn(() => Promise.resolve(hobbit)) }),
+      collection,
+    );
+    await typeQuery('9780345445605');
+
+    await fireEvent.press(await screen.findByRole('button', { name: 'Add The Hobbit' }));
+
+    expect(await screen.findByText('✓ Owned')).toBeOnTheScreen();
+    await expect(collection.list()).resolves.toMatchObject([{ catalog: hobbit }]);
   });
 });
