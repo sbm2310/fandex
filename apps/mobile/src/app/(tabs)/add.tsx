@@ -6,6 +6,7 @@ import { ActivityIndicator, FlatList, Platform, Pressable, StyleSheet, View } fr
 
 import { AddBookButton } from '@/components/add-book-button';
 import { BookRow } from '@/components/book-row';
+import { PageTitle } from '@/components/page-title';
 import { Screen } from '@/components/screen';
 import { SearchField } from '@/components/search-field';
 import { ThemedText } from '@/components/themed-text';
@@ -29,6 +30,7 @@ export default function AddScreen() {
 
   return (
     <Screen>
+      <PageTitle title="Add a book" />
       <ThemedText type="subtitle">Add a book</ThemedText>
       <View style={styles.searchRow}>
         <View style={styles.searchField}>

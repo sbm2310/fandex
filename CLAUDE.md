@@ -47,7 +47,7 @@ Verify current terms, rate limits and attribution requirements for each API befo
 
 | Stage                    | Target    | Demo at the end                                                                                  |
 | ------------------------ | --------- | ------------------------------------------------------------------------------------------------ |
-| 1. MVP                   | ~Week 1   | App on iPhone + web: add items by search or ISBN scan, see the collection with covers            |
+| 1. MVP ✅ (v0.1.0)       | ~Week 1   | App on iPhone + web: add items by search or ISBN scan, see the collection with covers            |
 | 2. Real backend          | Weeks 2–4 | Accounts, cloud sync phone ↔ web, unified catalog search across all sources                      |
 | 3. Universe layer        | Month 2   | Franchise/character pages linking items across categories, missing-item suggestions              |
 | 4. AI                    | Month 3   | Shelf photo → identified items; natural-language questions about the collection                  |
@@ -87,7 +87,7 @@ Verify current terms, rate limits and attribution requirements for each API befo
 
 - Backend framework (NestJS vs. lighter options) and hosting — Stage 2 planning
 - Auth provider — Stage 2 planning
-- Data model for "universe / character / item" links across categories — Stage 3
+- Data model for "universe / character / item" links across categories — Stage 3. Include work-level matching: ownership is per edition (ISBN), so search can show "Add" for a different printing of a book the user owns; a "you own another edition" hint belongs here.
 - Which AI/vision model to use for shelf-photo recognition, and cost per scan — Stage 4
 - Apple Developer account — buy during Stage 2 (needed for dev builds/TestFlight; push notifications in Stage 5 at the latest)
 

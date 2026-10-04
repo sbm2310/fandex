@@ -1,5 +1,5 @@
 import { CollectionStorageError } from '@fandex/core';
-import { render, screen } from '@testing-library/react-native';
+import { fireEvent, render, screen } from '@testing-library/react-native';
 
 import CollectionScreen from '@/app/(tabs)/index';
 import { createMemoryCollection, createWrapper, dune, hobbit } from '@/test-utils/providers';
@@ -24,9 +24,38 @@ describe('Collection screen', () => {
 
     expect(await screen.findByText('2 books')).toBeOnTheScreen();
     const labels = screen
-      .getAllByLabelText(/ by /)
+      .getAllByRole('link')
       .map((element) => element.props.accessibilityLabel as string);
     expect(labels).toEqual(['Dune, by Frank Herbert', 'The Hobbit, by J.R.R. Tolkien']);
+  });
+
+  it('sorts by title when you pick Title, and back to recent', async () => {
+    const collection = createMemoryCollection();
+    await collection.add(dune);
+    await collection.add(hobbit);
+    await renderCollection(collection);
+    const order = () =>
+      screen.getAllByRole('link').map((el) => el.props.accessibilityLabel as string);
+    const recentOrder = ['The Hobbit, by J.R.R. Tolkien', 'Dune, by Frank Herbert'];
+
+    await screen.findByText('2 books');
+    expect(order()).toEqual(recentOrder);
+
+    await fireEvent.press(screen.getByRole('radio', { name: 'Sort by title' }));
+    expect(order()).toEqual(['Dune, by Frank Herbert', 'The Hobbit, by J.R.R. Tolkien']);
+    expect(screen.getByRole('radio', { name: 'Sort by title' })).toBeChecked();
+
+    await fireEvent.press(screen.getByRole('radio', { name: 'Sort by recent' }));
+    expect(order()).toEqual(recentOrder);
+  });
+
+  it('credits Open Library under the collection', async () => {
+    const collection = createMemoryCollection();
+    await collection.add(hobbit);
+
+    await renderCollection(collection);
+
+    expect(await screen.findByText('Book data and covers from Open Library')).toBeOnTheScreen();
   });
 
   it('uses the singular for one book', async () => {

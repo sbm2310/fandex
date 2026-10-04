@@ -4,6 +4,7 @@ import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'reac
 
 import { BookCover } from '@/components/book-cover';
 import { EmptyState } from '@/components/empty-state';
+import { PageTitle } from '@/components/page-title';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { MaxContentWidth, Spacing } from '@/constants/theme';
@@ -43,6 +44,7 @@ function BookDetail({ item }: { item: CollectionItem }) {
 
   return (
     <ThemedView style={styles.fill}>
+      <PageTitle title={formatTitle(catalog)} />
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.column}>
           <View style={styles.coverWrap}>

@@ -28,6 +28,11 @@ export function CollectionGrid({ items }: { items: CollectionItem[] }) {
       columnWrapperStyle={styles.row}
       contentContainerStyle={styles.content}
       renderItem={({ item }) => <GridItem item={item} width={itemWidth} />}
+      ListFooterComponent={
+        <ThemedText type="small" themeColor="textSecondary" style={styles.attribution}>
+          Book data and covers from Open Library
+        </ThemedText>
+      }
     />
   );
 }
@@ -70,5 +75,9 @@ const styles = StyleSheet.create({
   },
   item: {
     gap: Spacing.one,
+  },
+  attribution: {
+    textAlign: 'center',
+    paddingTop: Spacing.two,
   },
 });
