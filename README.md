@@ -70,7 +70,7 @@ Full decision log: [`CLAUDE.md`](CLAUDE.md).
 
 ```
 apps/
-  api/               NestJS API (Stage 2, in progress): accounts (Better Auth), cached catalog with categories, per-user collections, PostgreSQL via Prisma, OpenAPI docs
+  api/               NestJS API (Stage 2, in progress): accounts (Better Auth), cached catalog (books, manga, comics, LEGO), per-user collections, PostgreSQL via Prisma, OpenAPI docs
   mobile/            Expo app (Expo Router): iOS, Android and web
     src/app/         Routes: (tabs)/index, (tabs)/add, book/[id], scan
     src/components/  UI components
@@ -106,6 +106,8 @@ npm run db:deploy -w @fandex/api           # apply database migrations
 npm run dev:api                            # API on http://localhost:3000, docs at /docs
 ```
 
+LEGO search needs a free [Rebrickable API key](https://rebrickable.com/users/settings/#api) in `apps/api/.env` (`REBRICKABLE_API_KEY=...`); everything else works without it.
+
 ## Testing
 
 ```bash
@@ -115,10 +117,10 @@ npm run lint
 npm run format:check
 ```
 
-324 tests run in CI on every push:
+358 tests run in CI on every push:
 
-- **`packages/core` (137, Jest + ts-jest):** ISBN validation against reference values, book/manga/comic classification against real Open Library subject data, the Open Library adapter against **recorded real API responses** plus edge cases, and the repository (concurrent writes, corrupt data, restarts) over an in-memory store.
-- **`apps/api` (69, Vitest + Supertest):** config validation, caching and rate limiting, plus end-to-end tests against the real Nest app and a real PostgreSQL test database (created and migrated automatically), including sign-up/sign-in, native-app sessions, CORS, account deletion, password hashing, CSRF protection, the catalog API (validation, database caching, upstream failures) with a fake Open Library, and the collection API, including isolation between users (mutation-checked).
+- **`packages/core` (161, Jest + ts-jest):** ISBN validation against reference values, book/manga/comic classification against real Open Library subject data, the Open Library and Rebrickable adapters against **recorded real API responses** plus edge cases, and the repository (concurrent writes, corrupt data, restarts) over an in-memory store.
+- **`apps/api` (79, Vitest + Supertest):** config validation, caching and rate limiting, plus end-to-end tests against the real Nest app and a real PostgreSQL test database (created and migrated automatically), including sign-up/sign-in, native-app sessions, CORS, account deletion, password hashing, CSRF protection, the catalog API (validation, database caching, upstream failures) with a fake Open Library, and the collection API, including isolation between users (mutation-checked).
 - **`apps/mobile` (118, jest-expo + React Native Testing Library):** screens rendered with a fake catalog, a fake account service and the real repository over an in-memory store: search states, ISBN lookup, adding and removing, navigation, sorting, accounts (sign-in, sign-up, sign-out, delete account), cloud sync (account vs device collection, moving device books into an account), and the barcode scanner with a mocked camera.
 
 Tests never call the network.
@@ -142,7 +144,7 @@ This project was built by a C#/.NET developer learning React Native. If that's y
 
 ## Data sources and attribution
 
-Book data and cover images come from [Open Library](https://openlibrary.org), a project of the Internet Archive. The native app identifies itself to the Open Library API (browsers can't set the header), Fandex caches responses, and only makes requests on behalf of a person, per their [API guidelines](https://openlibrary.org/developers/api).
+Book data and cover images come from [Open Library](https://openlibrary.org), a project of the Internet Archive. LEGO set data and images come from [Rebrickable](https://rebrickable.com). The native app identifies itself to the Open Library API (browsers can't set the header), Fandex caches responses, and only makes requests on behalf of a person, per their [API guidelines](https://openlibrary.org/developers/api).
 
 ## Roadmap
 
