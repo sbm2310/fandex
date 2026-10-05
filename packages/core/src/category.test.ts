@@ -1,8 +1,8 @@
 import { isCategory } from './category';
 
 describe('isCategory', () => {
-  it('accepts a supported category', () => {
-    expect(isCategory('book')).toBe(true);
+  it.each(['book', 'manga', 'comic', 'lego'])('accepts %s', (category) => {
+    expect(isCategory(category)).toBe(true);
   });
 
   it('rejects an unsupported category', () => {

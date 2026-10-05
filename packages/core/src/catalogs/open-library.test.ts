@@ -1,5 +1,7 @@
 import { parseIsbn, type Isbn13 } from '../isbn';
 import isbnFixture from './__fixtures__/openlibrary-isbn-9780345445605.json';
+import batmanFixture from './__fixtures__/openlibrary-isbn-batman-year-one.json';
+import onePieceFixture from './__fixtures__/openlibrary-isbn-one-piece.json';
 import notFoundFixture from './__fixtures__/openlibrary-isbn-not-found.json';
 import searchFixture from './__fixtures__/openlibrary-search-hobbit.json';
 import { CatalogError } from './catalog-error';
@@ -46,6 +48,7 @@ describe('OpenLibraryCatalog.search', () => {
     expect(results[0]).toEqual({
       source: 'openlibrary',
       externalId: 'OL51709286M',
+      category: 'book',
       title: 'The Hobbit',
       authors: ['J.R.R. Tolkien'],
       publishedYear: 1984,
@@ -84,6 +87,7 @@ describe('OpenLibraryCatalog.search', () => {
     expect(url.searchParams.get('limit')).toBe('20');
     expect(url.searchParams.get('lang')).toBe('en');
     expect(url.searchParams.get('fields')).toContain('editions.isbn');
+    expect(url.searchParams.get('fields')).toContain('subject');
   });
 
   it('sends configured headers (e.g. User-Agent on native)', async () => {
@@ -123,6 +127,7 @@ describe('OpenLibraryCatalog.search', () => {
     expect(book).toEqual({
       source: 'openlibrary',
       externalId: 'OL1M',
+      category: 'book',
       title: 'Work Title',
       subtitle: 'Work Subtitle',
       authors: [],
@@ -182,6 +187,8 @@ describe('OpenLibraryCatalog.lookupIsbn', () => {
     expect(book).toEqual({
       source: 'openlibrary',
       externalId: 'OL22039557M',
+      // Chuck Dixon's graphic-novel adaptation, not Tolkien's novel.
+      category: 'comic',
       title: 'The Hobbit',
       authors: ['Charles Dixon', 'Sean Deming', 'J.R.R. Tolkien'],
       publishedYear: 2001,
@@ -189,6 +196,15 @@ describe('OpenLibraryCatalog.lookupIsbn', () => {
       isbn13: '9780345445605',
       coverUrl: 'https://covers.openlibrary.org/b/id/8406778-M.jpg',
     });
+  });
+
+  it.each([
+    ['One Piece v1', onePieceFixture, '9781569319017', 'manga'],
+    ['Batman: Year One', batmanFixture, '9781401207526', 'comic'],
+  ] as const)('classifies %s as %s', async (_, fixture, value, category) => {
+    const { catalog } = catalogReturning(jsonResponse(fixture));
+
+    await expect(catalog.lookupIsbn(isbn(value))).resolves.toMatchObject({ category });
   });
 
   it('returns null when Open Library does not know the ISBN', async () => {

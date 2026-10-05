@@ -1,0 +1,39 @@
+import { z } from 'zod';
+
+import { CATEGORIES } from '../category';
+import { parseIsbn } from '../isbn';
+
+/** A catalog entry as the API returns it: cached in our database, with our own id. */
+export const catalogItemSchema = z.object({
+  id: z.uuid(),
+  category: z.enum(CATEGORIES),
+  source: z.enum(['openlibrary', 'rebrickable']),
+  externalId: z.string(),
+  title: z.string(),
+  subtitle: z.string().optional(),
+  creators: z.array(z.string()),
+  year: z.number().int().optional(),
+  publisher: z.string().optional(),
+  isbn13: z.string().length(13).optional(),
+  coverUrl: z.url().optional(),
+});
+
+export type CatalogItemResponse = z.infer<typeof catalogItemSchema>;
+
+/** GET /catalog/search?q= */
+export const catalogSearchResponseSchema = z.object({ items: z.array(catalogItemSchema) });
+
+export type CatalogSearchResponse = z.infer<typeof catalogSearchResponseSchema>;
+
+/** Query for GET /catalog/search: trimmed, 2–200 characters. */
+export const catalogSearchQuerySchema = z.string().trim().min(2).max(200);
+
+/** Path parameter for GET /catalog/isbn/:isbn: any ISBN-10/13 form, normalized to ISBN-13. */
+export const isbnParamSchema = z.string().transform((value, ctx) => {
+  const isbn = parseIsbn(value);
+  if (!isbn) {
+    ctx.addIssue({ code: 'custom', message: 'Not a valid ISBN' });
+    return z.NEVER;
+  }
+  return isbn;
+});

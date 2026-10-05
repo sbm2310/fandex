@@ -1,5 +1,6 @@
 import type { BookCatalog, CatalogRequestOptions } from '../book-catalog';
 import type { CatalogBook } from '../catalog-book';
+import { classifyBookCategory } from '../classify-book-category';
 import { parseIsbn, type Isbn13 } from '../isbn';
 import { CatalogError } from './catalog-error';
 
@@ -38,6 +39,7 @@ const FIELDS = [
   'author_name',
   'first_publish_year',
   'cover_i',
+  'subject',
   'editions',
   'editions.key',
   'editions.title',
@@ -58,6 +60,7 @@ type WorkDoc = {
   author_name?: string[];
   first_publish_year?: number;
   cover_i?: number;
+  subject?: string[];
   editions?: { docs?: EditionDoc[] };
 };
 
@@ -164,6 +167,8 @@ export class OpenLibraryCatalog implements BookCatalog {
     const book: CatalogBook = {
       source: 'openlibrary',
       externalId: key.replace(/^\/(books|works)\//, ''),
+      // Set below, once the edition's publisher is known.
+      category: 'book',
       title,
       authors: (work.author_name ?? []).map(cleanText).filter(isPresent),
     };
@@ -176,6 +181,7 @@ export class OpenLibraryCatalog implements BookCatalog {
 
     const publisher = cleanText(edition?.publisher?.[0]);
     if (publisher) book.publisher = publisher;
+    book.category = classifyBookCategory({ subjects: work.subject, publisher });
 
     const isbn13 = (edition?.isbn ?? []).map(parseIsbn).find(isPresent);
     if (isbn13) book.isbn13 = isbn13;

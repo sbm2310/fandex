@@ -70,7 +70,7 @@ Full decision log: [`CLAUDE.md`](CLAUDE.md).
 
 ```
 apps/
-  api/               NestJS API (Stage 2, in progress): accounts (Better Auth), PostgreSQL via Prisma, OpenAPI docs
+  api/               NestJS API (Stage 2, in progress): accounts (Better Auth), cached catalog with categories, PostgreSQL via Prisma, OpenAPI docs
   mobile/            Expo app (Expo Router): iOS, Android and web
     src/app/         Routes: (tabs)/index, (tabs)/add, book/[id], scan
     src/components/  UI components
@@ -115,10 +115,10 @@ npm run lint
 npm run format:check
 ```
 
-223 tests run in CI on every push:
+271 tests run in CI on every push:
 
-- **`packages/core` (101, Jest + ts-jest):** ISBN validation against reference values, the Open Library adapter against **recorded real API responses** plus edge cases, and the repository (concurrent writes, corrupt data, restarts) over an in-memory store.
-- **`apps/api` (37, Vitest + Supertest):** config validation and controllers, plus end-to-end tests against the real Nest app and a real PostgreSQL test database (created and migrated automatically), including sign-up/sign-in, native-app sessions, CORS, account deletion, password hashing and CSRF protection.
+- **`packages/core` (131, Jest + ts-jest):** ISBN validation against reference values, book/manga/comic classification against real Open Library subject data, the Open Library adapter against **recorded real API responses** plus edge cases, and the repository (concurrent writes, corrupt data, restarts) over an in-memory store.
+- **`apps/api` (55, Vitest + Supertest):** config validation, caching and rate limiting, plus end-to-end tests against the real Nest app and a real PostgreSQL test database (created and migrated automatically), including sign-up/sign-in, native-app sessions, CORS, account deletion, password hashing, CSRF protection, and the catalog API (validation, database caching, upstream failures) with a fake Open Library.
 - **`apps/mobile` (85, jest-expo + React Native Testing Library):** screens rendered with a fake catalog, a fake account service and the real repository over an in-memory store: search states, ISBN lookup, adding and removing, navigation, sorting, accounts (sign-in, sign-up, sign-out, delete account), and the barcode scanner with a mocked camera.
 
 Tests never call the network.

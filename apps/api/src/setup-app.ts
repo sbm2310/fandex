@@ -1,4 +1,8 @@
-import type { INestApplication, NestApplicationOptions } from '@nestjs/common';
+import {
+  StandardSchemaValidationPipe,
+  type INestApplication,
+  type NestApplicationOptions,
+} from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 /**
@@ -13,6 +17,8 @@ export const appOptions: NestApplicationOptions = { bodyParser: false };
  */
 export function setupApp(app: INestApplication): INestApplication {
   app.enableShutdownHooks();
+  // Validates (and transforms) parameters declared with `{ schema }` against zod schemas.
+  app.useGlobalPipes(new StandardSchemaValidationPipe({ transform: true }));
 
   const openApi = new DocumentBuilder()
     .setTitle('Fandex API')

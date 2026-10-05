@@ -1,15 +1,16 @@
 import type { CatalogBook } from './catalog-book';
-import type { Category } from './category';
+import type { BookCategory } from './category';
 
 /**
  * A copy the user owns. It keeps a snapshot of the catalog data so the collection renders
  * even if the source changes or is unreachable.
  *
- * Only books exist in Stage 1; other categories will join as a discriminated union on `category`.
+ * Books, manga and comics for now (copied from the catalog entry); LEGO will join as a
+ * discriminated union on `category`.
  */
 export type CollectionItem = {
   id: string;
-  category: Extract<Category, 'book'>;
+  category: BookCategory;
   catalog: CatalogBook;
   /** ISO 8601 timestamp; a string so items round-trip through JSON storage unchanged. */
   addedAt: string;
@@ -21,5 +22,5 @@ export function createCollectionItem(
   catalog: CatalogBook,
   { id, now }: { id: string; now: Date },
 ): CollectionItem {
-  return { id, category: 'book', catalog, addedAt: now.toISOString() };
+  return { id, category: catalog.category, catalog, addedAt: now.toISOString() };
 }

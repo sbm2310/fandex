@@ -94,13 +94,22 @@ export class KeyValueCollectionRepository implements CollectionRepository {
     if (!isStoredCollection(parsed)) {
       throw new CollectionStorageError('Saved collection has an unknown format');
     }
-    return parsed.items;
+    return parsed.items.map(withCategory);
   }
 
   private async write(items: CollectionItem[]): Promise<void> {
     const data: StoredCollection = { version: SCHEMA_VERSION, items };
     await this.store.setItem(STORAGE_KEY, JSON.stringify(data));
   }
+}
+
+/**
+ * Items saved before categories existed (Stage 1) have none; they were all books. Filling it
+ * in on read is backward-compatible, so the storage format version stays the same.
+ */
+function withCategory(item: CollectionItem): CollectionItem {
+  const category = item.catalog.category ?? 'book';
+  return { ...item, category, catalog: { ...item.catalog, category } };
 }
 
 function isStoredCollection(value: unknown): value is StoredCollection {

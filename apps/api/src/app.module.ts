@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from '@thallesp/nestjs-better-auth';
 
 import { createAuth } from './auth/auth.js';
+import { CatalogModule } from './catalog/catalog.module.js';
 import { envSchema, type Env } from './config/env.js';
 import { HealthModule } from './health/health.module.js';
 import { MeModule } from './me/me.module.js';
@@ -29,6 +30,7 @@ import { PrismaService } from './prisma/prisma.service.js';
     }),
     HealthModule,
     MeModule,
+    CatalogModule,
   ],
 })
 export class AppModule {}

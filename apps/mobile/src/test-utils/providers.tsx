@@ -127,6 +127,7 @@ export function createWrapper({
 
 export const hobbit: CatalogBook = {
   source: 'openlibrary',
+  category: 'book',
   externalId: 'OL22039557M',
   title: 'The Hobbit',
   authors: ['J.R.R. Tolkien'],
@@ -137,6 +138,7 @@ export const hobbit: CatalogBook = {
 
 export const dune: CatalogBook = {
   source: 'openlibrary',
+  category: 'book',
   externalId: 'OL1532643M',
   title: 'Dune',
   authors: ['Frank Herbert'],

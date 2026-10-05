@@ -1,0 +1,48 @@
+{
+  "numFound": 1,
+  "start": 0,
+  "numFoundExact": true,
+  "num_found": 1,
+  "q": "isbn:9781569319017",
+  "offset": null,
+  "docs": [
+    {
+      "author_name": ["尾田栄一郎"],
+      "cover_i": 1020563,
+      "first_publish_year": 1997,
+      "key": "/works/OL8215661W",
+      "subtitle": "ROMANCE DAWN —冒険の夜明け—",
+      "title": "ONE PIECE 1",
+      "subject": [
+        "franchise:ONE PIECE",
+        "series:ONE PIECE",
+        "form:manga",
+        "form:manga volume",
+        "form:graphic novel",
+        "genre:adventure",
+        "genre:comedy drama",
+        "genre:science fantasy",
+        "intended public:shōnen",
+        "universe:ONE PIECE",
+        "Pirates",
+        "Treasure troves"
+      ],
+      "editions": {
+        "numFound": 2,
+        "start": 0,
+        "numFoundExact": true,
+        "docs": [
+          {
+            "key": "/books/OL8692999M",
+            "title": "One Piece, Vol. 1",
+            "subtitle": "Romance Dawn",
+            "cover_i": 813900,
+            "publisher": ["SHONEN JUMP"],
+            "publish_year": [2003],
+            "isbn": ["9781569319017", "1569319014"]
+          }
+        ]
+      }
+    }
+  ]
+}

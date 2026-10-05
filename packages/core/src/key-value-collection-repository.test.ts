@@ -10,6 +10,7 @@ const isbn = (value: string) => parseIsbn(value) as Isbn13;
 
 const hobbit: CatalogBook = {
   source: 'openlibrary',
+  category: 'book',
   externalId: 'OL22039557M',
   title: 'The Hobbit',
   authors: ['J.R.R. Tolkien'],
@@ -17,6 +18,7 @@ const hobbit: CatalogBook = {
 };
 const dune: CatalogBook = {
   source: 'openlibrary',
+  category: 'book',
   externalId: 'OL1M',
   title: 'Dune',
   authors: ['Frank Herbert'],
@@ -124,6 +126,30 @@ describe('KeyValueCollectionRepository', () => {
     const stored = JSON.parse(store.data.get('fandex:collection') ?? '{}') as unknown;
 
     expect(stored).toMatchObject({ version: 1, items: [{ catalog: hobbit }] });
+  });
+
+  it('treats items saved before categories existed as books', async () => {
+    const store = new MemoryStore();
+    const { category: _, ...stage1Catalog } = hobbit;
+    store.data.set(
+      'fandex:collection',
+      JSON.stringify({
+        version: 1,
+        items: [
+          {
+            id: 'old',
+            category: 'book',
+            catalog: stage1Catalog,
+            addedAt: '2026-10-04T12:00:00.000Z',
+          },
+        ],
+      }),
+    );
+    const { repository } = createRepository(store);
+
+    await expect(repository.list()).resolves.toMatchObject([
+      { id: 'old', category: 'book', catalog: { category: 'book', title: 'The Hobbit' } },
+    ]);
   });
 
   describe('with unreadable saved data', () => {

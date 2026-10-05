@@ -10,6 +10,7 @@ function isbn(value: string): Isbn13 {
 
 const hobbit: CatalogBook = {
   source: 'openlibrary',
+  category: 'book',
   externalId: 'OL26331930M',
   title: 'The Hobbit',
   authors: ['J.R.R. Tolkien'],
@@ -35,5 +36,13 @@ describe('createCollectionItem', () => {
     const item = createCollectionItem(hobbit, { id: 'item-1', now: new Date() });
 
     expect(JSON.parse(JSON.stringify(item))).toEqual(item);
+  });
+});
+
+describe('createCollectionItem category', () => {
+  it('takes the category from the catalog entry', () => {
+    const manga = { ...hobbit, category: 'manga' as const };
+
+    expect(createCollectionItem(manga, { id: 'x', now: new Date() }).category).toBe('manga');
   });
 });

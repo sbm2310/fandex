@@ -9,6 +9,7 @@ function item(title: string, addedAt: string, subtitle?: string): CollectionItem
     catalog: {
       source: 'openlibrary',
       externalId: title,
+      category: 'book',
       title,
       authors: [],
       ...(subtitle && { subtitle }),

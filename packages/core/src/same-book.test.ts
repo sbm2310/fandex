@@ -8,6 +8,7 @@ const otherSource = 'another-catalog' as CatalogSource;
 const book = (overrides: Partial<CatalogBook>): CatalogBook => ({
   source: 'openlibrary',
   externalId: 'OL1M',
+  category: 'book',
   title: 'T',
   authors: [],
   ...overrides,

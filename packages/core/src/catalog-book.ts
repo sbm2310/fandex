@@ -1,3 +1,4 @@
+import type { BookCategory } from './category';
 import type { Isbn13 } from './isbn';
 
 /**
@@ -14,6 +15,8 @@ export type CatalogBook = {
   source: CatalogSource;
   /** The book's id in its source, e.g. an Open Library edition key (`OL22039557M`). */
   externalId: string;
+  /** Book, manga or comic; derived from the catalog's subjects. */
+  category: BookCategory;
   title: string;
   subtitle?: string;
   authors: string[];
