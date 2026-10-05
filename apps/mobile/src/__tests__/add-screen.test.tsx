@@ -8,6 +8,7 @@ import {
   createMemoryCollection,
   createWrapper,
   hobbit,
+  onePiece,
 } from '@/test-utils/providers';
 
 async function renderAddScreen(
@@ -228,5 +229,20 @@ describe('Add screen with the barcode scanner', () => {
     await fireEvent.press(screen.getByLabelText('Scan a barcode'));
 
     expect(app.getPathname()).toBe('/scan');
+  });
+});
+
+describe('Add screen categories', () => {
+  it('badges manga and comics but not plain books', async () => {
+    await renderAddScreen(
+      createFakeCatalog({ search: jest.fn(() => Promise.resolve([onePiece, hobbit])) }),
+    );
+
+    await typeQuery('one piece');
+
+    expect(await screen.findByText('Manga')).toBeOnTheScreen();
+    expect(screen.queryByText('Book')).toBeNull();
+    expect(screen.getByLabelText(/^One Piece, Vol\. 1, manga, by Eiichiro Oda/)).toBeOnTheScreen();
+    await screen.findByRole('button', { name: 'Add One Piece, Vol. 1' });
   });
 });

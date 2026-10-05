@@ -2,7 +2,13 @@ import { CollectionStorageError } from '@fandex/core';
 import { fireEvent, render, screen } from '@testing-library/react-native';
 
 import CollectionScreen from '@/app/(tabs)/index';
-import { createMemoryCollection, createWrapper, dune, hobbit } from '@/test-utils/providers';
+import {
+  createMemoryCollection,
+  createWrapper,
+  dune,
+  hobbit,
+  onePiece,
+} from '@/test-utils/providers';
 
 async function renderCollection(collection = createMemoryCollection()) {
   await render(<CollectionScreen />, { wrapper: createWrapper({ collection }) });
@@ -47,6 +53,17 @@ describe('Collection screen', () => {
 
     await fireEvent.press(screen.getByRole('radio', { name: 'Sort by recent' }));
     expect(order()).toEqual(recentOrder);
+  });
+
+  it('badges manga in the collection', async () => {
+    const collection = createMemoryCollection();
+    await collection.add(onePiece);
+    await collection.add(hobbit);
+
+    await renderCollection(collection);
+
+    expect(await screen.findByText('Manga')).toBeOnTheScreen();
+    expect(screen.getByRole('link', { name: /^One Piece, Vol\. 1, manga,/ })).toBeOnTheScreen();
   });
 
   it('credits Open Library under the collection', async () => {

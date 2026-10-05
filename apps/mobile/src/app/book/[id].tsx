@@ -3,6 +3,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import { BookCover } from '@/components/book-cover';
+import { CATEGORY_LABELS } from '@/components/category-badge';
 import { EmptyState } from '@/components/empty-state';
 import { PageTitle } from '@/components/page-title';
 import { ThemedText } from '@/components/themed-text';
@@ -19,6 +20,8 @@ export default function BookDetailScreen() {
   if (isPending) {
     return (
       <ThemedView style={styles.centered}>
+        {/* Every state sets a title, like the tab screens (see PageTitle). */}
+        <PageTitle title="Book" />
         <ActivityIndicator accessibilityLabel="Loading book" />
       </ThemedView>
     );
@@ -27,6 +30,7 @@ export default function BookDetailScreen() {
   if (!item) {
     return (
       <ThemedView style={styles.fill}>
+        <PageTitle title="Book not found" />
         <EmptyState
           title="Book not found"
           message="This book isn't in your collection. It may have been removed."
@@ -63,6 +67,7 @@ function BookDetail({ item }: { item: CollectionItem }) {
           </View>
 
           <View style={styles.facts}>
+            <Fact label="Type" value={CATEGORY_LABELS[item.category]} />
             <Fact label="Publisher" value={catalog.publisher} />
             <Fact label="Published" value={catalog.publishedYear?.toString()} />
             <Fact label="ISBN" value={catalog.isbn13} />

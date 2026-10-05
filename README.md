@@ -25,7 +25,7 @@ Fandex is a collection app for fans who collect comics, manga, fantasy books, pr
 
 The MVP runs on iPhone and the web from one codebase:
 
-- **Search** Open Library by title or author as you type, with covers.
+- **Search** books, manga and comics by title or author as you type, with covers and category badges (via the Fandex API, backed by Open Library).
 - **Look up by ISBN**: type or paste an ISBN-10/13 into the same field for an exact match; typos are caught by the check digit before any request is made.
 - **Scan barcodes** with the iPhone camera. Only book barcodes are accepted, so a DVD or toy on the same shelf won't trigger a lookup.
 - **Your collection**: a cover grid sorted by recently added or by title (ignoring "The"/"A"), a detail screen per book, and removal with confirmation.
@@ -115,11 +115,11 @@ npm run lint
 npm run format:check
 ```
 
-271 tests run in CI on every push:
+291 tests run in CI on every push:
 
-- **`packages/core` (131, Jest + ts-jest):** ISBN validation against reference values, book/manga/comic classification against real Open Library subject data, the Open Library adapter against **recorded real API responses** plus edge cases, and the repository (concurrent writes, corrupt data, restarts) over an in-memory store.
+- **`packages/core` (135, Jest + ts-jest):** ISBN validation against reference values, book/manga/comic classification against real Open Library subject data, the Open Library adapter against **recorded real API responses** plus edge cases, and the repository (concurrent writes, corrupt data, restarts) over an in-memory store.
 - **`apps/api` (55, Vitest + Supertest):** config validation, caching and rate limiting, plus end-to-end tests against the real Nest app and a real PostgreSQL test database (created and migrated automatically), including sign-up/sign-in, native-app sessions, CORS, account deletion, password hashing, CSRF protection, and the catalog API (validation, database caching, upstream failures) with a fake Open Library.
-- **`apps/mobile` (85, jest-expo + React Native Testing Library):** screens rendered with a fake catalog, a fake account service and the real repository over an in-memory store: search states, ISBN lookup, adding and removing, navigation, sorting, accounts (sign-in, sign-up, sign-out, delete account), and the barcode scanner with a mocked camera.
+- **`apps/mobile` (101, jest-expo + React Native Testing Library):** screens rendered with a fake catalog, a fake account service and the real repository over an in-memory store: search states, ISBN lookup, adding and removing, navigation, sorting, accounts (sign-in, sign-up, sign-out, delete account), and the barcode scanner with a mocked camera.
 
 Tests never call the network.
 

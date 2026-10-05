@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { BookCover } from './book-cover';
+import { CategoryBadge, categoryForLabel } from './category-badge';
 import { ThemedText } from './themed-text';
 
 import { Spacing } from '@/constants/theme';
@@ -24,10 +25,18 @@ export function BookRow({ book, accessory }: Props) {
       <View
         style={styles.info}
         accessible
-        accessibilityLabel={[title, authors && `by ${authors}`, details].filter(Boolean).join(', ')}
+        accessibilityLabel={[
+          title,
+          categoryForLabel(book.category),
+          authors && `by ${authors}`,
+          details,
+        ]
+          .filter(Boolean)
+          .join(', ')}
       >
         <BookCover coverUrl={book.coverUrl} title={book.title} width={48} />
         <View style={styles.text}>
+          <CategoryBadge category={book.category} />
           <ThemedText type="smallBold" numberOfLines={2}>
             {title}
           </ThemedText>

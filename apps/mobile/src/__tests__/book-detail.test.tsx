@@ -2,7 +2,13 @@ import { fireEvent, renderRouter, screen } from 'expo-router/testing-library';
 
 import CollectionScreen from '@/app/(tabs)/index';
 import BookDetailScreen from '@/app/book/[id]';
-import { createMemoryCollection, createWrapper, dune, hobbit } from '@/test-utils/providers';
+import {
+  createMemoryCollection,
+  createWrapper,
+  dune,
+  hobbit,
+  onePiece,
+} from '@/test-utils/providers';
 import { confirm } from '@/utils/confirm';
 
 jest.mock('@/utils/confirm', () => ({ confirm: jest.fn() }));
@@ -42,6 +48,13 @@ describe('Book detail', () => {
     expect(screen.getByText('J.R.R. Tolkien')).toBeOnTheScreen();
     expect(screen.getByText('2001')).toBeOnTheScreen();
     expect(screen.getByText('October 4, 2026')).toBeOnTheScreen();
+  });
+
+  it('shows the type of item', async () => {
+    await renderApp('/book/item-1', await collectionWith(onePiece));
+
+    expect(await screen.findByText('Manga')).toBeOnTheScreen();
+    expect(screen.getByText('Type')).toBeOnTheScreen();
   });
 
   it('leaves out details the catalog did not provide', async () => {

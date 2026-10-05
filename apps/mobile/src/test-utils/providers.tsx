@@ -145,3 +145,13 @@ export const dune: CatalogBook = {
   publishedYear: 1990,
   publisher: 'Ace',
 };
+
+export const onePiece: CatalogBook = {
+  source: 'openlibrary',
+  category: 'manga',
+  externalId: 'OL9218212M',
+  title: 'One Piece, Vol. 1',
+  authors: ['Eiichiro Oda'],
+  publishedYear: 2003,
+  publisher: 'SHONEN JUMP',
+};

@@ -90,6 +90,8 @@ Verify current terms, rate limits and attribution requirements for each API befo
 - **Routing:** root `Stack` (in `src/app/_layout.tsx`) holds the `(tabs)` group plus screens that slide over the tabs (e.g. `book/[id]`). Groups don't change URLs.
 - **Platform-specific files:** `foo.web.ts` replaces `foo.ts` on web (e.g. `utils/confirm.web.ts`, since RN's `Alert` is a no-op in browsers).
 - **Camera / barcode scanning** (`src/app/scan.tsx`) only runs on a real device; tests mock `expo-camera`. In Expo Go the iOS permission prompt shows Expo Go's text; our `cameraPermission` string in `app.json` applies to our own builds (dev build / TestFlight). React Native 0.86 removed `StyleSheet.absoluteFillObject`; spread `StyleSheet.absoluteFill`.
+- **Browser tab titles (web):** use `PageTitle` (`components/page-title.web.tsx`), which sets `document.title` in `useFocusEffect`. Don't use expo-router's `<Head>` for this: with stacked screens and titles that change after loading, the first `<Head>` title won and later ones never applied; `Stack.Screen` `title` doesn't set it either.
+- **App catalog:** `ApiCatalog` (implements `BookCatalog`) calls our API through `createApiFetch` (session cookie header on native, `credentials: 'include'` on web). The app no longer calls Open Library directly (only cover images load from covers.openlibrary.org). So in development, **the API must be running** (`npm run dev:api`) for search. Badges show for manga/comic/LEGO, not plain books.
 - **Web focus rings:** RN style types can't express `outline-style: none`; web-only CSS lives in `src/global.css`.
 - **Read the versioned Expo docs** before touching Expo APIs (see `apps/mobile/AGENTS.md`).
 

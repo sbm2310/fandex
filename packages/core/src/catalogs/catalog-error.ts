@@ -7,7 +7,8 @@ export class CatalogError extends Error {
   override readonly name = 'CatalogError';
 
   constructor(
-    readonly source: CatalogSource,
+    /** The external catalog, or the Fandex API when the app reaches catalogs through it. */
+    readonly source: CatalogSource | 'fandex-api',
     readonly kind: CatalogErrorKind,
     message: string,
     readonly status?: number,

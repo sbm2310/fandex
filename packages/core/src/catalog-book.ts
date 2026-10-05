@@ -17,6 +17,8 @@ export type CatalogBook = {
   externalId: string;
   /** Book, manga or comic; derived from the catalog's subjects. */
   category: BookCategory;
+  /** Our own catalog id, when the entry came through the Fandex API (cached in its database). */
+  catalogId?: string;
   title: string;
   subtitle?: string;
   authors: string[];

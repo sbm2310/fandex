@@ -57,7 +57,7 @@ collection_item                         ← a user's owned copy
 
 **5. Catalog API.** ✅ `GET /catalog/search?q=` and `GET /catalog/isbn/:isbn` on the server using core's `OpenLibraryCatalog` (with our User-Agent everywhere now, including for web users), results upserted into `catalog_item`, ISBN lookups served from the cache when present. Category classification from Open Library subjects. e2e tests with recorded fixtures (no live calls). _Demo:_ `curl` a manga ISBN → `category: "manga"`.
 
-**6. App uses the catalog API.** An `ApiCatalog` implementing `BookCatalog` replaces direct Open Library calls (screens don't change). Category badges on results and in the collection. _Demo:_ scanning a manga volume shows a "Manga" badge.
+**6. App uses the catalog API.** ✅ An `ApiCatalog` implementing `BookCatalog` replaces direct Open Library calls (screens don't change). Category badges on results and in the collection. _Demo:_ scanning a manga volume shows a "Manga" badge.
 
 **7. Collection API.** `GET/POST/DELETE /collection` for the signed-in user: idempotent add, newest first, items returned with their catalog data. e2e tests including **user isolation** (user A can never see or remove user B's items). _Demo:_ add and list items with `curl`.
 

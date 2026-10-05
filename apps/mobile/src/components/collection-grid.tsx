@@ -3,6 +3,7 @@ import { Link } from 'expo-router';
 import { FlatList, Pressable, StyleSheet, useWindowDimensions } from 'react-native';
 
 import { BookCover } from './book-cover';
+import { CategoryBadge, categoryForLabel } from './category-badge';
 import { ThemedText } from './themed-text';
 
 import { MaxContentWidth, Spacing } from '@/constants/theme';
@@ -46,12 +47,14 @@ function GridItem({ item, width }: { item: CollectionItem; width: number }) {
         style={StyleSheet.flatten([styles.item, { width }])}
         accessibilityLabel={[
           formatTitle(item.catalog),
+          categoryForLabel(item.category),
           authors.length > 0 && `by ${authors.join(', ')}`,
         ]
           .filter(Boolean)
           .join(', ')}
       >
         <BookCover coverUrl={item.catalog.coverUrl} title={title} width={width} />
+        <CategoryBadge category={item.category} />
         <ThemedText type="smallBold" numberOfLines={2}>
           {title}
         </ThemedText>
