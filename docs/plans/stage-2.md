@@ -53,7 +53,7 @@ collection_item                         ← a user's owned copy
 
 **3. Auth on the API.** ✅ Better Auth with the Prisma adapter (generates user/session/account tables), email + password, built-in rate limiting on auth routes, an `AuthGuard` (≈ `[Authorize]`), `GET /me`. e2e tests: sign up, sign in, `/me` with and without a session. _Demo:_ sign up and call `/me` with `curl`.
 
-**4. Accounts in the app.** An Account screen with sign up / sign in / sign out using the Better Auth Expo client (Keychain storage on iOS, cookies on web; CORS configured for the web origin). **Delete account** (an App Store requirement for any app with sign-up). Guest mode keeps working unchanged. Tests with a fake auth client. _Demo:_ create an account on the iPhone, sign in with it on web.
+**4. Accounts in the app.** ✅ An Account screen with sign up / sign in / sign out using the Better Auth Expo client (Keychain storage on iOS, cookies on web; CORS configured for the web origin). **Delete account** (an App Store requirement for any app with sign-up). Guest mode keeps working unchanged. Tests with a fake auth client. _Demo:_ create an account on the iPhone, sign in with it on web.
 
 **5. Catalog API.** `GET /catalog/search?q=` and `GET /catalog/isbn/:isbn` on the server using core's `OpenLibraryCatalog` (with our User-Agent everywhere now, including for web users), results upserted into `catalog_item`, ISBN lookups served from the cache when present. Category classification from Open Library subjects. e2e tests with recorded fixtures (no live calls). _Demo:_ `curl` a manga ISBN → `category: "manga"`.
 

@@ -22,6 +22,7 @@
     "db:studio": "prisma studio"
   },
   "dependencies": {
+    "@better-auth/expo": "^1.7.7",
     "@fandex/core": "*",
     "@nestjs/common": "^12.0.1",
     "@nestjs/config": "^12.0.1",

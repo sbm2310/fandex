@@ -1,10 +1,13 @@
 import type { BookCatalog, CollectionRepository } from '@fandex/core';
 import { createContext, use, type ReactNode } from 'react';
 
+import type { AccountService } from './account-service';
+
 /** The app's external dependencies. The root layout provides real ones; tests provide fakes. */
 export type AppServices = {
   catalog: BookCatalog;
   collection: CollectionRepository;
+  account: AccountService;
 };
 
 const AppServicesContext = createContext<AppServices | null>(null);
@@ -32,4 +35,8 @@ export function useCatalog(): BookCatalog {
 
 export function useCollectionRepository(): CollectionRepository {
   return useAppServices().collection;
+}
+
+export function useAccountService(): AccountService {
+  return useAppServices().account;
 }

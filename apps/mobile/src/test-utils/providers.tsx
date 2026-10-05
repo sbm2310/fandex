@@ -8,6 +8,7 @@ import {
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 
+import { AccountError, type AccountService, type AccountUser } from '@/services/account-service';
 import { AppServicesProvider } from '@/services/app-services';
 
 /** A catalog whose methods are Jest mocks; by default it finds nothing. */
@@ -42,13 +43,73 @@ export function createMemoryCollection({ now }: { now?: () => Date } = {}): Coll
 }
 
 /**
+ * An in-memory AccountService that behaves like the real one: accounts with passwords,
+ * one signed-in user at a time, the same error kinds.
+ */
+export class FakeAccountService implements AccountService {
+  private readonly accounts = new Map<string, { user: AccountUser; password: string }>();
+  private signedInEmail: string | null = null;
+
+  /** Creates an account without signing in (test setup). */
+  register(name: string, email: string, password: string): AccountUser {
+    const user: AccountUser = {
+      id: `0199b5a0-0000-7000-8000-${String(this.accounts.size + 1).padStart(12, '0')}`,
+      name,
+      email,
+      emailVerified: false,
+      createdAt: '2026-10-05T09:00:00.000Z',
+    };
+    this.accounts.set(email, { user, password });
+    return user;
+  }
+
+  async getCurrentUser() {
+    return this.signedInEmail ? (this.accounts.get(this.signedInEmail)?.user ?? null) : null;
+  }
+
+  async signUp({ name, email, password }: { name: string; email: string; password: string }) {
+    if (this.accounts.has(email))
+      throw new AccountError(
+        'email-taken',
+        'An account with this email already exists. Try signing in instead.',
+      );
+    this.register(name, email, password);
+    this.signedInEmail = email;
+  }
+
+  async signIn({ email, password }: { email: string; password: string }) {
+    if (this.accounts.get(email)?.password !== password) {
+      throw new AccountError(
+        'invalid-credentials',
+        "That email and password don't match. Check them and try again.",
+      );
+    }
+    this.signedInEmail = email;
+  }
+
+  async signOut() {
+    this.signedInEmail = null;
+  }
+
+  async deleteAccount({ password }: { password: string }) {
+    const email = this.signedInEmail;
+    if (!email || this.accounts.get(email)?.password !== password) {
+      throw new AccountError('wrong-password', "That password isn't right.");
+    }
+    this.accounts.delete(email);
+    this.signedInEmail = null;
+  }
+}
+
+/**
  * Wraps a screen in the app's providers with test doubles and a fresh QueryClient per test
  * (no retries, so error states show immediately).
  */
 export function createWrapper({
   catalog = createFakeCatalog(),
   collection = createMemoryCollection(),
-}: { catalog?: BookCatalog; collection?: CollectionRepository } = {}) {
+  account = new FakeAccountService(),
+}: { catalog?: BookCatalog; collection?: CollectionRepository; account?: AccountService } = {}) {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false, gcTime: Infinity } },
   });
@@ -56,7 +117,9 @@ export function createWrapper({
   return function Wrapper({ children }: { children: ReactNode }) {
     return (
       <QueryClientProvider client={queryClient}>
-        <AppServicesProvider services={{ catalog, collection }}>{children}</AppServicesProvider>
+        <AppServicesProvider services={{ catalog, collection, account }}>
+          {children}
+        </AppServicesProvider>
       </QueryClientProvider>
     );
   };

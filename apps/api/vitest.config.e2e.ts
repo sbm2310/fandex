@@ -16,7 +16,7 @@ export default defineConfig({
       // Test-only secret (not used anywhere else).
       BETTER_AUTH_SECRET: 'test-secret-test-secret-test-secret-1234',
       BETTER_AUTH_URL: 'http://localhost:3000',
-      TRUSTED_ORIGINS: 'http://localhost:8081',
+      TRUSTED_ORIGINS: 'http://localhost:8081,fandex://',
     },
     // Test files share one database, so run them one at a time.
     fileParallelism: false,

@@ -22,6 +22,11 @@ export default function AppTabs() {
         <NativeTabs.Trigger.Label>Add</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf="plus.circle.fill" md="add_circle" />
       </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name="account">
+        <NativeTabs.Trigger.Label>Account</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf="person.crop.circle" md="account_circle" />
+      </NativeTabs.Trigger>
     </NativeTabs>
   );
 }

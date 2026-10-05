@@ -12,7 +12,7 @@ describe('envSchema', () => {
       DATABASE_URL,
       BETTER_AUTH_SECRET,
       BETTER_AUTH_URL: 'http://localhost:3000',
-      TRUSTED_ORIGINS: ['http://localhost:8081'],
+      TRUSTED_ORIGINS: ['http://localhost:8081', 'fandex://'],
     });
   });
 

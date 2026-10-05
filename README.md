@@ -115,11 +115,11 @@ npm run lint
 npm run format:check
 ```
 
-184 tests run in CI on every push:
+223 tests run in CI on every push:
 
 - **`packages/core` (101, Jest + ts-jest):** ISBN validation against reference values, the Open Library adapter against **recorded real API responses** plus edge cases, and the repository (concurrent writes, corrupt data, restarts) over an in-memory store.
-- **`apps/api` (32, Vitest + Supertest):** config validation and controllers, plus end-to-end tests against the real Nest app and a real PostgreSQL test database (created and migrated automatically), including sign-up/sign-in, password hashing and CSRF protection.
-- **`apps/mobile` (51, jest-expo + React Native Testing Library):** screens rendered with a fake catalog and the real repository over an in-memory store: search states, ISBN lookup, adding and removing, navigation, sorting, and the barcode scanner with a mocked camera.
+- **`apps/api` (37, Vitest + Supertest):** config validation and controllers, plus end-to-end tests against the real Nest app and a real PostgreSQL test database (created and migrated automatically), including sign-up/sign-in, native-app sessions, CORS, account deletion, password hashing and CSRF protection.
+- **`apps/mobile` (85, jest-expo + React Native Testing Library):** screens rendered with a fake catalog, a fake account service and the real repository over an in-memory store: search states, ISBN lookup, adding and removing, navigation, sorting, accounts (sign-in, sign-up, sign-out, delete account), and the barcode scanner with a mocked camera.
 
 Tests never call the network.
 

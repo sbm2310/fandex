@@ -1,3 +1,4 @@
+import { expo } from '@better-auth/expo';
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 
@@ -21,8 +22,16 @@ export function createAuth(prisma: PrismaClient, env: AuthEnv) {
       minPasswordLength: 8,
       maxPasswordLength: 128,
     },
-    // Web origins allowed to make cookie-authenticated requests (CSRF protection + CORS).
-    trustedOrigins: env.TRUSTED_ORIGINS,
+    // Origins allowed to make cookie-authenticated requests (CSRF protection + CORS): the web
+    // app, the native app's scheme, and, in development only, Expo Go's exp:// URLs.
+    trustedOrigins: [
+      ...env.TRUSTED_ORIGINS,
+      ...(env.NODE_ENV === 'development' ? ['exp://', 'exp://**'] : []),
+    ],
+    // Native apps don't send an Origin header; the Expo plugin uses the app's scheme instead.
+    plugins: [expo()],
+    // In-app account deletion (an App Store requirement). The client must send the password.
+    user: { deleteUser: { enabled: true } },
     // Throttles brute-force attempts on auth routes; off in tests so they can run quickly.
     rateLimit: { enabled: env.NODE_ENV !== 'test' },
     advanced: {
