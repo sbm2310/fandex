@@ -1,8 +1,9 @@
 import type { CatalogBook } from './catalog-book';
+import type { CatalogEntry } from './catalog-entry';
 import { createCollectionItem, type CollectionItem } from './collection-item';
 import type { CollectionRepository } from './collection-repository';
 import type { Isbn13 } from './isbn';
-import { isSameBook } from './same-book';
+import { isSameEntry } from './same-book';
 
 /** The minimal async key-value API we need; AsyncStorage (and a Map, in tests) fits it. */
 export interface KeyValueStore {
@@ -49,14 +50,14 @@ export class KeyValueCollectionRepository implements CollectionRepository {
     return this.read();
   }
 
-  /** Adds a book; if the same edition is already in the collection, returns that item instead. */
-  add(book: CatalogBook): Promise<CollectionItem> {
+  /** Adds an entry; if the same edition or set is already there, returns that item instead. */
+  add(entry: CatalogEntry): Promise<CollectionItem> {
     return this.serialize(async () => {
       const items = await this.read();
-      const existing = items.find((item) => isSameBook(item.catalog, book));
+      const existing = items.find((item) => isSameEntry(item.catalog, entry));
       if (existing) return existing;
 
-      const item = createCollectionItem(book, { id: this.generateId(), now: this.now() });
+      const item = createCollectionItem(entry, { id: this.generateId(), now: this.now() });
       await this.write([item, ...items]);
       return item;
     });
@@ -71,7 +72,9 @@ export class KeyValueCollectionRepository implements CollectionRepository {
   }
 
   async findByIsbn(isbn: Isbn13): Promise<CollectionItem | undefined> {
-    return (await this.list()).find((item) => item.catalog.isbn13 === isbn);
+    return (await this.list()).find(
+      (item) => item.category !== 'lego' && item.catalog.isbn13 === isbn,
+    );
   }
 
   private serialize<T>(operation: () => Promise<T>): Promise<T> {
@@ -108,8 +111,9 @@ export class KeyValueCollectionRepository implements CollectionRepository {
  * in on read is backward-compatible, so the storage format version stays the same.
  */
 function withCategory(item: CollectionItem): CollectionItem {
-  const category = item.catalog.category ?? 'book';
-  return { ...item, category, catalog: { ...item.catalog, category } };
+  if (item.catalog.category) return item;
+  const legacy = item as unknown as { catalog: Omit<CatalogBook, 'category'> };
+  return { ...item, category: 'book', catalog: { ...legacy.catalog, category: 'book' } };
 }
 
 function isStoredCollection(value: unknown): value is StoredCollection {

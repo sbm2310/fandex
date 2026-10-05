@@ -24,6 +24,6 @@ describe('app navigation', () => {
     await fireEvent.press(await screen.findByRole('link', { name: 'Add your first book' }));
 
     expect(app.getPathname()).toBe('/add');
-    expect(screen.getByText('Add a book')).toBeOnTheScreen();
+    expect(screen.getByText('Add to collection')).toBeOnTheScreen();
   });
 });

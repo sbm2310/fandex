@@ -1,4 +1,4 @@
-import type { BookCatalog, CollectionRepository } from '@fandex/core';
+import type { BookCatalog, CollectionRepository, LegoCatalog } from '@fandex/core';
 import { createContext, use, type ReactNode } from 'react';
 
 import type { AccountService } from './account-service';
@@ -6,6 +6,7 @@ import type { AccountService } from './account-service';
 /** The app's external dependencies. The root layout provides real ones; tests provide fakes. */
 export type AppServices = {
   catalog: BookCatalog;
+  legoCatalog: LegoCatalog;
   /** Books saved on this device: the collection while signed out ("guest mode"). */
   deviceCollection: CollectionRepository;
   /** The signed-in user's collection on the Fandex API, synced across devices. */
@@ -34,6 +35,10 @@ function useAppServices(): AppServices {
 
 export function useCatalog(): BookCatalog {
   return useAppServices().catalog;
+}
+
+export function useLegoCatalog(): LegoCatalog {
+  return useAppServices().legoCatalog;
 }
 
 export function useCollectionRepositories(): {

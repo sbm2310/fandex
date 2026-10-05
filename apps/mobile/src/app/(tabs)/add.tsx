@@ -1,60 +1,91 @@
-import type { CatalogBook } from '@fandex/core';
+import type { CatalogEntry } from '@fandex/core';
 import { Link, useLocalSearchParams } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 import { useState, type ReactNode } from 'react';
 import { ActivityIndicator, FlatList, Platform, Pressable, StyleSheet, View } from 'react-native';
 
-import { AddBookButton } from '@/components/add-book-button';
-import { BookRow } from '@/components/book-row';
+import { AddToCollectionButton } from '@/components/add-to-collection-button';
+import { EntryRow } from '@/components/entry-row';
 import { PageTitle } from '@/components/page-title';
 import { Screen } from '@/components/screen';
 import { SearchField } from '@/components/search-field';
+import { SegmentedControl, type SegmentedOption } from '@/components/segmented-control';
 import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
-import { useBookSearch } from '@/hooks/use-book-search';
+import { useCatalogSearch, type SearchKind } from '@/hooks/use-catalog-search';
 import { useTheme } from '@/hooks/use-theme';
 import { catalogErrorMessage } from '@/services/catalog-error-message';
+
+const KIND_OPTIONS: SegmentedOption<SearchKind>[] = [
+  { value: 'books', label: 'Books' },
+  { value: 'lego', label: 'LEGO' },
+];
 
 export default function AddScreen() {
   // The scanner returns here with ?isbn=…&scan=<timestamp>; `scan` changes on every scan.
   const { isbn: scannedIsbn, scan } = useLocalSearchParams<{ isbn?: string; scan?: string }>();
   const [input, setInput] = useState(scannedIsbn ?? '');
+  const [kind, setKind] = useState<SearchKind>('books');
   const [appliedScan, setAppliedScan] = useState(scan);
   // Put a new scan into the search field (adjusting state during render, as React recommends
   // over an effect: https://react.dev/learn/you-might-not-need-an-effect).
   if (scan !== appliedScan) {
     setAppliedScan(scan);
-    if (scannedIsbn) setInput(scannedIsbn);
+    if (scannedIsbn) {
+      setInput(scannedIsbn);
+      setKind('books');
+    }
   }
-  const search = useBookSearch(input);
+  const search = useCatalogSearch(input, kind);
 
   return (
     <Screen>
-      <PageTitle title="Add a book" />
-      <ThemedText type="subtitle">Add a book</ThemedText>
+      <PageTitle title="Add to collection" />
+      <ThemedText type="subtitle">Add to collection</ThemedText>
+      <SegmentedControl
+        options={KIND_OPTIONS}
+        value={kind}
+        onChange={setKind}
+        accessibilityLabel="Search for"
+      />
       <View style={styles.searchRow}>
         <View style={styles.searchField}>
           <SearchField
             value={input}
             onChangeText={setInput}
-            placeholder="Title, author or ISBN"
-            accessibilityLabel="Search books"
+            placeholder={kind === 'lego' ? 'Set name or number' : 'Title, author or ISBN'}
+            accessibilityLabel={kind === 'lego' ? 'Search LEGO sets' : 'Search books'}
             busy={search.isFetching && !search.isPending}
           />
         </View>
-        {/* Camera barcode scanning is unreliable in browsers; on web, type the ISBN instead. */}
-        {Platform.OS !== 'web' && <ScanButton />}
+        {/* Book barcodes only: camera scanning is unreliable in browsers, and LEGO box
+            barcodes aren't ISBNs. */}
+        {Platform.OS !== 'web' && kind === 'books' && <ScanButton />}
       </View>
-      <SearchResults search={search} />
+      <SearchResults search={search} kind={kind} />
     </Screen>
   );
 }
 
-function SearchResults({ search }: { search: ReturnType<typeof useBookSearch> }) {
+function SearchResults({
+  search,
+  kind,
+}: {
+  search: ReturnType<typeof useCatalogSearch>;
+  kind: SearchKind;
+}) {
   const { mode } = search;
 
   if (mode.kind === 'idle') {
-    return <Message text="Search Open Library by title, author or ISBN." />;
+    return (
+      <Message
+        text={
+          kind === 'lego'
+            ? 'Search LEGO sets by name or set number, e.g. "Millennium Falcon" or 75192.'
+            : 'Search Open Library by title, author or ISBN.'
+        }
+      />
+    );
   }
   if (mode.kind === 'invalid-isbn') {
     return (
@@ -83,17 +114,21 @@ function SearchResults({ search }: { search: ReturnType<typeof useBookSearch> })
         text={
           mode.kind === 'isbn'
             ? `No book found for ISBN ${mode.isbn}. Open Library doesn't have this edition yet. Try searching by title instead.`
-            : `No books found for “${mode.query}”.`
+            : mode.kind === 'lego'
+              ? `No LEGO sets found for “${mode.query}”.`
+              : `No books found for “${mode.query}”.`
         }
       />
     );
   }
 
   return (
-    <FlatList<CatalogBook>
+    <FlatList<CatalogEntry>
       data={search.data}
-      keyExtractor={(book) => `${book.source}:${book.externalId}`}
-      renderItem={({ item }) => <BookRow book={item} accessory={<AddBookButton book={item} />} />}
+      keyExtractor={(entry) => `${entry.source}:${entry.externalId}`}
+      renderItem={({ item }) => (
+        <EntryRow entry={item} accessory={<AddToCollectionButton entry={item} />} />
+      )}
       keyboardShouldPersistTaps="handled"
       keyboardDismissMode="on-drag"
       ListHeaderComponent={
@@ -105,7 +140,7 @@ function SearchResults({ search }: { search: ReturnType<typeof useBookSearch> })
       }
       ListFooterComponent={
         <ThemedText type="small" themeColor="textSecondary" style={styles.attribution}>
-          Book data from Open Library
+          {mode.kind === 'lego' ? 'Set data from Rebrickable' : 'Book data from Open Library'}
         </ThemedText>
       }
     />

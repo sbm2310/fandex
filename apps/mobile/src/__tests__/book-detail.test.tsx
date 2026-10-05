@@ -70,7 +70,7 @@ describe('Book detail', () => {
   it('says so when the book is not in the collection', async () => {
     await renderApp('/book/missing');
 
-    expect(await screen.findByText('Book not found')).toBeOnTheScreen();
+    expect(await screen.findByText('Not in your collection')).toBeOnTheScreen();
   });
 
   it('removes the book after confirmation and returns to the collection', async () => {

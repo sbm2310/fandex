@@ -2,8 +2,10 @@ import {
   KeyValueCollectionRepository,
   type BookCatalog,
   type CatalogBook,
+  type CatalogSet,
   type CollectionRepository,
   type KeyValueStore,
+  type LegoCatalog,
 } from '@fandex/core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
@@ -18,6 +20,19 @@ export function createFakeCatalog(overrides: Partial<BookCatalog> = {}) {
       Promise.resolve([]),
     ),
     lookupIsbn: jest.fn<Promise<CatalogBook | null>, Parameters<BookCatalog['lookupIsbn']>>(() =>
+      Promise.resolve(null),
+    ),
+    ...overrides,
+  };
+}
+
+/** A LEGO catalog whose methods are Jest mocks; by default it finds nothing. */
+export function createFakeLegoCatalog(overrides: Partial<LegoCatalog> = {}) {
+  return {
+    searchSets: jest.fn<Promise<CatalogSet[]>, Parameters<LegoCatalog['searchSets']>>(() =>
+      Promise.resolve([]),
+    ),
+    lookupSet: jest.fn<Promise<CatalogSet | null>, Parameters<LegoCatalog['lookupSet']>>(() =>
       Promise.resolve(null),
     ),
     ...overrides,
@@ -107,11 +122,13 @@ export class FakeAccountService implements AccountService {
  */
 export function createWrapper({
   catalog = createFakeCatalog(),
+  legoCatalog = createFakeLegoCatalog(),
   deviceCollection = createMemoryCollection(),
   accountCollection = createMemoryCollection(),
   account = new FakeAccountService(),
 }: {
   catalog?: BookCatalog;
+  legoCatalog?: LegoCatalog;
   deviceCollection?: CollectionRepository;
   accountCollection?: CollectionRepository;
   account?: AccountService;
@@ -123,7 +140,9 @@ export function createWrapper({
   return function Wrapper({ children }: { children: ReactNode }) {
     return (
       <QueryClientProvider client={queryClient}>
-        <AppServicesProvider services={{ catalog, deviceCollection, accountCollection, account }}>
+        <AppServicesProvider
+          services={{ catalog, legoCatalog, deviceCollection, accountCollection, account }}
+        >
           {children}
         </AppServicesProvider>
       </QueryClientProvider>
@@ -160,4 +179,17 @@ export const onePiece: CatalogBook = {
   authors: ['Eiichiro Oda'],
   publishedYear: 2003,
   publisher: 'SHONEN JUMP',
+};
+
+export const falcon: CatalogSet = {
+  source: 'rebrickable',
+  externalId: '75192-1',
+  category: 'lego',
+  title: 'Millennium Falcon',
+  setNumber: '75192',
+  year: 2017,
+  pieceCount: 7541,
+  theme: 'Star Wars',
+  subtheme: 'Ultimate Collector Series',
+  coverUrl: 'https://cdn.rebrickable.com/media/sets/75192-1/30881.jpg',
 };

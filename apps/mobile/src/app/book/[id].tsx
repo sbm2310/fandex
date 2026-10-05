@@ -21,8 +21,8 @@ export default function BookDetailScreen() {
     return (
       <ThemedView style={styles.centered}>
         {/* Every state sets a title, like the tab screens (see PageTitle). */}
-        <PageTitle title="Book" />
-        <ActivityIndicator accessibilityLabel="Loading book" />
+        <PageTitle title="Loading" />
+        <ActivityIndicator accessibilityLabel="Loading" />
       </ThemedView>
     );
   }
@@ -30,10 +30,10 @@ export default function BookDetailScreen() {
   if (!item) {
     return (
       <ThemedView style={styles.fill}>
-        <PageTitle title="Book not found" />
+        <PageTitle title="Not found" />
         <EmptyState
-          title="Book not found"
-          message="This book isn't in your collection. It may have been removed."
+          title="Not in your collection"
+          message="This item isn't in your collection. It may have been removed."
           action={{ label: 'Back to collection', href: '/' }}
         />
       </ThemedView>
@@ -45,6 +45,8 @@ export default function BookDetailScreen() {
 
 function BookDetail({ item }: { item: CollectionItem }) {
   const { catalog } = item;
+  const isSet = item.category === 'lego';
+  const byline = item.category === 'lego' ? undefined : item.catalog.authors.join(', ');
 
   return (
     <ThemedView style={styles.fill}>
@@ -52,25 +54,47 @@ function BookDetail({ item }: { item: CollectionItem }) {
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.column}>
           <View style={styles.coverWrap}>
-            <BookCover coverUrl={catalog.coverUrl} title={catalog.title} width={180} />
+            <BookCover
+              coverUrl={catalog.coverUrl}
+              title={catalog.title}
+              width={180}
+              fit={isSet ? 'contain' : 'cover'}
+            />
           </View>
 
           <View style={styles.heading}>
             <ThemedText type="subtitle" style={styles.centeredText} accessibilityRole="header">
               {formatTitle(catalog)}
             </ThemedText>
-            {catalog.authors.length > 0 && (
+            {byline ? (
               <ThemedText themeColor="textSecondary" style={styles.centeredText}>
-                {catalog.authors.join(', ')}
+                {byline}
               </ThemedText>
-            )}
+            ) : null}
           </View>
 
           <View style={styles.facts}>
             <Fact label="Type" value={CATEGORY_LABELS[item.category]} />
-            <Fact label="Publisher" value={catalog.publisher} />
-            <Fact label="Published" value={catalog.publishedYear?.toString()} />
-            <Fact label="ISBN" value={catalog.isbn13} />
+            {item.category === 'lego' ? (
+              <>
+                <Fact label="Set number" value={item.catalog.setNumber} />
+                <Fact label="Pieces" value={item.catalog.pieceCount?.toLocaleString('en-US')} />
+                <Fact
+                  label="Theme"
+                  value={
+                    [item.catalog.theme, item.catalog.subtheme].filter(Boolean).join(' › ') ||
+                    undefined
+                  }
+                />
+                <Fact label="Released" value={item.catalog.year?.toString()} />
+              </>
+            ) : (
+              <>
+                <Fact label="Publisher" value={item.catalog.publisher} />
+                <Fact label="Published" value={item.catalog.publishedYear?.toString()} />
+                <Fact label="ISBN" value={item.catalog.isbn13} />
+              </>
+            )}
             <Fact label="Added" value={formatDate(item.addedAt)} />
           </View>
 

@@ -52,11 +52,11 @@ describe('sortCollection', () => {
       item('Saga', '2026-01-03T00:00:00Z', 'Volume 1'),
     ];
 
-    expect(sortCollection(series, 'title').map((i) => i.catalog.subtitle)).toEqual([
-      'Volume 1',
-      'Volume 2',
-      'Volume 10',
-    ]);
+    expect(
+      sortCollection(series, 'title').map((i) =>
+        i.category === 'lego' ? undefined : i.catalog.subtitle,
+      ),
+    ).toEqual(['Volume 1', 'Volume 2', 'Volume 10']);
   });
 
   it('does not mutate the input', () => {

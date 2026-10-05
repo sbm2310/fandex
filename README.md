@@ -117,11 +117,11 @@ npm run lint
 npm run format:check
 ```
 
-358 tests run in CI on every push:
+381 tests run in CI on every push:
 
-- **`packages/core` (161, Jest + ts-jest):** ISBN validation against reference values, book/manga/comic classification against real Open Library subject data, the Open Library and Rebrickable adapters against **recorded real API responses** plus edge cases, and the repository (concurrent writes, corrupt data, restarts) over an in-memory store.
+- **`packages/core` (168, Jest + ts-jest):** ISBN validation against reference values, book/manga/comic classification against real Open Library subject data, the Open Library and Rebrickable adapters against **recorded real API responses** plus edge cases, and the repository (concurrent writes, corrupt data, restarts) over an in-memory store.
 - **`apps/api` (79, Vitest + Supertest):** config validation, caching and rate limiting, plus end-to-end tests against the real Nest app and a real PostgreSQL test database (created and migrated automatically), including sign-up/sign-in, native-app sessions, CORS, account deletion, password hashing, CSRF protection, the catalog API (validation, database caching, upstream failures) with a fake Open Library, and the collection API, including isolation between users (mutation-checked).
-- **`apps/mobile` (118, jest-expo + React Native Testing Library):** screens rendered with a fake catalog, a fake account service and the real repository over an in-memory store: search states, ISBN lookup, adding and removing, navigation, sorting, accounts (sign-in, sign-up, sign-out, delete account), cloud sync (account vs device collection, moving device books into an account), and the barcode scanner with a mocked camera.
+- **`apps/mobile` (134, jest-expo + React Native Testing Library):** screens rendered with a fake catalog, a fake account service and the real repository over an in-memory store: search states, ISBN lookup, adding and removing, navigation, sorting, accounts (sign-in, sign-up, sign-out, delete account), cloud sync (account vs device collection, moving device books into an account), LEGO search and detail, category filters, and the barcode scanner with a mocked camera.
 
 Tests never call the network.
 

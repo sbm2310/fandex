@@ -2,6 +2,12 @@ import { sortCollection, type CollectionSort } from '@fandex/core';
 import { useState } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
+import {
+  CategoryFilter,
+  countByCategory,
+  countLabel,
+  type CategoryFilterValue,
+} from '@/components/category-filter';
 import { CollectionGrid } from '@/components/collection-grid';
 import { EmptyState } from '@/components/empty-state';
 import { MoveToAccountBanner } from '@/components/move-to-account-banner';
@@ -19,6 +25,7 @@ export default function CollectionScreen() {
   const deviceCount = device.data?.length ?? 0;
   const banner = collection.mode === 'account' && <MoveToAccountBanner deviceCount={deviceCount} />;
   const [sort, setSort] = useState<CollectionSort>('recent');
+  const [filter, setFilter] = useState<CategoryFilterValue>('all');
 
   if (collection.isPending || (collection.mode === 'account' && device.isPending)) {
     return (
@@ -61,7 +68,13 @@ export default function CollectionScreen() {
     );
   }
 
-  const count = collection.data.length;
+  // A filter for a category that's no longer in the collection falls back to "all".
+  const owned = countByCategory(collection.data);
+  const activeFilter = filter !== 'all' && owned.has(filter) ? filter : 'all';
+  const visible =
+    activeFilter === 'all'
+      ? collection.data
+      : collection.data.filter((item) => item.category === activeFilter);
   return (
     <Screen>
       <PageTitle title="My collection" />
@@ -70,12 +83,13 @@ export default function CollectionScreen() {
         <ThemedText type="subtitle">My collection</ThemedText>
         <View style={styles.headerRow}>
           <ThemedText themeColor="textSecondary">
-            {count} {count === 1 ? 'book' : 'books'}
+            {countLabel(collection.data, activeFilter)}
           </ThemedText>
           <SortToggle value={sort} onChange={setSort} />
         </View>
+        <CategoryFilter items={collection.data} value={activeFilter} onChange={setFilter} />
       </View>
-      <CollectionGrid items={sortCollection(collection.data, sort)} />
+      <CollectionGrid items={sortCollection(visible, sort)} />
     </Screen>
   );
 }

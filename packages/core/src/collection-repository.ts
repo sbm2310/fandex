@@ -1,4 +1,4 @@
-import type { CatalogBook } from './catalog-book';
+import type { CatalogEntry } from './catalog-entry';
 import type { CollectionItem } from './collection-item';
 import type { Isbn13 } from './isbn';
 
@@ -9,7 +9,7 @@ import type { Isbn13 } from './isbn';
 export interface CollectionRepository {
   /** All items, most recently added first. */
   list(): Promise<CollectionItem[]>;
-  add(book: CatalogBook): Promise<CollectionItem>;
+  add(entry: CatalogEntry): Promise<CollectionItem>;
   /** Removes an item; does nothing if the id doesn't exist. */
   remove(id: string): Promise<void>;
   findByIsbn(isbn: Isbn13): Promise<CollectionItem | undefined>;

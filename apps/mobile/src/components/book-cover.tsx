@@ -10,13 +10,17 @@ type Props = {
   coverUrl?: string | undefined;
   title: string;
   width: number;
+  /** "contain" shows the whole image (LEGO box art); "cover" fills the frame (book covers). */
+  fit?: 'cover' | 'contain';
+  /** Height ÷ width: 1.5 for a book (2:3), 1 for a square frame (LEGO in lists). */
+  aspectRatio?: number;
 };
 
 /** A book cover at a 2:3 ratio, with a lettered placeholder when there's no image (or it fails to load). */
-export function BookCover({ coverUrl, title, width }: Props) {
+export function BookCover({ coverUrl, title, width, fit = 'cover', aspectRatio = 1.5 }: Props) {
   const colors = useTheme();
   const [failed, setFailed] = useState(false);
-  const size = { width, height: Math.round(width * 1.5) };
+  const size = { width, height: Math.round(width * aspectRatio) };
 
   if (!coverUrl || failed) {
     return (
@@ -40,7 +44,7 @@ export function BookCover({ coverUrl, title, width }: Props) {
     <Image
       source={{ uri: coverUrl }}
       style={[styles.cover, size, { backgroundColor: colors.backgroundElement }]}
-      contentFit="cover"
+      contentFit={fit}
       transition={150}
       onError={() => setFailed(true)}
       accessibilityIgnoresInvertColors

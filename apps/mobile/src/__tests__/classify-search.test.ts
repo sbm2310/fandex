@@ -1,4 +1,4 @@
-import { classifySearch } from '@/hooks/use-book-search';
+import { classifySearch } from '@/hooks/use-catalog-search';
 
 describe('classifySearch', () => {
   it.each([

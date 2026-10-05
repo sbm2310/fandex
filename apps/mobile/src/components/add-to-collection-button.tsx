@@ -1,4 +1,4 @@
-import { formatTitle, type CatalogBook } from '@fandex/core';
+import { formatTitle, type CatalogEntry } from '@fandex/core';
 import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from './themed-text';
@@ -8,11 +8,13 @@ import { useAddToCollection, useIsInCollection } from '@/hooks/use-collection';
 import { useTheme } from '@/hooks/use-theme';
 
 /** Adds a search result to the collection; each row tracks its own saving/saved/failed state. */
-export function AddBookButton({ book }: { book: CatalogBook }) {
+export function AddToCollectionButton({ entry: book }: { entry: CatalogEntry }) {
   const colors = useTheme();
   const inCollection = useIsInCollection(book);
   const add = useAddToCollection();
-  const title = formatTitle(book);
+  // Several sets share a name ("Millennium Falcon"), so their labels include the set number.
+  const title =
+    book.category === 'lego' ? `${book.title} (set ${book.setNumber})` : formatTitle(book);
 
   // Until we know whether it's owned, keep the space empty rather than flash "Add".
   if (inCollection === undefined) {

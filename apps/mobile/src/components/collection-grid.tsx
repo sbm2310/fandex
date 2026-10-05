@@ -4,6 +4,7 @@ import { FlatList, Pressable, StyleSheet, useWindowDimensions } from 'react-nati
 
 import { BookCover } from './book-cover';
 import { CategoryBadge, categoryForLabel } from './category-badge';
+import { entryDetails } from './entry-row';
 import { ThemedText } from './themed-text';
 
 import { MaxContentWidth, Spacing } from '@/constants/theme';
@@ -31,38 +32,50 @@ export function CollectionGrid({ items }: { items: CollectionItem[] }) {
       renderItem={({ item }) => <GridItem item={item} width={itemWidth} />}
       ListFooterComponent={
         <ThemedText type="small" themeColor="textSecondary" style={styles.attribution}>
-          Book data and covers from Open Library
+          {items.some((item) => item.category === 'lego')
+            ? 'Data and images from Open Library and Rebrickable'
+            : 'Book data and covers from Open Library'}
         </ThemedText>
       }
     />
   );
 }
 
+/** The short line under a grid cover: first author, or "Set 75192". */
+function gridSubtitle(item: CollectionItem): string | undefined {
+  return item.category === 'lego' ? `Set ${item.catalog.setNumber}` : item.catalog.authors[0];
+}
+
 function GridItem({ item, width }: { item: CollectionItem; width: number }) {
-  const { title, authors } = item.catalog;
+  const { title } = item.catalog;
+  const [first] = entryDetails(item.catalog);
+  const subtitle = gridSubtitle(item);
+  const label = [
+    formatTitle(item.catalog),
+    categoryForLabel(item.category),
+    first && (item.category === 'lego' ? `set ${first}` : `by ${first}`),
+  ]
+    .filter(Boolean)
+    .join(', ');
   // Link asChild needs a single style object on its child (no arrays or style functions).
   return (
     <Link href={{ pathname: '/book/[id]', params: { id: item.id } }} asChild>
-      <Pressable
-        style={StyleSheet.flatten([styles.item, { width }])}
-        accessibilityLabel={[
-          formatTitle(item.catalog),
-          categoryForLabel(item.category),
-          authors.length > 0 && `by ${authors.join(', ')}`,
-        ]
-          .filter(Boolean)
-          .join(', ')}
-      >
-        <BookCover coverUrl={item.catalog.coverUrl} title={title} width={width} />
+      <Pressable style={StyleSheet.flatten([styles.item, { width }])} accessibilityLabel={label}>
+        <BookCover
+          coverUrl={item.catalog.coverUrl}
+          title={title}
+          width={width}
+          fit={item.category === 'lego' ? 'contain' : 'cover'}
+        />
         <CategoryBadge category={item.category} />
         <ThemedText type="smallBold" numberOfLines={2}>
           {title}
         </ThemedText>
-        {authors.length > 0 && (
+        {subtitle ? (
           <ThemedText type="small" themeColor="textSecondary" numberOfLines={1}>
-            {authors[0]}
+            {subtitle}
           </ThemedText>
-        )}
+        ) : null}
       </Pressable>
     </Link>
   );

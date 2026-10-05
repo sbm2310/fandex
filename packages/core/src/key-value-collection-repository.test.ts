@@ -1,4 +1,5 @@
-import type { CatalogBook, BookSource } from './catalog-book';
+import type { BookSource, CatalogBook } from './catalog-book';
+import type { CatalogSet } from './catalog-set';
 import { parseIsbn, type Isbn13 } from './isbn';
 import {
   CollectionStorageError,
@@ -150,6 +151,43 @@ describe('KeyValueCollectionRepository', () => {
     await expect(repository.list()).resolves.toMatchObject([
       { id: 'old', category: 'book', catalog: { category: 'book', title: 'The Hobbit' } },
     ]);
+  });
+
+  describe('LEGO sets', () => {
+    const falcon: CatalogSet = {
+      source: 'rebrickable',
+      externalId: '75192-1',
+      category: 'lego',
+      title: 'Millennium Falcon',
+      setNumber: '75192',
+      pieceCount: 7541,
+      theme: 'Star Wars',
+    };
+
+    it('stores sets alongside books', async () => {
+      const { repository } = createRepository();
+      await repository.add(hobbit);
+
+      const set = await repository.add(falcon);
+
+      expect(set).toMatchObject({ category: 'lego', catalog: { setNumber: '75192' } });
+      expect((await repository.list()).map((item) => item.category)).toEqual(['lego', 'book']);
+    });
+
+    it('returns the existing item for the same set', async () => {
+      const { repository } = createRepository();
+      const first = await repository.add(falcon);
+
+      await expect(repository.add({ ...falcon })).resolves.toEqual(first);
+      await expect(repository.list()).resolves.toHaveLength(1);
+    });
+
+    it('ignores sets when looking up by ISBN', async () => {
+      const { repository } = createRepository();
+      await repository.add(falcon);
+
+      await expect(repository.findByIsbn(isbn('9780345445605'))).resolves.toBeUndefined();
+    });
   });
 
   describe('with unreadable saved data', () => {

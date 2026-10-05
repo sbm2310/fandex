@@ -1,6 +1,6 @@
 import {
-  isSameBook,
-  type CatalogBook,
+  isSameEntry,
+  type CatalogEntry,
   type CollectionItem,
   type CollectionRepository,
 } from '@fandex/core';
@@ -75,10 +75,10 @@ export function useCollectionItem(id: string) {
   return { ...collection, item: collection.data?.find((item) => item.id === id) };
 }
 
-/** Whether this edition is already in the collection; `undefined` until the collection has loaded. */
-export function useIsInCollection(book: CatalogBook): boolean | undefined {
+/** Whether this edition or set is already owned; `undefined` until the collection has loaded. */
+export function useIsInCollection(entry: CatalogEntry): boolean | undefined {
   const { data } = useCollection();
-  return data?.some((item) => isSameBook(item.catalog, book));
+  return data?.some((item) => isSameEntry(item.catalog, entry));
 }
 
 function useActiveRepositoryOrThrow() {
@@ -93,9 +93,9 @@ export function useAddToCollection() {
   const getActive = useActiveRepositoryOrThrow();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (book: CatalogBook) => {
+    mutationFn: async (entry: CatalogEntry) => {
       const { repository, queryKey } = getActive();
-      return { item: await repository.add(book), queryKey };
+      return { item: await repository.add(entry), queryKey };
     },
     // Put the saved item in the cache right away so the UI flips to "owned" in the same
     // render the save completes (no flash of the Add button), then re-read in the background.

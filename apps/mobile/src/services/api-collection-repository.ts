@@ -2,7 +2,7 @@ import {
   CollectionStorageError,
   collectionItemSchema,
   collectionResponseSchema,
-  type CatalogBook,
+  type CatalogEntry,
   type CollectionItem,
   type CollectionItemResponse,
   type CollectionRepository,
@@ -10,7 +10,7 @@ import {
 } from '@fandex/core';
 
 import type { ApiFetch } from './api-fetch';
-import { toCatalogBook } from './catalog-mapping';
+import { toCatalogEntry } from './catalog-mapping';
 
 /** The signed-in user's collection, stored by the Fandex API (synced across devices). */
 export class ApiCollectionRepository implements CollectionRepository {
@@ -25,14 +25,14 @@ export class ApiCollectionRepository implements CollectionRepository {
     });
   }
 
-  async add(book: CatalogBook): Promise<CollectionItem> {
-    if (!book.catalogId) {
-      throw new CollectionStorageError(`"${book.title}" has no catalog id, so it can't be synced`);
+  async add(entry: CatalogEntry): Promise<CollectionItem> {
+    if (!entry.catalogId) {
+      throw new CollectionStorageError(`"${entry.title}" has no catalog id, so it can't be synced`);
     }
     const response = await this.request('/collection', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ catalogItemId: book.catalogId }),
+      body: JSON.stringify({ catalogItemId: entry.catalogId }),
     });
     const item = toCollectionItem(collectionItemSchema.parse(await response.json()));
     if (!item) throw new CollectionStorageError('The server returned an item the app cannot show');
@@ -45,7 +45,9 @@ export class ApiCollectionRepository implements CollectionRepository {
   }
 
   async findByIsbn(isbn: Isbn13): Promise<CollectionItem | undefined> {
-    return (await this.list()).find((item) => item.catalog.isbn13 === isbn);
+    return (await this.list()).find(
+      (item) => item.category !== 'lego' && item.catalog.isbn13 === isbn,
+    );
   }
 
   private async request(path: string, init: RequestInit = {}, acceptable: number[] = []) {
@@ -63,13 +65,10 @@ export class ApiCollectionRepository implements CollectionRepository {
 }
 
 function toCollectionItem(item: CollectionItemResponse): CollectionItem | null {
-  const catalog = toCatalogBook(item.catalog);
+  const catalog = toCatalogEntry(item.catalog);
   if (!catalog) return null;
-  return {
-    id: item.id,
-    category: catalog.category,
-    catalog,
-    addedAt: item.addedAt,
-    ...(item.notes && { notes: item.notes }),
-  };
+  const base = { id: item.id, addedAt: item.addedAt, ...(item.notes && { notes: item.notes }) };
+  return catalog.category === 'lego'
+    ? { ...base, category: 'lego', catalog }
+    : { ...base, category: catalog.category, catalog };
 }

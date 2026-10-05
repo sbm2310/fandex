@@ -1,9 +1,19 @@
-import { parseIsbn, type CatalogBook, type Isbn13 } from '@fandex/core';
+import { parseIsbn, type CatalogEntry, type Isbn13 } from '@fandex/core';
 
 import { moveDeviceCollectionToAccount } from '@/services/move-to-account';
-import { createFakeCatalog, createMemoryCollection, dune, hobbit } from '@/test-utils/providers';
+import {
+  createFakeCatalog,
+  createFakeLegoCatalog,
+  createMemoryCollection,
+  dune,
+  falcon,
+  hobbit,
+} from '@/test-utils/providers';
 
-const withId = (book: CatalogBook, catalogId: string): CatalogBook => ({ ...book, catalogId });
+const withId = <T extends CatalogEntry>(entry: T, catalogId: string): T => ({
+  ...entry,
+  catalogId,
+});
 
 describe('moveDeviceCollectionToAccount', () => {
   it('moves books with a catalog id and keeps their order', async () => {
@@ -16,6 +26,7 @@ describe('moveDeviceCollectionToAccount', () => {
       device,
       account,
       catalog: createFakeCatalog(),
+      legoCatalog: createFakeLegoCatalog(),
     });
 
     expect(result).toEqual({ moved: 2, failed: 0 });
@@ -39,6 +50,7 @@ describe('moveDeviceCollectionToAccount', () => {
       device,
       account,
       catalog: createFakeCatalog({ lookupIsbn }),
+      legoCatalog: createFakeLegoCatalog(),
     });
 
     expect(lookupIsbn).toHaveBeenCalledWith(isbn);
@@ -56,6 +68,7 @@ describe('moveDeviceCollectionToAccount', () => {
       device,
       account,
       catalog: createFakeCatalog({ search }),
+      legoCatalog: createFakeLegoCatalog(),
     });
 
     expect(search).toHaveBeenCalledWith('Dune');
@@ -73,9 +86,30 @@ describe('moveDeviceCollectionToAccount', () => {
       device,
       account,
       catalog: createFakeCatalog(),
+      legoCatalog: createFakeLegoCatalog(),
     });
 
     expect(result).toEqual({ moved: 0, failed: 2 });
     await expect(device.list()).resolves.toHaveLength(2);
+  });
+
+  it('moves LEGO sets, looking them up by set number', async () => {
+    const device = createMemoryCollection();
+    const account = createMemoryCollection();
+    await device.add(falcon);
+    const lookupSet = jest.fn(() => Promise.resolve(withId(falcon, 'c-falcon')));
+
+    const result = await moveDeviceCollectionToAccount({
+      device,
+      account,
+      catalog: createFakeCatalog(),
+      legoCatalog: createFakeLegoCatalog({ lookupSet }),
+    });
+
+    expect(result).toEqual({ moved: 1, failed: 0 });
+    expect(lookupSet).toHaveBeenCalledWith('75192-1');
+    await expect(account.list()).resolves.toMatchObject([
+      { category: 'lego', catalog: { catalogId: 'c-falcon' } },
+    ]);
   });
 });

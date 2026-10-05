@@ -11,3 +11,4 @@ export * from './sort-collection';
 export * from './contracts';
 export * from './catalog-set';
 export * from './lego-catalog';
+export * from './catalog-entry';
