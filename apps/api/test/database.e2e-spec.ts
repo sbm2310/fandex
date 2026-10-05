@@ -3,6 +3,7 @@ import { Test } from '@nestjs/testing';
 import { AppModule } from '../src/app.module.js';
 import type { Prisma } from '../src/generated/prisma/client.js';
 import { PrismaService } from '../src/prisma/prisma.service.js';
+import { appOptions } from '../src/setup-app.js';
 import { resetDatabase } from './reset-database.js';
 
 describe('Database (e2e)', () => {
@@ -11,7 +12,7 @@ describe('Database (e2e)', () => {
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile();
-    const app = await moduleRef.createNestApplication().init();
+    const app = await moduleRef.createNestApplication(appOptions).init();
     prisma = app.get(PrismaService);
     close = () => app.close();
   });

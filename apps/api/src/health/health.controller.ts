@@ -1,5 +1,6 @@
 import { Controller, Get, ServiceUnavailableException } from '@nestjs/common';
 import { ApiOkResponse, ApiServiceUnavailableResponse, ApiTags } from '@nestjs/swagger';
+import { AllowAnonymous } from '@thallesp/nestjs-better-auth';
 
 import { PrismaService } from '../prisma/prisma.service.js';
 
@@ -7,6 +8,7 @@ export type HealthStatus = { status: 'ok'; database: 'up' };
 
 /** Liveness check for local dev, CI and the hosting platform. */
 @ApiTags('health')
+@AllowAnonymous()
 @Controller('health')
 export class HealthController {
   constructor(private readonly prisma: PrismaService) {}

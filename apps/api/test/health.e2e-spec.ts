@@ -3,14 +3,14 @@ import { Test } from '@nestjs/testing';
 import request from 'supertest';
 
 import { AppModule } from '../src/app.module.js';
-import { setupApp } from '../src/setup-app.js';
+import { appOptions, setupApp } from '../src/setup-app.js';
 
 describe('API (e2e)', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile();
-    app = setupApp(moduleRef.createNestApplication());
+    app = setupApp(moduleRef.createNestApplication(appOptions));
     await app.init();
   });
 

@@ -1,5 +1,11 @@
-import type { INestApplication } from '@nestjs/common';
+import type { INestApplication, NestApplicationOptions } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+
+/**
+ * Options for creating the app. Better Auth reads raw request bodies on its routes, so Nest's
+ * body parser is off; the auth module re-adds JSON parsing for all other routes.
+ */
+export const appOptions: NestApplicationOptions = { bodyParser: false };
 
 /**
  * Configuration shared by main.ts and the e2e tests, so tests exercise the same app setup

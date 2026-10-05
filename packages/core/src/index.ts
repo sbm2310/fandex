@@ -8,3 +8,4 @@ export * from './catalogs';
 export * from './key-value-collection-repository';
 export * from './same-book';
 export * from './sort-collection';
+export * from './contracts';
