@@ -8,7 +8,10 @@
     "scheme": "fandex",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/fandex.icon"
+      "icon": "./assets/fandex.icon",
+      "runtimeVersion": {
+        "policy": "appVersion"
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -47,6 +50,15 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "owner": "sbm2310",
+    "extra": {
+      "eas": {
+        "projectId": "9c89fb32-eabd-4482-a13f-07a0fea53777"
+      }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/9c89fb32-eabd-4482-a13f-07a0fea53777"
     }
   }
 }
