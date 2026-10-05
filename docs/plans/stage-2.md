@@ -59,7 +59,7 @@ collection_item                         ← a user's owned copy
 
 **6. App uses the catalog API.** ✅ An `ApiCatalog` implementing `BookCatalog` replaces direct Open Library calls (screens don't change). Category badges on results and in the collection. _Demo:_ scanning a manga volume shows a "Manga" badge.
 
-**7. Collection API.** `GET/POST/DELETE /collection` for the signed-in user: idempotent add, newest first, items returned with their catalog data. e2e tests including **user isolation** (user A can never see or remove user B's items). _Demo:_ add and list items with `curl`.
+**7. Collection API.** ✅ `GET/POST/DELETE /collection` for the signed-in user: idempotent add, newest first, items returned with their catalog data. e2e tests including **user isolation** (user A can never see or remove user B's items). _Demo:_ add and list items with `curl`.
 
 **8. Cloud sync in the app.** An `ApiCollectionRepository` implementing `CollectionRepository`: used when signed in, local storage when signed out. Optimistic add/remove. On first sign-in, offer to import the guest collection (merged by edition), then clear it locally. _Demo:_ add a book on the iPhone, refresh the web app, it's there.
 
