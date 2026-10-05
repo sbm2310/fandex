@@ -127,6 +127,16 @@ To point the app at the deployed API instead of a local one:
 EXPO_PUBLIC_API_URL=https://fandex-4mjc.onrender.com npm run start -w @fandex/mobile
 ```
 
+### Publishing the iPhone app (no Mac needed to run it)
+
+The iPhone app is published with [EAS Update](https://docs.expo.dev/eas-update/introduction/): Expo hosts the JavaScript bundle (with the deployed API URL built in), and Expo Go opens it without a dev server.
+
+```bash
+npm run update:ios -w @fandex/mobile    # publish the current code to the main branch
+```
+
+On the iPhone, sign in to Expo Go with the account that owns the project, then open **fandex → main** under Projects. Expo Go fetches new updates when the app is reopened. Expo's free plan covers this and can't incur charges.
+
 LEGO search needs a free [Rebrickable API key](https://rebrickable.com/users/settings/#api) in `apps/api/.env` (`REBRICKABLE_API_KEY=...`); everything else works without it.
 
 ## Deployment
