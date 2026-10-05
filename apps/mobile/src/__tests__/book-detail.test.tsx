@@ -23,7 +23,10 @@ async function collectionWith(...books: (typeof hobbit)[]) {
 }
 
 async function renderApp(initialUrl: string, collection = createMemoryCollection()) {
-  const app = renderRouter(routes, { initialUrl, wrapper: createWrapper({ collection }) });
+  const app = renderRouter(routes, {
+    initialUrl,
+    wrapper: createWrapper({ deviceCollection: collection }),
+  });
   await app;
   // Wrapped: returning the promise itself from an async function would unwrap it and lose getPathname.
   return { getPathname: () => app.getPathname() };

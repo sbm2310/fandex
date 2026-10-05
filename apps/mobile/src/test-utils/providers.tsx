@@ -107,9 +107,15 @@ export class FakeAccountService implements AccountService {
  */
 export function createWrapper({
   catalog = createFakeCatalog(),
-  collection = createMemoryCollection(),
+  deviceCollection = createMemoryCollection(),
+  accountCollection = createMemoryCollection(),
   account = new FakeAccountService(),
-}: { catalog?: BookCatalog; collection?: CollectionRepository; account?: AccountService } = {}) {
+}: {
+  catalog?: BookCatalog;
+  deviceCollection?: CollectionRepository;
+  accountCollection?: CollectionRepository;
+  account?: AccountService;
+} = {}) {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false, gcTime: Infinity } },
   });
@@ -117,7 +123,7 @@ export function createWrapper({
   return function Wrapper({ children }: { children: ReactNode }) {
     return (
       <QueryClientProvider client={queryClient}>
-        <AppServicesProvider services={{ catalog, collection, account }}>
+        <AppServicesProvider services={{ catalog, deviceCollection, accountCollection, account }}>
           {children}
         </AppServicesProvider>
       </QueryClientProvider>

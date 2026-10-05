@@ -2,15 +2,14 @@ import {
   CatalogError,
   catalogItemSchema,
   catalogSearchResponseSchema,
-  isBookCategory,
   type BookCatalog,
   type CatalogBook,
-  type CatalogItemResponse,
   type CatalogRequestOptions,
   type Isbn13,
 } from '@fandex/core';
 
 import type { ApiFetch } from './api-fetch';
+import { toCatalogBook } from './catalog-mapping';
 
 /**
  * The book catalog via the Fandex API, which queries Open Library, caches results in its
@@ -61,22 +60,4 @@ export class ApiCatalog implements BookCatalog {
       response.status,
     );
   }
-}
-
-/** API catalog item → the app's CatalogBook (only book categories; LEGO comes separately). */
-function toCatalogBook(item: CatalogItemResponse): CatalogBook | null {
-  if (!isBookCategory(item.category) || item.source !== 'openlibrary') return null;
-  return {
-    source: item.source,
-    externalId: item.externalId,
-    category: item.category,
-    catalogId: item.id,
-    title: item.title,
-    authors: item.creators,
-    ...(item.subtitle && { subtitle: item.subtitle }),
-    ...(item.year !== undefined && { publishedYear: item.year }),
-    ...(item.publisher && { publisher: item.publisher }),
-    ...(item.isbn13 && { isbn13: item.isbn13 as Isbn13 }),
-    ...(item.coverUrl && { coverUrl: item.coverUrl }),
-  };
 }

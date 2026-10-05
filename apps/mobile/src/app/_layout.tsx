@@ -1,9 +1,9 @@
 import '@/global.css';
 
-import { QueryClientProvider } from '@tanstack/react-query';
+import { focusManager, QueryClientProvider } from '@tanstack/react-query';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
-import { useState } from 'react';
-import { useColorScheme } from 'react-native';
+import { useEffect, useState } from 'react';
+import { AppState, Platform, useColorScheme } from 'react-native';
 
 import { AppServicesProvider } from '@/services/app-services';
 import { createDefaultServices } from '@/services/default-services';
@@ -14,6 +14,16 @@ export default function RootLayout() {
   // Created once per app session (useState initializer), not on every render.
   const [queryClient] = useState(createQueryClient);
   const [services] = useState(createDefaultServices);
+
+  // On iOS/Android, tell TanStack Query when the app returns to the foreground, so stale data
+  // (e.g. a collection changed on another device) is re-read. Browsers report focus themselves.
+  useEffect(() => {
+    if (Platform.OS === 'web') return;
+    const subscription = AppState.addEventListener('change', (state) =>
+      focusManager.setFocused(state === 'active'),
+    );
+    return () => subscription.remove();
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

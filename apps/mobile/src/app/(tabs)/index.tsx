@@ -4,18 +4,23 @@ import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 import { CollectionGrid } from '@/components/collection-grid';
 import { EmptyState } from '@/components/empty-state';
+import { MoveToAccountBanner } from '@/components/move-to-account-banner';
 import { PageTitle } from '@/components/page-title';
 import { Screen } from '@/components/screen';
 import { SortToggle } from '@/components/sort-toggle';
 import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
-import { useCollection } from '@/hooks/use-collection';
+import { useCollection, useDeviceCollection } from '@/hooks/use-collection';
 
 export default function CollectionScreen() {
   const collection = useCollection();
+  // Signed in: also read this device's books (local, fast) to offer moving them to the account.
+  const device = useDeviceCollection({ enabled: collection.mode === 'account' });
+  const deviceCount = device.data?.length ?? 0;
+  const banner = collection.mode === 'account' && <MoveToAccountBanner deviceCount={deviceCount} />;
   const [sort, setSort] = useState<CollectionSort>('recent');
 
-  if (collection.isPending) {
+  if (collection.isPending || (collection.mode === 'account' && device.isPending)) {
     return (
       <Screen>
         <PageTitle title="My collection" />
@@ -32,7 +37,11 @@ export default function CollectionScreen() {
         <PageTitle title="My collection" />
         <EmptyState
           title="Couldn't load your collection"
-          message="Your saved books couldn't be read. They haven't been deleted."
+          message={
+            collection.mode === 'account'
+              ? "Can't reach the Fandex server. Check your connection and try again."
+              : "Your saved books couldn't be read. They haven't been deleted."
+          }
         />
       </Screen>
     );
@@ -42,6 +51,7 @@ export default function CollectionScreen() {
     return (
       <Screen>
         <PageTitle title="My collection" />
+        {banner}
         <EmptyState
           title="Your collection is empty"
           message="Add books by searching for a title or scanning an ISBN barcode."
@@ -55,6 +65,7 @@ export default function CollectionScreen() {
   return (
     <Screen>
       <PageTitle title="My collection" />
+      {banner}
       <View style={styles.header}>
         <ThemedText type="subtitle">My collection</ThemedText>
         <View style={styles.headerRow}>

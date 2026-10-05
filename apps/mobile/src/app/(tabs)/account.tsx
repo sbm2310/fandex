@@ -49,8 +49,8 @@ export default function AccountScreen() {
           <View style={styles.section}>
             {notice && <ThemedText accessibilityRole="alert">{notice}</ThemedText>}
             <ThemedText themeColor="textSecondary">
-              Sign in to keep your collection in your account. Without an account, your books stay
-              on this device.
+              Sign in to keep your collection in your account and see it on all your devices.
+              Without an account, your books stay on this device.
             </ThemedText>
             <AuthForm />
           </View>
@@ -71,7 +71,7 @@ function SignedIn({ user, onDeleted }: { user: AccountUser; onDeleted: () => voi
         <ThemedText themeColor="textSecondary">{user.email}</ThemedText>
       </View>
       <ThemedText type="small" themeColor="textSecondary">
-        Your collection is still saved on this device. Syncing it to your account is coming soon.
+        Your collection is saved to your account and stays in sync across your devices.
       </ThemedText>
       <Button
         label="Sign out"

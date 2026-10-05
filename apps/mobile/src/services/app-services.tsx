@@ -6,7 +6,10 @@ import type { AccountService } from './account-service';
 /** The app's external dependencies. The root layout provides real ones; tests provide fakes. */
 export type AppServices = {
   catalog: BookCatalog;
-  collection: CollectionRepository;
+  /** Books saved on this device: the collection while signed out ("guest mode"). */
+  deviceCollection: CollectionRepository;
+  /** The signed-in user's collection on the Fandex API, synced across devices. */
+  accountCollection: CollectionRepository;
   account: AccountService;
 };
 
@@ -33,8 +36,12 @@ export function useCatalog(): BookCatalog {
   return useAppServices().catalog;
 }
 
-export function useCollectionRepository(): CollectionRepository {
-  return useAppServices().collection;
+export function useCollectionRepositories(): {
+  device: CollectionRepository;
+  account: CollectionRepository;
+} {
+  const { deviceCollection, accountCollection } = useAppServices();
+  return { device: deviceCollection, account: accountCollection };
 }
 
 export function useAccountService(): AccountService {

@@ -15,7 +15,9 @@ async function renderAddScreen(
   catalog = createFakeCatalog(),
   collection = createMemoryCollection(),
 ) {
-  await render(<AddScreen />, { wrapper: createWrapper({ catalog, collection }) });
+  await render(<AddScreen />, {
+    wrapper: createWrapper({ catalog, deviceCollection: collection }),
+  });
   return catalog;
 }
 

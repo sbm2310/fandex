@@ -11,7 +11,7 @@ import {
 } from '@/test-utils/providers';
 
 async function renderCollection(collection = createMemoryCollection()) {
-  await render(<CollectionScreen />, { wrapper: createWrapper({ collection }) });
+  await render(<CollectionScreen />, { wrapper: createWrapper({ deviceCollection: collection }) });
 }
 
 describe('Collection screen', () => {
