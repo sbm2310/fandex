@@ -92,11 +92,11 @@ Full plan and task list: [`docs/plans/stage-2.md`](docs/plans/stage-2.md).
 - **Catalog:** served by our API and cached in `catalog_item`; Open Library for books, manga and comic trade paperbacks (category from subjects); Rebrickable for LEGO after a manual terms check.
 - **Sync:** online-first when signed in; guest mode (on-device collection) when signed out; guest collection imported on first sign-in.
 - **Contracts:** zod schemas in `packages/core`, shared by API and app.
-- **Hosting:** decided in the last task of Stage 2 (options: Render + Neon, or Railway).
+- **Hosting:** decided in the last task of Stage 2, **free tiers only** (Render free web service + Neon free Postgres; Railway ruled out — not free). Re-verify limits and card requirements then.
 
 ## Open questions (deferred to later stages)
 
-- Production hosting and email provider — last task of Stage 2
+- Production hosting and email provider (free tiers only) — last task of Stage 2
 - Data model for "universe / character / item" links across categories — Stage 3. Include work-level matching: ownership is per edition (ISBN), so search can show "Add" for a different printing of a book the user owns; a "you own another edition" hint belongs here.
 - Which AI/vision model to use for shelf-photo recognition, and cost per scan — Stage 4
 - Apple Developer account — not needed for Stage 2 (email + password works in Expo Go); buy when adding Apple sign-in, push notifications (Stage 5) or TestFlight
@@ -107,3 +107,4 @@ Full plan and task list: [`docs/plans/stage-2.md`](docs/plans/stage-2.md).
 - Plan each stage before coding it; break stages into small tasks that each leave the app working.
 - Keep this file updated as decisions are made.
 - This is also a portfolio project: favor clean architecture, tests, and a good README over shortcuts.
+- **Budget: $0.** Use only free services and free tiers, preferably ones that need no credit card. Flag anything that could cost money (or requires a card on file) and ask before using it.
