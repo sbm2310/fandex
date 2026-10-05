@@ -1,4 +1,4 @@
-import type { CatalogBook, CatalogSource } from './catalog-book';
+import type { CatalogBook, BookSource } from './catalog-book';
 import { parseIsbn, type Isbn13 } from './isbn';
 import {
   CollectionStorageError,
@@ -82,7 +82,7 @@ describe('KeyValueCollectionRepository', () => {
     // Same ISBN from a (hypothetical) second catalog is still the same edition.
     const again = await repository.add({
       ...hobbit,
-      source: 'another-catalog' as CatalogSource,
+      source: 'another-catalog' as BookSource,
       externalId: 'x1',
     });
 

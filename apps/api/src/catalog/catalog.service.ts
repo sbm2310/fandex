@@ -10,7 +10,10 @@ import {
   type BookCatalog,
   type CatalogBook,
   type CatalogItemResponse,
+  type CatalogSearchKind,
+  type CatalogSet,
   type Isbn13,
+  type LegoCatalog,
 } from '@fandex/core';
 
 import { TtlCache } from '../common/ttl-cache.js';
@@ -20,7 +23,10 @@ import { toCatalogItemData, toCatalogItemResponse } from './catalog-item.mapper.
 /** Injection token for the external catalog (Open Library in production, a fake in tests). */
 export const BOOK_CATALOG = Symbol('BOOK_CATALOG');
 
-/** Cached ISBN entries are refreshed from the source after this long. */
+/** Injection token for LEGO (Rebrickable); null when no API key is configured. */
+export const LEGO_CATALOG = Symbol('LEGO_CATALOG');
+
+/** Cached ISBN and set entries are refreshed from the source after this long. */
 export const ISBN_CACHE_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
 
 /**
@@ -36,18 +42,47 @@ export class CatalogService {
 
   constructor(
     @Inject(BOOK_CATALOG) private readonly catalog: BookCatalog,
+    @Inject(LEGO_CATALOG) private readonly lego: LegoCatalog | null,
     private readonly prisma: PrismaService,
   ) {}
 
-  async search(query: string): Promise<CatalogItemResponse[]> {
-    const key = query.toLowerCase();
+  async search(query: string, kind: CatalogSearchKind = 'books'): Promise<CatalogItemResponse[]> {
+    const key = `${kind}:${query.toLowerCase()}`;
     const cached = this.searchCache.get(key);
     if (cached) return cached;
 
-    const books = await this.fromSource(() => this.catalog.search(query));
-    const items = await Promise.all(books.map((book) => this.save(book)));
+    const entries =
+      kind === 'lego'
+        ? await this.fromSource(() => this.requireLego().searchSets(query))
+        : await this.fromSource(() => this.catalog.search(query));
+    const items = await Promise.all(entries.map((entry) => this.save(entry)));
     this.searchCache.set(key, items);
     return items;
+  }
+
+  /** A LEGO set by Rebrickable set number ("75192-1"), served from the database when fresh. */
+  async lookupSet(setNum: string): Promise<CatalogItemResponse> {
+    const stored = await this.prisma.catalogItem.findUnique({
+      where: { source_externalId: { source: 'rebrickable', externalId: setNum } },
+    });
+    if (stored && Date.now() - stored.fetchedAt.getTime() < ISBN_CACHE_MAX_AGE_MS) {
+      return toCatalogItemResponse(stored);
+    }
+    const lego = this.requireLego();
+    const set = await this.fromSource(() => lego.lookupSet(setNum)).catch((error) => {
+      if (stored) return null;
+      throw error;
+    });
+    if (set) return this.save(set);
+    if (stored) return toCatalogItemResponse(stored);
+    throw new NotFoundException(`No LEGO set ${setNum}`);
+  }
+
+  private requireLego(): LegoCatalog {
+    if (!this.lego) {
+      throw new ServiceUnavailableException('LEGO search is not set up on this server.');
+    }
+    return this.lego;
   }
 
   async lookupIsbn(isbn: Isbn13): Promise<CatalogItemResponse> {
@@ -70,10 +105,10 @@ export class CatalogService {
   }
 
   /** Inserts or refreshes the item for this source record and returns it with our id. */
-  private async save(book: CatalogBook): Promise<CatalogItemResponse> {
-    const data = toCatalogItemData(book);
+  private async save(entry: CatalogBook | CatalogSet): Promise<CatalogItemResponse> {
+    const data = toCatalogItemData(entry);
     const row = await this.prisma.catalogItem.upsert({
-      where: { source_externalId: { source: book.source, externalId: book.externalId } },
+      where: { source_externalId: { source: entry.source, externalId: entry.externalId } },
       create: data,
       update: data,
     });

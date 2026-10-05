@@ -15,6 +15,11 @@ export const envSchema = z.object({
   /** The API's public URL (used for auth callbacks and cookies). */
   BETTER_AUTH_URL: z.url().default('http://localhost:3000'),
   /** Comma-separated origins allowed to call the API with a session: web app + app scheme. */
+  /** Rebrickable API key (free account) for LEGO search. Optional: without it LEGO is off. */
+  REBRICKABLE_API_KEY: z.preprocess(
+    (value) => (value === '' ? undefined : value),
+    z.string().min(20).optional(),
+  ),
   TRUSTED_ORIGINS: z
     .string()
     .default('http://localhost:8081,fandex://')

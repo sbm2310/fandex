@@ -53,4 +53,11 @@ describe('envSchema', () => {
         .TRUSTED_ORIGINS,
     ).toEqual(['http://a.test', 'https://b.test']);
   });
+
+  it('treats an empty Rebrickable key as not set, and rejects a short one', () => {
+    expect(
+      envSchema.parse({ ...required, REBRICKABLE_API_KEY: '' }).REBRICKABLE_API_KEY,
+    ).toBeUndefined();
+    expect(envSchema.safeParse({ ...required, REBRICKABLE_API_KEY: 'short' }).success).toBe(false);
+  });
 });

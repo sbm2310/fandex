@@ -1,10 +1,10 @@
-import type { CatalogBook, CatalogSource } from './catalog-book';
+import type { CatalogBook, BookSource } from './catalog-book';
 import { parseIsbn, type Isbn13 } from './isbn';
 import { isSameBook } from './same-book';
 
 const isbn = (value: string) => parseIsbn(value) as Isbn13;
 // Only Open Library exists today; matching must keep working once more sources are added.
-const otherSource = 'another-catalog' as CatalogSource;
+const otherSource = 'another-catalog' as BookSource;
 const book = (overrides: Partial<CatalogBook>): CatalogBook => ({
   source: 'openlibrary',
   externalId: 'OL1M',

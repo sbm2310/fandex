@@ -14,7 +14,12 @@ import { PrismaService } from './prisma/prisma.service.js';
 @Module({
   imports: [
     // Validates process.env (and .env in development) against the zod schema at startup.
-    ConfigModule.forRoot({ isGlobal: true, validationSchema: envSchema }),
+    // Tests ignore .env, so a developer's local settings (e.g. real API keys) can't leak in.
+    ConfigModule.forRoot({
+      isGlobal: true,
+      validationSchema: envSchema,
+      ignoreEnvFile: process.env.NODE_ENV === 'test',
+    }),
     PrismaModule,
     // Mounts Better Auth at /api/auth and registers a global guard: every route requires a
     // signed-in user unless marked @AllowAnonymous() (secure by default).

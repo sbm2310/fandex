@@ -1,4 +1,10 @@
-import { catalogItemSchema, catalogSearchQuerySchema, isbnParamSchema } from './catalog';
+import {
+  catalogItemSchema,
+  catalogSearchKindSchema,
+  catalogSearchQuerySchema,
+  isbnParamSchema,
+  setNumberParamSchema,
+} from './catalog';
 
 describe('catalog contracts', () => {
   it('normalizes ISBN path parameters to ISBN-13', () => {
@@ -23,5 +29,16 @@ describe('catalog contracts', () => {
         creators: ['Eiichiro Oda'],
       }),
     ).toMatchObject({ category: 'manga' });
+  });
+
+  it('defaults the search kind to books and accepts lego', () => {
+    expect(catalogSearchKindSchema.parse(undefined)).toBe('books');
+    expect(catalogSearchKindSchema.parse('lego')).toBe('lego');
+    expect(catalogSearchKindSchema.safeParse('vinyl').success).toBe(false);
+  });
+
+  it('normalizes set numbers', () => {
+    expect(setNumberParamSchema.parse('75192')).toBe('75192-1');
+    expect(setNumberParamSchema.safeParse('millennium falcon').success).toBe(false);
   });
 });
