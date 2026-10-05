@@ -20,19 +20,19 @@ describe('API (e2e)', () => {
 
   it('GET /health reports the API and database as up', async () => {
     await request(app.getHttpServer())
-      .get('/health')
+      .get('/api/health')
       .expect(200)
       .expect({ status: 'ok', database: 'up' });
   });
 
   it('serves the OpenAPI document', async () => {
-    const response = await request(app.getHttpServer()).get('/docs-json').expect(200);
+    const response = await request(app.getHttpServer()).get('/api/docs-json').expect(200);
 
     expect(response.body).toMatchObject({ info: { title: 'Fandex API' } });
-    expect(Object.keys(response.body.paths as object)).toContain('/health');
+    expect(Object.keys(response.body.paths as object)).toContain('/api/health');
   });
 
   it('returns 404 for unknown routes', async () => {
-    await request(app.getHttpServer()).get('/nope').expect(404);
+    await request(app.getHttpServer()).get('/api/nope').expect(404);
   });
 });

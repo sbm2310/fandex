@@ -47,7 +47,7 @@ describe('LEGO catalog (e2e)', () => {
 
   it('searches LEGO sets with kind=lego and stores them with theme and pieces', async () => {
     const response = await api()
-      .get('/catalog/search')
+      .get('/api/catalog/search')
       .query({ q: 'millennium falcon', kind: 'lego' })
       .expect(200);
 
@@ -68,20 +68,20 @@ describe('LEGO catalog (e2e)', () => {
   });
 
   it('keeps book and LEGO search caches apart', async () => {
-    await api().get('/catalog/search').query({ q: 'falcon', kind: 'lego' }).expect(200);
+    await api().get('/api/catalog/search').query({ q: 'falcon', kind: 'lego' }).expect(200);
 
-    await api().get('/catalog/search').query({ q: 'falcon', kind: 'lego' }).expect(200);
+    await api().get('/api/catalog/search').query({ q: 'falcon', kind: 'lego' }).expect(200);
 
     expect(fakeLego.searchSets).toHaveBeenCalledTimes(1);
   });
 
   it('rejects an unknown kind', async () => {
-    await api().get('/catalog/search').query({ q: 'falcon', kind: 'vinyl' }).expect(400);
+    await api().get('/api/catalog/search').query({ q: 'falcon', kind: 'vinyl' }).expect(400);
   });
 
   it('looks up a set by its printed number and caches it', async () => {
-    const first = await api().get('/catalog/lego/75192').expect(200);
-    const second = await api().get('/catalog/lego/75192-1').expect(200);
+    const first = await api().get('/api/catalog/lego/75192').expect(200);
+    const second = await api().get('/api/catalog/lego/75192-1').expect(200);
 
     expect(catalogItemSchema.parse(first.body)).toMatchObject({
       title: 'Millennium Falcon',
@@ -95,8 +95,8 @@ describe('LEGO catalog (e2e)', () => {
   it('returns 404 for an unknown set and 400 for an invalid number', async () => {
     fakeLego.lookupSet.mockResolvedValue(null);
 
-    await api().get('/catalog/lego/99999999').expect(404);
-    await api().get('/catalog/lego/not a set').expect(400);
+    await api().get('/api/catalog/lego/99999999').expect(404);
+    await api().get('/api/catalog/lego/not a set').expect(400);
   });
 
   it('lets a signed-in user add a LEGO set to their collection', async () => {
@@ -106,11 +106,11 @@ describe('LEGO catalog (e2e)', () => {
       .set('Origin', 'http://localhost:8081')
       .send({ name: 'Builder', email: 'builder@example.com', password: 'correct horse battery' })
       .expect(200);
-    const { body: set } = await api().get('/catalog/lego/75192').expect(200);
+    const { body: set } = await api().get('/api/catalog/lego/75192').expect(200);
 
-    await agent.post('/collection').send({ catalogItemId: set.id }).expect(201);
+    await agent.post('/api/collection').send({ catalogItemId: set.id }).expect(201);
 
-    const { body } = await agent.get('/collection').expect(200);
+    const { body } = await agent.get('/api/collection').expect(200);
     expect(body.items).toMatchObject([
       { catalog: { category: 'lego', title: 'Millennium Falcon' } },
     ]);
@@ -130,10 +130,10 @@ describe('LEGO catalog without an API key (e2e)', () => {
 
   it('answers 503 instead of failing', async () => {
     await request(app.getHttpServer())
-      .get('/catalog/search')
+      .get('/api/catalog/search')
       .query({ q: 'falcon', kind: 'lego' })
       .expect(503);
-    await request(app.getHttpServer()).get('/catalog/lego/75192').expect(503);
+    await request(app.getHttpServer()).get('/api/catalog/lego/75192').expect(503);
   });
 
   it('still serves sets that are already cached', async () => {
@@ -148,6 +148,6 @@ describe('LEGO catalog without an API key (e2e)', () => {
       },
     });
 
-    await request(app.getHttpServer()).get('/catalog/lego/75192').expect(200);
+    await request(app.getHttpServer()).get('/api/catalog/lego/75192').expect(200);
   });
 });

@@ -17,6 +17,9 @@ export const appOptions: NestApplicationOptions = { bodyParser: false };
  */
 export function setupApp(app: INestApplication): INestApplication {
   app.enableShutdownHooks();
+  // Every API route lives under /api (Better Auth is mounted at /api/auth), so the web app can
+  // be served from the same origin and own every other path.
+  app.setGlobalPrefix('api');
   // Validates (and transforms) parameters declared with `{ schema }` against zod schemas.
   app.useGlobalPipes(new StandardSchemaValidationPipe({ transform: true }));
 
@@ -25,8 +28,8 @@ export function setupApp(app: INestApplication): INestApplication {
     .setDescription('Accounts, catalog and collection for the Fandex apps.')
     .setVersion('0.2.0')
     .build();
-  // Interactive docs at /docs, raw OpenAPI JSON at /docs-json.
-  SwaggerModule.setup('docs', app, () => SwaggerModule.createDocument(app, openApi));
+  // Interactive docs at /api/docs, raw OpenAPI JSON at /api/docs-json.
+  SwaggerModule.setup('api/docs', app, () => SwaggerModule.createDocument(app, openApi));
 
   return app;
 }

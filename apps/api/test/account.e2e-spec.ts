@@ -38,21 +38,21 @@ describe('Account (e2e)', () => {
         .expect(200);
       const cookie = String(signIn.headers['set-cookie']).split(';')[0] ?? '';
 
-      await request(server).get('/me').set('Cookie', cookie).expect(200);
+      await request(server).get('/api/me').set('Cookie', cookie).expect(200);
       await request(server)
         .post('/api/auth/sign-out')
         .set('Cookie', cookie)
         .set('expo-origin', 'fandex://')
         .send({})
         .expect(200);
-      await request(server).get('/me').set('Cookie', cookie).expect(401);
+      await request(server).get('/api/me').set('Cookie', cookie).expect(401);
     });
   });
 
   describe('CORS', () => {
     it('allows the web app to call the API with credentials', async () => {
       const response = await request(app.getHttpServer())
-        .options('/me')
+        .options('/api/me')
         .set('Origin', WEB)
         .set('Access-Control-Request-Method', 'GET');
 
@@ -62,7 +62,7 @@ describe('Account (e2e)', () => {
 
     it('does not allow other sites', async () => {
       const response = await request(app.getHttpServer())
-        .options('/me')
+        .options('/api/me')
         .set('Origin', 'https://evil.example')
         .set('Access-Control-Request-Method', 'GET');
 
@@ -80,7 +80,7 @@ describe('Account (e2e)', () => {
         .send({ password: reader.password })
         .expect(200);
 
-      await agent.get('/me').expect(401);
+      await agent.get('/api/me').expect(401);
       expect(await prisma.user.count()).toBe(0);
       expect(await prisma.session.count()).toBe(0);
       expect(await prisma.account.count()).toBe(0);
@@ -96,7 +96,7 @@ describe('Account (e2e)', () => {
 
       expect(response.status).toBeGreaterThanOrEqual(400);
       expect(await prisma.user.count()).toBe(1);
-      await agent.get('/me').expect(200);
+      await agent.get('/api/me').expect(200);
     });
   });
 });

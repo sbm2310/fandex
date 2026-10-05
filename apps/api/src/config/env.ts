@@ -12,8 +12,13 @@ export const envSchema = z.object({
     .describe('PostgreSQL connection string'),
   /** Signs session tokens. Generate with `openssl rand -base64 32`; keep it secret. */
   BETTER_AUTH_SECRET: z.string().min(32, 'BETTER_AUTH_SECRET must be at least 32 characters'),
-  /** The API's public URL (used for auth callbacks and cookies). */
-  BETTER_AUTH_URL: z.url().default('http://localhost:3000'),
+  /**
+   * The API's public URL (auth callbacks, cookies). On Render it defaults to the service URL
+   * Render provides (RENDER_EXTERNAL_URL), so it needn't be configured by hand.
+   */
+  BETTER_AUTH_URL: z.url().default(process.env.RENDER_EXTERNAL_URL ?? 'http://localhost:3000'),
+  /** Optional: directory of the exported web app (`expo export --platform web`) to serve. */
+  WEB_APP_DIR: z.string().min(1).optional(),
   /** Comma-separated origins allowed to call the API with a session: web app + app scheme. */
   /** Rebrickable API key (free account) for LEGO search. Optional: without it LEGO is off. */
   REBRICKABLE_API_KEY: z.preprocess(

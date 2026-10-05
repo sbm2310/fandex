@@ -54,7 +54,8 @@
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
     "lint": "expo lint",
-    "test": "jest"
+    "test": "jest",
+    "build:web": "expo export --platform web --output-dir dist"
   },
   "private": true,
   "jest": {

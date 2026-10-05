@@ -14,7 +14,7 @@ describe('createApiFetch', () => {
     await apiFetch('/me');
 
     const [url, init = {}] = fetch.mock.calls[0] ?? [];
-    expect(url).toBe('http://api.test/me');
+    expect(url).toBe('http://api.test/api/me');
     expect(new Headers(init.headers).get('Cookie')).toBe('better-auth.session_token=abc');
     expect(init.credentials).toBe('omit');
   });

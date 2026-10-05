@@ -54,15 +54,15 @@ describe('Collection (e2e)', () => {
   it('requires signing in', async () => {
     const api = request(app.getHttpServer());
 
-    await api.get('/collection').expect(401);
-    await api.post('/collection').send({ catalogItemId: dune.id }).expect(401);
-    await api.delete('/collection/0199b5a0-7c1e-7a3b-9f00-1234567890ab').expect(401);
+    await api.get('/api/collection').expect(401);
+    await api.post('/api/collection').send({ catalogItemId: dune.id }).expect(401);
+    await api.delete('/api/collection/0199b5a0-7c1e-7a3b-9f00-1234567890ab').expect(401);
   });
 
   it('starts empty', async () => {
     const reader = await signedIn('reader@example.com');
 
-    const response = await reader.get('/collection').expect(200);
+    const response = await reader.get('/api/collection').expect(200);
 
     expect(collectionResponseSchema.parse(response.body)).toEqual({ items: [] });
   });
@@ -70,11 +70,11 @@ describe('Collection (e2e)', () => {
   it('adds catalog items and lists them newest first, with catalog data', async () => {
     const reader = await signedIn('reader@example.com');
 
-    const added = await reader.post('/collection').send({ catalogItemId: dune.id }).expect(201);
-    await reader.post('/collection').send({ catalogItemId: onePiece.id }).expect(201);
+    const added = await reader.post('/api/collection').send({ catalogItemId: dune.id }).expect(201);
+    await reader.post('/api/collection').send({ catalogItemId: onePiece.id }).expect(201);
 
     expect(collectionItemSchema.parse(added.body)).toMatchObject({ catalog: { title: 'Dune' } });
-    const { items } = collectionResponseSchema.parse((await reader.get('/collection')).body);
+    const { items } = collectionResponseSchema.parse((await reader.get('/api/collection')).body);
     expect(items.map((item) => [item.catalog.title, item.catalog.category])).toEqual([
       ['One Piece, Vol. 1', 'manga'],
       ['Dune', 'book'],
@@ -83,9 +83,9 @@ describe('Collection (e2e)', () => {
 
   it('returns the existing item (200) when adding the same edition again', async () => {
     const reader = await signedIn('reader@example.com');
-    const first = await reader.post('/collection').send({ catalogItemId: dune.id }).expect(201);
+    const first = await reader.post('/api/collection').send({ catalogItemId: dune.id }).expect(201);
 
-    const again = await reader.post('/collection').send({ catalogItemId: dune.id }).expect(200);
+    const again = await reader.post('/api/collection').send({ catalogItemId: dune.id }).expect(200);
 
     expect(again.body.id).toBe(first.body.id);
     expect(await prisma.collectionItem.count()).toBe(1);
@@ -95,7 +95,7 @@ describe('Collection (e2e)', () => {
     const reader = await signedIn('reader@example.com');
 
     const responses = await Promise.all(
-      [1, 2, 3].map(() => reader.post('/collection').send({ catalogItemId: dune.id })),
+      [1, 2, 3].map(() => reader.post('/api/collection').send({ catalogItemId: dune.id })),
     );
 
     expect(responses.map((r) => r.status).sort()).toEqual([200, 200, 201]);
@@ -109,40 +109,40 @@ describe('Collection (e2e)', () => {
   ])('rejects %s with 400', async (_, body) => {
     const reader = await signedIn('reader@example.com');
 
-    await reader.post('/collection').send(body).expect(400);
+    await reader.post('/api/collection').send(body).expect(400);
   });
 
   it('returns 404 for an unknown catalog item', async () => {
     const reader = await signedIn('reader@example.com');
 
     await reader
-      .post('/collection')
+      .post('/api/collection')
       .send({ catalogItemId: '0199b5a0-7c1e-7a3b-9f00-1234567890ab' })
       .expect(404);
   });
 
   it('removes an item (204), then reports it as gone (404)', async () => {
     const reader = await signedIn('reader@example.com');
-    const { body } = await reader.post('/collection').send({ catalogItemId: dune.id });
+    const { body } = await reader.post('/api/collection').send({ catalogItemId: dune.id });
 
-    await reader.delete(`/collection/${body.id}`).expect(204);
-    await reader.delete(`/collection/${body.id}`).expect(404);
-    expect((await reader.get('/collection')).body.items).toEqual([]);
+    await reader.delete(`/api/collection/${body.id}`).expect(204);
+    await reader.delete(`/api/collection/${body.id}`).expect(404);
+    expect((await reader.get('/api/collection')).body.items).toEqual([]);
   });
 
   it('rejects a non-UUID item id', async () => {
     const reader = await signedIn('reader@example.com');
 
-    await reader.delete('/collection/not-a-uuid').expect(400);
+    await reader.delete('/api/collection/not-a-uuid').expect(400);
   });
 
   describe('isolation between users', () => {
     it("never shows one user's items to another", async () => {
       const alice = await signedIn('alice@example.com');
       const bob = await signedIn('bob@example.com');
-      await alice.post('/collection').send({ catalogItemId: dune.id }).expect(201);
+      await alice.post('/api/collection').send({ catalogItemId: dune.id }).expect(201);
 
-      const bobs = await bob.get('/collection').expect(200);
+      const bobs = await bob.get('/api/collection').expect(200);
 
       expect(bobs.body.items).toEqual([]);
     });
@@ -150,19 +150,21 @@ describe('Collection (e2e)', () => {
     it("can't remove another user's item, and doesn't reveal that it exists", async () => {
       const alice = await signedIn('alice@example.com');
       const bob = await signedIn('bob@example.com');
-      const { body: alicesItem } = await alice.post('/collection').send({ catalogItemId: dune.id });
+      const { body: alicesItem } = await alice
+        .post('/api/collection')
+        .send({ catalogItemId: dune.id });
 
-      await bob.delete(`/collection/${alicesItem.id}`).expect(404);
+      await bob.delete(`/api/collection/${alicesItem.id}`).expect(404);
 
-      expect((await alice.get('/collection')).body.items).toHaveLength(1);
+      expect((await alice.get('/api/collection')).body.items).toHaveLength(1);
     });
 
     it('lets two users own the same edition independently', async () => {
       const alice = await signedIn('alice@example.com');
       const bob = await signedIn('bob@example.com');
 
-      const a = await alice.post('/collection').send({ catalogItemId: dune.id }).expect(201);
-      const b = await bob.post('/collection').send({ catalogItemId: dune.id }).expect(201);
+      const a = await alice.post('/api/collection').send({ catalogItemId: dune.id }).expect(201);
+      const b = await bob.post('/api/collection').send({ catalogItemId: dune.id }).expect(201);
 
       expect(a.body.id).not.toBe(b.body.id);
     });
@@ -170,7 +172,7 @@ describe('Collection (e2e)', () => {
 
   it('deletes the collection along with the account', async () => {
     const reader = await signedIn('reader@example.com');
-    await reader.post('/collection').send({ catalogItemId: dune.id }).expect(201);
+    await reader.post('/api/collection').send({ catalogItemId: dune.id }).expect(201);
 
     await reader
       .post('/api/auth/delete-user')

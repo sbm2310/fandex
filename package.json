@@ -18,7 +18,9 @@
     "format:check": "prettier --check .",
     "dev:api": "npm run dev -w @fandex/api",
     "db:up": "docker compose up -d --wait",
-    "db:down": "docker compose down"
+    "db:down": "docker compose down",
+    "build:deploy": "npm run build -w @fandex/api && npm run build:web -w @fandex/mobile",
+    "start:deploy": "npm run db:deploy -w @fandex/api && npm run start -w @fandex/api"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",

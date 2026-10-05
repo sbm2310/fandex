@@ -6,7 +6,8 @@ export type GetSessionCookie = () => Promise<string | null | undefined> | string
 export type ApiFetch = (path: string, init?: RequestInit) => Promise<Response>;
 
 /**
- * Fetches the Fandex API with the session attached the right way for each platform:
+ * Fetches the Fandex API (routes under /api) with the session attached the right way for
+ * each platform:
  * - native: the cookie comes from secure storage and is sent as a header (no cookie jar);
  * - web: the browser sends its cookie; cross-origin requests need credentials included.
  */
@@ -25,7 +26,7 @@ export function createApiFetch(
       const cookie = await getSessionCookie();
       if (cookie) headers.set('Cookie', cookie);
     }
-    return fetchImpl(`${apiUrl}${path}`, {
+    return fetchImpl(`${apiUrl}/api${path}`, {
       ...init,
       headers,
       credentials: platform === 'web' ? 'include' : 'omit',

@@ -35,7 +35,7 @@ describe('Auth (e2e)', () => {
     expect(response.status).toBe(200);
     expect(String(response.headers['set-cookie'])).toMatch(/session_token=/);
 
-    const me = await agent.get('/me').expect(200);
+    const me = await agent.get('/api/me').expect(200);
     expect(meResponseSchema.parse(me.body)).toMatchObject({
       email: reader.email,
       name: reader.name,
@@ -44,7 +44,7 @@ describe('Auth (e2e)', () => {
   });
 
   it('rejects /me without a session', async () => {
-    await request(app.getHttpServer()).get('/me').expect(401);
+    await request(app.getHttpServer()).get('/api/me').expect(401);
   });
 
   it('signs in with the right password', async () => {
@@ -57,7 +57,7 @@ describe('Auth (e2e)', () => {
       .send({ email: reader.email, password: reader.password })
       .expect(200);
 
-    await agent.get('/me').expect(200);
+    await agent.get('/api/me').expect(200);
   });
 
   it('rejects a wrong password', async () => {
@@ -91,7 +91,7 @@ describe('Auth (e2e)', () => {
 
     await agent.post('/api/auth/sign-out').set('Origin', ORIGIN).send({}).expect(200);
 
-    await agent.get('/me').expect(401);
+    await agent.get('/api/me').expect(401);
   });
 
   it('stores a password hash, never the password', async () => {
@@ -124,10 +124,10 @@ describe('Auth (e2e)', () => {
       .send({})
       .expect(403);
 
-    await agent.get('/me').expect(200);
+    await agent.get('/api/me').expect(200);
   });
 
   it('keeps /health public', async () => {
-    await request(app.getHttpServer()).get('/health').expect(200);
+    await request(app.getHttpServer()).get('/api/health').expect(200);
   });
 });

@@ -24,9 +24,13 @@ export function createAuth(prisma: PrismaClient, env: AuthEnv) {
     },
     // Origins allowed to make cookie-authenticated requests (CSRF protection + CORS): the web
     // app, the native app's scheme, and, in development only, Expo Go's exp:// URLs.
+    // The API's own origin is always trusted: in production it also serves the web app.
     trustedOrigins: [
-      ...env.TRUSTED_ORIGINS,
-      ...(env.NODE_ENV === 'development' ? ['exp://', 'exp://**'] : []),
+      ...new Set([
+        new URL(env.BETTER_AUTH_URL).origin,
+        ...env.TRUSTED_ORIGINS,
+        ...(env.NODE_ENV === 'development' ? ['exp://', 'exp://**'] : []),
+      ]),
     ],
     // Native apps don't send an Origin header; the Expo plugin uses the app's scheme instead.
     plugins: [expo()],

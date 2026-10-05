@@ -1,0 +1,32 @@
+# Render Blueprint: the Fandex API, which also serves the web app (same origin, so the session
+# cookie stays first-party). Free plan: sleeps after 15 min idle, ~1 min to wake.
+# Keep the workspace WITHOUT a payment method: Render then suspends instead of billing if a
+# free limit is ever exceeded.
+services:
+  - type: web
+    name: fandex
+    runtime: node
+    plan: free
+    region: virginia
+    # Dev dependencies are build tools here (Nest CLI, Prisma, tsdown, Expo).
+    buildCommand: npm ci --include=dev && npm run build:deploy
+    # Applies pending database migrations, then starts the API.
+    startCommand: npm run start:deploy
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: WEB_APP_DIR
+        value: ../mobile/dist
+      # Native app scheme, plus Expo Go (exp://) while the iPhone app runs in Expo Go.
+      # The service's own URL is trusted automatically.
+      - key: TRUSTED_ORIGINS
+        value: fandex://,exp://**
+      - key: BETTER_AUTH_SECRET
+        generateValue: true
+      # Set in the Render dashboard (never committed):
+      - key: DATABASE_URL
+        sync: false
+      - key: REBRICKABLE_API_KEY
+        sync: false
