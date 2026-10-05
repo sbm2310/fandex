@@ -22,20 +22,20 @@ Nobody connects a collection the way fans think about it: "everything I own from
 - **Platforms:** iPhone first, then Android and web (same codebase)
 - **Stack:** TypeScript end to end
   - Client: React Native + Expo (iOS, Android, web from one codebase)
-  - Backend: Node.js with TypeScript (NestJS is the leading option — confirm in planning)
+  - Backend: Node.js with TypeScript — NestJS + Prisma (decided in Stage 2 planning)
   - Database: PostgreSQL
 - **Dev machine:** Intel MacBook Pro — use Expo cloud builds (EAS) for iOS builds; test on a real iPhone via Expo Go / dev builds
 - **Approach:** long-term project, delivered in stages; every stage ends with a working, demo-able version
 
 ## Catalog data sources
 
-| Category                   | Source                     | Notes                                                                                                     |
-| -------------------------- | -------------------------- | --------------------------------------------------------------------------------------------------------- |
-| Books / fantasy            | Open Library               | ISBN barcode scanning. Google Books rejected (see below)                                                  |
-| Comics                     | Comic Vine API             | Free API key; 200 requests per resource per hour → must cache in our own DB                               |
-| Manga                      | AniList (GraphQL)          | Free                                                                                                      |
-| LEGO                       | Rebrickable, Brickset APIs |                                                                                                           |
-| Hot Toys / premium figures | **No known public API**    | Biggest risk. Build our own catalog: AI extraction from photos + community contributions. Potential moat. |
+| Category                   | Source                                           | Notes                                                                                                                                                         |
+| -------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Books / fantasy            | Open Library                                     | ISBN barcode scanning. Google Books rejected (see below)                                                                                                      |
+| Comics                     | Open Library (trade paperbacks / graphic novels) | Comic Vine is **non-commercial only** (key revoked otherwise) — not used. Single issues later, e.g. Metron (terms unverified).                                |
+| Manga                      | Open Library (volumes by ISBN)                   | AniList: free only under $150/mo revenue and bans use in "competing list/tracker" apps — not used without written permission.                                 |
+| LEGO                       | Rebrickable (planned)                            | Terms not yet verified (pages block automated reads) — check by hand before integrating. Brickset fallback: 100 calls/day until approved; no "copycat" sites. |
+| Hot Toys / premium figures | **No known public API**                          | Biggest risk. Build our own catalog: AI extraction from photos + community contributions. Potential moat.                                                     |
 
 Verify current terms, rate limits and attribution requirements for each API before integrating.
 
@@ -83,13 +83,23 @@ Verify current terms, rate limits and attribution requirements for each API befo
 - **Web focus rings:** RN style types can't express `outline-style: none`; web-only CSS lives in `src/global.css`.
 - **Read the versioned Expo docs** before touching Expo APIs (see `apps/mobile/AGENTS.md`).
 
+## Stage 2 decisions (settled 2026-10-05)
+
+Full plan and task list: [`docs/plans/stage-2.md`](docs/plans/stage-2.md).
+
+- **Backend:** NestJS + Prisma in `apps/api`; PostgreSQL via Docker Compose locally and in CI.
+- **Auth:** Better Auth inside the API (users in our Postgres); email + password in Stage 2; Apple/Google sign-in later with our own build. In-app account deletion is required (App Store).
+- **Catalog:** served by our API and cached in `catalog_item`; Open Library for books, manga and comic trade paperbacks (category from subjects); Rebrickable for LEGO after a manual terms check.
+- **Sync:** online-first when signed in; guest mode (on-device collection) when signed out; guest collection imported on first sign-in.
+- **Contracts:** zod schemas in `packages/core`, shared by API and app.
+- **Hosting:** decided in the last task of Stage 2 (options: Render + Neon, or Railway).
+
 ## Open questions (deferred to later stages)
 
-- Backend framework (NestJS vs. lighter options) and hosting — Stage 2 planning
-- Auth provider — Stage 2 planning
+- Production hosting and email provider — last task of Stage 2
 - Data model for "universe / character / item" links across categories — Stage 3. Include work-level matching: ownership is per edition (ISBN), so search can show "Add" for a different printing of a book the user owns; a "you own another edition" hint belongs here.
 - Which AI/vision model to use for shelf-photo recognition, and cost per scan — Stage 4
-- Apple Developer account — buy during Stage 2 (needed for dev builds/TestFlight; push notifications in Stage 5 at the latest)
+- Apple Developer account — not needed for Stage 2 (email + password works in Expo Go); buy when adding Apple sign-in, push notifications (Stage 5) or TestFlight
 
 ## Working agreements
 
