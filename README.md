@@ -70,6 +70,7 @@ Full decision log: [`CLAUDE.md`](CLAUDE.md).
 
 ```
 apps/
+  api/               NestJS API (Stage 2, in progress): health check and OpenAPI docs so far
   mobile/            Expo app (Expo Router): iOS, Android and web
     src/app/         Routes: (tabs)/index, (tabs)/add, book/[id], scan
     src/components/  UI components
@@ -92,7 +93,18 @@ npm run start -w @fandex/mobile
 - **iPhone:** scan the QR code with the Camera app (phone and computer on the same Wi-Fi).
 - **Web:** press `w` in the terminal.
 
-No API keys or environment variables are needed.
+No API keys or environment variables are needed for the app.
+
+### API (Stage 2, in progress)
+
+Requires [Docker Desktop](https://www.docker.com/products/docker-desktop/) for the local PostgreSQL database.
+
+```bash
+npm run db:up        # start PostgreSQL in Docker
+npm run dev:api      # API on http://localhost:3000, docs at /docs
+```
+
+Optional settings go in `apps/api/.env` (see `.env.example`).
 
 ## Testing
 
@@ -103,9 +115,10 @@ npm run lint
 npm run format:check
 ```
 
-148 tests run in CI on every push:
+159 tests run in CI on every push:
 
 - **`packages/core` (97, Jest + ts-jest):** ISBN validation against reference values, the Open Library adapter against **recorded real API responses** plus edge cases, and the repository (concurrent writes, corrupt data, restarts) over an in-memory store.
+- **`apps/api` (11, Vitest + Supertest):** config validation, controllers, and end-to-end HTTP tests against the real Nest app.
 - **`apps/mobile` (51, jest-expo + React Native Testing Library):** screens rendered with a fake catalog and the real repository over an in-memory store: search states, ISBN lookup, adding and removing, navigation, sorting, and the barcode scanner with a mocked camera.
 
 Tests never call the network.

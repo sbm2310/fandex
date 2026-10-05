@@ -1,7 +1,7 @@
 {
   "name": "fandex",
   "private": true,
-  "description": "Collect across formats — organized by universe and character.",
+  "description": "Collect across formats \u2014 organized by universe and character.",
   "workspaces": [
     "apps/*",
     "packages/*"
@@ -10,11 +10,15 @@
     "node": ">=24"
   },
   "scripts": {
-    "typecheck": "npm run typecheck --workspaces --if-present",
+    "build:core": "npm run build -w @fandex/core",
+    "typecheck": "npm run build:core && npm run typecheck --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "dev:api": "npm run dev -w @fandex/api",
+    "db:up": "docker compose up -d --wait",
+    "db:down": "docker compose down"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
@@ -24,6 +28,7 @@
     "jest": "^30.5.2",
     "prettier": "^3.9.9",
     "ts-jest": "^29.4.14",
+    "tsdown": "^0.23.0",
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.71.0"
   },
