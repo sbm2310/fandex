@@ -1,0 +1,51 @@
+// Fandex database schema. Models use TypeScript-style names; tables and columns are
+// snake_case in PostgreSQL via @@map / @map.
+// After changing this file: `npm run db:migrate -- --name <change>` (creates a migration).
+
+generator client {
+  provider             = "prisma-client"
+  output               = "../src/generated/prisma"
+  moduleFormat         = "esm"
+  // The API is an ESM/nodenext project, so generated imports need .js extensions.
+  importFileExtension  = "js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Category {
+  book
+  manga
+  comic
+  lego
+}
+
+enum CatalogSource {
+  openlibrary
+  rebrickable
+}
+
+/// A catalog entry fetched from an external source and cached here, shared by all users.
+model CatalogItem {
+  id         String        @id @default(uuid(7)) @db.Uuid
+  category   Category
+  source     CatalogSource
+  externalId String        @map("external_id")
+  title      String
+  subtitle   String?
+  creators   String[]
+  year       Int?
+  publisher  String?
+  isbn13     String?       @db.Char(13)
+  setNumber  String?       @map("set_number")
+  pieceCount Int?          @map("piece_count")
+  coverUrl   String?       @map("cover_url")
+  fetchedAt  DateTime      @default(now()) @map("fetched_at") @db.Timestamptz
+  createdAt  DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt  DateTime      @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@unique([source, externalId])
+  @@index([isbn13])
+  @@map("catalog_item")
+}

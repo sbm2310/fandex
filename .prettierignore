@@ -3,3 +3,4 @@ dist
 coverage
 .expo
 package-lock.json
+apps/api/src/generated

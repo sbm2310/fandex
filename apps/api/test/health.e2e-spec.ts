@@ -18,8 +18,11 @@ describe('API (e2e)', () => {
     await app.close();
   });
 
-  it('GET /health reports ok', async () => {
-    await request(app.getHttpServer()).get('/health').expect(200).expect({ status: 'ok' });
+  it('GET /health reports the API and database as up', async () => {
+    await request(app.getHttpServer())
+      .get('/health')
+      .expect(200)
+      .expect({ status: 'ok', database: 'up' });
   });
 
   it('serves the OpenAPI document', async () => {

@@ -70,7 +70,7 @@ Full decision log: [`CLAUDE.md`](CLAUDE.md).
 
 ```
 apps/
-  api/               NestJS API (Stage 2, in progress): health check and OpenAPI docs so far
+  api/               NestJS API (Stage 2, in progress): PostgreSQL via Prisma, health check, OpenAPI docs
   mobile/            Expo app (Expo Router): iOS, Android and web
     src/app/         Routes: (tabs)/index, (tabs)/add, book/[id], scan
     src/components/  UI components
@@ -100,11 +100,11 @@ No API keys or environment variables are needed for the app.
 Requires [Docker Desktop](https://www.docker.com/products/docker-desktop/) for the local PostgreSQL database.
 
 ```bash
-npm run db:up        # start PostgreSQL in Docker
-npm run dev:api      # API on http://localhost:3000, docs at /docs
+cp apps/api/.env.example apps/api/.env
+npm run db:up                              # start PostgreSQL in Docker
+npm run db:deploy -w @fandex/api           # apply database migrations
+npm run dev:api                            # API on http://localhost:3000, docs at /docs
 ```
-
-Optional settings go in `apps/api/.env` (see `.env.example`).
 
 ## Testing
 
@@ -115,10 +115,10 @@ npm run lint
 npm run format:check
 ```
 
-159 tests run in CI on every push:
+167 tests run in CI on every push:
 
 - **`packages/core` (97, Jest + ts-jest):** ISBN validation against reference values, the Open Library adapter against **recorded real API responses** plus edge cases, and the repository (concurrent writes, corrupt data, restarts) over an in-memory store.
-- **`apps/api` (11, Vitest + Supertest):** config validation, controllers, and end-to-end HTTP tests against the real Nest app.
+- **`apps/api` (19, Vitest + Supertest):** config validation and controllers, plus end-to-end tests against the real Nest app and a real PostgreSQL test database (created and migrated automatically).
 - **`apps/mobile` (51, jest-expo + React Native Testing Library):** screens rendered with a fake catalog and the real repository over an in-memory store: search states, ISBN lookup, adding and removing, navigation, sorting, and the barcode scanner with a mocked camera.
 
 Tests never call the network.

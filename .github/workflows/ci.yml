@@ -12,6 +12,24 @@ concurrency:
 jobs:
   check:
     runs-on: ubuntu-latest
+    services:
+      # Same image as docker-compose.yml; the API's e2e tests create and migrate fandex_test.
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: fandex
+          POSTGRES_PASSWORD: fandex
+          POSTGRES_DB: fandex
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U fandex -d fandex"
+          --health-interval 2s
+          --health-timeout 5s
+          --health-retries 15
+    env:
+      DATABASE_URL: postgresql://fandex:fandex@localhost:5432/fandex
+      TEST_DATABASE_URL: postgresql://fandex:fandex@localhost:5432/fandex_test
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7

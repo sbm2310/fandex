@@ -7,6 +7,9 @@ import { z } from 'zod';
 export const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().int().min(1).max(65535).default(3000),
+  DATABASE_URL: z
+    .url({ protocol: /^postgres(ql)?$/, error: 'DATABASE_URL must be a postgresql:// URL' })
+    .describe('PostgreSQL connection string'),
 });
 
 export type Env = z.infer<typeof envSchema>;

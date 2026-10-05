@@ -49,7 +49,7 @@ collection_item                         ← a user's owned copy
 
 **1. API skeleton.** ✅ `apps/api` with NestJS (strict TS), config validated with zod (fails fast on missing env vars), `GET /health`, OpenAPI at `/docs`, Jest unit tests + Supertest e2e test, CI job. Give `packages/core` a build step so Node can consume it (Metro and Jest keep using the source). `docker-compose.yml` with Postgres. _Demo:_ `curl localhost:3000/health` → `ok`; the app is unchanged.
 
-**2. Database & Prisma.** Prisma schema for `catalog_item` (users come next), first migration, Prisma service in Nest, health check includes the DB. CI runs e2e tests against a Postgres service container. _Demo:_ `/health` reports the database as up.
+**2. Database & Prisma.** ✅ Prisma schema for `catalog_item` (users come next), first migration, Prisma service in Nest, health check includes the DB. CI runs e2e tests against a Postgres service container. _Demo:_ `/health` reports the database as up.
 
 **3. Auth on the API.** Better Auth with the Prisma adapter (generates user/session/account tables), email + password, built-in rate limiting on auth routes, an `AuthGuard` (≈ `[Authorize]`), `GET /me`. e2e tests: sign up, sign in, `/me` with and without a session. _Demo:_ sign up and call `/me` with `curl`.
 
