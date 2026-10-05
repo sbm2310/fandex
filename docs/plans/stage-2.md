@@ -67,7 +67,7 @@ collection_item                         ← a user's owned copy
 
 **10. Unified search & filters.** ✅ Category filter chips on the Add screen (All / Books / Manga / Comics / LEGO) and in the collection; LEGO rows show set number and piece count; detail screen adapts per category. _Demo:_ filter the collection to just LEGO.
 
-**11. Deploy & Stage 2 demo.** Re-verify free-tier limits and card requirements, then deploy on free tiers only (no paid services), provision production Postgres, run migrations in the deploy pipeline, set up a free email provider for verification and password reset (or defer email if none fits), environment-specific API URLs for the app, and point the iPhone and web apps at the deployed API. Update README (architecture diagram, API docs link) and tag `v0.2.0`. _Demo:_ the full end-to-end demo above, on the deployed backend.
+**11. Deploy & Stage 2 demo.** ✅ Live at https://fandex-4mjc.onrender.com (Render free web service serving the API and the web app, Neon free Postgres, no card on either). Migrations run on start; email deferred (free providers need a domain). Verified end to end: accounts and sync between iPhone (Expo Go against the deployed API) and web. Re-verify free-tier limits and card requirements, then deploy on free tiers only (no paid services), provision production Postgres, run migrations in the deploy pipeline, set up a free email provider for verification and password reset (or defer email if none fits), environment-specific API URLs for the app, and point the iPhone and web apps at the deployed API. Update README (architecture diagram, API docs link) and tag `v0.2.0`. _Demo:_ the full end-to-end demo above, on the deployed backend.
 
 ## New concepts, introduced as they come up
 

@@ -21,18 +21,19 @@ Fandex is a collection app for fans who collect comics, manga, fantasy books, pr
   </tr>
 </table>
 
-## Status: Stage 1 (v0.1.0)
+## Status: Stage 2 (v0.2.0)
 
-The MVP runs on iPhone and the web from one codebase:
+**Live demo: [fandex-4mjc.onrender.com](https://fandex-4mjc.onrender.com)** (free hosting: the first visit after a quiet spell takes about a minute while the server wakes up). API docs: [/api/docs](https://fandex-4mjc.onrender.com/api/docs).
 
-- **Search** books, manga and comics by title or author as you type, with covers and category badges (via the Fandex API, backed by Open Library).
-- **Look up by ISBN**: type or paste an ISBN-10/13 into the same field for an exact match; typos are caught by the check digit before any request is made.
-- **Scan barcodes** with the iPhone camera. Only book barcodes are accepted, so a DVD or toy on the same shelf won't trigger a lookup.
-- **Your collection**: a cover grid sorted by recently added or by title (ignoring "The"/"A"), a detail screen per book, and removal with confirmation.
-- **Saved on the device** (AsyncStorage on iOS, localStorage on web), surviving restarts.
-- Light and dark mode, screen-reader labels, and browser tab titles on web.
+Fandex runs on iPhone and the web from one codebase, backed by its own API:
 
-Next up is a real backend with accounts and sync (see [Roadmap](#roadmap)).
+- **Accounts and cloud sync:** sign up with email and password; your collection follows you between iPhone and web. Without an account it's saved on the device, and signing in offers to move those items into the account.
+- **Books, manga, comics and LEGO** in one collection, with category badges and filters. Books come from Open Library (category detected from publisher and subjects), LEGO sets from Rebrickable (search by name or set number, with pieces and theme).
+- **Look up by ISBN** or **scan a barcode** with the iPhone camera. Typos are caught by the check digit before any request is made, and only book barcodes are accepted.
+- **Your collection:** a cover grid sorted by recently added or by title (ignoring "The"/"A"), a detail screen per item, and removal with confirmation.
+- **Account deletion** in the app (required by the App Store), light and dark mode, screen-reader labels, and browser tab titles on web.
+
+Next up is the universe layer: franchise and character pages that link items across categories (see [Roadmap](#roadmap)).
 
 ## Architecture
 
@@ -42,26 +43,39 @@ flowchart LR
     screens["Screens<br/>(Expo Router)"] --> hooks["Hooks<br/>(TanStack Query)"]
     hooks --> services["AppServicesProvider<br/>(dependency injection)"]
   end
-  subgraph core["packages/core (pure TypeScript)"]
-    catalog["OpenLibraryCatalog<br/>implements BookCatalog"]
-    repo["KeyValueCollectionRepository<br/>implements CollectionRepository"]
-    domain["Domain: CatalogBook, CollectionItem,<br/>ISBN parsing, sorting"]
+  subgraph api["apps/api (NestJS)"]
+    auth["Better Auth<br/>(accounts, sessions)"]
+    catalogApi["Catalog API<br/>(cached, rate-limited)"]
+    collectionApi["Collection API<br/>(per user)"]
   end
-  services --> catalog
-  services --> repo
-  catalog --> ol[("Open Library API")]
-  repo --> kv[("AsyncStorage /<br/>localStorage")]
+  subgraph core["packages/core (pure TypeScript)"]
+    adapters["OpenLibraryCatalog,<br/>RebrickableCatalog"]
+    domain["Domain model, zod contracts,<br/>ISBN parsing, repositories"]
+  end
+  services -->|"signed in"| auth
+  services --> catalogApi
+  services -->|"signed in"| collectionApi
+  services -->|"guest"| kv[("AsyncStorage /<br/>localStorage")]
+  catalogApi --> adapters
+  adapters --> ol[("Open Library")]
+  adapters --> rb[("Rebrickable")]
+  auth --> pg[("PostgreSQL<br/>(Prisma)")]
+  catalogApi --> pg
+  collectionApi --> pg
 ```
 
-- **`packages/core`** has no React or platform code: the domain model, ISBN validation, the Open Library adapter and the collection repository. It's tested in plain Node and will be reused by the Stage 2 backend.
-- **`apps/mobile`** is the Expo app. Screens get their dependencies (`BookCatalog`, `CollectionRepository`) from a context provider, so tests swap in fakes and Stage 2 can swap local storage for an API without touching the screens.
-- **Catalog entries vs. owned copies:** a `CatalogBook` is what a catalog says exists; a `CollectionItem` is the user's copy, with a snapshot of the catalog data so the collection still renders if the source changes or is offline.
+- **`packages/core`** has no React, Node or platform code: the domain model, the zod schemas shared by the API and the app, ISBN validation, the Open Library and Rebrickable adapters, and the collection repository. Both the API and the app use it.
+- **`apps/api`** is a NestJS API (in production it also serves the web app from the same origin). It owns the accounts (Better Auth, users stored in our PostgreSQL), caches catalog results in a shared `catalog_item` table, and stores each user's collection. A global guard protects every route unless it's marked public.
+- **`apps/mobile`** is the Expo app. Screens get their dependencies (`BookCatalog`, `CollectionRepository`, `AccountService`) from a context provider: signed in, the collection is the API-backed repository; signed out, it's the on-device one. Tests swap in fakes.
+- **Catalog entries vs. owned copies:** a catalog entry is what a catalog says exists; a `CollectionItem` is the user's copy, with a snapshot of the catalog data so the collection still renders if the source changes or is offline.
 
 ### Notable decisions
 
 - **Open Library only.** It's free, keyless and allows browser calls. Google Books was evaluated and rejected: its terms forbid storing results permanently (which a collection does) and charging users without a separate agreement.
 - **Cover images by cover ID**, not ISBN: Open Library rate-limits ISBN cover URLs (100 per 5 minutes per IP) but not cover-ID URLs.
 - **Ownership is per edition** (matched by ISBN, else by source ID), because collectors care which printing they own.
+- **One server, one origin:** the API serves the web app, so the web session cookie is first-party (no third-party cookie problems) and CORS only matters for development.
+- **Users only see their own items:** every collection query is scoped by the signed-in user's id (never a request field), and another user's item answers 404 rather than 403. The tests for this were mutation-checked.
 - **Defensive storage:** versioned JSON documents, serialized writes (rapid taps can't overwrite each other), and unreadable data raises an error instead of being silently replaced.
 
 Full decision log: [`CLAUDE.md`](CLAUDE.md).
@@ -70,47 +84,54 @@ Full decision log: [`CLAUDE.md`](CLAUDE.md).
 
 ```
 apps/
-  api/               NestJS API (Stage 2, in progress): accounts (Better Auth), cached catalog (books, manga, comics, LEGO), per-user collections, PostgreSQL via Prisma, OpenAPI docs
+  api/               NestJS API: accounts (Better Auth), cached catalog (books, manga, comics, LEGO), per-user collections, PostgreSQL via Prisma, OpenAPI docs
+    prisma/          Database schema and migrations
+    src/             Modules: auth, catalog, collection, health, me
+    test/            End-to-end tests against a real test database
   mobile/            Expo app (Expo Router): iOS, Android and web
-    src/app/         Routes: (tabs)/index, (tabs)/add, book/[id], scan
+    src/app/         Routes: (tabs)/index, (tabs)/add, (tabs)/account, book/[id], scan
     src/components/  UI components
-    src/hooks/       Data hooks (search, collection)
-    src/services/    App services and their wiring
+    src/hooks/       Data hooks (search, collection, account)
+    src/services/    App services and their wiring (API clients, repositories)
 packages/
-  core/              Domain model, ISBN utilities, Open Library adapter, repository
+  core/              Domain model, zod contracts, ISBN utilities, catalog adapters, repository
+docs/plans/          Stage plans and task lists
 docs/screenshots/    README images
+render.yaml          Deployment (Render Blueprint)
 ```
 
 ## Getting started
 
-Requirements: Node 24+ (see `.nvmrc`) and npm. For the iPhone, install [Expo Go](https://apps.apple.com/app/expo-go/id982107779).
+Requirements: Node 24+ (see `.nvmrc`), npm, and [Docker Desktop](https://www.docker.com/products/docker-desktop/) for the local PostgreSQL database. For the iPhone, install [Expo Go](https://apps.apple.com/app/expo-go/id982107779).
 
 ```bash
 npm install
-npm run start -w @fandex/mobile
-```
-
-- **iPhone:** scan the QR code with the Camera app (phone and computer on the same Wi-Fi).
-- **Web:** press `w` in the terminal.
-
-No API keys or environment variables are needed for the app.
-
-### API (Stage 2, in progress)
-
-Requires [Docker Desktop](https://www.docker.com/products/docker-desktop/) for the local PostgreSQL database.
-
-```bash
 cp apps/api/.env.example apps/api/.env     # then set BETTER_AUTH_SECRET (openssl rand -base64 32)
 npm run db:up                              # start PostgreSQL in Docker
 npm run db:deploy -w @fandex/api           # apply database migrations
-npm run dev:api                            # API on http://localhost:3000, docs at /docs
+npm run dev:api                            # API on http://localhost:3000, docs at /api/docs
+```
+
+In a second terminal:
+
+```bash
+npm run start -w @fandex/mobile
+```
+
+- **iPhone:** scan the QR code with the Camera app (phone and computer on the same Wi-Fi). The app finds the API on your computer automatically.
+- **Web:** press `w` in the terminal.
+
+To point the app at the deployed API instead of a local one:
+
+```bash
+EXPO_PUBLIC_API_URL=https://fandex-4mjc.onrender.com npm run start -w @fandex/mobile
 ```
 
 LEGO search needs a free [Rebrickable API key](https://rebrickable.com/users/settings/#api) in `apps/api/.env` (`REBRICKABLE_API_KEY=...`); everything else works without it.
 
 ## Deployment
 
-The API and the web app deploy together as one free [Render](https://render.com) web service, defined in [`render.yaml`](render.yaml), with a free [Neon](https://neon.com) PostgreSQL database. The API serves the exported web app from its own origin, so the browser's session cookie is first-party. Migrations run on every start. On the free plan the service sleeps after 15 minutes without traffic and takes about a minute to wake.
+The API and the web app deploy together as one free [Render](https://render.com) web service, defined in [`render.yaml`](render.yaml), with a free [Neon](https://neon.com) PostgreSQL database. The API serves the exported web app from its own origin, so the browser's session cookie is first-party. Migrations run on every start, and every push to `main` redeploys. Secrets (database URL, Rebrickable key) live only in the Render dashboard; Render generates the session secret. On the free plan the service sleeps after 15 minutes without traffic and takes about a minute to wake.
 
 ## Testing
 
@@ -133,18 +154,23 @@ Tests never call the network.
 
 This project was built by a C#/.NET developer learning React Native. If that's you too:
 
-| Here                                    | Roughly like in .NET                                 |
-| --------------------------------------- | ---------------------------------------------------- |
-| npm workspaces (`apps/*`, `packages/*`) | A solution with several projects                     |
-| `packages/core` consumed as source      | A class-library project reference                    |
-| Expo Router (`src/app/` files = routes) | Razor Pages file-based routing                       |
-| `_layout.tsx`                           | `_Layout.cshtml`                                     |
-| `AppServicesProvider` + `useCatalog()`  | Registering and resolving services in a DI container |
-| TanStack Query                          | A cached `HttpClient` plus state management          |
-| `foo.web.ts` next to `foo.ts`           | Conditional compilation per platform                 |
-| Metro                                   | The bundler (like webpack)                           |
-| EAS Build                               | A cloud CI service for native app binaries           |
-| Expo Go                                 | A prebuilt host app that runs your JavaScript bundle |
+| Here                                     | Roughly like in .NET                                 |
+| ---------------------------------------- | ---------------------------------------------------- |
+| npm workspaces (`apps/*`, `packages/*`)  | A solution with several projects                     |
+| `packages/core` consumed as source       | A class-library project reference                    |
+| Expo Router (`src/app/` files = routes)  | Razor Pages file-based routing                       |
+| `_layout.tsx`                            | `_Layout.cshtml`                                     |
+| `AppServicesProvider` + `useCatalog()`   | Registering and resolving services in a DI container |
+| TanStack Query                           | A cached `HttpClient` plus state management          |
+| `foo.web.ts` next to `foo.ts`            | Conditional compilation per platform                 |
+| Metro                                    | The bundler (like webpack)                           |
+| EAS Build                                | A cloud CI service for native app binaries           |
+| Expo Go                                  | A prebuilt host app that runs your JavaScript bundle |
+| NestJS modules, controllers, providers   | ASP.NET Core controllers and DI registrations        |
+| Global `AuthGuard` + `@AllowAnonymous()` | A fallback authorization policy + `[AllowAnonymous]` |
+| Prisma schema + migrations               | EF Core model + migrations                           |
+| zod schemas in `packages/core`           | Shared DTOs with validation attributes               |
+| Vitest + Supertest e2e tests             | `WebApplicationFactory` integration tests            |
 
 ## Data sources and attribution
 
@@ -155,7 +181,7 @@ Book data and cover images come from [Open Library](https://openlibrary.org), a 
 | Stage                    | Demo at the end                                                                 |
 | ------------------------ | ------------------------------------------------------------------------------- |
 | **1. MVP** ✅            | Add books by search, ISBN or barcode; collection with covers on iPhone and web  |
-| 2. Real backend          | Accounts, cloud sync phone ↔ web, manga/comics/LEGO catalogs                    |
+| **2. Real backend** ✅   | Accounts, cloud sync phone ↔ web, manga/comics/LEGO catalogs                    |
 | 3. Universe layer        | Franchise and character pages linking items across categories                   |
 | 4. AI                    | Shelf photo → identified items; natural-language questions about the collection |
 | 5. Pre-orders & releases | Release dates, payment reminders, push notifications                            |
