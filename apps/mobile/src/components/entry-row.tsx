@@ -5,6 +5,7 @@ import { StyleSheet, View } from 'react-native';
 import { BookCover } from './book-cover';
 import { CategoryBadge, categoryForLabel } from './category-badge';
 import { ThemedText } from './themed-text';
+import { UniverseChips } from './universe-links';
 
 import { Spacing } from '@/constants/theme';
 
@@ -44,43 +45,60 @@ export function EntryRow({ entry, accessory }: Props) {
     .join(', ');
 
   return (
-    <View style={styles.row}>
-      <View style={styles.info} accessible accessibilityLabel={label}>
-        <BookCover
-          coverUrl={entry.coverUrl}
-          title={entry.title}
-          width={48}
-          fit={isSet ? 'contain' : 'cover'}
-          aspectRatio={isSet ? 1 : 1.5}
-        />
-        <View style={styles.text}>
-          <CategoryBadge category={entry.category} />
-          <ThemedText type="smallBold" numberOfLines={2}>
-            {title}
-          </ThemedText>
-          {first ? (
-            <ThemedText type="small" themeColor="textSecondary" numberOfLines={1}>
-              {first}
+    <View style={styles.entry}>
+      <View style={styles.row}>
+        <View style={styles.info} accessible accessibilityLabel={label}>
+          <BookCover
+            coverUrl={entry.coverUrl}
+            title={entry.title}
+            width={COVER_WIDTH}
+            fit={isSet ? 'contain' : 'cover'}
+            aspectRatio={isSet ? 1 : 1.5}
+          />
+          <View style={styles.text}>
+            <CategoryBadge category={entry.category} />
+            <ThemedText type="smallBold" numberOfLines={2}>
+              {title}
             </ThemedText>
-          ) : null}
-          {second ? (
-            <ThemedText type="small" themeColor="textSecondary" numberOfLines={1}>
-              {second}
-            </ThemedText>
-          ) : null}
+            {first ? (
+              <ThemedText type="small" themeColor="textSecondary" numberOfLines={1}>
+                {first}
+              </ThemedText>
+            ) : null}
+            {second ? (
+              <ThemedText type="small" themeColor="textSecondary" numberOfLines={1}>
+                {second}
+              </ThemedText>
+            ) : null}
+          </View>
         </View>
+        {accessory}
       </View>
-      {accessory}
+      {/* Outside the grouped label so each universe link is reachable on its own. */}
+      {entry.universes?.length ? (
+        <View style={styles.universes}>
+          <UniverseChips universes={entry.universes} />
+        </View>
+      ) : null}
     </View>
   );
 }
 
+const COVER_WIDTH = 48;
+
 const styles = StyleSheet.create({
+  entry: {
+    paddingVertical: Spacing.two,
+    gap: Spacing.two,
+  },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.three,
-    paddingVertical: Spacing.two,
+  },
+  universes: {
+    // Lines up with the title, past the cover.
+    paddingLeft: COVER_WIDTH + Spacing.three,
   },
   info: {
     flex: 1,

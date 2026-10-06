@@ -55,13 +55,13 @@ collection_item_link                     ← a user's manual fixes
 
 **5. Universes tab (app).** ✅ A new tab listing the universes you own items from (with counts and cover thumbnails), and a universe page with your items grouped by category plus its characters. Works in guest mode from the links stored with each item. _Demo:_ open Middle-earth and see books and LEGO together.
 
-**6. Character pages and item links (app).** Character page (everything you own with that character); universe and character chips on the item detail screen and on search results, each opening its page. _Demo:_ tap Gandalf on the Rivendell set, land on his page with The Hobbit on it.
+**6. Character pages and item links (app).** ✅ Character page (everything you own with that character); universe and character chips on the item detail screen and on search results, each opening its page. _Demo:_ tap Gandalf on the Rivendell set, land on his page with The Hobbit on it.
 
 **7. Manual fixes.** On an item's detail screen: add or remove a universe or character, and override the category (the Stage 2 classifier follow-up). API endpoints write `collection_item_link` (and a per-user category override); guest mode stores the same fixes on the device. _Demo:_ remove a wrong match, add a missing one, see the universe page update on phone and web.
 
 **8. "You own another edition."** Using the Open Library work key: search results and detail show a hint when you own a different edition of the same book. _Demo:_ search a different printing of a book you own and see the hint.
 
-**9. Polish and Stage 3 demo.** Empty states, a "show all" cap for long character lists on universe pages, accessibility labels, web tab titles, README (screenshots, architecture, data-source credits incl. Wikidata), publish the iPhone update and deploy, tag `v0.3.0`. _Demo:_ the end-to-end demo above, on the deployed app.
+**9. Polish and Stage 3 demo.** Empty states, a "show all" cap for long character lists on universe pages, characters for LEGO sets in guest collections (guests save the search result, which has no minifigs; accounts get them from the server after adding), accessibility labels, web tab titles, README (screenshots, architecture, data-source credits incl. Wikidata), publish the iPhone update and deploy, tag `v0.3.0`. _Demo:_ the end-to-end demo above, on the deployed app.
 
 ## New concepts, introduced as they come up
 

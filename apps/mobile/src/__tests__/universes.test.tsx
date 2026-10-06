@@ -3,47 +3,21 @@ import { fireEvent, renderRouter, screen } from 'expo-router/testing-library';
 
 import UniversesScreen from '@/app/(tabs)/universes';
 import BookDetailScreen from '@/app/book/[id]';
-import UniverseScreen from '@/app/universe/[slug]';
+import UniverseScreen from '@/app/universe/[slug]/index';
 import { categoryCountsLabel, charactersLabel } from '@/components/universe-card';
 import {
   FakeAccountService,
   createMemoryCollection,
   createWrapper,
   dune,
-  falcon,
-  hobbit,
+  linkedFalcon,
+  linkedHobbit,
+  rivendell,
 } from '@/test-utils/providers';
-
-// Entries as the Fandex API returns them: with the universes and characters it matched.
-const linkedHobbit: CatalogBook = {
-  ...hobbit,
-  universes: ['middle-earth'],
-  characters: [
-    { universe: 'middle-earth', character: 'gandalf' },
-    { universe: 'middle-earth', character: 'bilbo-baggins' },
-  ],
-};
-const rivendell: CatalogSet = {
-  source: 'rebrickable',
-  externalId: '10316-1',
-  category: 'lego',
-  title: 'Lord of the Rings: Rivendell',
-  setNumber: '10316',
-  universes: ['middle-earth'],
-  characters: [
-    { universe: 'middle-earth', character: 'gandalf' },
-    { universe: 'middle-earth', character: 'frodo-baggins' },
-  ],
-};
-const linkedFalcon: CatalogSet = {
-  ...falcon,
-  universes: ['star-wars'],
-  characters: [{ universe: 'star-wars', character: 'han-solo' }],
-};
 
 const routes = {
   '(tabs)/universes': UniversesScreen,
-  'universe/[slug]': UniverseScreen,
+  'universe/[slug]/index': UniverseScreen,
   'book/[id]': BookDetailScreen,
 };
 
@@ -128,14 +102,14 @@ describe('Universe screen', () => {
     expect(screen.getByText('1 book · 1 LEGO set')).toBeOnTheScreen();
     expect(screen.getByRole('header', { name: 'Books · 1' })).toBeOnTheScreen();
     expect(screen.getByRole('header', { name: 'LEGO · 1' })).toBeOnTheScreen();
-    expect(screen.getByLabelText('Gandalf, 2 items')).toBeOnTheScreen();
-    expect(screen.getByLabelText('Bilbo Baggins, 1 item')).toBeOnTheScreen();
+    expect(screen.getByRole('link', { name: 'Gandalf, 2 items' })).toBeOnTheScreen();
+    expect(screen.getByRole('link', { name: 'Bilbo Baggins, 1 item' })).toBeOnTheScreen();
     // Only Middle-earth items: the Millennium Falcon isn't here.
-    const links = screen.getAllByRole('link').map((link) => link.props.accessibilityLabel);
-    expect(links).toEqual([
-      'The Hobbit, by J.R.R. Tolkien',
-      'Lord of the Rings: Rivendell, lego, set 10316',
-    ]);
+    expect(screen.getByRole('link', { name: 'The Hobbit, by J.R.R. Tolkien' })).toBeOnTheScreen();
+    expect(
+      screen.getByRole('link', { name: 'Lord of the Rings: Rivendell, lego, set 10316' }),
+    ).toBeOnTheScreen();
+    expect(screen.queryByRole('link', { name: /^Millennium Falcon/ })).not.toBeOnTheScreen();
   });
 
   it('invites you to add something from a universe you have nothing from', async () => {

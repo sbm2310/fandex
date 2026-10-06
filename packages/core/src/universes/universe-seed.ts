@@ -518,3 +518,22 @@ export const UNIVERSE_SEED: readonly UniverseSeed[] = [
     ],
   },
 ];
+
+/** A universe from the seed by slug. */
+export function findUniverse(
+  slug: string,
+  seed: readonly UniverseSeed[] = UNIVERSE_SEED,
+): UniverseSeed | undefined {
+  return seed.find((universe) => universe.slug === slug);
+}
+
+/** A character from the seed by universe and character slug. */
+export function findCharacter(
+  universeSlug: string,
+  characterSlug: string,
+  seed: readonly UniverseSeed[] = UNIVERSE_SEED,
+): CharacterSeed | undefined {
+  return findUniverse(universeSlug, seed)?.characters.find(
+    (character) => character.slug === characterSlug,
+  );
+}

@@ -1,23 +1,15 @@
-import { CATEGORIES, type Category, type CollectionItem } from '@fandex/core';
 import { useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
 
-import { GRID_GAP, GridItem, useGridLayout } from '@/components/collection-grid';
+import { CategorySections } from '@/components/category-sections';
 import { EmptyState } from '@/components/empty-state';
 import { PageTitle } from '@/components/page-title';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { categoryCountsLabel } from '@/components/universe-card';
+import { CharacterChips } from '@/components/universe-links';
 import { MaxContentWidth, Spacing } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
 import { useUniverse } from '@/hooks/use-universes';
-
-const SECTION_TITLES: Record<Category, string> = {
-  book: 'Books',
-  manga: 'Manga',
-  comic: 'Comics',
-  lego: 'LEGO',
-};
 
 /** Everything you own from one universe, grouped by category, with its characters. */
 export default function UniverseScreen() {
@@ -76,62 +68,25 @@ export default function UniverseScreen() {
             <ThemedText type="smallBold">{categoryCountsLabel(summary.categoryCounts)}</ThemedText>
           </View>
 
-          {summary.characters.length > 0 && <Characters characters={summary.characters} />}
+          {summary.characters.length > 0 && (
+            <View style={styles.section}>
+              <ThemedText type="smallBold" accessibilityRole="header">
+                Characters
+              </ThemedText>
+              <CharacterChips
+                characters={summary.characters.map((character) => ({
+                  universe: universe.slug,
+                  character: character.slug,
+                  itemCount: character.itemCount,
+                }))}
+              />
+            </View>
+          )}
 
-          {CATEGORIES.map((category) => (
-            <CategorySection
-              key={category}
-              category={category}
-              items={items.filter((item) => item.category === category)}
-            />
-          ))}
+          <CategorySections items={items} />
         </View>
       </ScrollView>
     </ThemedView>
-  );
-}
-
-function Characters({ characters }: { characters: { name: string; itemCount: number }[] }) {
-  const colors = useTheme();
-  return (
-    <View style={styles.section}>
-      <ThemedText type="smallBold" accessibilityRole="header">
-        Characters
-      </ThemedText>
-      <View style={styles.chips}>
-        {characters.map((character) => (
-          <View
-            key={character.name}
-            accessible
-            accessibilityLabel={`${character.name}, ${character.itemCount} ${character.itemCount === 1 ? 'item' : 'items'}`}
-            style={[styles.chip, { borderColor: colors.border }]}
-          >
-            <ThemedText type="small">{character.name}</ThemedText>
-            <ThemedText type="small" themeColor="textSecondary">
-              {character.itemCount}
-            </ThemedText>
-          </View>
-        ))}
-      </View>
-    </View>
-  );
-}
-
-/** One category's items as a wrapping grid (a universe has dozens of items, not thousands). */
-function CategorySection({ category, items }: { category: Category; items: CollectionItem[] }) {
-  const { itemWidth } = useGridLayout();
-  if (items.length === 0) return null;
-  return (
-    <View style={styles.section}>
-      <ThemedText type="smallBold" accessibilityRole="header">
-        {SECTION_TITLES[category]} · {items.length}
-      </ThemedText>
-      <View style={styles.grid}>
-        {items.map((item) => (
-          <GridItem key={item.id} item={item} width={itemWidth} />
-        ))}
-      </View>
-    </View>
   );
 }
 
@@ -159,23 +114,5 @@ const styles = StyleSheet.create({
   },
   section: {
     gap: Spacing.two,
-  },
-  chips: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: Spacing.two,
-  },
-  chip: {
-    flexDirection: 'row',
-    gap: Spacing.one,
-    borderWidth: 1,
-    borderRadius: Spacing.four,
-    paddingVertical: Spacing.one,
-    paddingHorizontal: Spacing.three,
-  },
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: GRID_GAP,
   },
 });

@@ -1,5 +1,7 @@
 import {
   UNIVERSE_SEED,
+  findCharacter,
+  findUniverse,
   summarizeCollectionUniverses,
   type CollectionItem,
   type UniverseLinkedItem,
@@ -35,11 +37,24 @@ export function useCollectionUniverses() {
 /** One universe from the seed with the items you own from it (newest first). */
 export function useUniverse(slug: string) {
   const collection = useCollection();
-  const universe = UNIVERSE_SEED.find((candidate) => candidate.slug === slug);
+  const universe = findUniverse(slug);
   const items = collection.data?.filter((item) => item.catalog.universes?.includes(slug));
   const summary =
     universe && items
       ? summarizeCollectionUniverses(items.map(toLinkedItem), [universe])[0]
       : undefined;
   return { ...collection, universe, items, summary };
+}
+
+/** One character from the seed with the items you own that it's in (newest first). */
+export function useCharacter(universeSlug: string, characterSlug: string) {
+  const collection = useCollection();
+  const universe = findUniverse(universeSlug);
+  const character = findCharacter(universeSlug, characterSlug);
+  const items = collection.data?.filter((item) =>
+    item.catalog.characters?.some(
+      (ref) => ref.universe === universeSlug && ref.character === characterSlug,
+    ),
+  );
+  return { ...collection, universe, character, items };
 }

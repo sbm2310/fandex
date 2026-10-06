@@ -8,6 +8,7 @@ import { EmptyState } from '@/components/empty-state';
 import { PageTitle } from '@/components/page-title';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { CharacterChips, UniverseChips } from '@/components/universe-links';
 import { MaxContentWidth, Spacing } from '@/constants/theme';
 import { useCollectionItem, useRemoveFromCollection } from '@/hooks/use-collection';
 import { useTheme } from '@/hooks/use-theme';
@@ -98,10 +99,39 @@ function BookDetail({ item }: { item: CollectionItem }) {
             <Fact label="Added" value={formatDate(item.addedAt)} />
           </View>
 
+          <Links item={item} />
+
           <RemoveButton item={item} />
         </View>
       </ScrollView>
     </ThemedView>
+  );
+}
+
+/** The universes and characters this item belongs to, each opening its page. */
+function Links({ item }: { item: CollectionItem }) {
+  const universes = item.catalog.universes ?? [];
+  const characters = item.catalog.characters ?? [];
+  if (universes.length === 0 && characters.length === 0) return null;
+  return (
+    <View style={styles.links}>
+      {universes.length > 0 && (
+        <View style={styles.linkGroup}>
+          <ThemedText type="small" themeColor="textSecondary" accessibilityRole="header">
+            {universes.length === 1 ? 'Universe' : 'Universes'}
+          </ThemedText>
+          <UniverseChips universes={universes} />
+        </View>
+      )}
+      {characters.length > 0 && (
+        <View style={styles.linkGroup}>
+          <ThemedText type="small" themeColor="textSecondary" accessibilityRole="header">
+            Characters
+          </ThemedText>
+          <CharacterChips characters={characters} />
+        </View>
+      )}
+    </View>
   );
 }
 
@@ -195,6 +225,12 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: MaxContentWidth / 1.5,
     gap: Spacing.four,
+  },
+  links: {
+    gap: Spacing.three,
+  },
+  linkGroup: {
+    gap: Spacing.two,
   },
   coverWrap: {
     alignItems: 'center',

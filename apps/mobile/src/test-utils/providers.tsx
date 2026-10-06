@@ -193,3 +193,30 @@ export const falcon: CatalogSet = {
   subtheme: 'Ultimate Collector Series',
   coverUrl: 'https://cdn.rebrickable.com/media/sets/75192-1/30881.jpg',
 };
+
+// Entries as the Fandex API returns them: with the universes and characters it matched.
+export const linkedHobbit: CatalogBook = {
+  ...hobbit,
+  universes: ['middle-earth'],
+  characters: [
+    { universe: 'middle-earth', character: 'gandalf' },
+    { universe: 'middle-earth', character: 'bilbo-baggins' },
+  ],
+};
+export const rivendell: CatalogSet = {
+  source: 'rebrickable',
+  externalId: '10316-1',
+  category: 'lego',
+  title: 'Lord of the Rings: Rivendell',
+  setNumber: '10316',
+  universes: ['middle-earth'],
+  characters: [
+    { universe: 'middle-earth', character: 'gandalf' },
+    { universe: 'middle-earth', character: 'frodo-baggins' },
+  ],
+};
+export const linkedFalcon: CatalogSet = {
+  ...falcon,
+  universes: ['star-wars'],
+  characters: [{ universe: 'star-wars', character: 'han-solo' }],
+};

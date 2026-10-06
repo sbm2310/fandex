@@ -1,6 +1,6 @@
 import themesFixture from '../catalogs/__fixtures__/rebrickable-themes.json';
 import { normalizeName, normalizeText } from './normalize-name';
-import { UNIVERSE_SEED } from './universe-seed';
+import { UNIVERSE_SEED, findCharacter, findUniverse } from './universe-seed';
 
 // The seed is hand-edited data, so these tests guard its shape rather than its content.
 
@@ -62,5 +62,18 @@ describe('UNIVERSE_SEED', () => {
       for (const character of universe.characters)
         for (const name of [character.name, ...(character.aliases ?? [])])
           expect(normalizeName(name)).not.toBe('');
+  });
+});
+
+describe('findUniverse / findCharacter', () => {
+  it('finds seed entries by slug', () => {
+    expect(findUniverse('star-wars')?.name).toBe('Star Wars');
+    expect(findCharacter('middle-earth', 'gandalf')?.name).toBe('Gandalf');
+  });
+
+  it('returns undefined for unknown slugs, or a character asked for in the wrong universe', () => {
+    expect(findUniverse('narnia')).toBeUndefined();
+    expect(findCharacter('middle-earth', 'aslan')).toBeUndefined();
+    expect(findCharacter('star-wars', 'gandalf')).toBeUndefined();
   });
 });
