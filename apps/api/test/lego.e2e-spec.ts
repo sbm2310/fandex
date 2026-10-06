@@ -23,6 +23,8 @@ const falcon: CatalogSet = {
   theme: 'Star Wars',
   subtheme: 'Ultimate Collector Series',
   coverUrl: 'https://cdn.rebrickable.com/media/sets/75192-1/30881.jpg',
+  // As a set lookup returns it: with its themes and minifigs.
+  matchSignals: { title: 'Millennium Falcon', legoThemeIds: [171, 158], minifigs: [] },
 };
 
 const fakeLego = {

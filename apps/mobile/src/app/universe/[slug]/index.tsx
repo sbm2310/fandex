@@ -11,6 +11,9 @@ import { CharacterChips } from '@/components/universe-links';
 import { MaxContentWidth, Spacing } from '@/constants/theme';
 import { useUniverse } from '@/hooks/use-universes';
 
+/** Characters shown before "Show all" (a universe can have two dozen). */
+const CHARACTER_LIMIT = 10;
+
 /** Everything you own from one universe, grouped by category, with its characters. */
 export default function UniverseScreen() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
@@ -74,11 +77,16 @@ export default function UniverseScreen() {
                 Characters
               </ThemedText>
               <CharacterChips
-                characters={summary.characters.map((character) => ({
-                  universe: universe.slug,
-                  character: character.slug,
-                  itemCount: character.itemCount,
-                }))}
+                // The characters you own the most items with first (stable sort keeps the
+                // seed's order among equals).
+                characters={[...summary.characters]
+                  .sort((a, b) => b.itemCount - a.itemCount)
+                  .map((character) => ({
+                    universe: universe.slug,
+                    character: character.slug,
+                    itemCount: character.itemCount,
+                  }))}
+                limit={CHARACTER_LIMIT}
               />
             </View>
           )}

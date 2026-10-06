@@ -107,6 +107,21 @@ describe('Catalog signals (e2e)', () => {
       expect(row.matchSignals).toEqual(hobbit.matchSignals);
     });
 
+    it('fetches the minifigs when a set seen only in search results is looked up', async () => {
+      await api().get('/api/catalog/search').query({ q: 'falcon', kind: 'lego' }).expect(200);
+
+      const response = await api().get('/api/catalog/lego/75192').expect(200);
+
+      expect(fakeLego.lookupSet).toHaveBeenCalledExactlyOnceWith('75192-1');
+      expect(response.body.characters).toEqual([
+        { universe: 'star-wars', character: 'han-solo' },
+        { universe: 'star-wars', character: 'chewbacca' },
+      ]);
+      // Now complete, so the next lookup is served from the database.
+      await api().get('/api/catalog/lego/75192').expect(200);
+      expect(fakeLego.lookupSet).toHaveBeenCalledTimes(1);
+    });
+
     it("doesn't erase minifigs from a set lookup when the set shows up in a search", async () => {
       await api().get('/api/catalog/lego/75192').expect(200);
       await api().get('/api/catalog/search').query({ q: 'falcon', kind: 'lego' }).expect(200);

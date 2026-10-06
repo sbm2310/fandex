@@ -21,6 +21,7 @@ import { PrismaService } from '../prisma/prisma.service.js';
 import { linksFromRow, linksInclude } from '../universes/item-links.js';
 import { UniverseLinker } from '../universes/universe-linker.service.js';
 import {
+  needsSignals,
   readMatchSignals,
   toCatalogItemData,
   toCatalogItemResponse,
@@ -67,13 +68,18 @@ export class CatalogService {
     return items;
   }
 
-  /** A LEGO set by Rebrickable set number ("75192-1"), served from the database when fresh. */
+  /**
+   * A LEGO set by Rebrickable set number ("75192-1"), served from the database when fresh —
+   * unless it was only seen in search results and its minifigs (its characters) are missing.
+   */
   async lookupSet(setNum: string): Promise<CatalogItemResponse> {
     const stored = await this.prisma.catalogItem.findUnique({
       where: { source_externalId: { source: 'rebrickable', externalId: setNum } },
       include: linksInclude,
     });
-    if (stored && Date.now() - stored.fetchedAt.getTime() < ISBN_CACHE_MAX_AGE_MS) {
+    const fresh = stored && Date.now() - stored.fetchedAt.getTime() < ISBN_CACHE_MAX_AGE_MS;
+    // Without a Rebrickable key there's no way to fetch the minifigs, so serve what we have.
+    if (stored && fresh && (!needsSignals(stored) || !this.lego)) {
       return toCatalogItemResponse(stored, linksFromRow(stored));
     }
     const lego = this.requireLego();

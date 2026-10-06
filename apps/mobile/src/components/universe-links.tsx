@@ -1,5 +1,6 @@
 import { findCharacter, findUniverse, type CharacterRef } from '@fandex/core';
 import { Link } from 'expo-router';
+import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from './themed-text';
@@ -59,20 +60,29 @@ export function UniverseChips({ universes }: { universes: readonly string[] }) {
   );
 }
 
-/** Links to character pages, optionally with how many of your items each is in. */
+/**
+ * Links to character pages, optionally with how many of your items each is in. With `limit`,
+ * long lists show that many first, with a "Show all" chip for the rest.
+ */
 export function CharacterChips({
   characters,
+  limit,
 }: {
   characters: readonly (CharacterRef & { itemCount?: number })[];
+  limit?: number;
 }) {
+  const colors = useTheme();
+  const [expanded, setExpanded] = useState(false);
   const known = characters.flatMap((ref) => {
     const character = findCharacter(ref.universe, ref.character);
     return character ? [{ ...ref, name: character.name }] : [];
   });
   if (known.length === 0) return null;
+  const collapsible = limit !== undefined && known.length > limit;
+  const shown = collapsible && !expanded ? known.slice(0, limit) : known;
   return (
     <View style={styles.chips}>
-      {known.map((character) => (
+      {shown.map((character) => (
         <Chip
           key={`${character.universe}/${character.character}`}
           href={{
@@ -88,6 +98,20 @@ export function CharacterChips({
           }
         />
       ))}
+      {collapsible && (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={
+            expanded ? 'Show fewer characters' : `Show all ${known.length} characters`
+          }
+          onPress={() => setExpanded(!expanded)}
+          style={[styles.chip, { borderColor: colors.accent }]}
+        >
+          <ThemedText type="small" themeColor="accent">
+            {expanded ? 'Show fewer' : `Show all ${known.length}`}
+          </ThemedText>
+        </Pressable>
+      )}
     </View>
   );
 }

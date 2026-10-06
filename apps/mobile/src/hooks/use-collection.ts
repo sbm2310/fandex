@@ -5,12 +5,13 @@ import {
   type CollectionItem,
   type CollectionItemChanges,
   type CollectionRepository,
+  type LegoCatalog,
 } from '@fandex/core';
 import { useMutation, useQuery, useQueryClient, type QueryKey } from '@tanstack/react-query';
 
 import { useCurrentUser } from './use-account';
 
-import { useCollectionRepositories } from '@/services/app-services';
+import { useCollectionRepositories, useLegoCatalog } from '@/services/app-services';
 
 type ActiveCollection =
   | { status: 'loading' }
@@ -99,11 +100,15 @@ function useActiveRepositoryOrThrow() {
 
 export function useAddToCollection() {
   const getActive = useActiveRepositoryOrThrow();
+  const legoCatalog = useLegoCatalog();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (entry: CatalogEntry) => {
-      const { repository, queryKey } = getActive();
-      return { item: await repository.add(entry), queryKey };
+      const { repository, queryKey, mode } = getActive();
+      // On the device, a set saved from search results would never learn its characters
+      // (search skips minifigs); look it up first. Accounts get them from the server.
+      const toSave = mode === 'device' ? await withCharacters(entry, legoCatalog) : entry;
+      return { item: await repository.add(toSave), queryKey };
     },
     // Put the saved item in the cache right away so the UI flips to "owned" in the same
     // render the save completes (no flash of the Add button), then re-read in the background.
@@ -150,4 +155,18 @@ export function useUpdateCollectionItem() {
       void queryClient.invalidateQueries({ queryKey });
     },
   });
+}
+
+/** A LEGO set with its minifig characters, if a lookup can get them (otherwise as it is). */
+async function withCharacters(
+  entry: CatalogEntry,
+  legoCatalog: LegoCatalog,
+): Promise<CatalogEntry> {
+  if (entry.category !== 'lego' || entry.characters) return entry;
+  try {
+    const full = await legoCatalog.lookupSet(entry.externalId);
+    return full?.externalId === entry.externalId ? full : entry;
+  } catch {
+    return entry;
+  }
 }
