@@ -11,6 +11,12 @@ import {
 import type { MatchSignals } from './match-signals';
 import { UNIVERSE_SEED, type UniverseSeed } from './universe-seed';
 
+/**
+ * Bump when the matching rules change, so stored links are recomputed (the API re-matches
+ * every catalog item when this or the seed changes).
+ */
+export const UNIVERSE_MATCHER_VERSION = 1;
+
 export type CharacterRef = { universe: string; character: string };
 
 export type UniverseMatch = {

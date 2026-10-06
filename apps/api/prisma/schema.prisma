@@ -53,7 +53,9 @@ model CatalogItem {
   createdAt    DateTime      @default(now()) @map("created_at") @db.Timestamptz
   updatedAt    DateTime      @updatedAt @map("updated_at") @db.Timestamptz
 
-  ownedBy CollectionItem[]
+  ownedBy    CollectionItem[]
+  universes  CatalogItemUniverse[]
+  characters CatalogItemCharacter[]
 
   @@unique([source, externalId])
   @@index([isbn13])
@@ -146,4 +148,72 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+/// A fictional universe from the curated seed (UNIVERSE_SEED in @fandex/core), synced on start.
+model Universe {
+  id          String @id @default(uuid(7)) @db.Uuid
+  slug        String @unique
+  name        String
+  description String
+  wikidataId  String @map("wikidata_id")
+  /// Order in the seed (lists are shown in this order).
+  position    Int
+
+  characters   Character[]
+  catalogItems CatalogItemUniverse[]
+
+  @@map("universe")
+}
+
+/// A character in a universe, from the seed.
+model Character {
+  id         String   @id @default(uuid(7)) @db.Uuid
+  universeId String   @map("universe_id") @db.Uuid
+  slug       String
+  name       String
+  aliases    String[]
+  wikidataId String   @map("wikidata_id")
+  position   Int
+
+  universe     Universe               @relation(fields: [universeId], references: [id], onDelete: Cascade)
+  catalogItems CatalogItemCharacter[]
+
+  @@unique([universeId, slug])
+  @@map("character")
+}
+
+/// Automatic link: a catalog item belongs to a universe (computed by matchUniverses).
+model CatalogItemUniverse {
+  catalogItemId String @map("catalog_item_id") @db.Uuid
+  universeId    String @map("universe_id") @db.Uuid
+
+  catalogItem CatalogItem @relation(fields: [catalogItemId], references: [id], onDelete: Cascade)
+  universe    Universe    @relation(fields: [universeId], references: [id], onDelete: Cascade)
+
+  @@id([catalogItemId, universeId])
+  @@index([universeId])
+  @@map("catalog_item_universe")
+}
+
+/// Automatic link: a character appears in a catalog item.
+model CatalogItemCharacter {
+  catalogItemId String @map("catalog_item_id") @db.Uuid
+  characterId   String @map("character_id") @db.Uuid
+
+  catalogItem CatalogItem @relation(fields: [catalogItemId], references: [id], onDelete: Cascade)
+  character   Character   @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@id([catalogItemId, characterId])
+  @@index([characterId])
+  @@map("catalog_item_character")
+}
+
+/// Bookkeeping for startup tasks: which version of something was last applied (e.g. the seed).
+model SyncState {
+  name     String   @id
+  hash     String
+  syncedAt DateTime @default(now()) @map("synced_at") @db.Timestamptz
+
+  @@map("sync_state")
 }

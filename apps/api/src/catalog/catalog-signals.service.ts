@@ -19,6 +19,7 @@ import { ConfigService } from '@nestjs/config';
 import type { Env } from '../config/env.js';
 import type { CatalogItem } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { UniverseLinker } from '../universes/universe-linker.service.js';
 import { needsSignals, toJson } from './catalog-item.mapper.js';
 import { BOOK_CATALOG, LEGO_CATALOG } from './catalog.service.js';
 
@@ -40,6 +41,7 @@ export class CatalogSignalsService implements OnApplicationBootstrap, BeforeAppl
     @Inject(LEGO_CATALOG) private readonly lego: LegoCatalog | null,
     private readonly prisma: PrismaService,
     private readonly config: ConfigService<Env, true>,
+    private readonly linker: UniverseLinker,
   ) {}
 
   /** Starts the backfill without delaying startup (tests start it themselves). */
@@ -122,6 +124,7 @@ export class CatalogSignalsService implements OnApplicationBootstrap, BeforeAppl
       data: { matchSignals: toJson(signals), ...(workKey && { workKey }) },
     });
     if (count === 0) return 'skipped';
+    await this.linker.link(id, signals);
     return entry ? 'refreshed' : 'not-found';
   }
 

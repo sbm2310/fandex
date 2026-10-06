@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import type { Env } from '../config/env.js';
+import { UniversesModule } from '../universes/universes.module.js';
 
 import { CatalogSignalsService } from './catalog-signals.service.js';
 import { CatalogController } from './catalog.controller.js';
@@ -14,6 +15,7 @@ import { RequestSpacer } from './request-spacer.js';
 const OPEN_LIBRARY_USER_AGENT = 'Fandex/0.2 (https://github.com/sbm2310/fandex)';
 
 @Module({
+  imports: [UniversesModule],
   controllers: [CatalogController],
   providers: [
     CatalogService,

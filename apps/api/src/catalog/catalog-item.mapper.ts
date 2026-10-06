@@ -7,6 +7,7 @@ import {
 } from '@fandex/core';
 
 import type { CatalogItem, Prisma } from '../generated/prisma/client.js';
+import type { ItemLinks } from '../universes/item-links.js';
 
 /** Catalog data as stored: what we upsert from an external catalog. */
 export function toCatalogItemData(entry: CatalogBook | CatalogSet): Prisma.CatalogItemCreateInput {
@@ -77,8 +78,8 @@ export function needsSignals(row: Pick<CatalogItem, 'category' | 'matchSignals'>
   return signals === null || (row.category === 'lego' && signals.minifigs === undefined);
 }
 
-/** A stored row as the API returns it (null columns become absent fields). */
-export function toCatalogItemResponse(row: CatalogItem): CatalogItemResponse {
+/** A stored row as the API returns it, with its links (null columns become absent fields). */
+export function toCatalogItemResponse(row: CatalogItem, links: ItemLinks): CatalogItemResponse {
   return {
     id: row.id,
     category: row.category,
@@ -95,5 +96,7 @@ export function toCatalogItemResponse(row: CatalogItem): CatalogItemResponse {
     ...(row.pieceCount !== null && { pieceCount: row.pieceCount }),
     ...(row.theme !== null && { theme: row.theme }),
     ...(row.subtheme !== null && { subtheme: row.subtheme }),
+    universes: links.universes,
+    characters: links.characters,
   };
 }

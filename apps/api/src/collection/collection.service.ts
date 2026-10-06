@@ -5,8 +5,9 @@ import { Prisma } from '../generated/prisma/client.js';
 import { toCatalogItemResponse } from '../catalog/catalog-item.mapper.js';
 import { CatalogSignalsService } from '../catalog/catalog-signals.service.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { linksFromRow, linksInclude } from '../universes/item-links.js';
 
-const withCatalog = { catalogItem: true } as const;
+const withCatalog = { catalogItem: { include: linksInclude } } as const;
 type CollectionRow = Prisma.CollectionItemGetPayload<{ include: typeof withCatalog }>;
 
 /**
@@ -69,7 +70,7 @@ function toCollectionItemResponse(row: CollectionRow): CollectionItemResponse {
     id: row.id,
     addedAt: row.addedAt.toISOString(),
     ...(row.notes !== null && { notes: row.notes }),
-    catalog: toCatalogItemResponse(row.catalogItem),
+    catalog: toCatalogItemResponse(row.catalogItem, linksFromRow(row.catalogItem)),
   };
 }
 

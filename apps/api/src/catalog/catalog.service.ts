@@ -18,6 +18,8 @@ import {
 
 import { TtlCache } from '../common/ttl-cache.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { linksFromRow, linksInclude } from '../universes/item-links.js';
+import { UniverseLinker } from '../universes/universe-linker.service.js';
 import {
   readMatchSignals,
   toCatalogItemData,
@@ -48,6 +50,7 @@ export class CatalogService {
     @Inject(BOOK_CATALOG) private readonly catalog: BookCatalog,
     @Inject(LEGO_CATALOG) private readonly lego: LegoCatalog | null,
     private readonly prisma: PrismaService,
+    private readonly linker: UniverseLinker,
   ) {}
 
   async search(query: string, kind: CatalogSearchKind = 'books'): Promise<CatalogItemResponse[]> {
@@ -68,9 +71,10 @@ export class CatalogService {
   async lookupSet(setNum: string): Promise<CatalogItemResponse> {
     const stored = await this.prisma.catalogItem.findUnique({
       where: { source_externalId: { source: 'rebrickable', externalId: setNum } },
+      include: linksInclude,
     });
     if (stored && Date.now() - stored.fetchedAt.getTime() < ISBN_CACHE_MAX_AGE_MS) {
-      return toCatalogItemResponse(stored);
+      return toCatalogItemResponse(stored, linksFromRow(stored));
     }
     const lego = this.requireLego();
     const set = await this.fromSource(() => lego.lookupSet(setNum)).catch((error) => {
@@ -78,7 +82,7 @@ export class CatalogService {
       throw error;
     });
     if (set) return this.save(set);
-    if (stored) return toCatalogItemResponse(stored);
+    if (stored) return toCatalogItemResponse(stored, linksFromRow(stored));
     throw new NotFoundException(`No LEGO set ${setNum}`);
   }
 
@@ -93,9 +97,10 @@ export class CatalogService {
     const stored = await this.prisma.catalogItem.findFirst({
       where: { isbn13: isbn },
       orderBy: { fetchedAt: 'desc' },
+      include: linksInclude,
     });
     if (stored && Date.now() - stored.fetchedAt.getTime() < ISBN_CACHE_MAX_AGE_MS) {
-      return toCatalogItemResponse(stored);
+      return toCatalogItemResponse(stored, linksFromRow(stored));
     }
 
     const book = await this.fromSource(() => this.catalog.lookupIsbn(isbn)).catch((error) => {
@@ -104,11 +109,11 @@ export class CatalogService {
       throw error;
     });
     if (book) return this.save(book);
-    if (stored) return toCatalogItemResponse(stored);
+    if (stored) return toCatalogItemResponse(stored, linksFromRow(stored));
     throw new NotFoundException(`No book found for ISBN ${isbn}`);
   }
 
-  /** Inserts or refreshes the item for this source record and returns it with our id. */
+  /** Inserts or refreshes the item for this source record, links it, and returns it with our id. */
   private async save(entry: CatalogBook | CatalogSet): Promise<CatalogItemResponse> {
     const data = toCatalogItemData(await this.withStoredMinifigs(entry));
     const row = await this.prisma.catalogItem.upsert({
@@ -116,7 +121,8 @@ export class CatalogService {
       create: data,
       update: data,
     });
-    return toCatalogItemResponse(row);
+    const links = await this.linker.link(row.id, readMatchSignals(row));
+    return toCatalogItemResponse(row, links);
   }
 
   /**

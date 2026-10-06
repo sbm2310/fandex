@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { CATEGORIES } from '../category';
 import { parseSetNumber } from '../catalog-set';
 import { parseIsbn } from '../isbn';
+import { characterRefSchema, slugSchema } from './universe';
 
 /** A catalog entry as the API returns it: cached in our database, with our own id. */
 export const catalogItemSchema = z.object({
@@ -24,6 +25,10 @@ export const catalogItemSchema = z.object({
   /** LEGO: top-level theme ("Star Wars") and sub-theme ("Ultimate Collector Series"). */
   theme: z.string().optional(),
   subtheme: z.string().optional(),
+  /** The universes this item belongs to (slugs; see GET /universes), in seed order. */
+  universes: z.array(slugSchema).default([]),
+  /** The characters in it, each with its universe. */
+  characters: z.array(characterRefSchema).default([]),
 });
 
 export type CatalogItemResponse = z.infer<typeof catalogItemSchema>;

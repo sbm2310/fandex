@@ -49,7 +49,7 @@ collection_item_link                     ← a user's manual fixes
 
 **2. Capture match signals.** ✅ The Open Library adapter returns people, places, series and work key; the Rebrickable adapter returns theme ids and, for a set lookup, its minifig names (one extra call, cached with the set). Migration adds `match_signals` and `work_key` to `catalog_item`. A backfill command refetches signals for items already in the database (rate-limited), and runs once on Render. _Demo:_ the Hobbit's catalog row holds Bilbo, Gandalf and Middle-earth.
 
-**3. Universes in the API.** Tables and migration, seed sync on start, links computed on every catalog upsert, re-match when the seed changes. Public `GET /universes` and `GET /universes/:slug` (with characters). Catalog responses include universe and character refs, so the app can show them before an item is owned. _Demo:_ `curl /api/catalog/search?q=hobbit` shows `universes: [middle-earth]`.
+**3. Universes in the API.** ✅ Tables and migration, seed sync on start, links computed on every catalog upsert, re-match when the seed changes. Public `GET /universes` and `GET /universes/:slug` (with characters). Catalog responses include universe and character refs, so the app can show them before an item is owned. _Demo:_ `curl /api/catalog/search?q=hobbit` shows `universes: [middle-earth]`.
 
 **4. Your collection by universe (API).** Collection items carry their effective links; `GET /collection/universes` returns the universes and characters the user owns, with counts per category. User isolation tests extended to the new endpoints. _Demo:_ `curl` your universe summary.
 
