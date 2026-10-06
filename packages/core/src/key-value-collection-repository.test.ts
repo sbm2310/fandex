@@ -217,4 +217,79 @@ describe('KeyValueCollectionRepository', () => {
     await expect(repository.add(dune)).resolves.toMatchObject({ catalog: dune });
     await expect(repository.list()).resolves.toHaveLength(1);
   });
+
+  describe('update', () => {
+    const linkedHobbit: CatalogBook = {
+      ...hobbit,
+      universes: ['middle-earth'],
+      characters: [{ universe: 'middle-earth', character: 'gandalf' }],
+    };
+
+    it('corrects the category and stores link fixes, across restarts', async () => {
+      const store = new MemoryStore();
+      const { repository } = createRepository(store);
+      const item = await repository.add(linkedHobbit);
+
+      const updated = await repository.update(item.id, {
+        category: 'comic',
+        links: {
+          universes: ['middle-earth'],
+          characters: [{ universe: 'middle-earth', character: 'bilbo-baggins' }],
+        },
+      });
+
+      expect(updated).toMatchObject({ category: 'comic', catalog: { category: 'book' } });
+      expect(updated.linkEdits).toEqual({
+        addedCharacters: [{ universe: 'middle-earth', character: 'bilbo-baggins' }],
+        removedCharacters: [{ universe: 'middle-earth', character: 'gandalf' }],
+      });
+      const [reloaded] = await createRepository(store).repository.list();
+      expect(reloaded).toEqual(updated);
+    });
+
+    it('resets to what the catalog says', async () => {
+      const { repository } = createRepository();
+      const item = await repository.add(linkedHobbit);
+      await repository.update(item.id, {
+        category: 'manga',
+        links: { universes: [], characters: [] },
+      });
+
+      const reset = await repository.update(item.id, { category: null, links: null });
+
+      expect(reset.category).toBe('book');
+      expect(reset).not.toHaveProperty('linkEdits');
+    });
+
+    it('keeps fields that are left out', async () => {
+      const { repository } = createRepository();
+      const item = await repository.add(linkedHobbit);
+      await repository.update(item.id, { category: 'manga' });
+
+      const updated = await repository.update(item.id, {
+        links: { universes: [], characters: [] },
+      });
+
+      expect(updated.category).toBe('manga');
+      expect(updated.linkEdits).toEqual({ removedUniverses: ['middle-earth'] });
+    });
+
+    it("rejects a category change for a LEGO set, and an item that isn't there", async () => {
+      const { repository } = createRepository();
+      const set = await repository.add({
+        source: 'rebrickable',
+        category: 'lego',
+        externalId: '10316-1',
+        title: 'Rivendell',
+        setNumber: '10316',
+      });
+
+      await expect(repository.update(set.id, { category: 'book' })).rejects.toThrow(
+        "can't be changed",
+      );
+      await expect(repository.update('missing', { category: null })).rejects.toBeInstanceOf(
+        CollectionStorageError,
+      );
+    });
+  });
 });

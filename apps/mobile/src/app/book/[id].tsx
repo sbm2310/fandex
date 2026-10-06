@@ -1,8 +1,9 @@
-import { formatTitle, type CollectionItem } from '@fandex/core';
+import { formatTitle, isEdited, itemLinks, type CollectionItem } from '@fandex/core';
 import { router, useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import { BookCover } from '@/components/book-cover';
+import { Button } from '@/components/button';
 import { CATEGORY_LABELS } from '@/components/category-badge';
 import { EmptyState } from '@/components/empty-state';
 import { PageTitle } from '@/components/page-title';
@@ -101,6 +102,19 @@ function BookDetail({ item }: { item: CollectionItem }) {
 
           <Links item={item} />
 
+          <View style={styles.fix}>
+            {isEdited(item) && (
+              <ThemedText type="small" themeColor="textSecondary" style={styles.centeredText}>
+                You&apos;ve edited this item&apos;s details.
+              </ThemedText>
+            )}
+            <Button
+              label="Fix details"
+              variant="secondary"
+              onPress={() => router.push({ pathname: '/edit/[id]', params: { id: item.id } })}
+            />
+          </View>
+
           <RemoveButton item={item} />
         </View>
       </ScrollView>
@@ -110,8 +124,7 @@ function BookDetail({ item }: { item: CollectionItem }) {
 
 /** The universes and characters this item belongs to, each opening its page. */
 function Links({ item }: { item: CollectionItem }) {
-  const universes = item.catalog.universes ?? [];
-  const characters = item.catalog.characters ?? [];
+  const { universes, characters } = itemLinks(item);
   if (universes.length === 0 && characters.length === 0) return null;
   return (
     <View style={styles.links}>
@@ -228,6 +241,9 @@ const styles = StyleSheet.create({
   },
   links: {
     gap: Spacing.three,
+  },
+  fix: {
+    gap: Spacing.two,
   },
   linkGroup: {
     gap: Spacing.two,

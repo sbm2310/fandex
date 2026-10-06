@@ -57,7 +57,7 @@ collection_item_link                     ← a user's manual fixes
 
 **6. Character pages and item links (app).** ✅ Character page (everything you own with that character); universe and character chips on the item detail screen and on search results, each opening its page. _Demo:_ tap Gandalf on the Rivendell set, land on his page with The Hobbit on it.
 
-**7. Manual fixes.** On an item's detail screen: add or remove a universe or character, and override the category (the Stage 2 classifier follow-up). API endpoints write `collection_item_link` (and a per-user category override); guest mode stores the same fixes on the device. _Demo:_ remove a wrong match, add a missing one, see the universe page update on phone and web.
+**7. Manual fixes.** ✅ On an item's detail screen: add or remove a universe or character, and override the category (the Stage 2 classifier follow-up). API endpoints write `collection_item_link` (and a per-user category override); guest mode stores the same fixes on the device. _Demo:_ remove a wrong match, add a missing one, see the universe page update on phone and web.
 
 **8. "You own another edition."** Using the Open Library work key: search results and detail show a hint when you own a different edition of the same book. _Demo:_ search a different printing of a book you own and see the hint.
 

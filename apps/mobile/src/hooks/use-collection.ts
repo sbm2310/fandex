@@ -2,6 +2,7 @@ import {
   isSameEntry,
   type CatalogEntry,
   type CollectionItem,
+  type CollectionItemChanges,
   type CollectionRepository,
 } from '@fandex/core';
 import { useMutation, useQuery, useQueryClient, type QueryKey } from '@tanstack/react-query';
@@ -120,6 +121,24 @@ export function useRemoveFromCollection() {
     onSuccess: ({ id, queryKey }) => {
       queryClient.setQueryData<CollectionItem[]>(queryKey, (items = []) =>
         items.filter((item) => item.id !== id),
+      );
+      void queryClient.invalidateQueries({ queryKey });
+    },
+  });
+}
+
+/** Fixes an owned item's category or universe links; the cache updates as soon as it's saved. */
+export function useUpdateCollectionItem() {
+  const getActive = useActiveRepositoryOrThrow();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, changes }: { id: string; changes: CollectionItemChanges }) => {
+      const { repository, queryKey } = getActive();
+      return { item: await repository.update(id, changes), queryKey };
+    },
+    onSuccess: ({ item, queryKey }) => {
+      queryClient.setQueryData<CollectionItem[]>(queryKey, (items = []) =>
+        items.map((existing) => (existing.id === item.id ? item : existing)),
       );
       void queryClient.invalidateQueries({ queryKey });
     },

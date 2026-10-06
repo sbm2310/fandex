@@ -1,5 +1,5 @@
 import type { CatalogEntry } from './catalog-entry';
-import type { CollectionItem } from './collection-item';
+import type { CollectionItem, CollectionItemChanges } from './collection-item';
 import type { Isbn13 } from './isbn';
 
 /**
@@ -12,5 +12,7 @@ export interface CollectionRepository {
   add(entry: CatalogEntry): Promise<CollectionItem>;
   /** Removes an item; does nothing if the id doesn't exist. */
   remove(id: string): Promise<void>;
+  /** Fixes an item's category or universe links; rejects if the item doesn't exist. */
+  update(id: string, changes: CollectionItemChanges): Promise<CollectionItem>;
   findByIsbn(isbn: Isbn13): Promise<CollectionItem | undefined>;
 }

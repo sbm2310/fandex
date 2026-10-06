@@ -1,12 +1,15 @@
 import {
   addToCollectionRequestSchema,
+  updateCollectionItemRequestSchema,
+  type UpdateCollectionItemRequest,
   type AddToCollectionRequest,
   type CollectionItemResponse,
   type CollectionResponse,
   type CollectionUniversesResponse,
 } from '@fandex/core';
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Res } from '@nestjs/common';
 import {
+  ApiBadRequestResponse,
   ApiCookieAuth,
   ApiCreatedResponse,
   ApiNoContentResponse,
@@ -58,6 +61,20 @@ export class CollectionController {
     const { item, created } = await this.collection.add(session.user.id, body.catalogItemId);
     response.status(created ? 201 : 200);
     return item;
+  }
+
+  @Patch(':id')
+  @ApiOkResponse({ description: 'Updated; the item as you now see it.' })
+  @ApiBadRequestResponse({
+    description: 'Nothing to change, an unknown universe or character, or a LEGO category change.',
+  })
+  @ApiNotFoundResponse({ description: 'Not in your collection.' })
+  async update(
+    @Session() session: UserSession,
+    @Param('id', { schema: itemIdSchema }) id: string,
+    @Body({ schema: updateCollectionItemRequestSchema }) body: UpdateCollectionItemRequest,
+  ): Promise<CollectionItemResponse> {
+    return this.collection.update(session.user.id, id, body);
   }
 
   @Delete(':id')

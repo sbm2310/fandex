@@ -2,8 +2,10 @@ import {
   CollectionStorageError,
   collectionItemSchema,
   collectionResponseSchema,
+  isBookCategory,
   type CatalogEntry,
   type CollectionItem,
+  type CollectionItemChanges,
   type CollectionItemResponse,
   type CollectionRepository,
   type Isbn13,
@@ -44,6 +46,17 @@ export class ApiCollectionRepository implements CollectionRepository {
     await this.request(`/collection/${encodeURIComponent(id)}`, { method: 'DELETE' }, [404]);
   }
 
+  async update(id: string, changes: CollectionItemChanges): Promise<CollectionItem> {
+    const response = await this.request(`/collection/${encodeURIComponent(id)}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(changes),
+    });
+    const item = toCollectionItem(collectionItemSchema.parse(await response.json()));
+    if (!item) throw new CollectionStorageError('The server returned an item the app cannot show');
+    return item;
+  }
+
   async findByIsbn(isbn: Isbn13): Promise<CollectionItem | undefined> {
     return (await this.list()).find(
       (item) => item.category !== 'lego' && item.catalog.isbn13 === isbn,
@@ -67,8 +80,15 @@ export class ApiCollectionRepository implements CollectionRepository {
 function toCollectionItem(item: CollectionItemResponse): CollectionItem | null {
   const catalog = toCatalogEntry(item.catalog);
   if (!catalog) return null;
-  const base = { id: item.id, addedAt: item.addedAt, ...(item.notes && { notes: item.notes }) };
-  return catalog.category === 'lego'
-    ? { ...base, category: 'lego', catalog }
-    : { ...base, category: catalog.category, catalog };
+  const base = {
+    id: item.id,
+    addedAt: item.addedAt,
+    ...(item.notes && { notes: item.notes }),
+    ...(item.linkEdits && { linkEdits: item.linkEdits }),
+  };
+  if (catalog.category === 'lego') return { ...base, category: 'lego', catalog };
+  // The user's corrected category, if any (older servers don't send one).
+  const category =
+    item.category && isBookCategory(item.category) ? item.category : catalog.category;
+  return { ...base, category, catalog };
 }

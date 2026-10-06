@@ -1,6 +1,11 @@
 import type { CatalogBook } from './catalog-book';
 import type { CatalogEntry } from './catalog-entry';
-import { createCollectionItem, type CollectionItem } from './collection-item';
+import {
+  applyItemChanges,
+  createCollectionItem,
+  type CollectionItem,
+  type CollectionItemChanges,
+} from './collection-item';
 import type { CollectionRepository } from './collection-repository';
 import type { Isbn13 } from './isbn';
 import { isSameEntry } from './same-book';
@@ -68,6 +73,18 @@ export class KeyValueCollectionRepository implements CollectionRepository {
       const items = await this.read();
       const remaining = items.filter((item) => item.id !== id);
       if (remaining.length !== items.length) await this.write(remaining);
+    });
+  }
+
+  update(id: string, changes: CollectionItemChanges): Promise<CollectionItem> {
+    return this.serialize(async () => {
+      const items = await this.read();
+      const index = items.findIndex((item) => item.id === id);
+      const item = items[index];
+      if (!item) throw new CollectionStorageError('This item is no longer in your collection');
+      const updated = applyItemChanges(item, changes);
+      await this.write(items.map((existing, i) => (i === index ? updated : existing)));
+      return updated;
     });
   }
 

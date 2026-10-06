@@ -1,9 +1,8 @@
-import type { CharacterRef } from '@fandex/core';
+import type { ItemLinks } from '@fandex/core';
 
 import type { Prisma } from '../generated/prisma/client.js';
 
-/** A catalog item's universes and characters, in seed order. */
-export type ItemLinks = { universes: string[]; characters: CharacterRef[] };
+export type { ItemLinks };
 
 /** Loads a catalog item's links along with it (for responses). */
 export const linksInclude = {

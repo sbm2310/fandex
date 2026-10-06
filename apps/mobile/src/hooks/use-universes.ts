@@ -2,6 +2,7 @@ import {
   UNIVERSE_SEED,
   findCharacter,
   findUniverse,
+  itemLinks,
   summarizeCollectionUniverses,
   type CollectionItem,
   type UniverseLinkedItem,
@@ -9,14 +10,13 @@ import {
 
 import { useCollection } from './use-collection';
 
-/** The parts of an owned item the universe summary needs. */
+/** The parts of an owned item the universe summary needs (with the user's fixes applied). */
 function toLinkedItem(item: CollectionItem): UniverseLinkedItem {
   return {
     category: item.category,
     coverUrl: item.catalog.coverUrl,
     addedAt: item.addedAt,
-    universes: item.catalog.universes ?? [],
-    characters: item.catalog.characters ?? [],
+    ...itemLinks(item),
   };
 }
 
@@ -38,7 +38,7 @@ export function useCollectionUniverses() {
 export function useUniverse(slug: string) {
   const collection = useCollection();
   const universe = findUniverse(slug);
-  const items = collection.data?.filter((item) => item.catalog.universes?.includes(slug));
+  const items = collection.data?.filter((item) => itemLinks(item).universes.includes(slug));
   const summary =
     universe && items
       ? summarizeCollectionUniverses(items.map(toLinkedItem), [universe])[0]
@@ -52,7 +52,7 @@ export function useCharacter(universeSlug: string, characterSlug: string) {
   const universe = findUniverse(universeSlug);
   const character = findCharacter(universeSlug, characterSlug);
   const items = collection.data?.filter((item) =>
-    item.catalog.characters?.some(
+    itemLinks(item).characters.some(
       (ref) => ref.universe === universeSlug && ref.character === characterSlug,
     ),
   );

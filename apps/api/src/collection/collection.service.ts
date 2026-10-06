@@ -1,9 +1,15 @@
 import {
+  applyLinkEdits,
+  diffLinks,
+  linkEditsSchema,
   summarizeCollectionUniverses,
   type CollectionItemResponse,
   type CollectionUniverse,
+  type ItemLinks,
+  type LinkEdits,
+  type UpdateCollectionItemRequest,
 } from '@fandex/core';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 
 import { Prisma } from '../generated/prisma/client.js';
 import { toCatalogItemResponse } from '../catalog/catalog-item.mapper.js';
@@ -52,10 +58,10 @@ export class CollectionService {
       }),
     ]);
     const items = rows.map((row) => ({
-      category: row.catalogItem.category,
+      category: row.categoryOverride ?? row.catalogItem.category,
       coverUrl: row.catalogItem.coverUrl ?? undefined,
       addedAt: row.addedAt.toISOString(),
-      ...linksFromRow(row.catalogItem),
+      ...effectiveLinks(row),
     }));
     return summarizeCollectionUniverses(items, directory);
   }
@@ -88,6 +94,66 @@ export class CollectionService {
     }
   }
 
+  /**
+   * Fixes the user's copy: its category (books only) and the universes and characters it's
+   * linked to. Only differences from the automatic links are stored, so later matching
+   * improvements still show up. Someone else's item is reported as not found.
+   */
+  async update(
+    userId: string,
+    id: string,
+    changes: UpdateCollectionItemRequest,
+  ): Promise<CollectionItemResponse> {
+    const row = await this.prisma.collectionItem.findFirst({
+      where: { id, userId },
+      include: withCatalog,
+    });
+    if (!row) throw new NotFoundException('No such item in your collection');
+
+    const data: Prisma.CollectionItemUpdateInput = {};
+    if (changes.category !== undefined) {
+      if (row.catalogItem.category === 'lego') {
+        throw new BadRequestException("A LEGO set's category can't be changed");
+      }
+      const override = changes.category ?? null;
+      data.categoryOverride = override === row.catalogItem.category ? null : override;
+    }
+    if (changes.links !== undefined) {
+      if (changes.links) await this.assertKnown(changes.links);
+      const edits = changes.links
+        ? diffLinks(linksFromRow(row.catalogItem), changes.links)
+        : undefined;
+      data.linkEdits = edits ? (edits as Prisma.InputJsonObject) : Prisma.DbNull;
+    }
+
+    const updated = await this.prisma.collectionItem.update({
+      where: { id: row.id },
+      data,
+      include: withCatalog,
+    });
+    return toCollectionItemResponse(updated);
+  }
+
+  /** Rejects universes and characters the seed doesn't have (or a character in the wrong one). */
+  private async assertKnown(links: ItemLinks): Promise<void> {
+    const slugs = [...new Set([...links.universes, ...links.characters.map((c) => c.universe)])];
+    const universes = await this.prisma.universe.findMany({
+      where: { slug: { in: slugs } },
+      select: { slug: true, characters: { select: { slug: true } } },
+    });
+    const known = new Map(universes.map((u) => [u.slug, new Set(u.characters.map((c) => c.slug))]));
+    const unknownUniverse = slugs.find((slug) => !known.has(slug));
+    if (unknownUniverse) throw new BadRequestException(`Unknown universe "${unknownUniverse}"`);
+    const unknownCharacter = links.characters.find(
+      (ref) => !known.get(ref.universe)?.has(ref.character),
+    );
+    if (unknownCharacter) {
+      throw new BadRequestException(
+        `Unknown character "${unknownCharacter.character}" in "${unknownCharacter.universe}"`,
+      );
+    }
+  }
+
   /** Removes the user's item. Someone else's item is reported as not found, not forbidden. */
   async remove(userId: string, id: string): Promise<void> {
     const { count } = await this.prisma.collectionItem.deleteMany({ where: { id, userId } });
@@ -96,12 +162,26 @@ export class CollectionService {
 }
 
 function toCollectionItemResponse(row: CollectionRow): CollectionItemResponse {
+  const linkEdits = readLinkEdits(row);
   return {
     id: row.id,
     addedAt: row.addedAt.toISOString(),
     ...(row.notes !== null && { notes: row.notes }),
+    category: row.categoryOverride ?? row.catalogItem.category,
+    ...(linkEdits && { linkEdits }),
+    // The catalog keeps the automatic links; the app applies linkEdits (as guest mode does).
     catalog: toCatalogItemResponse(row.catalogItem, linksFromRow(row.catalogItem)),
   };
+}
+
+function readLinkEdits(row: Pick<CollectionRow, 'linkEdits'>): LinkEdits | undefined {
+  const parsed = linkEditsSchema.safeParse(row.linkEdits);
+  return parsed.success ? parsed.data : undefined;
+}
+
+/** The links the user sees: automatic ones with their fixes applied. */
+function effectiveLinks(row: CollectionRow): ItemLinks {
+  return applyLinkEdits(linksFromRow(row.catalogItem), readLinkEdits(row));
 }
 
 /** P2002 = unique constraint violated, P2003 = foreign key constraint violated. */

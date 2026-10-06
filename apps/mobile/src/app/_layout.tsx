@@ -42,6 +42,10 @@ export default function RootLayout() {
               options={{ title: '', headerBackTitle: 'Back' }}
             />
             <Stack.Screen
+              name="edit/[id]"
+              options={{ presentation: 'modal', title: 'Fix details' }}
+            />
+            <Stack.Screen
               name="scan"
               options={{ presentation: 'fullScreenModal', headerShown: false }}
             />

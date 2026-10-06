@@ -65,13 +65,17 @@ model CatalogItem {
 
 /// A copy a user owns. Deleted with the user; a catalog entry can't be deleted while owned.
 model CollectionItem {
-  id            String      @id @default(uuid(7)) @db.Uuid
-  userId        String      @map("user_id") @db.Uuid
-  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  catalogItemId String      @map("catalog_item_id") @db.Uuid
-  catalogItem   CatalogItem @relation(fields: [catalogItemId], references: [id], onDelete: Restrict)
-  addedAt       DateTime    @default(now()) @map("added_at") @db.Timestamptz
-  notes         String?
+  id               String      @id @default(uuid(7)) @db.Uuid
+  userId           String      @map("user_id") @db.Uuid
+  user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  catalogItemId    String      @map("catalog_item_id") @db.Uuid
+  catalogItem      CatalogItem @relation(fields: [catalogItemId], references: [id], onDelete: Restrict)
+  addedAt          DateTime    @default(now()) @map("added_at") @db.Timestamptz
+  notes            String?
+  /// The user's correction of the catalog's category (books only); null = the catalog's.
+  categoryOverride Category?   @map("category_override")
+  /// The user's fixes to the automatic universe links (LinkEdits in @fandex/core); null = none.
+  linkEdits        Json?       @map("link_edits")
 
   // Each edition once per user (ownership is per edition).
   @@unique([userId, catalogItemId])

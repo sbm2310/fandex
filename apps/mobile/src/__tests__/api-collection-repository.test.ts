@@ -87,4 +87,45 @@ describe('ApiCollectionRepository', () => {
 
     await expect(repository.list()).rejects.toBeInstanceOf(CollectionStorageError);
   });
+
+  it('sends fixes with PATCH and reads back the corrected category and link edits', async () => {
+    const edits = { addedUniverses: ['star-wars'] };
+    const { repository, apiFetch } = repositoryWith(() =>
+      json({ ...owned, category: 'comic', linkEdits: edits }),
+    );
+    const changes = {
+      category: 'comic' as const,
+      links: { universes: ['star-wars'], characters: [] },
+    };
+
+    const item = await repository.update(owned.id, changes);
+
+    expect(item).toMatchObject({
+      category: 'comic',
+      linkEdits: edits,
+      catalog: { category: 'manga' },
+    });
+    expect(apiFetch).toHaveBeenCalledWith(`/collection/${owned.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(changes),
+    });
+  });
+
+  it('falls back to the catalog category for servers that send none', async () => {
+    const { repository } = repositoryWith(() => json({ items: [owned] }));
+
+    const [item] = await repository.list();
+
+    expect(item?.category).toBe('manga');
+    expect(item).not.toHaveProperty('linkEdits');
+  });
+
+  it('reports a failed update', async () => {
+    const { repository } = repositoryWith(() => json({ message: 'Bad Request' }, 400));
+
+    await expect(repository.update(owned.id, { category: null })).rejects.toBeInstanceOf(
+      CollectionStorageError,
+    );
+  });
 });
