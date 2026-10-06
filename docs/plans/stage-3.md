@@ -53,7 +53,7 @@ collection_item_link                     ← a user's manual fixes
 
 **4. Your collection by universe (API).** ✅ Collection items carry their effective links; `GET /collection/universes` returns the universes and characters the user owns, with counts per category. User isolation tests extended to the new endpoints. _Demo:_ `curl` your universe summary.
 
-**5. Universes tab (app).** A new tab listing the universes you own items from (with counts and cover thumbnails), and a universe page with your items grouped by category plus its characters. Works in guest mode from the links stored with each item. _Demo:_ open Middle-earth and see books and LEGO together.
+**5. Universes tab (app).** ✅ A new tab listing the universes you own items from (with counts and cover thumbnails), and a universe page with your items grouped by category plus its characters. Works in guest mode from the links stored with each item. _Demo:_ open Middle-earth and see books and LEGO together.
 
 **6. Character pages and item links (app).** Character page (everything you own with that character); universe and character chips on the item detail screen and on search results, each opening its page. _Demo:_ tap Gandalf on the Rivendell set, land on his page with The Hobbit on it.
 
@@ -61,7 +61,7 @@ collection_item_link                     ← a user's manual fixes
 
 **8. "You own another edition."** Using the Open Library work key: search results and detail show a hint when you own a different edition of the same book. _Demo:_ search a different printing of a book you own and see the hint.
 
-**9. Polish and Stage 3 demo.** Empty states, accessibility labels, web tab titles, README (screenshots, architecture, data-source credits incl. Wikidata), publish the iPhone update and deploy, tag `v0.3.0`. _Demo:_ the end-to-end demo above, on the deployed app.
+**9. Polish and Stage 3 demo.** Empty states, a "show all" cap for long character lists on universe pages, accessibility labels, web tab titles, README (screenshots, architecture, data-source credits incl. Wikidata), publish the iPhone update and deploy, tag `v0.3.0`. _Demo:_ the end-to-end demo above, on the deployed app.
 
 ## New concepts, introduced as they come up
 

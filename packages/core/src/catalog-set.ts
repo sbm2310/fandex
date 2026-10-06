@@ -1,4 +1,5 @@
 import type { MatchSignals } from './universes/match-signals';
+import type { CharacterRef } from './universes/match-universes';
 
 /** A LEGO set as Rebrickable describes it. */
 export type CatalogSet = {
@@ -20,6 +21,10 @@ export type CatalogSet = {
   coverUrl?: string;
   /** Set by catalog adapters for universe matching; the API keeps it server-side. */
   matchSignals?: MatchSignals;
+  /** Universes this entry belongs to (slugs), as the Fandex API matched them. */
+  universes?: string[];
+  /** Characters in it, each with its universe. */
+  characters?: CharacterRef[];
 };
 
 /** "75192-1" → "75192"; other versions keep their suffix ("10179-2"). */

@@ -1,6 +1,7 @@
 import type { BookCategory } from './category';
 import type { Isbn13 } from './isbn';
 import type { MatchSignals } from './universes/match-signals';
+import type { CharacterRef } from './universes/match-universes';
 
 /**
  * Where book data comes from: Open Library. Google Books was considered and rejected (its
@@ -34,6 +35,10 @@ export type CatalogBook = {
   workKey?: string;
   /** Set by catalog adapters for universe matching; the API keeps it server-side. */
   matchSignals?: MatchSignals;
+  /** Universes this entry belongs to (slugs), as the Fandex API matched them. */
+  universes?: string[];
+  /** Characters in it, each with its universe. */
+  characters?: CharacterRef[];
 };
 
 /** The display title including the subtitle, e.g. "Mistborn: The Final Empire". */

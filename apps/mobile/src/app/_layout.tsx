@@ -33,6 +33,7 @@ export default function RootLayout() {
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="book/[id]" options={{ title: '', headerBackTitle: 'Back' }} />
+            <Stack.Screen name="universe/[slug]" options={{ title: '', headerBackTitle: 'Back' }} />
             <Stack.Screen
               name="scan"
               options={{ presentation: 'fullScreenModal', headerShown: false }}

@@ -22,6 +22,7 @@ export function toCatalogBook(item: CatalogItemResponse): CatalogBook | null {
     ...(item.publisher && { publisher: item.publisher }),
     ...(item.isbn13 && { isbn13: item.isbn13 as Isbn13 }),
     ...(item.coverUrl && { coverUrl: item.coverUrl }),
+    ...links(item),
   };
 }
 
@@ -40,6 +41,18 @@ export function toCatalogSet(item: CatalogItemResponse): CatalogSet | null {
     ...(item.theme && { theme: item.theme }),
     ...(item.subtheme && { subtheme: item.subtheme }),
     ...(item.coverUrl && { coverUrl: item.coverUrl }),
+    ...links(item),
+  };
+}
+
+/**
+ * Universe links travel with the entry, so a guest collection saved on the device knows its
+ * universes too. Left out when empty, to keep stored snapshots small.
+ */
+function links(item: CatalogItemResponse): Pick<CatalogEntry, 'universes' | 'characters'> {
+  return {
+    ...(item.universes.length > 0 && { universes: item.universes }),
+    ...(item.characters.length > 0 && { characters: item.characters }),
   };
 }
 

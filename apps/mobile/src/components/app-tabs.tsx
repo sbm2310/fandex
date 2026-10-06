@@ -18,6 +18,11 @@ export default function AppTabs() {
         <NativeTabs.Trigger.Icon sf="books.vertical.fill" md="shelves" />
       </NativeTabs.Trigger>
 
+      <NativeTabs.Trigger name="universes">
+        <NativeTabs.Trigger.Label>Universes</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf="sparkles" md="auto_awesome" />
+      </NativeTabs.Trigger>
+
       <NativeTabs.Trigger name="add">
         <NativeTabs.Trigger.Label>Add</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf="plus.circle.fill" md="add_circle" />

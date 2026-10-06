@@ -13,12 +13,20 @@ const GAP = Spacing.three;
 const MIN_ITEM_WIDTH = 96;
 const MIN_COLUMNS = 3;
 
-/** A grid of covers that fits as many columns as the screen allows (at least 3). */
-export function CollectionGrid({ items }: { items: CollectionItem[] }) {
+/** Grid gap between covers, for layouts that place GridItems themselves. */
+export const GRID_GAP = GAP;
+
+/** How many cover columns fit the screen (at least 3), and how wide each cover is. */
+export function useGridLayout(): { columns: number; itemWidth: number } {
   const { width: windowWidth } = useWindowDimensions();
   const contentWidth = Math.min(windowWidth, MaxContentWidth) - Spacing.four * 2;
   const columns = Math.max(MIN_COLUMNS, Math.floor((contentWidth + GAP) / (MIN_ITEM_WIDTH + GAP)));
-  const itemWidth = Math.floor((contentWidth - GAP * (columns - 1)) / columns);
+  return { columns, itemWidth: Math.floor((contentWidth - GAP * (columns - 1)) / columns) };
+}
+
+/** A grid of covers that fits as many columns as the screen allows (at least 3). */
+export function CollectionGrid({ items }: { items: CollectionItem[] }) {
+  const { columns, itemWidth } = useGridLayout();
 
   return (
     <FlatList
@@ -46,7 +54,8 @@ function gridSubtitle(item: CollectionItem): string | undefined {
   return item.category === 'lego' ? `Set ${item.catalog.setNumber}` : item.catalog.authors[0];
 }
 
-function GridItem({ item, width }: { item: CollectionItem; width: number }) {
+/** One cover with its title, linking to the item's detail screen. */
+export function GridItem({ item, width }: { item: CollectionItem; width: number }) {
   const { title } = item.catalog;
   const [first] = entryDetails(item.catalog);
   const subtitle = gridSubtitle(item);

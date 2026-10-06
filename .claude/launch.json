@@ -2,10 +2,18 @@
   "version": "0.0.1",
   "configurations": [
     {
+      "name": "api",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev:api"],
+      "port": 3000
+    },
+    {
       "name": "mobile-web",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "web", "-w", "@fandex/mobile", "--", "--port", "8081"],
-      "env": { "BROWSER": "none" },
+      "env": {
+        "BROWSER": "none"
+      },
       "port": 8081
     }
   ]
