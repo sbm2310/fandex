@@ -1,0 +1,70 @@
+{
+  "count": 9,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 33464,
+      "set_num": "fig-002544",
+      "set_name": "BB-8",
+      "quantity": 1,
+      "set_img_url": "https://cdn.rebrickable.com/media/sets/fig-002544/138512.jpg"
+    },
+    {
+      "id": 33465,
+      "set_num": "fig-002514",
+      "set_name": "C-3PO, Pearl Gold, Colorful Wires, Printed Legs",
+      "quantity": 1,
+      "set_img_url": "https://cdn.rebrickable.com/media/sets/fig-002514/111826.jpg"
+    },
+    {
+      "id": 33466,
+      "set_num": "fig-001714",
+      "set_name": "Chewbacca, Dark Brown - Long Lines on Legs on Inside",
+      "quantity": 1,
+      "set_img_url": "https://cdn.rebrickable.com/media/sets/fig-001714/161722.jpg"
+    },
+    {
+      "id": 33468,
+      "set_num": "fig-001810",
+      "set_name": "Finn, Black Undershirt",
+      "quantity": 1,
+      "set_img_url": "https://cdn.rebrickable.com/media/sets/fig-001810/58259.jpg"
+    },
+    {
+      "id": 33470,
+      "set_num": "fig-002550",
+      "set_name": "Han Solo, Dark Blue Jacket, Dark Brown Legs, Printed Breathing Mask",
+      "quantity": 1,
+      "set_img_url": "https://cdn.rebrickable.com/media/sets/fig-002550/58258.jpg"
+    },
+    {
+      "id": 33471,
+      "set_num": "fig-002551",
+      "set_name": "Han Solo, Old, Angry",
+      "quantity": 1,
+      "set_img_url": "https://cdn.rebrickable.com/media/sets/fig-002551/58117.jpg"
+    },
+    {
+      "id": 33472,
+      "set_num": "fig-014404",
+      "set_name": "Porg - Black Wings",
+      "quantity": 2,
+      "set_img_url": "https://cdn.rebrickable.com/media/sets/fig-014404/137658.jpg"
+    },
+    {
+      "id": 33469,
+      "set_num": "fig-002549",
+      "set_name": "Princess Leia, Hoth Outfit, White Jacket, Printed Breathing Mask",
+      "quantity": 1,
+      "set_img_url": "https://cdn.rebrickable.com/media/sets/fig-002549/108001.jpg"
+    },
+    {
+      "id": 33467,
+      "set_num": "fig-002057",
+      "set_name": "Rey, Dark Tan Robe",
+      "quantity": 1,
+      "set_img_url": "https://cdn.rebrickable.com/media/sets/fig-002057/104893.jpg"
+    }
+  ]
+}

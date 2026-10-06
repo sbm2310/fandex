@@ -1,5 +1,6 @@
 import type { BookCategory } from './category';
 import type { Isbn13 } from './isbn';
+import type { MatchSignals } from './universes/match-signals';
 
 /**
  * Where book data comes from: Open Library. Google Books was considered and rejected (its
@@ -29,6 +30,10 @@ export type CatalogBook = {
   publisher?: string;
   isbn13?: Isbn13;
   coverUrl?: string;
+  /** The Open Library work this edition belongs to (`OL27482W`): the same book in any printing. */
+  workKey?: string;
+  /** Set by catalog adapters for universe matching; the API keeps it server-side. */
+  matchSignals?: MatchSignals;
 };
 
 /** The display title including the subtitle, e.g. "Mistborn: The Final Empire". */

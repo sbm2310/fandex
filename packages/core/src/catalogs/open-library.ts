@@ -1,5 +1,5 @@
 import type { BookCatalog, CatalogRequestOptions } from '../book-catalog';
-import type { CatalogBook } from '../catalog-book';
+import { formatTitle, type CatalogBook } from '../catalog-book';
 import { classifyBookCategory } from '../classify-book-category';
 import { parseIsbn, type Isbn13 } from '../isbn';
 import { CatalogError } from './catalog-error';
@@ -40,6 +40,9 @@ const FIELDS = [
   'first_publish_year',
   'cover_i',
   'subject',
+  // Characters and places, for universe matching.
+  'person',
+  'place',
   'editions',
   'editions.key',
   'editions.title',
@@ -61,6 +64,8 @@ type WorkDoc = {
   first_publish_year?: number;
   cover_i?: number;
   subject?: string[];
+  person?: string[];
+  place?: string[];
   editions?: { docs?: EditionDoc[] };
 };
 
@@ -189,6 +194,16 @@ export class OpenLibraryCatalog implements BookCatalog {
     const coverId = edition?.cover_i ?? work.cover_i;
     if (coverId && coverId > 0) book.coverUrl = `${this.coversBaseUrl}/b/id/${coverId}-M.jpg`;
 
+    const workKey = /^\/works\/(OL\d+W)$/.exec(work.key ?? '')?.[1];
+    if (workKey) book.workKey = workKey;
+
+    book.matchSignals = {
+      title: formatTitle(book),
+      authors: book.authors,
+      ...(work.person?.length ? { people: work.person } : {}),
+      ...(work.place?.length ? { places: work.place } : {}),
+      ...(work.subject?.length ? { subjects: work.subject } : {}),
+    };
     return book;
   }
 }

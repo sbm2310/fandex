@@ -28,30 +28,36 @@ enum CatalogSource {
 
 /// A catalog entry fetched from an external source and cached here, shared by all users.
 model CatalogItem {
-  id         String        @id @default(uuid(7)) @db.Uuid
-  category   Category
-  source     CatalogSource
-  externalId String        @map("external_id")
-  title      String
-  subtitle   String?
-  creators   String[]
-  year       Int?
-  publisher  String?
-  isbn13     String?       @db.Char(13)
-  setNumber  String?       @map("set_number")
-  pieceCount Int?          @map("piece_count")
-  coverUrl   String?       @map("cover_url")
-  /// LEGO: top-level theme ("Star Wars") and sub-theme; a future link to universes.
-  theme      String?
-  subtheme   String?
-  fetchedAt  DateTime      @default(now()) @map("fetched_at") @db.Timestamptz
-  createdAt  DateTime      @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt  DateTime      @updatedAt @map("updated_at") @db.Timestamptz
+  id           String        @id @default(uuid(7)) @db.Uuid
+  category     Category
+  source       CatalogSource
+  externalId   String        @map("external_id")
+  title        String
+  subtitle     String?
+  creators     String[]
+  year         Int?
+  publisher    String?
+  isbn13       String?       @db.Char(13)
+  setNumber    String?       @map("set_number")
+  pieceCount   Int?          @map("piece_count")
+  coverUrl     String?       @map("cover_url")
+  /// LEGO: top-level theme ("Star Wars") and sub-theme.
+  theme        String?
+  subtheme     String?
+  /// Open Library work id ("OL27482W"): the same book in any edition.
+  workKey      String?       @map("work_key")
+  /// What the source says about the item's fiction (characters, places, LEGO themes and
+  /// minifigs), for universe matching. Shape: MatchSignals in @fandex/core. Null = not fetched.
+  matchSignals Json?         @map("match_signals")
+  fetchedAt    DateTime      @default(now()) @map("fetched_at") @db.Timestamptz
+  createdAt    DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime      @updatedAt @map("updated_at") @db.Timestamptz
 
   ownedBy CollectionItem[]
 
   @@unique([source, externalId])
   @@index([isbn13])
+  @@index([workKey])
   @@map("catalog_item")
 }
 

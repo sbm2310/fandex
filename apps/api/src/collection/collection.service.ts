@@ -3,6 +3,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { Prisma } from '../generated/prisma/client.js';
 import { toCatalogItemResponse } from '../catalog/catalog-item.mapper.js';
+import { CatalogSignalsService } from '../catalog/catalog-signals.service.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 
 const withCatalog = { catalogItem: true } as const;
@@ -14,7 +15,10 @@ type CollectionRow = Prisma.CollectionItemGetPayload<{ include: typeof withCatal
  */
 @Injectable()
 export class CollectionService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly signals: CatalogSignalsService,
+  ) {}
 
   async list(userId: string): Promise<CollectionItemResponse[]> {
     const rows = await this.prisma.collectionItem.findMany({
@@ -35,6 +39,8 @@ export class CollectionService {
         data: { userId, catalogItemId },
         include: withCatalog,
       });
+      // A LEGO set added from search has no minifigs yet; fetch them without making the user wait.
+      this.signals.refreshSoon(row.catalogItem);
       return { item: toCollectionItemResponse(row), created: true };
     } catch (error) {
       if (isPrismaError(error, 'P2002')) {

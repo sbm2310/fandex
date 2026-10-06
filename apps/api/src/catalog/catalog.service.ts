@@ -18,7 +18,11 @@ import {
 
 import { TtlCache } from '../common/ttl-cache.js';
 import { PrismaService } from '../prisma/prisma.service.js';
-import { toCatalogItemData, toCatalogItemResponse } from './catalog-item.mapper.js';
+import {
+  readMatchSignals,
+  toCatalogItemData,
+  toCatalogItemResponse,
+} from './catalog-item.mapper.js';
 
 /** Injection token for the external catalog (Open Library in production, a fake in tests). */
 export const BOOK_CATALOG = Symbol('BOOK_CATALOG');
@@ -106,13 +110,31 @@ export class CatalogService {
 
   /** Inserts or refreshes the item for this source record and returns it with our id. */
   private async save(entry: CatalogBook | CatalogSet): Promise<CatalogItemResponse> {
-    const data = toCatalogItemData(entry);
+    const data = toCatalogItemData(await this.withStoredMinifigs(entry));
     const row = await this.prisma.catalogItem.upsert({
       where: { source_externalId: { source: entry.source, externalId: entry.externalId } },
       create: data,
       update: data,
     });
     return toCatalogItemResponse(row);
+  }
+
+  /**
+   * LEGO search results come without minifigs (one call per set would be too many); keep the
+   * ones a set lookup already stored rather than erasing them on every search.
+   */
+  private async withStoredMinifigs(
+    entry: CatalogBook | CatalogSet,
+  ): Promise<CatalogBook | CatalogSet> {
+    if (entry.category !== 'lego' || !entry.matchSignals || entry.matchSignals.minifigs) {
+      return entry;
+    }
+    const stored = await this.prisma.catalogItem.findUnique({
+      where: { source_externalId: { source: entry.source, externalId: entry.externalId } },
+      select: { matchSignals: true },
+    });
+    const minifigs = stored ? readMatchSignals(stored)?.minifigs : undefined;
+    return minifigs ? { ...entry, matchSignals: { ...entry.matchSignals, minifigs } } : entry;
   }
 
   /** Calls the external catalog, translating its failures into HTTP errors. */

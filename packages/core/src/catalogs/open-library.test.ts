@@ -2,6 +2,7 @@ import { parseIsbn, type Isbn13 } from '../isbn';
 import isbnFixture from './__fixtures__/openlibrary-isbn-9780345445605.json';
 import batmanFixture from './__fixtures__/openlibrary-isbn-batman-year-one.json';
 import onePieceFixture from './__fixtures__/openlibrary-isbn-one-piece.json';
+import harryPotterFixture from './__fixtures__/openlibrary-isbn-harry-potter.json';
 import notFoundFixture from './__fixtures__/openlibrary-isbn-not-found.json';
 import searchFixture from './__fixtures__/openlibrary-search-hobbit.json';
 import { CatalogError } from './catalog-error';
@@ -55,6 +56,12 @@ describe('OpenLibraryCatalog.search', () => {
       publisher: 'Houghton Mifflin Company',
       isbn13: '9780395520215',
       coverUrl: 'https://covers.openlibrary.org/b/id/15223072-M.jpg',
+      workKey: 'OL27482W',
+      matchSignals: {
+        title: 'The Hobbit',
+        authors: ['J.R.R. Tolkien'],
+        subjects: searchFixture.docs[0]?.subject,
+      },
     });
   });
 
@@ -133,6 +140,8 @@ describe('OpenLibraryCatalog.search', () => {
       authors: [],
       publishedYear: 1937,
       coverUrl: 'https://covers.openlibrary.org/b/id/42-M.jpg',
+      workKey: 'OL1W',
+      matchSignals: { title: 'Work Title: Work Subtitle', authors: [] },
     });
   });
 
@@ -141,7 +150,15 @@ describe('OpenLibraryCatalog.search', () => {
 
     const [book] = await catalog.search('x');
 
-    expect(book).toMatchObject({ externalId: 'OL1W', title: 'Only a Work' });
+    expect(book).toMatchObject({ externalId: 'OL1W', title: 'Only a Work', workKey: 'OL1W' });
+  });
+
+  it('leaves out a work key that is not a work', async () => {
+    const { catalog } = catalogReturning(oneWork({ key: '/books/OL1M', title: 'Odd' }));
+
+    const [book] = await catalog.search('x');
+
+    expect(book).not.toHaveProperty('workKey');
   });
 
   it('converts an ISBN-10-only edition to ISBN-13', async () => {
@@ -195,6 +212,28 @@ describe('OpenLibraryCatalog.lookupIsbn', () => {
       publisher: 'Ballantine Books',
       isbn13: '9780345445605',
       coverUrl: 'https://covers.openlibrary.org/b/id/8406778-M.jpg',
+      workKey: 'OL219602W',
+      matchSignals: {
+        title: 'The Hobbit',
+        authors: ['Charles Dixon', 'Sean Deming', 'J.R.R. Tolkien'],
+        subjects: isbnFixture.docs[0]?.subject,
+      },
+    });
+  });
+
+  it('keeps the characters and places Open Library lists, for universe matching', async () => {
+    const { catalog, requestedUrl } = catalogReturning(jsonResponse(harryPotterFixture));
+
+    const book = await catalog.lookupIsbn(isbn('9780747532699'));
+
+    expect(requestedUrl().searchParams.get('fields')).toContain('person');
+    expect(requestedUrl().searchParams.get('fields')).toContain('place');
+    expect(book?.workKey).toBe('OL82563W');
+    expect(book?.matchSignals).toMatchObject({
+      title: "Harry Potter and the Philosopher's Stone",
+      authors: ['J. K. Rowling'],
+      people: expect.arrayContaining(['Harry Potter', 'Hermione Granger', 'Albus Dumbledore']),
+      places: expect.arrayContaining(['Hogwarts School of Witchcraft and Wizardry']),
     });
   });
 

@@ -23,6 +23,11 @@ export type RebrickableCatalogOptions = {
   /** How long the theme list is cached (default 24 h). */
   themeCacheMs?: number;
   now?: () => number;
+  /**
+   * Awaited before every HTTP request. The API uses it to keep all requests (a set lookup is
+   * two: the set and its minifigs) about a second apart, per Rebrickable's limit.
+   */
+  beforeRequest?: () => Promise<void>;
 };
 
 type SetDoc = {
@@ -36,6 +41,9 @@ type SetDoc = {
 
 type ThemeDoc = { id: number; parent_id: number | null; name: string };
 
+/** A minifig in a set; `set_name` is the figure's name ("Gandalf The Grey - Cape, Hat"). */
+type MinifigDoc = { set_name?: string };
+
 export class RebrickableCatalog implements LegoCatalog {
   private readonly fetch: typeof fetch;
   private readonly apiKey: string;
@@ -43,6 +51,7 @@ export class RebrickableCatalog implements LegoCatalog {
   private readonly baseUrl: string;
   private readonly themeCacheMs: number;
   private readonly now: () => number;
+  private readonly beforeRequest: () => Promise<void>;
   private themes: { byId: Map<number, ThemeDoc>; loadedAt: number } | null = null;
   private themesLoading: Promise<Map<number, ThemeDoc>> | null = null;
 
@@ -53,6 +62,7 @@ export class RebrickableCatalog implements LegoCatalog {
     this.baseUrl = options.baseUrl ?? 'https://rebrickable.com/api/v3/lego';
     this.themeCacheMs = options.themeCacheMs ?? 24 * 60 * 60 * 1000;
     this.now = options.now ?? Date.now;
+    this.beforeRequest = options.beforeRequest ?? (() => Promise.resolve());
   }
 
   async searchSets(query: string, options: CatalogRequestOptions = {}): Promise<CatalogSet[]> {
@@ -77,7 +87,26 @@ export class RebrickableCatalog implements LegoCatalog {
       allowNotFound: true,
     });
     if (!doc) return null;
-    return toCatalogSet(doc, await this.loadThemes(options));
+    const set = toCatalogSet(doc, await this.loadThemes(options));
+    if (!set?.matchSignals) return set;
+    // Minifigs name the set's characters. If they can't be fetched now, the set is still
+    // returned (signals without minifigs mean "not fetched yet", so they're retried later).
+    const minifigs = await this.loadMinifigs(set.externalId, options).catch((error: unknown) => {
+      if (options.signal?.aborted) throw error;
+      return undefined;
+    });
+    if (minifigs) set.matchSignals = { ...set.matchSignals, minifigs };
+    return set;
+  }
+
+  private async loadMinifigs(setNum: string, options: CatalogRequestOptions): Promise<string[]> {
+    const body = await this.request<{ results?: MinifigDoc[] }>(
+      `/sets/${encodeURIComponent(setNum)}/minifigs/?page_size=1000`,
+      options,
+    );
+    return (body?.results ?? []).flatMap((fig) =>
+      fig.set_name?.trim() ? [fig.set_name.trim()] : [],
+    );
   }
 
   /** All ~500 themes come back in one call; cached so set lookups don't need extra requests. */
@@ -104,6 +133,7 @@ export class RebrickableCatalog implements LegoCatalog {
     { signal }: CatalogRequestOptions,
     { allowNotFound = false } = {},
   ): Promise<T | null> {
+    await this.beforeRequest();
     let response: Response;
     try {
       response = await this.fetch(`${this.baseUrl}${path}`, {
@@ -158,20 +188,27 @@ function toCatalogSet(doc: SetDoc, themes: Map<number, ThemeDoc>): CatalogSet | 
   if (doc.num_parts) set.pieceCount = doc.num_parts;
   if (doc.set_img_url) set.coverUrl = doc.set_img_url;
 
-  const [theme, ...rest] = themePath(doc.theme_id, themes);
+  const path = themePath(doc.theme_id, themes);
+  const [theme, ...rest] = path.map((t) => t.name);
   if (theme) set.theme = theme;
   const subtheme = rest.at(-1);
   if (subtheme) set.subtheme = subtheme;
+
+  set.matchSignals = {
+    title,
+    // The set's own theme first, then its parents ("Batman" → "Super Heroes DC").
+    legoThemeIds: path.map((t) => t.id).reverse(),
+  };
   return set;
 }
 
-/** Theme names from the top level down, e.g. ["Star Wars", "Ultimate Collector Series"]. */
-function themePath(themeId: number | undefined, themes: Map<number, ThemeDoc>): string[] {
-  const path: string[] = [];
+/** Themes from the top level down, e.g. Star Wars → Ultimate Collector Series. */
+function themePath(themeId: number | undefined, themes: Map<number, ThemeDoc>): ThemeDoc[] {
+  const path: ThemeDoc[] = [];
   let current = themeId === undefined ? undefined : themes.get(themeId);
   // Guard against cycles in external data.
   while (current && path.length < 10) {
-    path.unshift(current.name);
+    path.unshift(current);
     current = current.parent_id === null ? undefined : themes.get(current.parent_id);
   }
   return path;

@@ -8,25 +8,8 @@ import {
   parseSubject,
   subjectText,
 } from './normalize-name';
+import type { MatchSignals } from './match-signals';
 import { UNIVERSE_SEED, type UniverseSeed } from './universe-seed';
-
-/** What a catalog entry tells us about the fiction it belongs to. Everything is optional. */
-export type MatchSignals = {
-  title: string;
-  /** Series names, e.g. "Harry Potter" or "The Thrawn Trilogy". */
-  series?: readonly string[];
-  /** Authors: never mistaken for characters (one Star Wars novel lists its author as one). */
-  authors?: readonly string[];
-  /** Characters named by the source (Open Library's `person` / `subject_people`). */
-  people?: readonly string[];
-  /** Places named by the source (Open Library's `place` / `subject_places`). */
-  places?: readonly string[];
-  subjects?: readonly string[];
-  /** A LEGO set's theme id and all its parent theme ids. */
-  legoThemeIds?: readonly number[];
-  /** A LEGO set's minifig names as Rebrickable lists them. */
-  minifigs?: readonly string[];
-};
 
 export type CharacterRef = { universe: string; character: string };
 

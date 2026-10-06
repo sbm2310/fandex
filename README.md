@@ -152,10 +152,10 @@ npm run lint
 npm run format:check
 ```
 
-429 tests run in CI on every push:
+442 tests run in CI on every push:
 
-- **`packages/core` (209, Jest + ts-jest):** ISBN validation against reference values, universe and character matching against recorded real data (including look-alikes such as a book about the "Star Wars" missile defense program and Norse mythology's Thor), book/manga/comic classification against real Open Library subject data, the Open Library and Rebrickable adapters against **recorded real API responses** plus edge cases, and the repository (concurrent writes, corrupt data, restarts) over an in-memory store.
-- **`apps/api` (85, Vitest + Supertest):** config validation, caching and rate limiting, plus end-to-end tests against the real Nest app and a real PostgreSQL test database (created and migrated automatically), including sign-up/sign-in, native-app sessions, CORS, account deletion, password hashing, CSRF protection, the catalog API (validation, database caching, upstream failures) with a fake Open Library, and the collection API, including isolation between users (mutation-checked).
+- **`packages/core` (215, Jest + ts-jest):** ISBN validation against reference values, universe and character matching against recorded real data (including look-alikes such as a book about the "Star Wars" missile defense program and Norse mythology's Thor), book/manga/comic classification against real Open Library subject data, the Open Library and Rebrickable adapters against **recorded real API responses** plus edge cases, and the repository (concurrent writes, corrupt data, restarts) over an in-memory store.
+- **`apps/api` (92, Vitest + Supertest):** config validation, caching and rate limiting, plus end-to-end tests against the real Nest app and a real PostgreSQL test database (created and migrated automatically), including sign-up/sign-in, native-app sessions, CORS, account deletion, password hashing, CSRF protection, the catalog API (validation, database caching, upstream failures) with a fake Open Library, the collection API, including isolation between users (mutation-checked), and storing and backfilling universe-matching signals (resumable after failures, without erasing LEGO minifigs).
 - **`apps/mobile` (135, jest-expo + React Native Testing Library):** screens rendered with a fake catalog, a fake account service and the real repository over an in-memory store: search states, ISBN lookup, adding and removing, navigation, sorting, accounts (sign-in, sign-up, sign-out, delete account), cloud sync (account vs device collection, moving device books into an account), LEGO search and detail, category filters, and the barcode scanner with a mocked camera.
 
 Tests never call the network.

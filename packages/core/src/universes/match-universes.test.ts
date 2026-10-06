@@ -1,5 +1,6 @@
 import fixtures from './__fixtures__/signals.json';
-import { matchUniverses, type MatchSignals } from './match-universes';
+import type { MatchSignals } from './match-signals';
+import { matchUniverses } from './match-universes';
 import type { UniverseSeed } from './universe-seed';
 
 // signals.json holds real data recorded from Open Library and Rebrickable (October 2026):

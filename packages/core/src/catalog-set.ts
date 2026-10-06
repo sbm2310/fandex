@@ -1,3 +1,5 @@
+import type { MatchSignals } from './universes/match-signals';
+
 /** A LEGO set as Rebrickable describes it. */
 export type CatalogSet = {
   source: 'rebrickable';
@@ -16,6 +18,8 @@ export type CatalogSet = {
   /** Sub-theme, e.g. "Ultimate Collector Series". */
   subtheme?: string;
   coverUrl?: string;
+  /** Set by catalog adapters for universe matching; the API keeps it server-side. */
+  matchSignals?: MatchSignals;
 };
 
 /** "75192-1" → "75192"; other versions keep their suffix ("10179-2"). */

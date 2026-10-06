@@ -1,11 +1,4 @@
-import type {
-  BookCatalog,
-  CatalogBook,
-  CatalogRequestOptions,
-  CatalogSet,
-  Isbn13,
-  LegoCatalog,
-} from '@fandex/core';
+import type { BookCatalog, CatalogBook, CatalogRequestOptions, Isbn13 } from '@fandex/core';
 
 import { RequestSpacer } from './request-spacer.js';
 
@@ -27,26 +20,5 @@ export class RateLimitedCatalog implements BookCatalog {
 
   lookupIsbn(isbn: Isbn13, options?: CatalogRequestOptions): Promise<CatalogBook | null> {
     return this.spacer.run(() => this.inner.lookupIsbn(isbn, options));
-  }
-}
-
-/** A LegoCatalog whose calls start at least `minIntervalMs` apart (Rebrickable: ~1/s). */
-export class RateLimitedLegoCatalog implements LegoCatalog {
-  private readonly spacer: RequestSpacer;
-
-  constructor(
-    private readonly inner: LegoCatalog,
-    minIntervalMs: number,
-    now?: () => number,
-  ) {
-    this.spacer = new RequestSpacer(minIntervalMs, now);
-  }
-
-  searchSets(query: string, options?: CatalogRequestOptions): Promise<CatalogSet[]> {
-    return this.spacer.run(() => this.inner.searchSets(query, options));
-  }
-
-  lookupSet(setNum: string, options?: CatalogRequestOptions): Promise<CatalogSet | null> {
-    return this.spacer.run(() => this.inner.lookupSet(setNum, options));
   }
 }

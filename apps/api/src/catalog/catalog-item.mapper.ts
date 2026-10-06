@@ -1,4 +1,10 @@
-import type { CatalogBook, CatalogItemResponse, CatalogSet } from '@fandex/core';
+import {
+  matchSignalsSchema,
+  type CatalogBook,
+  type CatalogItemResponse,
+  type CatalogSet,
+  type MatchSignals,
+} from '@fandex/core';
 
 import type { CatalogItem, Prisma } from '../generated/prisma/client.js';
 
@@ -20,6 +26,7 @@ function fromSet(set: CatalogSet): Prisma.CatalogItemCreateInput {
     theme: set.theme ?? null,
     subtheme: set.subtheme ?? null,
     coverUrl: set.coverUrl ?? null,
+    ...signalsData(set.matchSignals),
     fetchedAt: new Date(),
   };
 }
@@ -36,8 +43,38 @@ function fromBook(book: CatalogBook): Prisma.CatalogItemCreateInput {
     publisher: book.publisher ?? null,
     isbn13: book.isbn13 ?? null,
     coverUrl: book.coverUrl ?? null,
+    ...(book.workKey && { workKey: book.workKey }),
+    ...signalsData(book.matchSignals),
     fetchedAt: new Date(),
   };
+}
+
+/**
+ * Signals are only written when the source provided them, so an upsert from a source that
+ * didn't (or a test fake) never erases signals already stored.
+ */
+function signalsData(signals: MatchSignals | undefined) {
+  return signals ? { matchSignals: toJson(signals) } : {};
+}
+
+/** The JSON column's input type is mutable; MatchSignals' arrays are readonly. */
+export function toJson(signals: MatchSignals): Prisma.InputJsonObject {
+  return signals as Prisma.InputJsonObject;
+}
+
+/** A stored row's signals, or null if none were stored (or they don't have the expected shape). */
+export function readMatchSignals(row: Pick<CatalogItem, 'matchSignals'>): MatchSignals | null {
+  const parsed = matchSignalsSchema.safeParse(row.matchSignals);
+  return parsed.success ? parsed.data : null;
+}
+
+/**
+ * Whether an item still needs signals from its source: stored before Stage 3 (none), or a
+ * LEGO set seen only in search results (no minifigs yet).
+ */
+export function needsSignals(row: Pick<CatalogItem, 'category' | 'matchSignals'>): boolean {
+  const signals = readMatchSignals(row);
+  return signals === null || (row.category === 'lego' && signals.minifigs === undefined);
 }
 
 /** A stored row as the API returns it (null columns become absent fields). */
