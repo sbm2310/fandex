@@ -6,7 +6,7 @@ import {
   TabTriggerSlotProps,
   TabListProps,
 } from 'expo-router/ui';
-import { Pressable, View, StyleSheet } from 'react-native';
+import { Pressable, View, StyleSheet, useWindowDimensions } from 'react-native';
 
 import { ThemedText } from './themed-text';
 import { ThemedView } from './themed-view';
@@ -38,12 +38,20 @@ export default function AppTabs() {
   );
 }
 
+/** Below this width the bar drops the brand and tightens up, so four tabs fit a phone. */
+const COMPACT_WIDTH = 520;
+
+function useCompact(): boolean {
+  return useWindowDimensions().width < COMPACT_WIDTH;
+}
+
 export function TabButton({ children, isFocused, ...props }: TabTriggerSlotProps) {
+  const compact = useCompact();
   return (
     <Pressable {...props} style={({ pressed }) => pressed && styles.pressed}>
       <ThemedView
         type={isFocused ? 'backgroundSelected' : 'backgroundElement'}
-        style={styles.tabButtonView}
+        style={[styles.tabButtonView, compact && styles.tabButtonCompact]}
       >
         <ThemedText type="small" themeColor={isFocused ? 'text' : 'textSecondary'}>
           {children}
@@ -54,12 +62,18 @@ export function TabButton({ children, isFocused, ...props }: TabTriggerSlotProps
 }
 
 export function CustomTabList(props: TabListProps) {
+  const compact = useCompact();
   return (
-    <View {...props} style={styles.tabListContainer}>
-      <ThemedView type="backgroundElement" style={styles.innerContainer}>
-        <ThemedText type="smallBold" themeColor="accent" style={styles.brandText}>
-          Fandex
-        </ThemedText>
+    <View {...props} style={[styles.tabListContainer, compact && styles.tabListCompact]}>
+      <ThemedView
+        type="backgroundElement"
+        style={[styles.innerContainer, compact && styles.innerCompact]}
+      >
+        {compact ? null : (
+          <ThemedText type="smallBold" themeColor="accent" style={styles.brandText}>
+            Fandex
+          </ThemedText>
+        )}
         {props.children}
       </ThemedView>
     </View>
@@ -85,6 +99,14 @@ const styles = StyleSheet.create({
     gap: Spacing.two,
     maxWidth: MaxContentWidth,
   },
+  tabListCompact: {
+    padding: Spacing.two,
+  },
+  innerCompact: {
+    paddingHorizontal: Spacing.two,
+    gap: Spacing.one,
+    justifyContent: 'space-between',
+  },
   brandText: {
     marginRight: 'auto',
   },
@@ -95,5 +117,8 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.one,
     paddingHorizontal: Spacing.three,
     borderRadius: Spacing.three,
+  },
+  tabButtonCompact: {
+    paddingHorizontal: Spacing.two,
   },
 });

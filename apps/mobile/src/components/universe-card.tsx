@@ -71,7 +71,7 @@ export function UniverseCard({ universe }: { universe: CollectionUniverse }) {
             {counts}
           </ThemedText>
           {characters ? (
-            <ThemedText type="small" themeColor="textSecondary" numberOfLines={1}>
+            <ThemedText type="small" themeColor="textSecondary" numberOfLines={2}>
               {characters}
             </ThemedText>
           ) : null}

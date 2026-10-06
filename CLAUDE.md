@@ -47,14 +47,14 @@ Verify current terms, rate limits and attribution requirements for each API befo
 
 ## Roadmap
 
-| Stage                       | Target    | Demo at the end                                                                                  |
-| --------------------------- | --------- | ------------------------------------------------------------------------------------------------ |
-| 1. MVP ✅ (v0.1.0)          | ~Week 1   | App on iPhone + web: add items by search or ISBN scan, see the collection with covers            |
-| 2. Real backend ✅ (v0.2.0) | Weeks 2–4 | Accounts, cloud sync phone ↔ web, unified catalog search across all sources                      |
-| 3. Universe layer           | Month 2   | Franchise/character pages linking items across categories (missing-item suggestions deferred)    |
-| 4. AI                       | Month 3   | Shelf photo → identified items; natural-language questions about the collection                  |
-| 5. Pre-orders & releases    | Month 4   | Release dates, payment reminders, push notifications (event-driven)                              |
-| 6. Launch                   | After     | TestFlight → App Store, shareable public collection pages, beta users from collector communities |
+| Stage                         | Target    | Demo at the end                                                                                  |
+| ----------------------------- | --------- | ------------------------------------------------------------------------------------------------ |
+| 1. MVP ✅ (v0.1.0)            | ~Week 1   | App on iPhone + web: add items by search or ISBN scan, see the collection with covers            |
+| 2. Real backend ✅ (v0.2.0)   | Weeks 2–4 | Accounts, cloud sync phone ↔ web, unified catalog search across all sources                      |
+| 3. Universe layer ✅ (v0.3.0) | Month 2   | Franchise/character pages linking items across categories (missing-item suggestions deferred)    |
+| 4. AI                         | Month 3   | Shelf photo → identified items; natural-language questions about the collection                  |
+| 5. Pre-orders & releases      | Month 4   | Release dates, payment reminders, push notifications (event-driven)                              |
+| 6. Launch                     | After     | TestFlight → App Store, shareable public collection pages, beta users from collector communities |
 
 ## Stage 1 decisions (settled 2026-10-04)
 
@@ -96,6 +96,7 @@ Verify current terms, rate limits and attribution requirements for each API befo
 - **Character pages** (Stage 3 Task 6): routes `universe/[slug]/index.tsx` and `universe/[slug]/[character].tsx` (URL `/universe/middle-earth/gandalf`; root Stack names `universe/[slug]/index` and `universe/[slug]/[character]`). Core has `findUniverse` / `findCharacter` (seed lookups). `UniverseChips` / `CharacterChips` (`components/universe-links.tsx`) render link chips for slugs the seed knows (real `<a href>` on web); used on universe pages, item detail and search rows (`EntryRow` puts them outside its grouped accessibility label). `CategorySections` groups items by category. Known gap: guest LEGO sets have no characters (the saved search result has no minifigs).
 - **Manual fixes** (Stage 3 Task 7): an owned item stores `linkEdits` (added/removed universes and characters, as _differences_ from the automatic links — core `diffLinks`/`applyLinkEdits`) and, for books, a corrected `category` (`item.category` is what the user sees; `item.catalog.category` stays the source's). **Always read links through core's `itemLinks(item)`**, never `item.catalog.universes`. Rules: removing a universe removes its characters; a wanted character's universe counts as wanted. `CollectionRepository.update(id, changes)` (null = reset, omitted = keep); device repo applies `applyItemChanges`, the API (`PATCH /collection/:id`, columns `category_override`, `link_edits`) validates slugs against the universe tables and stores nothing when a value equals the automatic one. Fixes live on collection items, so re-matching never erases them. The edit screen (`app/edit/[id].tsx`, modal) must close with `router.canGoBack() ? back() : replace(item)` — opened by URL or after a reload there's no history (found on web).
 - **Other editions** (Stage 3 Task 8): catalog responses carry `workKey` (Open Library work id); app entries keep it, so owned snapshots have it. Core `findOtherEditions(entry, items)` = owned books with the same work key but a different edition (`isSameBook` false); ownership stays per edition, so the result can still be added. `OtherEditionNote` (search rows, via `EntryRow`'s `note` slot, only when the entry itself isn't owned) and `AlsoOwnedEditions` (detail) link to the owned copy. Guest items saved before this have no work key, so no hint for them.
+- **Web tab bar at phone width** (found in Stage 3 Task 9): with four tabs the top bar was wider than a 375 px screen, so the whole web page scrolled sideways (and clicks landed off target). Below 520 px it drops the "Fandex" label and tightens padding (`app-tabs.web.tsx`). Check `document.documentElement.scrollWidth === innerWidth` at phone width after adding nav items. README screenshots are 750×1624: the browser pane's mobile preset, captured at scale 1.
 - **API e2e tests** use a separate `fandex_test` database: `test/global-setup.ts` creates it and runs `prisma migrate deploy`; files run sequentially; `resetDatabase()` truncates tables between tests. CI provides Postgres as a service container.
 - **App tests:** use `renderRouter` from `expo-router/testing-library`; it returns a promise with `getPathname()` etc. attached — keep the reference, then `await` it. Tests live in `src/__tests__/`, never in `src/app/`. Don't `return` that promise from an async helper (it gets unwrapped and loses the methods); wrap it in a plain object.
 - **`<Link asChild>`:** the child must get a single flattened style object (`StyleSheet.flatten`), not an array or style function — otherwise it throws on web.

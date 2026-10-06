@@ -61,7 +61,7 @@ collection_item_link                     ← a user's manual fixes
 
 **8. "You own another edition."** ✅ Using the Open Library work key: search results and detail show a hint when you own a different edition of the same book. _Demo:_ search a different printing of a book you own and see the hint.
 
-**9. Polish and Stage 3 demo.** Empty states, a "show all" cap for long character lists on universe pages, characters for LEGO sets in guest collections (guests save the search result, which has no minifigs; accounts get them from the server after adding), accessibility labels, web tab titles, README (screenshots, architecture, data-source credits incl. Wikidata), publish the iPhone update and deploy, tag `v0.3.0`. _Demo:_ the end-to-end demo above, on the deployed app.
+**9. Polish and Stage 3 demo.** ✅ Empty states, a "show all" cap for long character lists on universe pages, characters for LEGO sets in guest collections (guests save the search result, which has no minifigs; accounts get them from the server after adding), accessibility labels, web tab titles, README (screenshots, architecture, data-source credits incl. Wikidata), publish the iPhone update and deploy, tag `v0.3.0`. _Demo:_ the end-to-end demo above, on the deployed app.
 
 ## New concepts, introduced as they come up
 

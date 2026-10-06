@@ -8,6 +8,18 @@ Fandex is a collection app for fans who collect comics, manga, fantasy books, pr
 
 <table>
   <tr>
+    <td><img src="docs/screenshots/universes.jpg" width="200" alt="Universes tab: Middle-earth, Star Wars and Wizarding World with covers, counts and characters"></td>
+    <td><img src="docs/screenshots/universe.jpg" width="200" alt="Middle-earth page: description, characters with item counts, books and LEGO"></td>
+    <td><img src="docs/screenshots/character.jpg" width="200" alt="Gandalf's page: the books he appears in"></td>
+    <td><img src="docs/screenshots/item-links.jpg" width="200" alt="The Hobbit's detail screen with its universe, characters and a Fix details button"></td>
+  </tr>
+  <tr>
+    <td align="center">Universes</td>
+    <td align="center">A universe</td>
+    <td align="center">A character</td>
+    <td align="center">An item's links</td>
+  </tr>
+  <tr>
     <td><img src="docs/screenshots/collection.jpg" width="200" alt="Collection grid with book covers, dark mode"></td>
     <td><img src="docs/screenshots/search.jpg" width="200" alt="Search results with Add buttons"></td>
     <td><img src="docs/screenshots/detail.jpg" width="200" alt="Book detail screen"></td>
@@ -21,19 +33,21 @@ Fandex is a collection app for fans who collect comics, manga, fantasy books, pr
   </tr>
 </table>
 
-## Status: Stage 2 (v0.2.0)
+## Status: Stage 3 (v0.3.0)
 
 **Live demo: [fandex-4mjc.onrender.com](https://fandex-4mjc.onrender.com)** (free hosting: the first visit after a quiet spell takes about a minute while the server wakes up). API docs: [/api/docs](https://fandex-4mjc.onrender.com/api/docs).
 
 Fandex runs on iPhone and the web from one codebase, backed by its own API:
 
+- **Universes and characters:** a Universes tab groups everything you own from Middle-earth, Star Wars, the Wizarding World, DC and Marvel, across books and LEGO. Each universe page lists its characters; each character page shows every book they appear in and every set with their minifig. Items are matched automatically from Open Library's characters and places and Rebrickable's themes and minifigs, and you can fix any match (or a misfiled category) by hand.
+- **"You own another edition":** search results flag other printings of books you already own.
 - **Accounts and cloud sync:** sign up with email and password; your collection follows you between iPhone and web. Without an account it's saved on the device, and signing in offers to move those items into the account.
 - **Books, manga, comics and LEGO** in one collection, with category badges and filters. Books come from Open Library (category detected from publisher and subjects), LEGO sets from Rebrickable (search by name or set number, with pieces and theme).
 - **Look up by ISBN** or **scan a barcode** with the iPhone camera. Typos are caught by the check digit before any request is made, and only book barcodes are accepted.
 - **Your collection:** a cover grid sorted by recently added or by title (ignoring "The"/"A"), a detail screen per item, and removal with confirmation.
 - **Account deletion** in the app (required by the App Store), light and dark mode, screen-reader labels, and browser tab titles on web.
 
-Next up is the universe layer: franchise and character pages that link items across categories (see [Roadmap](#roadmap)).
+Next up is AI: identify every item on a photographed shelf, and ask questions about your collection (see [Roadmap](#roadmap)).
 
 ## Architecture
 
@@ -46,10 +60,12 @@ flowchart LR
   subgraph api["apps/api (NestJS)"]
     auth["Better Auth<br/>(accounts, sessions)"]
     catalogApi["Catalog API<br/>(cached, rate-limited)"]
-    collectionApi["Collection API<br/>(per user)"]
+    collectionApi["Collection API<br/>(per user, with fixes)"]
+    universeApi["Universes<br/>(seed sync, links)"]
   end
   subgraph core["packages/core (pure TypeScript)"]
     adapters["OpenLibraryCatalog,<br/>RebrickableCatalog"]
+    universes["Universe seed +<br/>matchUniverses"]
     domain["Domain model, zod contracts,<br/>ISBN parsing, repositories"]
   end
   services -->|"signed in"| auth
@@ -57,6 +73,9 @@ flowchart LR
   services -->|"signed in"| collectionApi
   services -->|"guest"| kv[("AsyncStorage /<br/>localStorage")]
   catalogApi --> adapters
+  catalogApi --> universeApi
+  universeApi --> universes
+  universeApi --> pg
   adapters --> ol[("Open Library")]
   adapters --> rb[("Rebrickable")]
   auth --> pg[("PostgreSQL<br/>(Prisma)")]
@@ -67,6 +86,7 @@ flowchart LR
 - **`packages/core`** has no React, Node or platform code: the domain model, the zod schemas shared by the API and the app, ISBN validation, the Open Library and Rebrickable adapters, and the collection repository. Both the API and the app use it.
 - **`apps/api`** is a NestJS API (in production it also serves the web app from the same origin). It owns the accounts (Better Auth, users stored in our PostgreSQL), caches catalog results in a shared `catalog_item` table, and stores each user's collection. A global guard protects every route unless it's marked public.
 - **`apps/mobile`** is the Expo app. Screens get their dependencies (`BookCatalog`, `CollectionRepository`, `AccountService`) from a context provider: signed in, the collection is the API-backed repository; signed out, it's the on-device one. Tests swap in fakes.
+- **The universe layer:** a hand-checked seed of universes and characters lives in `packages/core`. A pure function, `matchUniverses`, links each catalog item from the clues its source gives (title, characters, places, LEGO theme, minifigs), with guards against look-alikes (Reagan's "Star Wars" program isn't Star Wars; Norse mythology's Thor isn't Marvel's). The API stores the links per catalog item and re-matches everything on startup when the seed changes; a user's fixes are stored as differences on their own copy, so they survive re-matching.
 - **Catalog entries vs. owned copies:** a catalog entry is what a catalog says exists; a `CollectionItem` is the user's copy, with a snapshot of the catalog data so the collection still renders if the source changes or is offline.
 
 ### Notable decisions
@@ -76,6 +96,7 @@ flowchart LR
 - **Ownership is per edition** (matched by ISBN, else by source ID), because collectors care which printing they own.
 - **One server, one origin:** the API serves the web app, so the web session cookie is first-party (no third-party cookie problems) and CORS only matters for development.
 - **Users only see their own items:** every collection query is scoped by the signed-in user's id (never a request field), and another user's item answers 404 rather than 403. The tests for this were mutation-checked.
+- **Universes are computed on the device** from links that travel with each item, so guests get the same universe pages as accounts, offline, updated the moment something is added.
 - **Defensive storage:** versioned JSON documents, serialized writes (rapid taps can't overwrite each other), and unreadable data raises an error instead of being silently replaced.
 
 Full decision log: [`CLAUDE.md`](CLAUDE.md).
@@ -86,15 +107,15 @@ Full decision log: [`CLAUDE.md`](CLAUDE.md).
 apps/
   api/               NestJS API: accounts (Better Auth), cached catalog (books, manga, comics, LEGO), per-user collections, PostgreSQL via Prisma, OpenAPI docs
     prisma/          Database schema and migrations
-    src/             Modules: auth, catalog, collection, health, me
+    src/             Modules: auth, catalog, collection, universes, health, me
     test/            End-to-end tests against a real test database
   mobile/            Expo app (Expo Router): iOS, Android and web
-    src/app/         Routes: (tabs)/index, (tabs)/add, (tabs)/account, book/[id], scan
+    src/app/         Routes: (tabs)/index, (tabs)/universes, (tabs)/add, (tabs)/account, universe/[slug], universe/[slug]/[character], book/[id], edit/[id], scan
     src/components/  UI components
     src/hooks/       Data hooks (search, collection, account)
     src/services/    App services and their wiring (API clients, repositories)
 packages/
-  core/              Domain model, zod contracts, ISBN utilities, catalog adapters, repository
+  core/              Domain model, zod contracts, ISBN utilities, catalog adapters, repository, universe seed and matching
 docs/plans/          Stage plans and task lists
 docs/screenshots/    README images
 render.yaml          Deployment (Render Blueprint)
@@ -152,11 +173,11 @@ npm run lint
 npm run format:check
 ```
 
-525 tests run in CI on every push:
+530 tests run in CI on every push:
 
 - **`packages/core` (239, Jest + ts-jest):** ISBN validation against reference values, universe and character matching against recorded real data (including look-alikes such as a book about the "Star Wars" missile defense program and Norse mythology's Thor), book/manga/comic classification against real Open Library subject data, the Open Library and Rebrickable adapters against **recorded real API responses** plus edge cases, and the repository (concurrent writes, corrupt data, restarts) over an in-memory store.
-- **`apps/api` (118, Vitest + Supertest):** config validation, caching and rate limiting, plus end-to-end tests against the real Nest app and a real PostgreSQL test database (created and migrated automatically), including sign-up/sign-in, native-app sessions, CORS, account deletion, password hashing, CSRF protection, the catalog API (validation, database caching, upstream failures) with a fake Open Library, the collection API, including isolation between users (mutation-checked), storing and backfilling universe-matching signals (resumable after failures, without erasing LEGO minifigs), and the universe API (seed sync that keeps ids and drops stale universes, links on every catalog response, your collection by universe with user isolation mutation-checked), and per-item fixes (category and links, validated, isolated per user, surviving re-matching).
-- **`apps/mobile` (168, jest-expo + React Native Testing Library):** screens rendered with a fake catalog, a fake account service and the real repository over an in-memory store: search states, ISBN lookup, adding and removing, navigation, sorting, accounts (sign-in, sign-up, sign-out, delete account), cloud sync (account vs device collection, moving device books into an account), LEGO search and detail, category filters, the Universes tab, universe and character pages (guest and account), universe links on items and search results, fixing an item's category, universes and characters (guest and account), "you own another edition" hints, and the barcode scanner with a mocked camera.
+- **`apps/api` (119, Vitest + Supertest):** config validation, caching and rate limiting, plus end-to-end tests against the real Nest app and a real PostgreSQL test database (created and migrated automatically), including sign-up/sign-in, native-app sessions, CORS, account deletion, password hashing, CSRF protection, the catalog API (validation, database caching, upstream failures) with a fake Open Library, the collection API, including isolation between users (mutation-checked), storing and backfilling universe-matching signals (resumable after failures, without erasing LEGO minifigs), and the universe API (seed sync that keeps ids and drops stale universes, links on every catalog response, your collection by universe with user isolation mutation-checked), and per-item fixes (category and links, validated, isolated per user, surviving re-matching).
+- **`apps/mobile` (172, jest-expo + React Native Testing Library):** screens rendered with a fake catalog, a fake account service and the real repository over an in-memory store: search states, ISBN lookup, adding and removing, navigation, sorting, accounts (sign-in, sign-up, sign-out, delete account), cloud sync (account vs device collection, moving device books into an account), LEGO search and detail, category filters, the Universes tab, universe and character pages (guest and account), universe links on items and search results, fixing an item's category, universes and characters (guest and account), "you own another edition" hints, and the barcode scanner with a mocked camera.
 
 Tests never call the network.
 
@@ -181,6 +202,8 @@ This project was built by a C#/.NET developer learning React Native. If that's y
 | Prisma schema + migrations               | EF Core model + migrations                           |
 | zod schemas in `packages/core`           | Shared DTOs with validation attributes               |
 | Vitest + Supertest e2e tests             | `WebApplicationFactory` integration tests            |
+| `onModuleInit` seed sync                 | Seeding data in an `IHostedService` at startup       |
+| Prisma `Json` columns                    | EF Core owned types stored as JSON                   |
 
 ## Data sources and attribution
 
@@ -192,7 +215,7 @@ Book data and cover images come from [Open Library](https://openlibrary.org), a 
 | ------------------------ | ------------------------------------------------------------------------------- |
 | **1. MVP** ✅            | Add books by search, ISBN or barcode; collection with covers on iPhone and web  |
 | **2. Real backend** ✅   | Accounts, cloud sync phone ↔ web, manga/comics/LEGO catalogs                    |
-| 3. Universe layer        | Franchise and character pages linking items across categories                   |
+| **3. Universe layer** ✅ | Franchise and character pages linking items across categories                   |
 | 4. AI                    | Shelf photo → identified items; natural-language questions about the collection |
 | 5. Pre-orders & releases | Release dates, payment reminders, push notifications                            |
 | 6. Launch                | TestFlight → App Store, shareable public collection pages                       |
