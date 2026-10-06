@@ -3,6 +3,7 @@ import {
   type AddToCollectionRequest,
   type CollectionItemResponse,
   type CollectionResponse,
+  type CollectionUniversesResponse,
 } from '@fandex/core';
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Res } from '@nestjs/common';
 import {
@@ -34,6 +35,15 @@ export class CollectionController {
   @ApiOkResponse({ description: 'Your items, newest first.' })
   async list(@Session() session: UserSession): Promise<CollectionResponse> {
     return { items: await this.collection.list(session.user.id) };
+  }
+
+  @Get('universes')
+  @ApiOkResponse({
+    description:
+      'The universes you own items from, with counts per category, covers and characters.',
+  })
+  async universes(@Session() session: UserSession): Promise<CollectionUniversesResponse> {
+    return { universes: await this.collection.universes(session.user.id) };
   }
 
   @Post()

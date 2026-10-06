@@ -51,7 +51,7 @@ collection_item_link                     ← a user's manual fixes
 
 **3. Universes in the API.** ✅ Tables and migration, seed sync on start, links computed on every catalog upsert, re-match when the seed changes. Public `GET /universes` and `GET /universes/:slug` (with characters). Catalog responses include universe and character refs, so the app can show them before an item is owned. _Demo:_ `curl /api/catalog/search?q=hobbit` shows `universes: [middle-earth]`.
 
-**4. Your collection by universe (API).** Collection items carry their effective links; `GET /collection/universes` returns the universes and characters the user owns, with counts per category. User isolation tests extended to the new endpoints. _Demo:_ `curl` your universe summary.
+**4. Your collection by universe (API).** ✅ Collection items carry their effective links; `GET /collection/universes` returns the universes and characters the user owns, with counts per category. User isolation tests extended to the new endpoints. _Demo:_ `curl` your universe summary.
 
 **5. Universes tab (app).** A new tab listing the universes you own items from (with counts and cover thumbnails), and a universe page with your items grouped by category plus its characters. Works in guest mode from the links stored with each item. _Demo:_ open Middle-earth and see books and LEGO together.
 

@@ -1,4 +1,8 @@
-import type { CollectionItemResponse } from '@fandex/core';
+import {
+  summarizeCollectionUniverses,
+  type CollectionItemResponse,
+  type CollectionUniverse,
+} from '@fandex/core';
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { Prisma } from '../generated/prisma/client.js';
@@ -28,6 +32,32 @@ export class CollectionService {
       orderBy: [{ addedAt: 'desc' }, { id: 'desc' }],
     });
     return rows.map(toCollectionItemResponse);
+  }
+
+  /**
+   * The universes the user owns items from, with counts, covers and characters. The
+   * collection is small enough to summarize in memory, with the same function guest mode
+   * uses on the device.
+   */
+  async universes(userId: string): Promise<CollectionUniverse[]> {
+    const [rows, directory] = await Promise.all([
+      this.prisma.collectionItem.findMany({ where: { userId }, include: withCatalog }),
+      this.prisma.universe.findMany({
+        orderBy: { position: 'asc' },
+        select: {
+          slug: true,
+          name: true,
+          characters: { orderBy: { position: 'asc' }, select: { slug: true, name: true } },
+        },
+      }),
+    ]);
+    const items = rows.map((row) => ({
+      category: row.catalogItem.category,
+      coverUrl: row.catalogItem.coverUrl ?? undefined,
+      addedAt: row.addedAt.toISOString(),
+      ...linksFromRow(row.catalogItem),
+    }));
+    return summarizeCollectionUniverses(items, directory);
   }
 
   /** Adds a catalog item; if the user already owns it, returns the existing item instead. */

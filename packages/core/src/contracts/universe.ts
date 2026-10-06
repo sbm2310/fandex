@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { CATEGORIES } from '../category';
+
 /** A URL-safe id from the universe seed: "middle-earth", "gandalf". */
 export const slugSchema = z
   .string()
@@ -39,3 +41,28 @@ export type UniverseDetail = z.infer<typeof universeDetailSchema>;
 export const universeListResponseSchema = z.object({ universes: z.array(universeSummarySchema) });
 
 export type UniverseListResponse = z.infer<typeof universeListResponseSchema>;
+
+/** GET /collection/universes: one universe the user owns items from. */
+export const collectionUniverseSchema = z.object({
+  slug: slugSchema,
+  name: z.string(),
+  /** Owned items in this universe (an item in two universes counts in both). */
+  itemCount: z.number().int().positive(),
+  /** The same items by category; categories with none are left out. */
+  categoryCounts: z.partialRecord(z.enum(CATEGORIES), z.number().int().positive()),
+  /** Covers of the most recently added items, for a thumbnail (at most four). */
+  coverUrls: z.array(z.url()).max(4),
+  /** Characters the user owns items with, in seed order. */
+  characters: z.array(
+    z.object({ slug: slugSchema, name: z.string(), itemCount: z.number().int().positive() }),
+  ),
+});
+
+export type CollectionUniverse = z.infer<typeof collectionUniverseSchema>;
+
+/** GET /collection/universes */
+export const collectionUniversesResponseSchema = z.object({
+  universes: z.array(collectionUniverseSchema),
+});
+
+export type CollectionUniversesResponse = z.infer<typeof collectionUniversesResponseSchema>;
