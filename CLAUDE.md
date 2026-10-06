@@ -51,7 +51,7 @@ Verify current terms, rate limits and attribution requirements for each API befo
 | --------------------------- | --------- | ------------------------------------------------------------------------------------------------ |
 | 1. MVP ✅ (v0.1.0)          | ~Week 1   | App on iPhone + web: add items by search or ISBN scan, see the collection with covers            |
 | 2. Real backend ✅ (v0.2.0) | Weeks 2–4 | Accounts, cloud sync phone ↔ web, unified catalog search across all sources                      |
-| 3. Universe layer           | Month 2   | Franchise/character pages linking items across categories, missing-item suggestions              |
+| 3. Universe layer           | Month 2   | Franchise/character pages linking items across categories (missing-item suggestions deferred)    |
 | 4. AI                       | Month 3   | Shelf photo → identified items; natural-language questions about the collection                  |
 | 5. Pre-orders & releases    | Month 4   | Release dates, payment reminders, push notifications (event-driven)                              |
 | 6. Launch                   | After     | TestFlight → App Store, shareable public collection pages, beta users from collector communities |
@@ -115,10 +115,21 @@ Full plan and task list: [`docs/plans/stage-2.md`](docs/plans/stage-2.md).
 - **Contracts:** zod schemas in `packages/core`, shared by API and app.
 - **Hosting (Task 11):** Render free web service + Neon free Postgres, both without a card (Railway ruled out — not free). Live at https://fandex-4mjc.onrender.com.
 
+## Stage 3 decisions (settled 2026-10-06)
+
+Full plan and task list: [`docs/plans/stage-3.md`](docs/plans/stage-3.md).
+
+- **Universes:** a curated seed in `packages/core` (aliases, LEGO theme ids, main characters, Wikidata ids), drafted from Wikidata (CC0) and reviewed by hand; items matched automatically by a pure, tested `matchUniverses` function; per-item manual fixes.
+- **Starting universes:** Middle-earth, Star Wars, Wizarding World, DC, Marvel (the owner's fandoms). Others are added by extending the seed.
+- **Characters:** universe and character pages both in Stage 3.
+- **Signals:** books — title, series, Open Library people/places/subjects (authors never count as characters); LEGO — Rebrickable theme and minifig names. Open Library is patchy (some volumes list no characters, one novel lists its author), so rules combine signals.
+- **Links:** automatic links on `catalog_item` (shared), user overrides on `collection_item`; links travel with catalog entries so guest mode works.
+- **"You're missing…" suggestions:** deferred until after Stage 3.
+
 ## Open questions (deferred to later stages)
 
 - Email provider for verification and password reset (free tiers only) — needs a domain we own
-- Data model for "universe / character / item" links across categories — Stage 3. Include work-level matching: ownership is per edition (ISBN), so search can show "Add" for a different printing of a book the user owns; a "you own another edition" hint belongs here.
+- "You're missing…" suggestions (series gaps, manga volumes, LEGO sets in a theme) — after Stage 3; needs series/volume data (Wikidata has series order for well-known works)
 - Which AI/vision model to use for shelf-photo recognition, and cost per scan — Stage 4
 - Apple Developer account — not needed for Stage 2 (email + password works in Expo Go); buy when adding Apple sign-in, push notifications (Stage 5) or TestFlight
 
