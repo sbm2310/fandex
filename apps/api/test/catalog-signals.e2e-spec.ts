@@ -88,11 +88,11 @@ describe('Catalog signals (e2e)', () => {
     return rows;
   }
   const oldBook = {
-    category: 'book',
-    source: 'openlibrary',
+    category: 'book' as const,
+    source: 'openlibrary' as const,
     creators: ['J.R.R. Tolkien'],
-  } as const;
-  const oldSet = { category: 'lego', source: 'rebrickable', creators: [] } as const;
+  };
+  const oldSet = { category: 'lego' as const, source: 'rebrickable' as const, creators: [] };
 
   describe('when catalog results are stored', () => {
     it('keeps the signals and work key, without sending signals to the app', async () => {
