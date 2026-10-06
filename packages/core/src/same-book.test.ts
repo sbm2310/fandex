@@ -1,7 +1,8 @@
 import type { CatalogBook, BookSource } from './catalog-book';
 import { parseIsbn, type Isbn13 } from './isbn';
 import type { CatalogSet } from './catalog-set';
-import { isSameBook, isSameEntry } from './same-book';
+import { createCollectionItem } from './collection-item';
+import { findOtherEditions, isSameBook, isSameEntry } from './same-book';
 
 const isbn = (value: string) => parseIsbn(value) as Isbn13;
 // Only Open Library exists today; matching must keep working once more sources are added.
@@ -61,5 +62,35 @@ describe('isSameEntry', () => {
 
   it('matches books like isSameBook', () => {
     expect(isSameEntry(book({}), book({}))).toBe(true);
+  });
+});
+
+describe('findOtherEditions', () => {
+  const hardcover = book({
+    externalId: 'OL1M',
+    isbn13: isbn('9780547928227'),
+    workKey: 'OL27482W',
+  });
+  const paperback = book({
+    externalId: 'OL2M',
+    isbn13: isbn('9780345339683'),
+    workKey: 'OL27482W',
+  });
+  const owned = (catalog: CatalogBook) =>
+    createCollectionItem(catalog, { id: catalog.externalId, now: new Date('2026-10-06') });
+
+  it('finds owned copies of the same work in other editions', () => {
+    expect(findOtherEditions(paperback, [owned(hardcover)]).map((item) => item.id)).toEqual([
+      'OL1M',
+    ]);
+  });
+
+  it('ignores the same edition, other works, and entries without a work key', () => {
+    const otherWork = book({ externalId: 'OL3M', isbn13: isbn('9780306406157'), workKey: 'OL1W' });
+    const { workKey: _workKey, ...unknownWork } = paperback;
+
+    expect(findOtherEditions(hardcover, [owned(hardcover)])).toEqual([]);
+    expect(findOtherEditions(paperback, [owned(otherWork)])).toEqual([]);
+    expect(findOtherEditions(unknownWork, [owned(hardcover)])).toEqual([]);
   });
 });

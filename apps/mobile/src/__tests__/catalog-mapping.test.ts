@@ -9,13 +9,15 @@ const book = catalogItemSchema.parse({
   externalId: 'OL1M',
   title: 'The Hobbit',
   creators: ['J.R.R. Tolkien'],
+  workKey: 'OL27482W',
   universes: ['middle-earth'],
   characters: [{ universe: 'middle-earth', character: 'gandalf' }],
 });
 
 describe('catalog mapping', () => {
-  it('keeps the universe links, so a guest collection knows its universes', () => {
+  it('keeps the work key and universe links, so a guest collection has them too', () => {
     expect(toCatalogBook(book)).toMatchObject({
+      workKey: 'OL27482W',
       universes: ['middle-earth'],
       characters: [{ universe: 'middle-earth', character: 'gandalf' }],
     });

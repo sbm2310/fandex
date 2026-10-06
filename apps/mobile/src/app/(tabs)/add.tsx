@@ -6,6 +6,7 @@ import { ActivityIndicator, FlatList, Platform, Pressable, StyleSheet, View } fr
 
 import { AddToCollectionButton } from '@/components/add-to-collection-button';
 import { EntryRow } from '@/components/entry-row';
+import { OtherEditionNote } from '@/components/other-editions';
 import { PageTitle } from '@/components/page-title';
 import { Screen } from '@/components/screen';
 import { SearchField } from '@/components/search-field';
@@ -127,7 +128,11 @@ function SearchResults({
       data={search.data}
       keyExtractor={(entry) => `${entry.source}:${entry.externalId}`}
       renderItem={({ item }) => (
-        <EntryRow entry={item} accessory={<AddToCollectionButton entry={item} />} />
+        <EntryRow
+          entry={item}
+          accessory={<AddToCollectionButton entry={item} />}
+          note={<OtherEditionNote entry={item} />}
+        />
       )}
       keyboardShouldPersistTaps="handled"
       keyboardDismissMode="on-drag"

@@ -13,6 +13,8 @@ type Props = {
   entry: CatalogEntry;
   /** Optional trailing control, e.g. an Add button. Kept outside the grouped label so it stays focusable. */
   accessory?: ReactNode;
+  /** Optional line under the row, e.g. "You own another edition" (also its own focusable element). */
+  note?: ReactNode;
 };
 
 /** The two secondary lines for a result: authors + year/publisher, or set number/pieces + theme/year. */
@@ -31,7 +33,7 @@ export function entryDetails(entry: CatalogEntry): [string | undefined, string |
 }
 
 /** One search result: image, title, and two lines of details (books or LEGO sets). */
-export function EntryRow({ entry, accessory }: Props) {
+export function EntryRow({ entry, accessory, note }: Props) {
   const title = formatTitle(entry);
   const [first, second] = entryDetails(entry);
   const isSet = entry.category === 'lego';
@@ -74,9 +76,10 @@ export function EntryRow({ entry, accessory }: Props) {
         </View>
         {accessory}
       </View>
-      {/* Outside the grouped label so each universe link is reachable on its own. */}
+      {/* Outside the grouped label so each link is reachable on its own. */}
+      {note ? <View style={styles.indented}>{note}</View> : null}
       {entry.universes?.length ? (
-        <View style={styles.universes}>
+        <View style={styles.indented}>
           <UniverseChips universes={entry.universes} />
         </View>
       ) : null}
@@ -96,7 +99,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.three,
   },
-  universes: {
+  indented: {
     // Lines up with the title, past the cover.
     paddingLeft: COVER_WIDTH + Spacing.three,
   },

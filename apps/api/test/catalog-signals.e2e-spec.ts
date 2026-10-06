@@ -99,6 +99,7 @@ describe('Catalog signals (e2e)', () => {
       const response = await api().get('/api/catalog/search').query({ q: 'hobbit' }).expect(200);
 
       expect(response.body.items[0]).not.toHaveProperty('matchSignals');
+      expect(response.body.items[0].workKey).toBe('OL27482W');
       const row = await prisma.catalogItem.findFirstOrThrow({
         where: { externalId: hobbit.externalId },
       });

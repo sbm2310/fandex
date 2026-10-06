@@ -21,6 +21,7 @@ export function toCatalogBook(item: CatalogItemResponse): CatalogBook | null {
     ...(item.year !== undefined && { publishedYear: item.year }),
     ...(item.publisher && { publisher: item.publisher }),
     ...(item.isbn13 && { isbn13: item.isbn13 as Isbn13 }),
+    ...(item.workKey && { workKey: item.workKey }),
     ...(item.coverUrl && { coverUrl: item.coverUrl }),
     ...links(item),
   };

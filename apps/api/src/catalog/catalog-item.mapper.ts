@@ -91,6 +91,7 @@ export function toCatalogItemResponse(row: CatalogItem, links: ItemLinks): Catal
     ...(row.year !== null && { year: row.year }),
     ...(row.publisher !== null && { publisher: row.publisher }),
     ...(row.isbn13 !== null && { isbn13: row.isbn13 }),
+    ...(row.workKey !== null && { workKey: row.workKey }),
     ...(row.coverUrl !== null && { coverUrl: row.coverUrl }),
     ...(row.setNumber !== null && { setNumber: row.setNumber }),
     ...(row.pieceCount !== null && { pieceCount: row.pieceCount }),

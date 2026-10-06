@@ -1,4 +1,5 @@
 import {
+  findOtherEditions,
   isSameEntry,
   type CatalogEntry,
   type CollectionItem,
@@ -80,6 +81,12 @@ export function useCollectionItem(id: string) {
 export function useIsInCollection(entry: CatalogEntry): boolean | undefined {
   const { data } = useCollection();
   return data?.some((item) => isSameEntry(item.catalog, entry));
+}
+
+/** Owned copies of this book in other editions; `undefined` until the collection has loaded. */
+export function useOtherEditions(entry: CatalogEntry): CollectionItem[] | undefined {
+  const { data } = useCollection();
+  return data && findOtherEditions(entry, data);
 }
 
 function useActiveRepositoryOrThrow() {

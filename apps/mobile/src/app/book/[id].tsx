@@ -4,6 +4,7 @@ import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'reac
 
 import { BookCover } from '@/components/book-cover';
 import { Button } from '@/components/button';
+import { AlsoOwnedEditions } from '@/components/other-editions';
 import { CATEGORY_LABELS } from '@/components/category-badge';
 import { EmptyState } from '@/components/empty-state';
 import { PageTitle } from '@/components/page-title';
@@ -73,6 +74,9 @@ function BookDetail({ item }: { item: CollectionItem }) {
                 {byline}
               </ThemedText>
             ) : null}
+            <View style={styles.centeredRow}>
+              <AlsoOwnedEditions entry={catalog} />
+            </View>
           </View>
 
           <View style={styles.facts}>
@@ -241,6 +245,9 @@ const styles = StyleSheet.create({
   },
   links: {
     gap: Spacing.three,
+  },
+  centeredRow: {
+    alignItems: 'center',
   },
   fix: {
     gap: Spacing.two,

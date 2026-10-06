@@ -17,6 +17,8 @@ export const catalogItemSchema = z.object({
   year: z.number().int().optional(),
   publisher: z.string().optional(),
   isbn13: z.string().length(13).optional(),
+  /** Open Library work id ("OL27482W"): the same book in every edition. */
+  workKey: z.string().optional(),
   coverUrl: z.url().optional(),
   /** LEGO only: the set number as printed on the box ("75192"). */
   setNumber: z.string().optional(),
