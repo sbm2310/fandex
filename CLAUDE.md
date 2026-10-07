@@ -135,11 +135,21 @@ Full plan and task list: [`docs/plans/stage-3.md`](docs/plans/stage-3.md).
 - **Links:** automatic links on `catalog_item` (shared), user overrides on `collection_item`; links travel with catalog entries so guest mode works.
 - **"You're missing…" suggestions:** deferred until after Stage 3.
 
+## Stage 4 decisions (settled 2026-10-07)
+
+Full plan and task list: [`docs/plans/stage-4.md`](docs/plans/stage-4.md).
+
+- **AI provider:** Groq free plan (no card), behind our own `VisionModel` / `LanguageModel` interfaces. Its Services Agreement forbids Groq from training on inputs/outputs and allows end-user apps. Rejected: Gemini free tier (trains on content, "no personal information", no EU/UK users), Cloudflare Workers AI, GitHub Models (prototyping only), OpenAI/Anthropic (no free API).
+- **Model:** `qwen/qwen3.8-27b` (Groq's vision model; images count 2,048 tokens each, ≤ 3 per request; strict JSON-schema outputs). Free plan: 30 req/min, 1,000/day, 8K tokens/min. Model ids are config — Groq retires models.
+- **Access:** signed-in users only, per-user daily quotas plus a global guard; `GROQ_API_KEY` optional (AI endpoints answer 503 without it). Zero Data Retention on in the Groq console.
+- **Shelf scan:** books, manga, comics, LEGO boxes. The model reads titles/authors/set numbers; our catalogs supply the entries; the user confirms before adding. Photos are resized on the device and never stored. Figures later.
+- **Ask your collection:** the model turns the question into a `CollectionQuery`; core runs it on the collection. The collection (and any Rebrickable content) is never sent to the model. Keyword fallback when AI is unavailable.
+
 ## Open questions (deferred to later stages)
 
 - Email provider for verification and password reset (free tiers only) — needs a domain we own
 - "You're missing…" suggestions (series gaps, manga volumes, LEGO sets in a theme) — after Stage 3; needs series/volume data (Wikidata has series order for well-known works)
-- Which AI/vision model to use for shelf-photo recognition, and cost per scan — Stage 4
+- Premium figures catalog (AI-read box details + community contributions) — after Stage 4
 - Apple Developer account — not needed for Stage 2 (email + password works in Expo Go); buy when adding Apple sign-in, push notifications (Stage 5) or TestFlight
 
 ## Working agreements
