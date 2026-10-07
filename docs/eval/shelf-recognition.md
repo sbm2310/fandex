@@ -7,14 +7,15 @@ How well a free vision model reads a collector's shelf, measured on the owner's 
 - **Model:** `qwen/qwen3.8-27b` on Groq's free plan (its only vision model), temperature 0.6, top-p 0.95, at most 800 reply tokens, reasoning off.
 - **Photos:** 9 iPhone photos of one five-shelf bookcase: 4 of the whole bookcase, 5 closer ones. About 130 spines: English and Hebrew novels, manga (Demon Slayer, Vagabond, Vinland Saga), Marvel trade paperbacks, and built LEGO Star Wars sets on display stands.
 - **Truth:** 26 items (a series run is one item, e.g. "Demon Slayer 1–23"), each with the phrases that identify it in any script.
+- **Scores below** use the corrected list (the owner confirmed The Silmarillion and more Dragonlance titles that Gemini had named; `apps/api/eval/rescore.ts` re-scores saved runs without calling a model).
 - **Scoring:** an item is _found_ when a reading's title contains one of its phrases (strictly: "UNLAND SAGA" does not count as Vinland Saga, because Open Library's search finds nothing for it either). _Precision_ is the share of readings that match something really on the shelf.
 
 ## Results
 
 | How the photo is sent                                      | Items found  | Readings that were real | Replies cut off at the limit | Tokens per request |
 | ---------------------------------------------------------- | ------------ | ----------------------- | ---------------------------- | ------------------ |
-| Whole photo, one image                                     | 21/166 (13%) | 49/125 (39%)            | 9/9                          | 2,746              |
-| One shelf per image                                        | 18/50 (36%)  | 39/89 (44%)             | 4/9                          | 2,092              |
+| Whole photo, one image                                     | 21/166 (13%) | 48/125 (38%)            | 9/9                          | 2,746              |
+| One shelf per image                                        | 18/50 (36%)  | 38/89 (43%)             | 4/9                          | 2,092              |
 | **One shelf, cut into 2 overlapping halves (one request)** | 21/50 (42%)  | 29/74 (39%)             | 4/9                          | 2,367              |
 
 Counting only items in English (no Hebrew editions), the one-shelf variants found 18–19 of 40 (about 48%). LEGO: 2 of 8.
@@ -38,7 +39,7 @@ The same script with `--provider gemini` (`gemini-3.5-flash`, thinking off; `gem
 | Same 4 photos, whole photo | Groq `qwen/qwen3.8-27b` | Gemini `gemini-3.5-flash` |
 | -------------------------- | ----------------------- | ------------------------- |
 | Items found                | 5/57 (9%)               | **36/57 (63%)**           |
-| Readings that were real    | 11/26 (42%)             | 78/95 (82%)               |
+| Readings that were real    | 11/26 (42%)             | 79/95 (83%)               |
 | Hebrew spines              | none                    | read (4–5 Hebrew series)  |
 | Built LEGO models          | none                    | all 4 on the closer photo |
 

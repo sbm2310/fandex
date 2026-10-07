@@ -27,7 +27,7 @@
       "shelf": 1,
       "id": "dragonlance-he",
       "kind": "book",
-      "name": "Dragonlance (Hebrew), Margaret Weis & Tracy Hickman",
+      "name": "Dragonlance (Hebrew), Margaret Weis & Tracy Hickman — many series",
       "count": 15,
       "aliases": [
         "dragonlance",
@@ -42,7 +42,13 @@
         "tracy hickman",
         "דרקונים",
         "התאומים",
-        "רומח הדרקון"
+        "רומח הדרקון",
+        "amber and ashes",
+        "amber and iron",
+        "raistlin",
+        "ענבר",
+        "רייסטלין",
+        "קרין"
       ]
     },
     {
@@ -63,7 +69,7 @@
       "shelf": 2,
       "id": "lotr-he",
       "kind": "book",
-      "name": "The Lord of the Rings + The Hobbit (Hebrew), J. R. R. Tolkien",
+      "name": "Tolkien in Hebrew: The Lord of the Rings, The Hobbit, The Silmarillion",
       "count": 4,
       "aliases": [
         "lord of the rings",
@@ -78,7 +84,9 @@
         "שובו של המלך",
         "הוביט",
         "ההוביט",
-        "טולקין"
+        "טולקין",
+        "silmarillion",
+        "סילמריליון"
       ]
     },
     {
