@@ -42,6 +42,6 @@ const OPEN_LIBRARY_USER_AGENT = 'Fandex/0.2 (https://github.com/sbm2310/fandex)'
       },
     },
   ],
-  exports: [CatalogSignalsService],
+  exports: [CatalogService, CatalogSignalsService],
 })
 export class CatalogModule {}

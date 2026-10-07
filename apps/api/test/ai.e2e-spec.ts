@@ -1,10 +1,18 @@
-import { aiQuotaResponseSchema, shelfScanResponseSchema } from '@fandex/core';
+import {
+  aiQuotaResponseSchema,
+  shelfScanResponseSchema,
+  type BookCatalog,
+  type CatalogBook,
+  type CatalogSet,
+  type LegoCatalog,
+} from '@fandex/core';
 import type { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 
 import { usageDay } from '../src/ai/ai-quota.service.js';
 import { AiProviderError, AiRateLimitError, type ChatModel } from '../src/ai/chat-client.js';
 import { CHAT_MODEL } from '../src/ai/shelf-reader.service.js';
+import { BOOK_CATALOG, LEGO_CATALOG } from '../src/catalog/catalog.service.js';
 import type { PrismaService } from '../src/prisma/prisma.service.js';
 import { createTestApp } from './create-test-app.js';
 import { resetDatabase } from './reset-database.js';
@@ -21,13 +29,52 @@ const reply = [
 
 const fakeModel = { chat: vi.fn<ChatModel['chat']>() };
 
+const vagabondNovel: CatalogBook = {
+  source: 'openlibrary',
+  externalId: 'OL1M',
+  category: 'book',
+  title: 'Vagabond',
+  authors: ['Bernard Cornwell'],
+};
+const vagabondManga: CatalogBook = {
+  source: 'openlibrary',
+  externalId: 'OL2M',
+  category: 'manga',
+  title: 'Vagabond VIZBIG Edition, Vol. 1',
+  authors: ['井上雄彦 (Takehiko Inoue)'],
+};
+const falcon: CatalogSet = {
+  source: 'rebrickable',
+  externalId: '75375-1',
+  category: 'lego',
+  title: 'Millennium Falcon',
+  setNumber: '75375',
+  year: 2024,
+};
+const oldFalcon: CatalogSet = { ...falcon, externalId: '10179-1', setNumber: '10179', year: 2007 };
+
+const fakeBooks = {
+  search: vi.fn<BookCatalog['search']>(),
+  lookupIsbn: vi.fn<BookCatalog['lookupIsbn']>(),
+};
+const fakeLego = {
+  searchSets: vi.fn<LegoCatalog['searchSets']>(),
+  lookupSet: vi.fn<LegoCatalog['lookupSet']>(),
+};
+
 describe('AI (e2e)', () => {
   let app: INestApplication;
   let prisma: PrismaService;
 
-  async function start(model: ChatModel | null = fakeModel) {
+  async function start(model: ChatModel | null = fakeModel, { lego = true } = {}) {
     ({ app, prisma } = await createTestApp((builder) =>
-      builder.overrideProvider(CHAT_MODEL).useValue(model),
+      builder
+        .overrideProvider(CHAT_MODEL)
+        .useValue(model)
+        .overrideProvider(BOOK_CATALOG)
+        .useValue(fakeBooks)
+        .overrideProvider(LEGO_CATALOG)
+        .useValue(lego ? fakeLego : null),
     ));
     await resetDatabase(prisma);
   }
@@ -55,6 +102,15 @@ describe('AI (e2e)', () => {
       finishReason: 'stop',
       usage: { promptTokens: 2000, completionTokens: 40 },
     });
+    fakeBooks.search
+      .mockReset()
+      .mockImplementation(async (query) =>
+        query === 'Vagabond Takehiko Inoue' ? [vagabondNovel, vagabondManga] : [],
+      );
+    fakeLego.searchSets.mockReset().mockResolvedValue([oldFalcon, falcon]);
+    fakeLego.lookupSet
+      .mockReset()
+      .mockImplementation(async (setNumber) => (setNumber === '75375-1' ? falcon : null));
   });
 
   afterEach(() => app.close());
@@ -71,7 +127,7 @@ describe('AI (e2e)', () => {
     expect(fakeModel.chat).not.toHaveBeenCalled();
   });
 
-  it('reads a shelf photo sent in parts, and counts it', async () => {
+  it('reads a shelf photo sent in parts, finds each reading in the catalog, and counts it', async () => {
     await start();
     const agent = await signUp();
     const left = jpeg(10);
@@ -79,13 +135,30 @@ describe('AI (e2e)', () => {
 
     const { body } = await scan(agent, [left, right]).expect(200);
 
-    expect(shelfScanResponseSchema.parse(body)).toEqual({
-      readings: [
-        { kind: 'manga', title: 'Vagabond', author: 'Takehiko Inoue', count: 8 },
-        { kind: 'lego', title: 'Millennium Falcon', count: 1, setNumber: '75375' },
-      ],
-      quota: { used: 1, limit: 5 },
-    });
+    const { items, quota } = shelfScanResponseSchema.parse(body);
+    expect(quota).toEqual({ used: 1, limit: 5 });
+    expect(items.map((item) => item.reading)).toEqual([
+      { kind: 'manga', title: 'Vagabond', author: 'Takehiko Inoue', count: 8 },
+      { kind: 'lego', title: 'Millennium Falcon', count: 1, setNumber: '75375' },
+    ]);
+    // Best first: the manga over the novel of the same name; the set whose number was read.
+    const [vagabond, millenniumFalcon] = items;
+    expect(vagabond!.candidates.map(({ item }) => [item.title, item.category])).toEqual([
+      ['Vagabond VIZBIG Edition, Vol. 1', 'manga'],
+      ['Vagabond', 'book'],
+    ]);
+    expect(millenniumFalcon!.candidates.map(({ item }) => item.setNumber)).toEqual([
+      '75375',
+      '10179',
+    ]);
+    expect(fakeBooks.search).toHaveBeenCalledWith('Vagabond Takehiko Inoue');
+    expect(fakeLego.lookupSet).toHaveBeenCalledWith('75375-1');
+    // Candidates are real catalog items, with our ids: addable as they are.
+    const added = await agent
+      .post('/api/collection')
+      .send({ catalogItemId: vagabond!.candidates[0]!.item.id })
+      .expect(201);
+    expect(added.body.catalog.title).toBe('Vagabond VIZBIG Edition, Vol. 1');
     // One request with both parts, core's prompt and the measured settings.
     expect(fakeModel.chat).toHaveBeenCalledTimes(1);
     const sent = fakeModel.chat.mock.calls[0]![0];
@@ -93,8 +166,36 @@ describe('AI (e2e)', () => {
     expect(sent.prompt).toContain('The 2 images are parts of one photo');
     expect(sent.images?.map((image) => Buffer.from(image))).toEqual([left, right]);
 
-    const quota = aiQuotaResponseSchema.parse((await agent.get('/api/ai/quota').expect(200)).body);
-    expect(quota).toEqual({ available: true, shelfScans: { used: 1, limit: 5 } });
+    const status = aiQuotaResponseSchema.parse((await agent.get('/api/ai/quota').expect(200)).body);
+    expect(status).toEqual({ available: true, shelfScans: { used: 1, limit: 5 } });
+  });
+
+  it('marks candidates the user already owns', async () => {
+    await start();
+    const agent = await signUp();
+    const first = shelfScanResponseSchema.parse((await scan(agent).expect(200)).body);
+    const manga = first.items[0]!.candidates[0]!.item;
+    await agent.post('/api/collection').send({ catalogItemId: manga.id }).expect(201);
+
+    const again = shelfScanResponseSchema.parse((await scan(agent).expect(200)).body);
+
+    expect(again.items[0]!.candidates.map((candidate) => candidate.owned)).toEqual([true, false]);
+    expect(again.items[1]!.candidates.every((candidate) => !candidate.owned)).toBe(true);
+    // Ownership is per user.
+    const friend = await signUp('friend@example.com');
+    const theirs = shelfScanResponseSchema.parse((await scan(friend).expect(200)).body);
+    expect(theirs.items[0]!.candidates[0]!.owned).toBe(false);
+  });
+
+  it('still answers when a catalog search fails, or without LEGO on the server', async () => {
+    await start(fakeModel, { lego: false });
+    const agent = await signUp();
+    fakeBooks.search.mockRejectedValue(new Error('Open Library is down'));
+
+    const { items, quota } = shelfScanResponseSchema.parse((await scan(agent).expect(200)).body);
+
+    expect(items.map((item) => item.candidates)).toEqual([[], []]);
+    expect(quota.used).toBe(1);
   });
 
   it.each([

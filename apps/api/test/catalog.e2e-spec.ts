@@ -84,6 +84,26 @@ describe('Catalog (e2e)', () => {
       expect(await prisma.catalogItem.count()).toBe(2);
     });
 
+    it('survives simultaneous searches that return the same book', async () => {
+      // A shelf scan searches for every reading at once; editions overlap between searches.
+      const linked: CatalogBook = {
+        ...hobbit,
+        matchSignals: { title: 'The Hobbit', people: ['Gandalf', 'Bilbo Baggins'] },
+      };
+      fakeCatalog.search.mockResolvedValue([linked]);
+
+      const responses = await Promise.all(
+        ['hobbit', 'the hobbit', 'tolkien hobbit', 'hobbit tolkien', 'bilbo'].map((q) =>
+          api().get('/api/catalog/search').query({ q }),
+        ),
+      );
+
+      expect(responses.map((response) => response.status)).toEqual([200, 200, 200, 200, 200]);
+      expect(new Set(responses.map((response) => response.body.items[0].id)).size).toBe(1);
+      expect(await prisma.catalogItem.count()).toBe(1);
+      expect(responses[0]!.body.items[0].universes).toEqual(['middle-earth']);
+    });
+
     it('answers repeated searches from memory', async () => {
       await api().get('/api/catalog/search').query({ q: 'One Piece' }).expect(200);
       await api().get('/api/catalog/search').query({ q: 'one piece' }).expect(200);

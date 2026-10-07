@@ -54,6 +54,11 @@ export class CatalogService {
     private readonly linker: UniverseLinker,
   ) {}
 
+  /** Whether LEGO is set up on this server (it needs a Rebrickable key). */
+  get legoAvailable(): boolean {
+    return this.lego !== null;
+  }
+
   async search(query: string, kind: CatalogSearchKind = 'books'): Promise<CatalogItemResponse[]> {
     const key = `${kind}:${query.toLowerCase()}`;
     const cached = this.searchCache.get(key);

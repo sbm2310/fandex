@@ -1,18 +1,22 @@
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
+import { CatalogModule } from '../catalog/catalog.module.js';
 import type { Env } from '../config/env.js';
 
 import { AiQuotaService } from './ai-quota.service.js';
 import { AiController } from './ai.controller.js';
 import { ChatClient } from './chat-client.js';
 import { CHAT_MODEL, ShelfReader } from './shelf-reader.service.js';
+import { ShelfScanService } from './shelf-scan.service.js';
 
 @Module({
+  imports: [CatalogModule],
   controllers: [AiController],
   providers: [
     AiQuotaService,
     ShelfReader,
+    ShelfScanService,
     {
       provide: CHAT_MODEL,
       inject: [ConfigService],

@@ -28,8 +28,8 @@ import { Session, type UserSession } from '@thallesp/nestjs-better-auth';
 import type { Response } from 'express';
 
 import { AiQuotaService } from './ai-quota.service.js';
-import { AiRateLimitError } from './chat-client.js';
-import { ShelfReader } from './shelf-reader.service.js';
+import { AiProviderError, AiRateLimitError } from './chat-client.js';
+import { ShelfScanService } from './shelf-scan.service.js';
 
 /** The parts of one shelf photo (the app sends two halves; the provider accepts up to 3). */
 export const MAX_SHELF_IMAGES = 3;
@@ -47,7 +47,7 @@ export class AiController {
   private readonly logger = new Logger(AiController.name);
 
   constructor(
-    private readonly reader: ShelfReader,
+    private readonly shelfScans: ShelfScanService,
     private readonly quota: AiQuotaService,
   ) {}
 
@@ -55,7 +55,7 @@ export class AiController {
   @ApiOkResponse({ description: "Whether AI is available here, and today's allowance." })
   async getQuota(@Session() session: UserSession): Promise<AiQuotaResponse> {
     return {
-      available: this.reader.available,
+      available: this.shelfScans.available,
       shelfScans: await this.quota.status(session.user.id, 'shelf_scan'),
     };
   }
@@ -79,7 +79,10 @@ export class AiController {
       properties: { images: { type: 'array', items: { type: 'string', format: 'binary' } } },
     },
   })
-  @ApiOkResponse({ description: 'What the model read (unverified guesses), and your allowance.' })
+  @ApiOkResponse({
+    description:
+      'What the model read, each with the catalog entries it could be (best first, marked when you own them), and your allowance.',
+  })
   @ApiBadRequestResponse({ description: 'No images, more than 3, or not JPEG.' })
   @ApiPayloadTooLargeResponse({ description: 'An image is larger than 2 MB.' })
   @ApiTooManyRequestsResponse({ description: "You've used today's shelf scans." })
@@ -95,16 +98,13 @@ export class AiController {
     const images = (files ?? []).map((file) => new Uint8Array(file.buffer));
     if (images.length === 0) throw new BadRequestException('Send the photo as JPEG `images`.');
     if (!images.every(isJpeg)) throw new BadRequestException('Images must be JPEG.');
-    if (!this.reader.available) {
+    if (!this.shelfScans.available) {
       throw new ServiceUnavailableException('Shelf scanning is not set up on this server.');
     }
-    const userId = session.user.id;
-    await this.quota.assertAvailable(userId, 'shelf_scan');
-
-    let readings;
     try {
-      ({ readings } = await this.reader.read(images));
+      return await this.shelfScans.scan(session.user.id, images);
     } catch (error) {
+      if (!(error instanceof AiProviderError) && !(error instanceof TypeError)) throw error;
       // The user isn't charged for a failure at the provider; "busy" with a time to retry.
       const retryAfterSeconds =
         error instanceof AiRateLimitError ? Math.ceil(error.retryAfterMs / 1000) : 30;
@@ -118,6 +118,5 @@ export class AiController {
           : 'Shelf scanning is unavailable right now. Try again shortly.',
       );
     }
-    return { readings, quota: await this.quota.record(userId, 'shelf_scan') };
   }
 }

@@ -1,0 +1,1257 @@
+{
+  "$comment": "Real Open Library and Rebrickable results (2026-10-07) for queries built from real shelf readings, trimmed to the fields ranking uses.",
+  "books": {
+    "Civil War comics": [
+      {
+        "title": "The Art of War",
+        "creators": ["孙武 (Sun Tzu)"],
+        "category": "book",
+        "year": 2020
+      },
+      {
+        "title": "The war of the worlds",
+        "creators": ["H. G. Wells"],
+        "category": "book",
+        "year": 1922
+      },
+      {
+        "title": "The Forever War",
+        "creators": ["Joe Haldeman"],
+        "category": "comic",
+        "year": 1999
+      },
+      {
+        "title": "The red badge of courage",
+        "subtitle": "an episode of the American Civil War",
+        "creators": ["Stephen Crane"],
+        "category": "book",
+        "year": 1896
+      },
+      {
+        "title": "Civil War",
+        "creators": ["Mark Millar"],
+        "category": "comic",
+        "year": 2007
+      },
+      {
+        "title": "Deadpool",
+        "subtitle": "civil war II",
+        "creators": ["Gerry Duggan"],
+        "category": "comic",
+        "year": 2016
+      },
+      {
+        "title": "Civil war",
+        "subtitle": "a Marvel Comics event",
+        "creators": ["Mark Millar"],
+        "category": "comic",
+        "year": 2007
+      },
+      {
+        "title": "Spider-Man 2099",
+        "subtitle": "Civil War II",
+        "creators": ["Peter David"],
+        "category": "comic",
+        "year": 2016
+      },
+      {
+        "title": "Big Bad Ironclad A Civil War Steamship Showdown",
+        "creators": ["Hale, Nathan"],
+        "category": "comic",
+        "year": 2012
+      },
+      {
+        "title": "Blue Phantom #01-066-208",
+        "subtitle": "Golden Age Civil War Comic",
+        "creators": ["Dell Company"],
+        "category": "book",
+        "year": 2015
+      },
+      {
+        "title": "Ms. Marvel",
+        "subtitle": "Civil War II",
+        "creators": ["G. Willow Wilson"],
+        "category": "comic",
+        "year": 2016
+      },
+      {
+        "title": "Civil War",
+        "subtitle": "Thunderbolts TPB (Civil War (Marvel))",
+        "creators": ["Fabian Nicieza", "Tom Grummett"],
+        "category": "comic",
+        "year": 2007
+      },
+      {
+        "title": "Civil War",
+        "creators": ["Matt Fraction", "Ariel Olivetti", "Mike Deodato Jr."],
+        "category": "comic",
+        "year": 2009
+      },
+      {
+        "title": "Civil War",
+        "subtitle": "Marvel Universe",
+        "creators": [
+          "Ed Brubaker",
+          "Charles Knauf",
+          "Daniel Knauf",
+          "Christos Gage",
+          "Brian Michael Bendis"
+        ],
+        "category": "comic",
+        "year": 2016
+      },
+      {
+        "title": "Civil war",
+        "subtitle": "a novel of the Marvel universe",
+        "creators": ["Stuart Moore"],
+        "category": "comic",
+        "year": 2012
+      },
+      {
+        "title": "Uncanny Inhumans - Civil War II",
+        "creators": ["Marvel Comics", "Brandon Peterson", "Charles Soule"],
+        "category": "comic",
+        "year": 2016
+      },
+      {
+        "title": "Civil War",
+        "subtitle": "Fantastic Four",
+        "creators": ["Dwayne McDuffie"],
+        "category": "comic",
+        "year": 2007
+      },
+      {
+        "title": "Civil War",
+        "subtitle": "Captain America",
+        "creators": ["Ed Brubaker"],
+        "category": "comic",
+        "year": 2007
+      },
+      {
+        "title": "Civil War",
+        "subtitle": "Marvel Universe",
+        "creators": ["Paul Smith"],
+        "category": "comic",
+        "year": 2007
+      },
+      {
+        "title": "Civil War",
+        "creators": ["Mark Millar", "Steve McNiven"],
+        "category": "comic",
+        "year": 2017
+      }
+    ],
+    "Vagabond Takehiko Inoue": [
+      {
+        "title": "Vagabond, Vol. 6",
+        "creators": ["井上雄彦 (Takehiko Inoue)"],
+        "category": "manga",
+        "year": 2002
+      },
+      {
+        "title": "Vagabond Volume 1",
+        "creators": ["井上雄彦 (Takehiko Inoue)"],
+        "category": "manga",
+        "year": 2007
+      },
+      {
+        "title": "Vagabond, Volume 1",
+        "creators": ["井上雄彦 (Takehiko Inoue)"],
+        "category": "book"
+      },
+      {
+        "title": "Vagabond VIZBIG Edition, Vol. 1",
+        "creators": ["井上雄彦 (Takehiko Inoue)"],
+        "category": "manga",
+        "year": 2008
+      },
+      {
+        "title": "Vagabond Volume 2",
+        "creators": ["井上雄彦 (Takehiko Inoue)"],
+        "category": "manga",
+        "year": 2007
+      },
+      {
+        "title": "バガボンド(5)",
+        "creators": ["井上雄彦 (Takehiko Inoue)"],
+        "category": "book",
+        "year": 2000
+      },
+      {
+        "title": "Vagabond, Vol. 25",
+        "creators": ["井上雄彦 (Takehiko Inoue)"],
+        "category": "manga",
+        "year": 2007
+      },
+      {
+        "title": "Vagabond, Vol. 4",
+        "creators": ["井上雄彦 (Takehiko Inoue)"],
+        "category": "manga",
+        "year": 2002
+      },
+      {
+        "title": "Vagabond, Volume 13 (Vagabond)",
+        "creators": ["井上雄彦 (Takehiko Inoue)"],
+        "category": "manga",
+        "year": 2004
+      },
+      {
+        "title": "Vagabond Volume 33 Vagabond Paperback",
+        "creators": ["井上雄彦 (Takehiko Inoue)", "Marcelo Vicente"],
+        "category": "manga",
+        "year": 2010
+      },
+      {
+        "title": "Vagabond, Volume 10 (Vagabond)",
+        "creators": ["井上雄彦 (Takehiko Inoue)", "Eji Yoshikawa"],
+        "category": "manga",
+        "year": 2004
+      },
+      {
+        "title": "Vagabond, Volume 17 (Vagabond)",
+        "creators": ["井上雄彦 (Takehiko Inoue)", "Agustín Gomez Sanz"],
+        "category": "manga",
+        "year": 2004
+      },
+      {
+        "title": "Vagabond, Volume 9 (Vagabond)",
+        "creators": ["井上雄彦 (Takehiko Inoue)", "Eji Yoshikawa"],
+        "category": "manga",
+        "year": 2004
+      },
+      {
+        "title": "Vagabond VIZBIG Edition, Vol. 4",
+        "creators": ["井上雄彦 (Takehiko Inoue)"],
+        "category": "manga",
+        "year": 2009
+      },
+      {
+        "title": "バガボンド(29)",
+        "creators": ["井上雄彦 (Takehiko Inoue)"],
+        "category": "manga",
+        "year": 2008
+      },
+      {
+        "title": "バガボンド(7)",
+        "creators": ["井上雄彦 (Takehiko Inoue)", "Eji Yoshikawa"],
+        "category": "manga",
+        "year": 2000
+      },
+      {
+        "title": "Vagabond, Volume 11 (Vagabond)",
+        "creators": ["井上雄彦 (Takehiko Inoue)", "Eji Yoshikawa"],
+        "category": "manga",
+        "year": 2004
+      },
+      {
+        "title": "Vagabond, Volume 20 (Vagabond)",
+        "creators": ["井上雄彦 (Takehiko Inoue)"],
+        "category": "manga",
+        "year": 2005
+      },
+      {
+        "title": "Vagabond VIZBIG Edition, Vol. 2",
+        "creators": ["井上雄彦 (Takehiko Inoue)"],
+        "category": "manga",
+        "year": 2008
+      },
+      {
+        "title": "Vagabond VIZBIG Edition, Vol. 3",
+        "creators": ["井上雄彦 (Takehiko Inoue)"],
+        "category": "manga",
+        "year": 2009
+      }
+    ],
+    "Vagabond manga": [
+      {
+        "title": "Vagabond, Vol. 6",
+        "creators": ["井上雄彦 (Takehiko Inoue)"],
+        "category": "manga",
+        "year": 2002
+      },
+      {
+        "title": "Vagabond Volume 2",
+        "creators": ["井上雄彦 (Takehiko Inoue)"],
+        "category": "manga",
+        "year": 2007
+      },
+      {
+        "title": "Vagabond VIZBIG Edition, Vol. 1",
+        "creators": ["井上雄彦 (Takehiko Inoue)"],
+        "category": "manga",
+        "year": 2008
+      },
+      {
+        "title": "Vagabond Volume 33 Vagabond Paperback",
+        "creators": ["井上雄彦 (Takehiko Inoue)", "Marcelo Vicente"],
+        "category": "manga",
+        "year": 2010
+      },
+      {
+        "title": "Vagabond, Vol. 25",
+        "creators": ["井上雄彦 (Takehiko Inoue)"],
+        "category": "manga",
+        "year": 2007
+      },
+      {
+        "title": "Vagabond, Volume 13 (Vagabond)",
+        "creators": ["井上雄彦 (Takehiko Inoue)"],
+        "category": "manga",
+        "year": 2004
+      },
+      {
+        "title": "Vagabond, Volume 17 (Vagabond)",
+        "creators": ["井上雄彦 (Takehiko Inoue)", "Agustín Gomez Sanz"],
+        "category": "manga",
+        "year": 2004
+      },
+      {
+        "title": "Vagabond, Volume 11 (Vagabond)",
+        "creators": ["井上雄彦 (Takehiko Inoue)", "Eji Yoshikawa"],
+        "category": "manga",
+        "year": 2004
+      },
+      {
+        "title": "バガボンド(21)",
+        "creators": ["井上雄彦 (Takehiko Inoue)", "Eji Yoshikawa"],
+        "category": "manga",
+        "year": 2005
+      },
+      {
+        "title": "バガボンド(18)",
+        "creators": ["井上雄彦 (Takehiko Inoue)", "Agustín Gomez Sanz"],
+        "category": "manga",
+        "year": 2003
+      },
+      {
+        "title": "Vagabond, Volume 16 (Vagabond)",
+        "creators": ["井上雄彦 (Takehiko Inoue)", "Agustín Gomez Sanz"],
+        "category": "manga",
+        "year": 2004
+      },
+      {
+        "title": "Vagabond, Volume 19 (Vagabond)",
+        "creators": ["井上雄彦 (Takehiko Inoue)", "Agustín Gomez Sanz"],
+        "category": "manga",
+        "year": 2005
+      },
+      {
+        "title": "バガボンド(29)",
+        "creators": ["井上雄彦 (Takehiko Inoue)"],
+        "category": "manga",
+        "year": 2008
+      },
+      {
+        "title": "Vagabond, Volume 12 (Vagabond)",
+        "creators": ["井上雄彦 (Takehiko Inoue)", "Eji Yoshikawa"],
+        "category": "manga",
+        "year": 2004
+      },
+      {
+        "title": "Vagabond, Volume 20 (Vagabond)",
+        "creators": ["井上雄彦 (Takehiko Inoue)"],
+        "category": "manga",
+        "year": 2005
+      },
+      {
+        "title": "バガボンド(3)",
+        "creators": ["井上雄彦 (Takehiko Inoue)"],
+        "category": "manga",
+        "year": 1999
+      },
+      {
+        "title": "Vagabond, Volume 14 (Vagabond)",
+        "creators": ["井上雄彦 (Takehiko Inoue)", "Eji Yoshikawa", "Agustín Gomez Sanz"],
+        "category": "manga",
+        "year": 2004
+      },
+      {
+        "title": "Vagabond, Vol. 34",
+        "creators": ["井上雄彦 (Takehiko Inoue)"],
+        "category": "manga",
+        "year": 2013
+      },
+      {
+        "title": "バガボンド(22)",
+        "creators": ["井上雄彦 (Takehiko Inoue)", "Eji Yoshikawa", "Agustín Gomez Sanz"],
+        "category": "manga",
+        "year": 2006
+      },
+      {
+        "title": "Vagabond, Vol. 27",
+        "creators": ["井上雄彦 (Takehiko Inoue)", "Eji Yoshikawa"],
+        "category": "manga",
+        "year": 2008
+      }
+    ],
+    "Demon Slayer manga": [
+      {
+        "title": "Demon slayer",
+        "subtitle": "Kimetsu no yaiba. Volume 1",
+        "creators": ["Koyoharu Gotoge"],
+        "category": "manga",
+        "year": 2018
+      },
+      {
+        "title": "Demon Slayer",
+        "subtitle": "Kimetsu no Yaiba, Vol. 5",
+        "creators": ["Koyoharu Gotoge"],
+        "category": "manga",
+        "year": 2019
+      },
+      {
+        "title": "Demon Slayer Colouring Book",
+        "subtitle": ",More Then 30 High Quality Illustrations . Demon Slayer Coloring Book, Demon Slayer Manga, Anime Coloring Book ...",
+        "creators": ["Anime Ghost"],
+        "category": "book",
+        "year": 2020
+      },
+      {
+        "title": "Demon Slayer: Kimetsu no Yaiba, Vol. 8",
+        "creators": ["Koyoharu Gotoge"],
+        "category": "manga",
+        "year": 2019
+      },
+      {
+        "title": "Journal : Manga. Demon Slayer",
+        "subtitle": "Mugen Train Theme Cover. 150 Pages",
+        "creators": ["Athena Montanari"],
+        "category": "book",
+        "year": 2021
+      },
+      {
+        "title": "Demon Slayer",
+        "subtitle": "Kimetsu no Yaiba, Vol. 2",
+        "creators": ["Koyoharu Gotoge"],
+        "category": "manga",
+        "year": 2018
+      },
+      {
+        "title": "Demon Slayer Coloring Book",
+        "subtitle": "Your Best Demon Slayer Character ,More Then 30 High Quality Illustrations . Demon Slayer Coloring Book, Demon Slayer Manga, Anime Coloring Book",
+        "creators": ["Nonce Hirota"],
+        "category": "book",
+        "year": 2021
+      },
+      {
+        "title": "Demon Slayer Coloring Book",
+        "subtitle": "Coloring Book with Unofficial High Quality Demon Slayer Manga Images for Kids and Adults - 40+ Illustrations",
+        "creators": ["Iori Hatano"],
+        "category": "book",
+        "year": 2020
+      },
+      {
+        "title": "Demon Slayer Coloring Book",
+        "subtitle": "Coloring Book with Unofficial High Quality Demon Slayer Manga Images for Kids and Adults - 45 Illustrations",
+        "creators": ["Mark Miller"],
+        "category": "book",
+        "year": 2021
+      },
+      {
+        "title": "Demon Slayer",
+        "subtitle": "Kimetsu no Yaiba, Vol. 13",
+        "creators": ["Koyoharu Gotoge"],
+        "category": "manga",
+        "year": 2020
+      },
+      {
+        "title": "Erotic Manga",
+        "subtitle": "Draw Like the Experts",
+        "creators": ["Ikari Studio"],
+        "category": "comic",
+        "year": 2006
+      },
+      {
+        "title": "Demon Slayer Coloring Book for Adults",
+        "subtitle": "Your Best Demon Slayer Character ,Demon Slayer Manga, Anime Coloring Book for Adults and for Kids High Quality Illustrations. the Best +30 Hig",
+        "creators": ["Santibanez Aika"],
+        "category": "book",
+        "year": 2021
+      },
+      {
+        "title": "Demon Slayer Coloring Book",
+        "subtitle": "Perfect Gift for Kids and Adults Who Love Demon Slayer Manga with Lots of Kimetsu No Yaiba Illustrations, for Relax and Stress Relief",
+        "creators": ["Inosuke Anime Arts"],
+        "category": "book",
+        "year": 2021
+      },
+      {
+        "title": "DemoN SlayeR Coloring Book",
+        "subtitle": "Perfect Gift for Kids and Adults Who Love Demon Slayer Manga with Lots of Kimetsu No Yaiba Illustrations, for Relax and Stress Relief",
+        "creators": ["Jassi Arr"],
+        "category": "book",
+        "year": 2021
+      },
+      {
+        "title": "How to Draw dèmon Slàyer Manga and Anime Characters #2",
+        "subtitle": "Beginner's Guide Learn to Draw Step-By-Step Kimétsu No yàiba Characters with 50+ Tutorials for Drawing for Kids, Teens and Adults",
+        "creators": ["Kanna Yuutarou"],
+        "category": "book",
+        "year": 2022
+      },
+      {
+        "title": "Demon Slayer Coloring Book",
+        "subtitle": "An Awesome Coloring Book for Relaxation and Stress Relief with a Bunch of Illustrations of Demon Slayer",
+        "creators": ["Anime Manga"],
+        "category": "book",
+        "year": 2021
+      },
+      {
+        "title": "Demon Slayẹr 2022 Calendar",
+        "subtitle": "OFFICIAL 2022 Calendar - Anime Manga Calendar 2022-2023, Calendar Planner - Kalendar Calendario Calendrier 18 Monthly - January 2022 to December 2023. 1",
+        "creators": ["Demon Slayer calender"],
+        "category": "book",
+        "year": 2021
+      },
+      {
+        "title": "Demon Slayer Kimetsu No Yaiba Hashira Coloring Book",
+        "subtitle": "Demon Slayer Manga 9 Hashira Characters High Quality Illustrations for Adults, an Awesome Fans Gift for Best Relaxation and Stress Relief, Anime Coloring Books 60 Pages 8. 5x11 In",
+        "creators": ["O. N. E. ALL"],
+        "category": "book",
+        "year": 2021
+      },
+      {
+        "title": "Demon Slayer Coloring Book",
+        "subtitle": "Beatiful Anime and Manga Illustrations to Color for Adults",
+        "creators": ["Hitoshi Naoto"],
+        "category": "book",
+        "year": 2021
+      },
+      {
+        "title": "Demon Slaỵer 2022 Calendar",
+        "subtitle": "OFFICIAL 2022 Calendar - Anime Manga Calendar 2022-2023, Calendar Planner - Kalendar Calendario Calendrier 18 Monthly - January 2022 to December 2023. 20",
+        "creators": ["Judy Judy Wilcox"],
+        "category": "book",
+        "year": 2021
+      }
+    ],
+    "Planet Hulk comics": [
+      {
+        "title": "Planet Hulk",
+        "creators": ["Greg Pak"],
+        "category": "comic",
+        "year": 2008
+      },
+      {
+        "title": "Incredible Hulk",
+        "subtitle": "Planet Hulk",
+        "creators": ["Greg Pak"],
+        "category": "comic",
+        "year": 2008
+      },
+      {
+        "title": "Hulk",
+        "subtitle": "Planet Hulk Omnibus",
+        "creators": ["Greg Pak"],
+        "category": "comic",
+        "year": 2017
+      },
+      {
+        "title": "Hulk",
+        "subtitle": "Planet Hulk Prose Novel",
+        "creators": ["Marvel Comics", "Greg Pak"],
+        "category": "comic",
+        "year": 2017
+      },
+      {
+        "title": "Planet Hulk",
+        "subtitle": "warzones!",
+        "creators": ["Sam Humphries"],
+        "category": "comic",
+        "year": 2015
+      },
+      {
+        "title": "Scorpion",
+        "subtitle": "Poison Tomorrow (Planet Hulk, World War Hulk)",
+        "creators": ["Fred Van Lente"],
+        "category": "comic",
+        "year": 2005
+      },
+      {
+        "title": "Incredible Hulk",
+        "subtitle": "Prelude to Planet Hulk",
+        "creators": ["Daniel Way", "Keu Cha"],
+        "category": "comic",
+        "year": 2006
+      },
+      {
+        "title": "She-Hulk Vol. 5",
+        "subtitle": "Planet Without A Hulk",
+        "creators": ["Dan Slott", "Rick Burchett"],
+        "category": "comic",
+        "year": 2007
+      },
+      {
+        "title": "Planet Hulk",
+        "creators": [],
+        "category": "book",
+        "year": 2020
+      },
+      {
+        "title": "Hulk",
+        "subtitle": "Planet Hulk Omnibus",
+        "creators": ["Greg Pak", "Peter David", "Roger Stern", "Greg Land", "Fred Van Lente"],
+        "category": "comic",
+        "year": 2023
+      },
+      {
+        "title": "Planet Hulk",
+        "creators": ["Greg Pak", "Carlo Pagulayan", "Aaron Lopresti"],
+        "category": "comic",
+        "year": 2007
+      },
+      {
+        "title": "Incredible Hulk: Planet Skaar",
+        "creators": ["Greg Pak"],
+        "category": "comic",
+        "year": 2009
+      },
+      {
+        "title": "Return to Planet Hulk",
+        "creators": ["Greg Pak", "Greg Land"],
+        "category": "comic",
+        "year": 2018
+      },
+      {
+        "title": "Marvel Premium Edition",
+        "subtitle": "Planet Hulk",
+        "creators": ["Greg Pak", "Carlo Pagulayan", "Arron Lopresti"],
+        "category": "comic",
+        "year": 2018
+      },
+      {
+        "title": "Journal",
+        "subtitle": "The Hulk",
+        "creators": ["PlainSimpleBooks"],
+        "category": "book",
+        "year": 2016
+      },
+      {
+        "title": "City of Ashes (The Mortal Instruments)",
+        "subtitle": "The Shadowhunter war rages on...",
+        "creators": ["Cassandra Clare"],
+        "category": "book",
+        "year": 2008
+      }
+    ],
+    "Oathbringer Brandon Sanderson": [
+      {
+        "title": "Oathbringer",
+        "creators": ["Brandon Sanderson"],
+        "category": "book",
+        "year": 2017
+      },
+      {
+        "title": "Oathbringer",
+        "subtitle": "Part One",
+        "creators": ["Brandon Sanderson"],
+        "category": "book",
+        "year": 2019
+      },
+      {
+        "title": "Oathbringer Part Two",
+        "subtitle": "The Stormlight Archive Book Three",
+        "creators": ["Brandon Sanderson"],
+        "category": "book",
+        "year": 2022
+      },
+      {
+        "title": "Stormlight Archive, Books 1-3",
+        "subtitle": "The Way of Kings, Words of Radiance, Oathbringer",
+        "creators": ["Brandon Sanderson"],
+        "category": "book",
+        "year": 2018
+      },
+      {
+        "title": "The Stormlight Archive Series 6 Books Collection Set by Brandon Sanderson",
+        "creators": ["Brandon Sanderson"],
+        "category": "book",
+        "year": 2020
+      },
+      {
+        "title": "Stormlight Archive, Books 1-4",
+        "subtitle": "The Way of Kings, Words of Radiance, Oathbringer, Rhythm of War",
+        "creators": ["Brandon Sanderson"],
+        "category": "book",
+        "year": 2023
+      },
+      {
+        "title": "Stormlight Archives HC Boxed Set 1-4",
+        "subtitle": "The Way of Kings, Words of Radiance, Oathbringer, Rhythm of War",
+        "creators": ["Brandon Sanderson"],
+        "category": "book",
+        "year": 2022
+      },
+      {
+        "title": "Stormlight Archive Series. 4 Books Collection Set. the Way of Kings, Words of Radiance, Oathbringer, Rhythm of War by Brandon Sanderson",
+        "creators": ["Brandon Sanderson"],
+        "category": "book",
+        "year": 2021
+      }
+    ],
+    "SPIDER-MAN: BIG TIME comics": [
+      {
+        "title": "The amazing Spider-Man",
+        "subtitle": "Big time, the complete collection",
+        "creators": ["Dan Slott"],
+        "category": "comic",
+        "year": 2013
+      },
+      {
+        "title": "American Film, Volume 1, Number 9",
+        "subtitle": "July-August 1976",
+        "creators": ["American Film Institute"],
+        "category": "book",
+        "year": 1976
+      },
+      {
+        "title": "City of Ashes (The Mortal Instruments)",
+        "subtitle": "The Shadowhunter war rages on...",
+        "creators": ["Cassandra Clare"],
+        "category": "book",
+        "year": 2008
+      },
+      {
+        "title": "Prayer and action",
+        "subtitle": "Law and Love",
+        "creators": ["Ernest Edward Holmes"],
+        "category": "book",
+        "year": 1911
+      }
+    ],
+    "UNLAND SAGA manga": [],
+    "Harry Potter J.K. Rowling": [
+      {
+        "title": "Harry Potter and the Sorcerer's Stone (Harry Potters) by Rowling, J.K. (1999) Paperback",
+        "creators": ["J. K. Rowling"],
+        "category": "book",
+        "year": 1999
+      },
+      {
+        "title": "Harry Potter and the Half-Blood Prince. J.K. Rowling",
+        "creators": ["J. K. Rowling"],
+        "category": "book",
+        "year": 2010
+      },
+      {
+        "title": "Harry Potter and the Cursed Child",
+        "subtitle": "Parts One And Two Playscript",
+        "creators": ["Jack Thorne", "John Tiffany", "J. K. Rowling"],
+        "category": "book",
+        "year": 2016
+      },
+      {
+        "title": "J.K. Rowling",
+        "subtitle": "the wizard behind Harry Potter",
+        "creators": ["Marc Shapiro"],
+        "category": "book",
+        "year": 2000
+      },
+      {
+        "title": "J.K. Rowling's Harry Potter novels",
+        "subtitle": "a reader's guide",
+        "creators": ["Philip Nel"],
+        "category": "book",
+        "year": 2002
+      },
+      {
+        "title": "J. K. Rowling's Harry Potter",
+        "subtitle": "The First Four Thrilling Adventures at Hogwarts",
+        "creators": ["J. K. Rowling"],
+        "category": "book",
+        "year": 2000
+      },
+      {
+        "title": "Biografia J.K. Rowling",
+        "subtitle": "A Biography",
+        "creators": ["Sean Smith"],
+        "category": "book",
+        "year": 2002
+      },
+      {
+        "title": "Harry i czary-mary, czyli, O wartościach edukacyjnych w cyklu powieści \"Harry Potter\" J.K. Rowling",
+        "creators": ["Dagmara Kowalewska"],
+        "category": "book",
+        "year": 2005
+      },
+      {
+        "title": "Harry Potter Wizarding Almanac",
+        "subtitle": "the Official Magical Companion to J. K. Rowling's Harry Potter Books",
+        "creators": ["J. K. Rowling", "Peter Goes", "Louise Lockhart"],
+        "category": "book",
+        "year": 2023
+      },
+      {
+        "title": "JK Rowling",
+        "subtitle": "the wizard behind Harry Potter",
+        "creators": ["Marc Shapiro"],
+        "category": "book",
+        "year": 2001
+      },
+      {
+        "title": "J.K. Luolin zhuan",
+        "subtitle": "Hali bote bei hou de tian cai = the genius behind Harry Potter J.K. Rowling a biography",
+        "creators": ["Sean Smith"],
+        "category": "book",
+        "year": 2002
+      },
+      {
+        "title": "J.K. Rowling",
+        "subtitle": "author of Harry Potter",
+        "creators": ["Karen Leigh Harmin"],
+        "category": "book",
+        "year": 2006
+      },
+      {
+        "title": "Muggles and magic",
+        "subtitle": "J.K. Rowling and the Harry Potter phenomenon",
+        "creators": ["George W. Beahm"],
+        "category": "book",
+        "year": 2004
+      },
+      {
+        "title": "Harry Potter and the Sorcerer's Stone by J.K. Rowling",
+        "subtitle": "A Story Grid Masterwork Analysis Guide",
+        "creators": ["Savannah Gilbo", "A. K. Lambert"],
+        "category": "book",
+        "year": 2024
+      },
+      {
+        "title": "50 Lektionen Grimoire Harry Potter, J. K. Rowling, Thich Nhat Hanh, Siddhārtha Gautama Usw. Hogwarts - Poudlard",
+        "subtitle": "Zauberkurse Oder Lehren, Um Den Geist des Höchsten Zauberers Zu Erwecken",
+        "creators": ["Bassiti Bassiti Bantila"],
+        "category": "book",
+        "year": 2021
+      },
+      {
+        "title": "J.K. Rowling",
+        "subtitle": "creator of Harry Potter",
+        "creators": ["Cath Senker"],
+        "category": "book",
+        "year": 2012
+      },
+      {
+        "title": "J.K. Rowling",
+        "subtitle": "la maga dietro Harry Potter",
+        "creators": ["Marc Shapiro"],
+        "category": "book",
+        "year": 2002
+      },
+      {
+        "title": "Harry Potter and Beyond",
+        "subtitle": "On J. K. Rowling's Fantasies and Other Fictions",
+        "creators": ["Tison Pugh"],
+        "category": "book",
+        "year": 2020
+      },
+      {
+        "title": "J. K. Rowling",
+        "subtitle": "Author of the Harry Potter Series",
+        "creators": ["Jennifer Hunsicker"],
+        "category": "book",
+        "year": 2018
+      },
+      {
+        "title": "Baptizing Harry Potter",
+        "subtitle": "a Christian reading of J.K. Rowling",
+        "creators": ["Luke Bell"],
+        "category": "book",
+        "year": 2010
+      }
+    ]
+  },
+  "lego": {
+    "Millennium Falcon": [
+      {
+        "title": "Millennium Falcon",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "10179",
+        "theme": "Star Wars",
+        "year": 2007
+      },
+      {
+        "title": "Millennium Falcon Mini-Build",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "30708",
+        "theme": "Star Wars",
+        "year": 2025
+      },
+      {
+        "title": "Millennium Falcon Holiday Diorama",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "40658",
+        "theme": "Star Wars",
+        "year": 2023
+      },
+      {
+        "title": "Millennium Falcon",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "4488",
+        "theme": "Star Wars",
+        "year": 2003
+      },
+      {
+        "title": "Millennium Falcon (Blue Box Version)",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "4504",
+        "theme": "Star Wars",
+        "year": 2004
+      },
+      {
+        "title": "Millennium Falcon (Black Box Version)",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "4504-2",
+        "theme": "Star Wars",
+        "year": 2004
+      },
+      {
+        "title": "Star Wars Mini Millennium Falcon",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "55555",
+        "theme": "Star Wars",
+        "year": 2017
+      },
+      {
+        "title": "Millennium Falcon",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "6523826",
+        "theme": "Star Wars",
+        "year": 2024
+      },
+      {
+        "title": "Millennium Falcon",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "7190",
+        "theme": "Star Wars",
+        "year": 2000
+      },
+      {
+        "title": "Millennium Falcon",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "75030",
+        "theme": "Star Wars",
+        "year": 2014
+      },
+      {
+        "title": "Millennium Falcon",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "75105",
+        "theme": "Star Wars",
+        "year": 2015
+      },
+      {
+        "title": "Millennium Falcon",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "75192",
+        "theme": "Star Wars",
+        "year": 2017
+      },
+      {
+        "title": "Millennium Falcon Microfighter",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "75193",
+        "theme": "Star Wars",
+        "year": 2018
+      },
+      {
+        "title": "Kessel Run Millennium Falcon",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "75212",
+        "theme": "Star Wars",
+        "year": 2018
+      },
+      {
+        "title": "Millennium Falcon",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "75257",
+        "theme": "Star Wars",
+        "year": 2019
+      },
+      {
+        "title": "Millennium Falcon Microfighter",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "75295",
+        "theme": "Star Wars",
+        "year": 2021
+      },
+      {
+        "title": "Millennium Falcon",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "75375",
+        "theme": "Star Wars",
+        "year": 2024
+      },
+      {
+        "title": "Millennium Falcon",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "75426",
+        "theme": "Star Wars",
+        "year": 2026
+      },
+      {
+        "title": "Millennium Falcon Cockpit",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "75512",
+        "theme": "Star Wars",
+        "year": 2018
+      },
+      {
+        "title": "Midi-Scale Millennium Falcon",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "7778",
+        "theme": "Star Wars",
+        "year": 2009
+      }
+    ],
+    "X-Wing": [
+      {
+        "title": "Red Five X-Wing Starfighter",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "10240",
+        "theme": "Star Wars",
+        "year": 2013
+      },
+      {
+        "title": "Luke Skywalker X-wing Pilot Pen",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "2851134",
+        "theme": "Gear",
+        "year": 2008
+      },
+      {
+        "title": "X-wing Fighter - Mini",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "30051",
+        "theme": "Star Wars",
+        "year": 2010
+      },
+      {
+        "title": "Poe's X-wing Fighter",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "30278",
+        "theme": "Star Wars",
+        "year": 2015
+      },
+      {
+        "title": "Poe Dameron's X-wing Fighter",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "30386",
+        "theme": "Star Wars",
+        "year": 2020
+      },
+      {
+        "title": "X-Wing Starfighter",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "30654",
+        "theme": "Star Wars",
+        "year": 2023
+      },
+      {
+        "title": "X-wing Fighter & TIE Advanced",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "4484",
+        "theme": "Star Wars",
+        "year": 2003
+      },
+      {
+        "title": "X-wing Fighter",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "4502",
+        "theme": "Star Wars",
+        "year": 2003
+      },
+      {
+        "title": "X-wing Fighter",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "4502-2",
+        "theme": "Star Wars",
+        "year": 2004
+      },
+      {
+        "title": "X-wing Fighter",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "6212",
+        "theme": "Star Wars",
+        "year": 2006
+      },
+      {
+        "title": "X-Wing",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "6520657",
+        "theme": "Star Wars",
+        "year": 2024
+      },
+      {
+        "title": "X-wing Fighter",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "6963",
+        "theme": "Star Wars",
+        "year": 2004
+      },
+      {
+        "title": "X-wing Fighter",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "6963-2",
+        "theme": "Star Wars",
+        "year": 2004
+      },
+      {
+        "title": "X-wing Fighter",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "7140",
+        "theme": "Star Wars",
+        "year": 1999
+      },
+      {
+        "title": "X-wing Fighter",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "7142",
+        "theme": "Star Wars",
+        "year": 2002
+      },
+      {
+        "title": "X-wing Fighter",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "7191",
+        "theme": "Star Wars",
+        "year": 2000
+      },
+      {
+        "title": "X-Wing Fighter",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "75032",
+        "theme": "Star Wars",
+        "year": 2014
+      },
+      {
+        "title": "Poe's X-Wing Fighter",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "75102",
+        "theme": "Star Wars",
+        "year": 2015
+      },
+      {
+        "title": "Resistance X-Wing Fighter",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "75125",
+        "theme": "Star Wars",
+        "year": 2016
+      },
+      {
+        "title": "Resistance X-Wing Fighter",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "75149",
+        "theme": "Star Wars",
+        "year": 2016
+      }
+    ],
+    "Tantive IV": [
+      {
+        "title": "Tantive IV",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "10198",
+        "theme": "Star Wars",
+        "year": 2009
+      },
+      {
+        "title": "Tantive IV",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "6382975",
+        "theme": "Star Wars",
+        "year": 2019
+      },
+      {
+        "title": "Tantive IV & Planet Alderaan",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "75011",
+        "theme": "Star Wars",
+        "year": 2013
+      },
+      {
+        "title": "Tantive IV",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "75244",
+        "theme": "Star Wars",
+        "year": 2019
+      },
+      {
+        "title": "Tantive IV",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "75376",
+        "theme": "Star Wars",
+        "year": 2024
+      },
+      {
+        "title": "Boarding the Tantive IV",
+        "creators": [],
+        "category": "lego",
+        "setNumber": "75387",
+        "theme": "Star Wars",
+        "year": 2024
+      }
+    ]
+  },
+  "lookups": {
+    "75375-1": {
+      "title": "Millennium Falcon",
+      "creators": [],
+      "category": "lego",
+      "setNumber": "75375",
+      "theme": "Star Wars",
+      "year": 2024
+    },
+    "75020-1": {
+      "title": "Jabba's Sail Barge",
+      "creators": [],
+      "category": "lego",
+      "setNumber": "75020",
+      "theme": "Star Wars",
+      "year": 2013
+    }
+  }
+}

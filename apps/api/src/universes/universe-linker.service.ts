@@ -74,9 +74,15 @@ export class UniverseLinker {
   }
 
   /** `items` must be resolved against the same `ids`, so every lookup succeeds. */
+  /**
+   * `skipDuplicates`: the same catalog item can be saved by two requests at once (a shelf scan
+   * searches for every reading in parallel, and editions overlap). Each deletes and re-inserts
+   * the item's links; both compute the same links, so the second insert just skips them.
+   */
   private createLinks(items: { catalogItemId: string; links: ItemLinks }[], ids: Ids) {
     return [
       this.prisma.catalogItemUniverse.createMany({
+        skipDuplicates: true,
         data: items.flatMap(({ catalogItemId, links }) =>
           links.universes.map((slug) => ({
             catalogItemId,
@@ -85,6 +91,7 @@ export class UniverseLinker {
         ),
       }),
       this.prisma.catalogItemCharacter.createMany({
+        skipDuplicates: true,
         data: items.flatMap(({ catalogItemId, links }) =>
           links.characters.map((ref) => ({
             catalogItemId,

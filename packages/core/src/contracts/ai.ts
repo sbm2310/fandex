@@ -1,8 +1,9 @@
 import { z } from 'zod';
 
 import { SHELF_ITEM_KINDS, type ShelfReading } from '../ai/shelf-reading';
+import { catalogItemSchema } from './catalog';
 
-/** What the model read on a shelf photo (unverified: Task 3 matches it to the catalog). */
+/** What the model read on a shelf photo: a guess, to be matched to the catalog. */
 export const shelfReadingSchema = z.object({
   kind: z.enum(SHELF_ITEM_KINDS),
   title: z.string(),
@@ -19,9 +20,24 @@ export const aiQuotaSchema = z.object({
 });
 export type AiQuota = z.infer<typeof aiQuotaSchema>;
 
+/** A catalog entry that could be what was read, and whether the user already owns it. */
+export const shelfCandidateSchema = z.object({
+  item: catalogItemSchema,
+  owned: z.boolean(),
+});
+export type ShelfCandidate = z.infer<typeof shelfCandidateSchema>;
+
+/** One thing on the shelf: what was read, and the catalog entries it could be (best first). */
+export const shelfScanItemSchema = z.object({
+  reading: shelfReadingSchema,
+  /** Empty when nothing in the catalog resembled the reading: offer a search instead. */
+  candidates: z.array(shelfCandidateSchema),
+});
+export type ShelfScanItem = z.infer<typeof shelfScanItemSchema>;
+
 /** POST /ai/shelf-scans (multipart: 1–3 JPEG `images`, the parts of one shelf photo). */
 export const shelfScanResponseSchema = z.object({
-  readings: z.array(shelfReadingSchema),
+  items: z.array(shelfScanItemSchema),
   /** Shelf scans after this one. */
   quota: aiQuotaSchema,
 });
