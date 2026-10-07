@@ -55,7 +55,9 @@ const { values } = parseArgs({
   options: {
     variants: { type: 'string' },
     photos: { type: 'string' },
-    model: { type: 'string', default: process.env.GROQ_VISION_MODEL ?? 'qwen/qwen3.8-27b' },
+    /** "groq" (production) or "gemini" (comparison only; see docs/eval/shelf-recognition.md). */
+    provider: { type: 'string', default: 'groq' },
+    model: { type: 'string' },
     temperature: { type: 'string', default: '0.6' },
     'max-tokens': { type: 'string', default: '800' },
     /** "catalogue" (core's prompt) or an experimental prompt from PROMPTS below. */
@@ -65,8 +67,32 @@ const { values } = parseArgs({
 });
 
 config({ path: join(here, '../.env'), quiet: true });
-const apiKey = process.env.GROQ_API_KEY;
-if (!apiKey) throw new Error('GROQ_API_KEY is missing from apps/api/.env');
+/**
+ * Both providers speak the OpenAI chat-completions format, so one client serves both. Gemini's
+ * free tier is used here only to compare models on the owner's photos.
+ */
+const PROVIDERS = {
+  groq: {
+    baseUrl: 'https://api.groq.com/openai/v1',
+    keyName: 'GROQ_API_KEY',
+    model: 'qwen/qwen3.8-27b',
+    reasoningEffort: undefined,
+    tokensPerMinute: 7_500,
+  },
+  gemini: {
+    baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai',
+    keyName: 'GEMINI_API_KEY',
+    // gemini-3.8-flash didn't answer at all on the free tier (2026-10-07); 3.5 did.
+    model: 'gemini-3.5-flash',
+    reasoningEffort: 'none', // Gemini 3 thinks by default, spending the reply budget
+    tokensPerMinute: 200_000,
+  },
+} as const;
+const provider = PROVIDERS[values.provider as keyof typeof PROVIDERS];
+if (!provider) throw new Error(`Unknown provider "${values.provider}"`);
+const model = values.model ?? provider.model;
+const apiKey = process.env[provider.keyName];
+if (!apiKey) throw new Error(`${provider.keyName} is missing from apps/api/.env`);
 
 const expected = JSON.parse(readFileSync(join(here, 'shelf-expected.json'), 'utf8')) as Expected;
 const pick = (list: string | undefined, all: readonly string[]) =>
@@ -126,7 +152,7 @@ async function jobsFor(variant: string, photo: Photo): Promise<Job[]> {
 }
 
 // The free plan allows 8,000 tokens a minute, counting the reply's maximum length up front.
-const TOKENS_PER_MINUTE = 7_500;
+const TOKENS_PER_MINUTE = provider.tokensPerMinute;
 const usage: { at: number; tokens: number }[] = [];
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -143,13 +169,14 @@ async function paced(send: () => Promise<GroqChatResult>, estimate: number) {
       usage.push({ at: Date.now(), tokens: estimate });
       return result;
     } catch (error) {
-      const timedOut = error instanceof GroqError && error.status === 504;
-      if (!(error instanceof GroqRateLimitError || timedOut) || attempt === 5) throw error;
-      const wait = error instanceof GroqRateLimitError ? error.retryAfterMs : 5_000;
+      // Timeouts and "overloaded" (Gemini's free tier answers 503 at busy times) are worth a retry.
+      const transient = error instanceof GroqError && [500, 503, 504].includes(error.status);
+      if (!(error instanceof GroqRateLimitError || transient) || attempt === 6) throw error;
+      const wait = error instanceof GroqRateLimitError ? error.retryAfterMs : 15_000 * attempt;
       process.stdout.write(
-        timedOut
-          ? ' (timed out, retrying)'
-          : ` (rate limited, waiting ${Math.ceil(wait / 1000)} s)`,
+        error instanceof GroqRateLimitError
+          ? ` (rate limited, waiting ${Math.ceil(wait / 1000)} s)`
+          : ` (${error.status}, retrying in ${wait / 1000} s)`,
       );
       await sleep(wait + 1_000);
     }
@@ -170,10 +197,11 @@ type Row = {
   seconds: number;
 };
 
-const groq = new GroqClient({ apiKey });
+const groq = new GroqClient({ apiKey, baseUrl: provider.baseUrl, timeoutMs: 90_000 });
 const runDir = join(here, 'runs', new Date().toISOString().replace(/[:.]/g, '-'));
 mkdirSync(runDir, { recursive: true });
 const rows: Row[] = [];
+const failures: string[] = [];
 const percent = (value: number) => `${Math.round(value * 100)}%`;
 const maxTokens = Number(values['max-tokens']);
 
@@ -203,7 +231,8 @@ for (const variant of variants) {
         async () => {
           const started = Date.now();
           const reply = await groq.chat({
-            model: values.model,
+            model,
+            ...(provider.reasoningEffort && { reasoningEffort: provider.reasoningEffort }),
             prompt: prompt(job.images.length),
             images: job.images,
             maxTokens,
@@ -214,7 +243,13 @@ for (const variant of variants) {
           return reply;
         },
         1_400 * job.images.length + 300 + maxTokens,
-      );
+      ).catch((error: unknown) => {
+        // A provider that stays overloaded skips this request rather than ending the run.
+        console.log(` FAILED: ${error instanceof Error ? error.message : String(error)}`);
+        failures.push(`${variant} ${photo.file} ${job.label}`);
+        return undefined;
+      });
+      if (!result) continue;
       const parsed = parseShelfReply(result.text);
       const score = scoreShelfReading(items, parsed.readings);
 
@@ -252,7 +287,7 @@ for (const variant of variants) {
 
 // Totals per variant (sums over every request, not averages of ratios).
 const lines = [
-  `# Shelf evaluation — ${values.model}, prompt ${values.prompt}, temperature ${values.temperature}, max ${maxTokens} reply tokens`,
+  `# Shelf evaluation — ${model}, prompt ${values.prompt}, temperature ${values.temperature}, max ${maxTokens} reply tokens`,
   '',
   '| Variant | Items found | Recall | Readings right | Precision | Lines dropped | Requests cut off | Tokens per request |',
   '| --- | --- | --- | --- | --- | --- | --- | --- |',
@@ -278,5 +313,6 @@ for (const row of rows) {
       ` | ${row.seconds.toFixed(1)} |`,
   );
 }
+if (failures.length) lines.push('', `Failed after retries: ${failures.join('; ')}`);
 writeFileSync(join(runDir, 'summary.md'), `${lines.join('\n')}\n`);
 console.log(`\n${lines.join('\n')}\n\nReplies and scores: ${runDir}`);

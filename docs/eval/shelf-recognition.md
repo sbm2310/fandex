@@ -31,8 +31,21 @@ Counting only items in English (no Hebrew editions), the one-shelf variants foun
 8. **Capacity.** Groq counts the prompt (≈1,000 tokens per image half) plus the _maximum_ reply length against the limits: about 3,000 tokens per shelf photo. The free plan's 8,000 tokens a minute allow two shelf photos a minute, and its 200,000 tokens a day roughly **60 shelf photos a day for all users together**. This evaluation (≈50 requests) used up a day's allowance.
 9. **Requests can hang.** One request never answered; the client now gives up after 30 s.
 
+## Comparison: Gemini's free tier (2026-10-07)
+
+The same script with `--provider gemini` (`gemini-3.5-flash`, thinking off; `gemini-3.8-flash` never answered on the free tier). The owner agreed to send these photos; Gemini's free tier may use what it receives to improve Google's products. The run stopped after 4 photos at the free tier's limit of **20 requests a day per model** (several spent on "503 overloaded" retries).
+
+| Same 4 photos, whole photo | Groq `qwen/qwen3.8-27b` | Gemini `gemini-3.5-flash` |
+| -------------------------- | ----------------------- | ------------------------- |
+| Items found                | 5/57 (9%)               | **36/57 (63%)**           |
+| Readings that were real    | 11/26 (42%)             | 78/95 (82%)               |
+| Hebrew spines              | none                    | read (4–5 Hebrew series)  |
+| Built LEGO models          | none                    | all 4 on the closer photo |
+
+Gemini reads far better, including Hebrew and built LEGO, and doesn't loop. Whole-bookcase photos still lose the small spines (it missed every manga and comic on the full bookcase). But its free tier can't serve the app: **20 requests a day for every user together**, frequent "overloaded" errors, content used for training, and no users in the EU/UK. Its paid tier needs a card.
+
 ## Decision
 
-Shelf photos stay, as an _assist_: one shelf per photo, two halves per request, a review screen where the user ticks what to add and can search for anything missed. Because recall is about half, Stage 4 also adds a **rapid barcode mode** (scan book after book without leaving the camera) as the reliable way to add a whole shelf. Model ids are configuration, so a better free model can be measured with this script and swapped in.
+Shelf photos stay, as an _assist_: one shelf per photo, two halves per request, a review screen where the user ticks what to add and can search for anything missed. Because recall is about half, Stage 4 also adds a **rapid barcode mode** (scan book after book without leaving the camera) as the reliable way to add a whole shelf. Model ids are configuration, so a better free model can be measured with this script and swapped in. Gemini shows what a stronger model achieves; both speak the OpenAI chat format, so the provider (base URL, key, model) is configuration too, in case a free tier with workable limits and terms appears.
 
 Not yet measured: a "copy the spine text, don't identify" prompt (one request ran before the daily limit: 3 of 5 readings real). Re-run it when changing the prompt.

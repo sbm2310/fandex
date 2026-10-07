@@ -12,6 +12,8 @@ export type GroqChatRequest = {
   maxTokens: number;
   temperature?: number;
   topP?: number;
+  /** For models that can think before answering ("none" turns it off where supported). */
+  reasoningEffort?: string;
 };
 
 export type GroqChatResult = {
@@ -82,6 +84,7 @@ export class GroqClient {
         max_completion_tokens: request.maxTokens,
         ...(request.temperature !== undefined && { temperature: request.temperature }),
         ...(request.topP !== undefined && { top_p: request.topP }),
+        ...(request.reasoningEffort !== undefined && { reasoning_effort: request.reasoningEffort }),
         messages: [
           {
             role: 'user',

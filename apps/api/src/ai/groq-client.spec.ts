@@ -62,6 +62,17 @@ describe('GroqClient', () => {
     expect(JSON.parse(calls[0]!.init.body as string).messages[0].content).toBe('Hi');
   });
 
+  it('passes a reasoning effort only when given', async () => {
+    const { fetch, calls } = fakeFetch(200, completion);
+    const client = new GroqClient({ apiKey: 'k', fetch });
+
+    await client.chat({ model: 'm', prompt: 'Hi', maxTokens: 10, reasoningEffort: 'none' });
+    await client.chat({ model: 'm', prompt: 'Hi', maxTokens: 10 });
+
+    expect(JSON.parse(calls[0]!.init.body as string).reasoning_effort).toBe('none');
+    expect(JSON.parse(calls[1]!.init.body as string)).not.toHaveProperty('reasoning_effort');
+  });
+
   it('turns 429 into a rate-limit error with the wait from Retry-After', async () => {
     const { fetch } = fakeFetch(
       429,
