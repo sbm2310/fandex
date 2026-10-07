@@ -45,8 +45,21 @@ The same script with `--provider gemini` (`gemini-3.5-flash`, thinking off; `gem
 
 Gemini reads far better, including Hebrew and built LEGO, and doesn't loop. Whole-bookcase photos still lose the small spines (it missed every manga and comic on the full bookcase). But its free tier can't serve the app: **20 requests a day for every user together**, frequent "overloaded" errors, content used for training, and no users in the EU/UK. Its paid tier needs a card.
 
+## Comparison: Mistral's free plan (2026-10-07)
+
+`--provider mistral`. The free plan only serves the small Ministral models (Mistral Small and Medium answer 429 with a limit of 0 requests a minute); it allows 30 requests and ~900K tokens a minute for `ministral-14b-latest`. The owner turned off training on API data in Mistral's privacy settings.
+
+| All 9 photos                       | Groq `qwen/qwen3.8-27b` | Mistral `ministral-14b-latest` |
+| ---------------------------------- | ----------------------- | ------------------------------ |
+| Whole photo: items found           | 21/166 (13%)            | 23/166 (14%)                   |
+| One shelf: items found             | 18/50 (36%)             | 13/50 (26%)                    |
+| One shelf in halves: items found   | **21/50 (42%)**         | 18/50 (36%)                    |
+| One shelf in halves: readings real | 29/74 (39%)             | **30/60 (50%)**                |
+
+Ministral often wrote the literal word "kind" instead of book/manga/comic (scored here with that slip corrected) and invented confidently: _Saga_, _The Witcher_ and _Berserk_ on a shelf without them, and LEGO set numbers that don't match the models. No better than Groq, and its plan is described as being for evaluation and prototyping.
+
 ## Decision
 
-Shelf photos stay, as an _assist_: one shelf per photo, two halves per request, a review screen where the user ticks what to add and can search for anything missed. Because recall is about half, Stage 4 also adds a **rapid barcode mode** (scan book after book without leaving the camera) as the reliable way to add a whole shelf. Model ids are configuration, so a better free model can be measured with this script and swapped in. Gemini shows what a stronger model achieves; both speak the OpenAI chat format, so the provider (base URL, key, model) is configuration too, in case a free tier with workable limits and terms appears.
+Shelf photos stay, as an _assist_: one shelf per photo, two halves per request, a review screen where the user ticks what to add and can search for anything missed. Because recall is about half, Stage 4 also adds a **rapid barcode mode** (scan book after book without leaving the camera) as the reliable way to add a whole shelf. Model ids are configuration, so a better free model can be measured with this script and swapped in. Gemini shows what a stronger model achieves (Mistral's free models don't); both speak the OpenAI chat format, so the provider (base URL, key, model) is configuration too, in case a free tier with workable limits and terms appears.
 
 Not yet measured: a "copy the spine text, don't identify" prompt (one request ran before the daily limit: 3 of 5 readings real). Re-run it when changing the prompt.

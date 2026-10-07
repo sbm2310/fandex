@@ -55,7 +55,7 @@ const { values } = parseArgs({
   options: {
     variants: { type: 'string' },
     photos: { type: 'string' },
-    /** "groq" (production) or "gemini" (comparison only; see docs/eval/shelf-recognition.md). */
+    /** "groq" (production), or "gemini" / "mistral" (comparisons; see docs/eval/shelf-recognition.md). */
     provider: { type: 'string', default: 'groq' },
     model: { type: 'string' },
     temperature: { type: 'string', default: '0.6' },
@@ -86,6 +86,14 @@ const PROVIDERS = {
     model: 'gemini-3.5-flash',
     reasoningEffort: 'none', // Gemini 3 thinks by default, spending the reply budget
     tokensPerMinute: 200_000,
+  },
+  mistral: {
+    baseUrl: 'https://api.mistral.ai/v1',
+    keyName: 'MISTRAL_API_KEY',
+    // The free plan allows only the Ministral models (Small and Medium answer 429, 0 per minute).
+    model: 'ministral-14b-latest',
+    reasoningEffort: undefined,
+    tokensPerMinute: 900_000,
   },
 } as const;
 const provider = PROVIDERS[values.provider as keyof typeof PROVIDERS];

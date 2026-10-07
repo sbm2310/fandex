@@ -183,7 +183,7 @@ npm run format:check
 
 Tests never call the network.
 
-AI quality is measured separately, because a model's answers aren't pass/fail: `npm run eval:shelf -w @fandex/api` sends the owner's shelf photos to the model and scores what it read against a hand-written list of what's really there ([results](docs/eval/shelf-recognition.md), including a comparison with Gemini). It calls the real API, so it doesn't run in CI.
+AI quality is measured separately, because a model's answers aren't pass/fail: `npm run eval:shelf -w @fandex/api` sends the owner's shelf photos to the model and scores what it read against a hand-written list of what's really there ([results](docs/eval/shelf-recognition.md), including comparisons with Gemini and Mistral). It calls the real API, so it doesn't run in CI.
 
 ## Concepts for .NET developers
 
