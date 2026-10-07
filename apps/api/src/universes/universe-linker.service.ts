@@ -2,6 +2,7 @@ import { matchUniverses, type MatchSignals } from '@fandex/core';
 import { Injectable } from '@nestjs/common';
 
 import { readMatchSignals } from '../catalog/catalog-item.mapper.js';
+import { Prisma } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import type { ItemLinks } from './item-links.js';
 
@@ -11,6 +12,12 @@ type Ids = { universes: Map<string, string>; characters: Map<string, string> };
 const characterKey = (universe: string, character: string) => `${universe}/${character}`;
 
 const RELINK_PAGE_SIZE = 500;
+
+/** Attempts at rewriting an item's links when Postgres picks it as a deadlock victim. */
+const DEADLOCK_ATTEMPTS = 3;
+
+const isDeadlock = (error: unknown) =>
+  error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2034';
 
 /**
  * Stores which universes and characters each catalog item belongs to, as computed by
@@ -32,11 +39,21 @@ export class UniverseLinker {
   async link(catalogItemId: string, signals: MatchSignals | null): Promise<ItemLinks> {
     const ids = await this.loadIds();
     const links = resolve(signals, ids);
-    await this.prisma.$transaction([
-      ...this.deleteLinks([catalogItemId]),
-      ...this.createLinks([{ catalogItemId, links }], ids),
-    ]);
-    return links;
+    // Several requests can rewrite overlapping items at once (a shelf scan runs a dozen
+    // searches in parallel); Postgres then aborts one transaction as a deadlock victim, and
+    // retrying it is the standard remedy.
+    for (let attempt = 1; ; attempt += 1) {
+      try {
+        await this.prisma.$transaction([
+          ...this.deleteLinks([catalogItemId]),
+          ...this.createLinks([{ catalogItemId, links }], ids),
+        ]);
+        return links;
+      } catch (error) {
+        if (!isDeadlock(error) || attempt === DEADLOCK_ATTEMPTS) throw error;
+        await new Promise((resolve) => setTimeout(resolve, 20 * attempt + Math.random() * 30));
+      }
+    }
   }
 
   /** Recomputes every catalog item's links (after the seed or the matching rules changed). */

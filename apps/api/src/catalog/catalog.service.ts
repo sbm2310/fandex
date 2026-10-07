@@ -68,7 +68,10 @@ export class CatalogService {
       kind === 'lego'
         ? await this.fromSource(() => this.requireLego().searchSets(query))
         : await this.fromSource(() => this.catalog.search(query));
-    const items = await Promise.all(entries.map((entry) => this.save(entry)));
+    // One at a time: parallel searches return overlapping items, and saving them all at once
+    // multiplies lock contention (each save rewrites the item's universe links).
+    const items: CatalogItemResponse[] = [];
+    for (const entry of entries) items.push(await this.save(entry));
     this.searchCache.set(key, items);
     return items;
   }

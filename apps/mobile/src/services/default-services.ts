@@ -10,6 +10,7 @@ import { getApiUrl } from './api-url';
 import type { AppServices } from './app-services';
 import { createAuthClientFor } from './auth-client';
 import { BetterAuthAccountService } from './better-auth-account-service';
+import { ApiShelfScanner } from './shelf-scanner';
 
 export function createDefaultServices(): AppServices {
   const apiUrl = getApiUrl();
@@ -27,5 +28,6 @@ export function createDefaultServices(): AppServices {
     }),
     accountCollection: new ApiCollectionRepository(apiFetch),
     account: new BetterAuthAccountService(authClient),
+    shelfScanner: new ApiShelfScanner(apiFetch),
   };
 }

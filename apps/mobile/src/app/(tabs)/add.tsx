@@ -23,18 +23,26 @@ const KIND_OPTIONS: SegmentedOption<SearchKind>[] = [
 ];
 
 export default function AddScreen() {
-  // The scanner returns here with ?isbn=…&scan=<timestamp>; `scan` changes on every scan.
-  const { isbn: scannedIsbn, scan } = useLocalSearchParams<{ isbn?: string; scan?: string }>();
-  const [input, setInput] = useState(scannedIsbn ?? '');
-  const [kind, setKind] = useState<SearchKind>('books');
-  const [appliedScan, setAppliedScan] = useState(scan);
+  // The barcode scanner returns here with ?isbn=…&scan=<timestamp>, and a shelf scan's
+  // "Search" with ?q=…&kind=…&scan=<timestamp>; `scan` changes every time.
+  const params = useLocalSearchParams<{
+    isbn?: string;
+    q?: string;
+    kind?: SearchKind;
+    scan?: string;
+  }>();
+  const incoming = params.isbn ?? params.q;
+  const incomingKind: SearchKind = params.kind === 'lego' && !params.isbn ? 'lego' : 'books';
+  const [input, setInput] = useState(incoming ?? '');
+  const [kind, setKind] = useState<SearchKind>(incomingKind);
+  const [appliedScan, setAppliedScan] = useState(params.scan);
   // Put a new scan into the search field (adjusting state during render, as React recommends
   // over an effect: https://react.dev/learn/you-might-not-need-an-effect).
-  if (scan !== appliedScan) {
-    setAppliedScan(scan);
-    if (scannedIsbn) {
-      setInput(scannedIsbn);
-      setKind('books');
+  if (params.scan !== appliedScan) {
+    setAppliedScan(params.scan);
+    if (incoming) {
+      setInput(incoming);
+      setKind(incomingKind);
     }
   }
   const search = useCatalogSearch(input, kind);
@@ -63,6 +71,7 @@ export default function AddScreen() {
             barcodes aren't ISBNs. */}
         {Platform.OS !== 'web' && kind === 'books' && <ScanButton />}
       </View>
+      <ShelfScanLink />
       <SearchResults search={search} kind={kind} />
     </Screen>
   );
@@ -182,6 +191,32 @@ function ScanButton() {
   );
 }
 
+/** Adding many items at once: photograph a shelf (AI). */
+function ShelfScanLink() {
+  const colors = useTheme();
+  return (
+    <Link href="/shelf-scan" asChild>
+      <Pressable
+        accessibilityRole="link"
+        accessibilityLabel="Scan a shelf: add several items from one photo"
+        style={StyleSheet.flatten([styles.shelfLink, { borderColor: colors.border }])}
+      >
+        <SymbolView
+          name={{ ios: 'camera.viewfinder', android: 'photo_camera', web: 'photo_camera' }}
+          tintColor={colors.accent}
+          size={22}
+        />
+        <View style={styles.searchField}>
+          <ThemedText type="smallBold">Scan a shelf</ThemedText>
+          <ThemedText type="small" themeColor="textSecondary">
+            Add several items from one photo
+          </ThemedText>
+        </View>
+      </Pressable>
+    </Link>
+  );
+}
+
 function RetryButton({ onPress }: { onPress: () => void }) {
   const colors = useTheme();
   return (
@@ -214,6 +249,15 @@ const styles = StyleSheet.create({
     borderRadius: Spacing.three,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  shelfLink: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.three,
+    borderWidth: 1,
+    borderRadius: Spacing.three,
+    paddingVertical: Spacing.two,
+    paddingHorizontal: Spacing.three,
   },
   centered: {
     flex: 1,

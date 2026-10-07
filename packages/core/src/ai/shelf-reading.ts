@@ -89,6 +89,18 @@ export function normalizeReading(value: string): string {
     .trim();
 }
 
+/**
+ * A publisher the model sometimes puts in front of a title ("MARVEL: PLANET HULK"); left in,
+ * it sends the catalog search astray.
+ */
+const PUBLISHER_PREFIX =
+  /^(?:marvel|dc|viz|vizbig|kodansha|image|dark horse|idw|tor|yen press)(?:\s+comics)?\s*[:\-–—]\s+(?=\S)/i;
+
+/** "MARVEL: PLANET HULK" → "PLANET HULK"; other titles are left as they are. */
+export function stripPublisher(title: string): string {
+  return title.replace(PUBLISHER_PREFIX, '');
+}
+
 export function isGenericTitle(title: string): boolean {
   return GENERIC_TITLES.has(normalizeReading(title));
 }
@@ -114,7 +126,8 @@ export function parseShelfReply(reply: string): ParsedShelfReply {
       .replace(/^\s*[-*\d.)]*\s*/, '') // list markers: "- ", "3. "
       .split('|');
     const kind = kindField?.trim().toLowerCase();
-    const title = field(titleField);
+    const printed = field(titleField);
+    const title = printed && stripPublisher(printed);
     if (!isShelfItemKind(kind) || !title || isGenericTitle(title)) {
       droppedLines += 1;
       continue;

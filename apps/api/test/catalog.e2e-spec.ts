@@ -104,6 +104,27 @@ describe('Catalog (e2e)', () => {
       expect(responses[0]!.body.items[0].universes).toEqual(['middle-earth']);
     });
 
+    it('survives simultaneous searches that return the same books in different orders', async () => {
+      const books: CatalogBook[] = Array.from({ length: 8 }, (_, i) => ({
+        ...hobbit,
+        externalId: `OL${i}M`,
+        title: `The Hobbit, part ${i}`,
+        matchSignals: { title: 'The Hobbit', people: ['Gandalf', 'Bilbo Baggins'] },
+      }));
+      fakeCatalog.search.mockImplementation(async (query) =>
+        query.length % 2 ? [...books] : [...books].reverse(),
+      );
+
+      const responses = await Promise.all(
+        ['ab', 'abc', 'abcd', 'abcde', 'abcdef', 'abcdefg'].map((q) =>
+          api().get('/api/catalog/search').query({ q }),
+        ),
+      );
+
+      expect(responses.map((response) => response.status)).toEqual([200, 200, 200, 200, 200, 200]);
+      expect(await prisma.catalogItem.count()).toBe(8);
+    });
+
     it('answers repeated searches from memory', async () => {
       await api().get('/api/catalog/search').query({ q: 'One Piece' }).expect(200);
       await api().get('/api/catalog/search').query({ q: 'one piece' }).expect(200);

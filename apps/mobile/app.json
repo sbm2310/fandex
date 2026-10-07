@@ -45,6 +45,14 @@
           "barcodeScannerEnabled": true
         }
       ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Fandex reads the spines in a shelf photo you choose to add those items to your collection.",
+          "cameraPermission": "Fandex uses the camera to scan book barcodes and photograph your shelves.",
+          "microphonePermission": false
+        }
+      ],
       "expo-secure-store"
     ],
     "experiments": {

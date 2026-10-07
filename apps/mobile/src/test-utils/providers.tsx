@@ -1,5 +1,7 @@
 import {
   KeyValueCollectionRepository,
+  type AiQuotaResponse,
+  type ShelfScanResponse,
   type BookCatalog,
   type CatalogBook,
   type CatalogSet,
@@ -12,6 +14,7 @@ import type { ReactNode } from 'react';
 
 import { AccountError, type AccountService, type AccountUser } from '@/services/account-service';
 import { AppServicesProvider } from '@/services/app-services';
+import type { ShelfPhoto, ShelfScanner } from '@/services/shelf-scanner';
 
 /** A catalog whose methods are Jest mocks; by default it finds nothing. */
 export function createFakeCatalog(overrides: Partial<BookCatalog> = {}) {
@@ -34,6 +37,19 @@ export function createFakeLegoCatalog(overrides: Partial<LegoCatalog> = {}) {
     ),
     lookupSet: jest.fn<Promise<CatalogSet | null>, Parameters<LegoCatalog['lookupSet']>>(() =>
       Promise.resolve(null),
+    ),
+    ...overrides,
+  };
+}
+
+/** A shelf scanner whose methods are Jest mocks; by default AI is available and finds nothing. */
+export function createFakeShelfScanner(overrides: Partial<ShelfScanner> = {}) {
+  return {
+    quota: jest.fn<Promise<AiQuotaResponse>, []>(() =>
+      Promise.resolve({ available: true, shelfScans: { used: 0, limit: 5 } }),
+    ),
+    scan: jest.fn<Promise<ShelfScanResponse>, [ShelfPhoto]>(() =>
+      Promise.resolve({ items: [], quota: { used: 1, limit: 5 } }),
     ),
     ...overrides,
   };
@@ -126,12 +142,14 @@ export function createWrapper({
   deviceCollection = createMemoryCollection(),
   accountCollection = createMemoryCollection(),
   account = new FakeAccountService(),
+  shelfScanner = createFakeShelfScanner(),
 }: {
   catalog?: BookCatalog;
   legoCatalog?: LegoCatalog;
   deviceCollection?: CollectionRepository;
   accountCollection?: CollectionRepository;
   account?: AccountService;
+  shelfScanner?: ShelfScanner;
 } = {}) {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false, gcTime: Infinity } },
@@ -141,7 +159,14 @@ export function createWrapper({
     return (
       <QueryClientProvider client={queryClient}>
         <AppServicesProvider
-          services={{ catalog, legoCatalog, deviceCollection, accountCollection, account }}
+          services={{
+            catalog,
+            legoCatalog,
+            deviceCollection,
+            accountCollection,
+            account,
+            shelfScanner,
+          }}
         >
           {children}
         </AppServicesProvider>

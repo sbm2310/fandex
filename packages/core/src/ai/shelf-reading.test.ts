@@ -49,6 +49,25 @@ describe('parseShelfReply', () => {
     expect(readings).toEqual([]);
   });
 
+  it('drops a publisher the model put in front of the title', () => {
+    const { readings } = parseShelfReply(
+      [
+        'comic | MARVEL: PLANET HULK | - | - | 1 | -',
+        'comic | Marvel Comics - Civil War | - | - | 1 | -',
+        'comic | DC: The Killing Joke | - | - | 1 | -',
+        'comic | MARVEL: | - | - | 1 | -',
+        'manga | Image of Dorian Gray | - | - | 1 | -',
+      ].join('\n'),
+    );
+
+    expect(readings.map((reading) => reading.title)).toEqual([
+      'PLANET HULK',
+      'Civil War',
+      'The Killing Joke',
+      'Image of Dorian Gray',
+    ]);
+  });
+
   it('merges repeated lines, keeping the higher spine count', () => {
     const { readings, droppedLines } = parseShelfReply(
       'manga | Demon Slayer | - | - | 14 | -\nmanga | DEMON SLAYER | - | - | 9 | -',

@@ -49,6 +49,10 @@ export default function RootLayout() {
               name="scan"
               options={{ presentation: 'fullScreenModal', headerShown: false }}
             />
+            <Stack.Screen
+              name="shelf-scan"
+              options={{ title: 'Scan a shelf', headerBackTitle: 'Back' }}
+            />
           </Stack>
         </ThemeProvider>
       </AppServicesProvider>
