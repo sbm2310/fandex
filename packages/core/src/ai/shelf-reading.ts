@@ -24,6 +24,13 @@ export type ShelfReading = {
   setNumber?: string;
 };
 
+/**
+ * Request settings measured in Task 1 (docs/eval/shelf-recognition.md): a short reply limit
+ * (providers count the maximum against their token limits; 800 fits a full shelf), some
+ * temperature (at 0 the model loops on one line), reasoning off.
+ */
+export const SHELF_READING_SETTINGS = { maxTokens: 800, temperature: 0.6, topP: 0.95 } as const;
+
 /** The instructions for one photo, sent as `imageCount` crops of it (left to right, top to bottom). */
 export function shelfPrompt(imageCount = 1): string {
   const parts =

@@ -1,4 +1,4 @@
-import { GroqClient, GroqError, GroqRateLimitError } from './groq-client.js';
+import { ChatClient, AiProviderError, AiRateLimitError } from './chat-client.js';
 
 type Call = { url: string; init: RequestInit };
 
@@ -16,10 +16,18 @@ const completion = {
   usage: { prompt_tokens: 1900, completion_tokens: 20 },
 };
 
-describe('GroqClient', () => {
+describe('ChatClient', () => {
+  it("reads Gemini's array-wrapped error bodies", async () => {
+    const { fetch } = fakeFetch(400, [{ error: { message: 'Invalid reasoning_effort' } }]);
+
+    await expect(
+      new ChatClient({ apiKey: 'k', fetch }).chat({ model: 'm', prompt: 'Hi', maxTokens: 10 }),
+    ).rejects.toMatchObject({ status: 400, message: 'Invalid reasoning_effort' });
+  });
+
   it('sends the prompt and images as one user message and returns the text', async () => {
     const { fetch, calls } = fakeFetch(200, completion);
-    const client = new GroqClient({ apiKey: 'test-key', fetch });
+    const client = new ChatClient({ apiKey: 'test-key', fetch });
 
     const result = await client.chat({
       model: 'qwen/qwen3.8-27b',
@@ -57,14 +65,14 @@ describe('GroqClient', () => {
   it('sends a text-only prompt as a plain string', async () => {
     const { fetch, calls } = fakeFetch(200, completion);
 
-    await new GroqClient({ apiKey: 'k', fetch }).chat({ model: 'm', prompt: 'Hi', maxTokens: 10 });
+    await new ChatClient({ apiKey: 'k', fetch }).chat({ model: 'm', prompt: 'Hi', maxTokens: 10 });
 
     expect(JSON.parse(calls[0]!.init.body as string).messages[0].content).toBe('Hi');
   });
 
   it('passes a reasoning effort only when given', async () => {
     const { fetch, calls } = fakeFetch(200, completion);
-    const client = new GroqClient({ apiKey: 'k', fetch });
+    const client = new ChatClient({ apiKey: 'k', fetch });
 
     await client.chat({ model: 'm', prompt: 'Hi', maxTokens: 10, reasoningEffort: 'none' });
     await client.chat({ model: 'm', prompt: 'Hi', maxTokens: 10 });
@@ -80,11 +88,11 @@ describe('GroqClient', () => {
       { 'retry-after': '11' },
     );
 
-    const error = await new GroqClient({ apiKey: 'k', fetch })
+    const error = await new ChatClient({ apiKey: 'k', fetch })
       .chat({ model: 'm', prompt: 'Hi', maxTokens: 10 })
       .catch((caught: unknown) => caught);
 
-    expect(error).toBeInstanceOf(GroqRateLimitError);
+    expect(error).toBeInstanceOf(AiRateLimitError);
     expect(error).toMatchObject({ retryAfterMs: 11_000, message: 'Rate limit reached for model' });
   });
 
@@ -92,34 +100,34 @@ describe('GroqClient', () => {
     const { fetch } = fakeFetch(429, {});
 
     await expect(
-      new GroqClient({ apiKey: 'k', fetch }).chat({ model: 'm', prompt: 'Hi', maxTokens: 10 }),
+      new ChatClient({ apiKey: 'k', fetch }).chat({ model: 'm', prompt: 'Hi', maxTokens: 10 }),
     ).rejects.toMatchObject({ retryAfterMs: 60_000 });
   });
 
-  it('turns other failures into GroqError with the status', async () => {
+  it('turns other failures into AiProviderError with the status', async () => {
     const { fetch } = fakeFetch(401, { error: { message: 'Invalid API Key' } });
 
-    const error = await new GroqClient({ apiKey: 'bad', fetch })
+    const error = await new ChatClient({ apiKey: 'bad', fetch })
       .chat({ model: 'm', prompt: 'Hi', maxTokens: 10 })
       .catch((caught: unknown) => caught);
 
-    expect(error).toBeInstanceOf(GroqError);
-    expect(error).not.toBeInstanceOf(GroqRateLimitError);
+    expect(error).toBeInstanceOf(AiProviderError);
+    expect(error).not.toBeInstanceOf(AiRateLimitError);
     expect(error).toMatchObject({ status: 401, message: 'Invalid API Key' });
   });
 
-  it('gives up when Groq does not answer in time', async () => {
+  it('gives up when the provider does not answer in time', async () => {
     const hanging = ((_url: string, init: RequestInit) =>
       new Promise((_resolve, reject) => {
         init.signal?.addEventListener('abort', () => reject(init.signal?.reason));
       })) as unknown as typeof globalThis.fetch;
 
     await expect(
-      new GroqClient({ apiKey: 'k', fetch: hanging, timeoutMs: 20 }).chat({
+      new ChatClient({ apiKey: 'k', fetch: hanging, timeoutMs: 20 }).chat({
         model: 'm',
         prompt: 'Hi',
         maxTokens: 10,
       }),
-    ).rejects.toMatchObject({ name: 'GroqError', status: 504 });
+    ).rejects.toMatchObject({ name: 'AiProviderError', status: 504 });
   });
 });

@@ -1,10 +1,11 @@
 /**
- * A minimal client for Groq's OpenAI-compatible chat completions API (plain `fetch`, no SDK):
- * one prompt plus optional images in, text out. Groq's free plan answers 429 when a limit is
- * reached; that becomes a `GroqRateLimitError` carrying how long to wait.
+ * A minimal client for the OpenAI-style chat completions API (plain `fetch`, no SDK): one
+ * prompt plus optional images in, text out. Groq, Gemini and Mistral all speak it, so the
+ * provider is just a base URL and key. A 429 (a free plan's limit) becomes an
+ * `AiRateLimitError` carrying how long to wait.
  */
 
-export type GroqChatRequest = {
+export type ChatRequest = {
   model: string;
   prompt: string;
   /** JPEG images, sent inline as data URLs (Groq accepts at most 3 per request). */
@@ -16,35 +17,40 @@ export type GroqChatRequest = {
   reasoningEffort?: string;
 };
 
-export type GroqChatResult = {
+export type ChatResult = {
   text: string;
   /** "stop", or "length" when the reply was cut off at `maxTokens`. */
   finishReason: string;
   usage: { promptTokens: number; completionTokens: number };
 };
 
-export class GroqError extends Error {
+export class AiProviderError extends Error {
   constructor(
     message: string,
     readonly status: number,
   ) {
     super(message);
-    this.name = 'GroqError';
+    this.name = 'AiProviderError';
   }
 }
 
-export class GroqRateLimitError extends GroqError {
+export class AiRateLimitError extends AiProviderError {
   constructor(
     message: string,
     /** Milliseconds until a retry can succeed. */
     readonly retryAfterMs: number,
   ) {
     super(message, 429);
-    this.name = 'GroqRateLimitError';
+    this.name = 'AiRateLimitError';
   }
 }
 
-export type GroqClientOptions = {
+/** What the rest of the API depends on, so tests can swap in a fake (like an interface in .NET DI). */
+export type ChatModel = {
+  chat(request: ChatRequest): Promise<ChatResult>;
+};
+
+export type ChatClientOptions = {
   apiKey: string;
   baseUrl?: string;
   fetch?: typeof fetch;
@@ -58,16 +64,19 @@ type ChatCompletion = {
   error?: { message?: string };
 };
 
-export class GroqClient {
+/** Gemini wraps its errors in an array: `[{ "error": { … } }]`. */
+type ErrorBody = ChatCompletion | ChatCompletion[];
+
+export class ChatClient implements ChatModel {
   private readonly baseUrl: string;
   private readonly fetch: typeof fetch;
 
-  constructor(private readonly options: GroqClientOptions) {
+  constructor(private readonly options: ChatClientOptions) {
     this.baseUrl = options.baseUrl ?? 'https://api.groq.com/openai/v1';
     this.fetch = options.fetch ?? globalThis.fetch;
   }
 
-  async chat(request: GroqChatRequest): Promise<GroqChatResult> {
+  async chat(request: ChatRequest): Promise<ChatResult> {
     const images = (request.images ?? []).map((image) => ({
       type: 'image_url',
       image_url: { url: `data:image/jpeg;base64,${Buffer.from(image).toString('base64')}` },
@@ -96,21 +105,22 @@ export class GroqClient {
       }),
     }).catch((error: unknown) => {
       if (error instanceof Error && error.name === 'TimeoutError') {
-        throw new GroqError('Groq did not answer in time', 504);
+        throw new AiProviderError('The AI provider did not answer in time', 504);
       }
       throw error;
     });
-    const body = (await response.json().catch(() => ({}))) as ChatCompletion;
+    const parsed = (await response.json().catch(() => ({}))) as ErrorBody;
+    const body = (Array.isArray(parsed) ? parsed[0] : parsed) ?? {};
 
     if (response.status === 429) {
-      throw new GroqRateLimitError(
-        body.error?.message ?? 'Groq rate limit reached',
+      throw new AiRateLimitError(
+        body.error?.message ?? 'The AI provider rate limit was reached',
         retryAfterMs(response.headers.get('retry-after')),
       );
     }
     if (!response.ok) {
-      throw new GroqError(
-        body.error?.message ?? `Groq answered ${response.status}`,
+      throw new AiProviderError(
+        body.error?.message ?? `The AI provider answered ${response.status}`,
         response.status,
       );
     }

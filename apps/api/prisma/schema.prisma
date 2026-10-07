@@ -100,6 +100,7 @@ model User {
   sessions      Session[]
   accounts      Account[]
   collection    CollectionItem[]
+  aiUsage       AiUsage[]
 
   @@map("user")
 }
@@ -220,4 +221,23 @@ model SyncState {
   syncedAt DateTime @default(now()) @map("synced_at") @db.Timestamptz
 
   @@map("sync_state")
+}
+
+enum AiUsageKind {
+  shelf_scan
+}
+
+/// How many AI requests a user made on a day (UTC), for quotas. Nothing about the request
+/// itself (photo, question) is stored.
+model AiUsage {
+  userId String      @map("user_id") @db.Uuid
+  user   User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  day    DateTime    @db.Date
+  kind   AiUsageKind
+  count  Int         @default(0)
+
+  @@id([userId, day, kind])
+  // "Everyone's scans today", for the global daily limit.
+  @@index([day, kind])
+  @@map("ai_usage")
 }

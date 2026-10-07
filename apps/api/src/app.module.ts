@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from '@thallesp/nestjs-better-auth';
 
+import { AiModule } from './ai/ai.module.js';
 import { createAuth } from './auth/auth.js';
 import { CatalogModule } from './catalog/catalog.module.js';
 import { CollectionModule } from './collection/collection.module.js';
@@ -40,6 +41,7 @@ import { UniversesModule } from './universes/universes.module.js';
     UniversesModule,
     CatalogModule,
     CollectionModule,
+    AiModule,
   ],
 })
 export class AppModule {}

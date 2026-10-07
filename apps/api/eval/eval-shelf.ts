@@ -13,7 +13,7 @@
  *   shelf-halves  each one-shelf crop cut into 2 halves (one request per shelf)
  * The shelf variants stand in for the one-shelf photos the app will ask for.
  *
- * Calls the real Groq API (GROQ_API_KEY from apps/api/.env), so it never runs in CI. Requests
+ * Calls the real provider (its key from apps/api/.env), so it never runs in CI. Requests
  * are paced to stay under the free plan's tokens-per-minute limit; raw replies and a summary
  * are written to eval/runs/<time>/ (gitignored).
  */
@@ -27,6 +27,7 @@ import {
   planShelfTiles,
   scoreShelfReading,
   shelfPrompt,
+  SHELF_READING_SETTINGS,
   type ExpectedShelfItem,
   type ImageTile,
 } from '@fandex/core';
@@ -34,11 +35,11 @@ import { config } from 'dotenv';
 import sharp from 'sharp';
 
 import {
-  GroqClient,
-  GroqError,
-  GroqRateLimitError,
-  type GroqChatResult,
-} from '../src/ai/groq-client.js';
+  ChatClient,
+  AiProviderError,
+  AiRateLimitError,
+  type ChatResult,
+} from '../src/ai/chat-client.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 
@@ -58,8 +59,8 @@ const { values } = parseArgs({
     /** "groq" (production), or "gemini" / "mistral" (comparisons; see docs/eval/shelf-recognition.md). */
     provider: { type: 'string', default: 'groq' },
     model: { type: 'string' },
-    temperature: { type: 'string', default: '0.6' },
-    'max-tokens': { type: 'string', default: '800' },
+    temperature: { type: 'string', default: String(SHELF_READING_SETTINGS.temperature) },
+    'max-tokens': { type: 'string', default: String(SHELF_READING_SETTINGS.maxTokens) },
     /** "catalogue" (core's prompt) or an experimental prompt from PROMPTS below. */
     prompt: { type: 'string', default: 'catalogue' },
     bands: { type: 'string' },
@@ -164,7 +165,7 @@ const TOKENS_PER_MINUTE = provider.tokensPerMinute;
 const usage: { at: number; tokens: number }[] = [];
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-async function paced(send: () => Promise<GroqChatResult>, estimate: number) {
+async function paced(send: () => Promise<ChatResult>, estimate: number) {
   for (let attempt = 1; ; attempt += 1) {
     for (;;) {
       const recent = usage.filter((entry) => entry.at > Date.now() - 60_000);
@@ -178,11 +179,11 @@ async function paced(send: () => Promise<GroqChatResult>, estimate: number) {
       return result;
     } catch (error) {
       // Timeouts and "overloaded" (Gemini's free tier answers 503 at busy times) are worth a retry.
-      const transient = error instanceof GroqError && [500, 503, 504].includes(error.status);
-      if (!(error instanceof GroqRateLimitError || transient) || attempt === 6) throw error;
-      const wait = error instanceof GroqRateLimitError ? error.retryAfterMs : 15_000 * attempt;
+      const transient = error instanceof AiProviderError && [500, 503, 504].includes(error.status);
+      if (!(error instanceof AiRateLimitError || transient) || attempt === 6) throw error;
+      const wait = error instanceof AiRateLimitError ? error.retryAfterMs : 15_000 * attempt;
       process.stdout.write(
-        error instanceof GroqRateLimitError
+        error instanceof AiRateLimitError
           ? ` (rate limited, waiting ${Math.ceil(wait / 1000)} s)`
           : ` (${error.status}, retrying in ${wait / 1000} s)`,
       );
@@ -205,7 +206,7 @@ type Row = {
   seconds: number;
 };
 
-const groq = new GroqClient({ apiKey, baseUrl: provider.baseUrl, timeoutMs: 90_000 });
+const client = new ChatClient({ apiKey, baseUrl: provider.baseUrl, timeoutMs: 90_000 });
 const runDir = join(here, 'runs', new Date().toISOString().replace(/[:.]/g, '-'));
 mkdirSync(runDir, { recursive: true });
 const rows: Row[] = [];
@@ -238,14 +239,14 @@ for (const variant of variants) {
       const result = await paced(
         async () => {
           const started = Date.now();
-          const reply = await groq.chat({
+          const reply = await client.chat({
             model,
             ...(provider.reasoningEffort && { reasoningEffort: provider.reasoningEffort }),
             prompt: prompt(job.images.length),
             images: job.images,
             maxTokens,
             temperature: Number(values.temperature),
-            topP: 0.95,
+            topP: SHELF_READING_SETTINGS.topP,
           });
           seconds = (Date.now() - started) / 1000; // the model's time, not our pacing
           return reply;

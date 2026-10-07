@@ -12,8 +12,25 @@ describe('envSchema', () => {
       DATABASE_URL,
       BETTER_AUTH_SECRET,
       BETTER_AUTH_URL: 'http://localhost:3000',
+      AI_BASE_URL: 'https://api.groq.com/openai/v1',
+      AI_VISION_MODEL: 'qwen/qwen3.8-27b',
+      AI_SHELF_SCANS_PER_USER: 5,
+      AI_SHELF_SCANS_PER_DAY: 60,
       TRUSTED_ORIGINS: ['http://localhost:8081', 'fandex://'],
     });
+  });
+
+  it('treats an empty AI key as missing and coerces the AI limits', () => {
+    const env = envSchema.parse({
+      ...required,
+      GROQ_API_KEY: '',
+      AI_SHELF_SCANS_PER_USER: '3',
+      AI_SHELF_SCANS_PER_DAY: '0',
+    });
+
+    expect(env.GROQ_API_KEY).toBeUndefined();
+    expect(env).toMatchObject({ AI_SHELF_SCANS_PER_USER: 3, AI_SHELF_SCANS_PER_DAY: 0 });
+    expect(envSchema.safeParse({ ...required, AI_SHELF_SCANS_PER_DAY: '-1' }).success).toBe(false);
   });
 
   it('coerces the port from a string', () => {
