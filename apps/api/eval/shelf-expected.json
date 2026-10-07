@@ -1,0 +1,417 @@
+{
+  "$comment": "What is really on the owner's bookcase, by shelf (1 = top), and which shelves each photo shows. Aliases are phrases that identify an item in a model's reading (any script). The photos themselves are not committed (eval/photos is gitignored). \"bands\" are one-shelf crops (pixels in the original photo) that stand in for the one-shelf photos the app asks for.",
+  "items": [
+    {
+      "shelf": 1,
+      "id": "asoiaf-he",
+      "kind": "book",
+      "name": "A Song of Ice and Fire (Hebrew), George R. R. Martin",
+      "count": 9,
+      "aliases": [
+        "song of ice and fire",
+        "game of thrones",
+        "clash of kings",
+        "storm of swords",
+        "feast for crows",
+        "dance with dragons",
+        "george r r martin",
+        "משחקי הכס",
+        "עימות המלכים",
+        "סופת החרבות",
+        "משתה לעורבים",
+        "ריקוד עם דרקונים",
+        "מרטין"
+      ]
+    },
+    {
+      "shelf": 1,
+      "id": "dragonlance-he",
+      "kind": "book",
+      "name": "Dragonlance (Hebrew), Margaret Weis & Tracy Hickman",
+      "count": 15,
+      "aliases": [
+        "dragonlance",
+        "dragons of autumn twilight",
+        "dragons of winter night",
+        "dragons of spring dawning",
+        "dragons of summer flame",
+        "time of the twins",
+        "war of the twins",
+        "test of the twins",
+        "margaret weis",
+        "tracy hickman",
+        "דרקונים",
+        "התאומים",
+        "רומח הדרקון"
+      ]
+    },
+    {
+      "shelf": 2,
+      "id": "stormlight",
+      "kind": "book",
+      "name": "The Stormlight Archive 1–3, Brandon Sanderson (hardcovers)",
+      "count": 3,
+      "aliases": [
+        "stormlight",
+        "way of kings",
+        "words of radiance",
+        "oathbringer",
+        "brandon sanderson"
+      ]
+    },
+    {
+      "shelf": 2,
+      "id": "lotr-he",
+      "kind": "book",
+      "name": "The Lord of the Rings + The Hobbit (Hebrew), J. R. R. Tolkien",
+      "count": 4,
+      "aliases": [
+        "lord of the rings",
+        "fellowship of the ring",
+        "two towers",
+        "return of the king",
+        "hobbit",
+        "tolkien",
+        "שר הטבעות",
+        "אחוות הטבעת",
+        "שני הצריחים",
+        "שובו של המלך",
+        "הוביט",
+        "ההוביט",
+        "טולקין"
+      ]
+    },
+    {
+      "shelf": 2,
+      "id": "inheritance-he",
+      "kind": "book",
+      "name": "The Inheritance Cycle (Hebrew), Christopher Paolini",
+      "count": 4,
+      "aliases": [
+        "inheritance cycle",
+        "eragon",
+        "eldest",
+        "brisingr",
+        "paolini",
+        "ארגון",
+        "אראגון",
+        "אלדסט",
+        "בריסינגר",
+        "פאוליני"
+      ]
+    },
+    {
+      "shelf": 2,
+      "id": "lego-tantive",
+      "kind": "lego",
+      "name": "LEGO Star Wars Tantive IV (75376)",
+      "count": 1,
+      "setNumber": "75376",
+      "aliases": ["tantive"]
+    },
+    {
+      "shelf": 3,
+      "id": "hp-he",
+      "kind": "book",
+      "name": "Harry Potter (Hebrew paperbacks), J. K. Rowling",
+      "count": 7,
+      "aliases": ["הארי פוטר", "רולינג"]
+    },
+    {
+      "shelf": 3,
+      "id": "hp-en",
+      "kind": "book",
+      "name": "Harry Potter box set (Bloomsbury), J. K. Rowling",
+      "count": 7,
+      "aliases": [
+        "harry potter",
+        "philosophers stone",
+        "chamber of secrets",
+        "prisoner of azkaban",
+        "goblet of fire",
+        "order of the phoenix",
+        "half blood prince",
+        "deathly hallows"
+      ]
+    },
+    {
+      "shelf": 3,
+      "id": "lego-xwing",
+      "kind": "lego",
+      "name": "LEGO Star Wars X-wing (set number unknown)",
+      "count": 1,
+      "aliases": ["x wing", "xwing"]
+    },
+    {
+      "shelf": 3,
+      "id": "lego-falcon",
+      "kind": "lego",
+      "name": "LEGO Star Wars Millennium Falcon (75375)",
+      "count": 1,
+      "setNumber": "75375",
+      "aliases": ["millennium falcon"]
+    },
+    {
+      "shelf": 3,
+      "id": "lego-executor",
+      "kind": "lego",
+      "name": "LEGO Star Wars Executor Super Star Destroyer (75356)",
+      "count": 1,
+      "setNumber": "75356",
+      "aliases": ["executor", "star destroyer"]
+    },
+    {
+      "shelf": 3,
+      "id": "sw-epic",
+      "kind": "comic",
+      "name": "Star Wars Legends Epic Collection: The Clone Wars",
+      "count": 1,
+      "aliases": ["star wars legends", "star wars epic collection", "clone wars"]
+    },
+    {
+      "shelf": 4,
+      "id": "demon-slayer",
+      "kind": "manga",
+      "name": "Demon Slayer (VIZ)",
+      "count": 23,
+      "aliases": ["demon slayer", "kimetsu no yaiba"]
+    },
+    {
+      "shelf": 4,
+      "id": "vagabond",
+      "kind": "manga",
+      "name": "Vagabond VIZBIG Edition 1–8",
+      "count": 8,
+      "aliases": ["vagabond"]
+    },
+    {
+      "shelf": 4,
+      "id": "hunger-games-he",
+      "kind": "book",
+      "name": "The Hunger Games 2–3 (Hebrew), Suzanne Collins",
+      "count": 2,
+      "aliases": [
+        "hunger games",
+        "catching fire",
+        "mockingjay",
+        "suzanne collins",
+        "משחקי הרעב",
+        "התלקחות",
+        "עורבני חקיין",
+        "סוזן קולינס"
+      ]
+    },
+    {
+      "shelf": 5,
+      "id": "x-men-aoa",
+      "kind": "comic",
+      "name": "X-Men: The Age of Apocalypse Omnibus",
+      "count": 1,
+      "aliases": ["age of apocalypse"]
+    },
+    {
+      "shelf": 5,
+      "id": "civil-war",
+      "kind": "comic",
+      "name": "Civil War (Millar, McNiven)",
+      "count": 1,
+      "aliases": ["civil war"]
+    },
+    {
+      "shelf": 5,
+      "id": "avengers-vs-x-men",
+      "kind": "comic",
+      "name": "Avengers vs. X-Men",
+      "count": 1,
+      "aliases": ["avengers vs x men", "avengers versus x men"]
+    },
+    {
+      "shelf": 5,
+      "id": "infinity",
+      "kind": "comic",
+      "name": "The Infinity Gauntlet + Infinity War",
+      "count": 2,
+      "aliases": ["infinity gauntlet", "infinity war"]
+    },
+    {
+      "shelf": 5,
+      "id": "house-of-m",
+      "kind": "comic",
+      "name": "House of M",
+      "count": 1,
+      "aliases": ["house of m"]
+    },
+    {
+      "shelf": 5,
+      "id": "hulk",
+      "kind": "comic",
+      "name": "Planet Hulk + World War Hulk",
+      "count": 2,
+      "aliases": ["planet hulk", "world war hulk"]
+    },
+    {
+      "shelf": 5,
+      "id": "deadpool",
+      "kind": "comic",
+      "name": "Deadpool by Daniel Way: The Complete Collection 1–2",
+      "count": 2,
+      "aliases": ["deadpool"]
+    },
+    {
+      "shelf": 5,
+      "id": "vinland-saga",
+      "kind": "manga",
+      "name": "Vinland Saga deluxe 1–11 (Kodansha)",
+      "count": 11,
+      "aliases": ["vinland saga"]
+    },
+    {
+      "shelf": 5,
+      "id": "spider-man-bnd",
+      "kind": "comic",
+      "name": "Spider-Man: Brand New Day — The Complete Collection",
+      "count": 4,
+      "aliases": ["brand new day"]
+    },
+    {
+      "shelf": 5,
+      "id": "spider-man-big-time",
+      "kind": "comic",
+      "name": "Spider-Man: Big Time — The Complete Collection",
+      "count": 4,
+      "aliases": ["big time"]
+    },
+    {
+      "shelf": 5,
+      "id": "spider-man-other",
+      "kind": "comic",
+      "name": "Other Spider-Man trades (Edge of Spider-Verse, Worldwide, Scorpio Rising, Spider-Man/Deadpool…)",
+      "count": 8,
+      "aliases": [
+        "edge of spider verse",
+        "worldwide",
+        "scorpio rising",
+        "spider man deadpool",
+        "amazing spider man"
+      ]
+    }
+  ],
+  "photos": [
+    {
+      "file": "shelf-1.jpeg",
+      "shelves": [1, 2, 3, 4, 5],
+      "note": "whole bookcase, from above"
+    },
+    {
+      "file": "2.jpeg",
+      "shelves": [1, 2],
+      "note": "top two shelves, close",
+      "bands": [
+        {
+          "shelf": 1,
+          "left": 179,
+          "top": 573,
+          "width": 1715,
+          "height": 292
+        },
+        {
+          "shelf": 2,
+          "left": 179,
+          "top": 1008,
+          "width": 1705,
+          "height": 385
+        }
+      ]
+    },
+    {
+      "file": "3.jpeg",
+      "shelves": [1, 2, 3],
+      "note": "top three shelves"
+    },
+    {
+      "file": "4.jpeg",
+      "shelves": [2, 3, 4],
+      "note": "middle shelves, close",
+      "bands": [
+        {
+          "shelf": 2,
+          "left": 0,
+          "top": 0,
+          "width": 1905,
+          "height": 358
+        },
+        {
+          "shelf": 3,
+          "left": 31,
+          "top": 507,
+          "width": 1802,
+          "height": 415
+        },
+        {
+          "shelf": 4,
+          "left": 143,
+          "top": 1024,
+          "width": 1547,
+          "height": 358
+        }
+      ]
+    },
+    {
+      "file": "5.jpeg",
+      "shelves": [3, 4, 5],
+      "note": "lower shelves",
+      "bands": [
+        {
+          "shelf": 3,
+          "left": 0,
+          "top": 92,
+          "width": 2007,
+          "height": 348
+        },
+        {
+          "shelf": 4,
+          "left": 41,
+          "top": 676,
+          "width": 1802,
+          "height": 358
+        },
+        {
+          "shelf": 5,
+          "left": 20,
+          "top": 1106,
+          "width": 1987,
+          "height": 430
+        }
+      ]
+    },
+    {
+      "file": "6.jpeg",
+      "shelves": [5],
+      "note": "bottom shelf, close",
+      "bands": [
+        {
+          "shelf": 5,
+          "left": 31,
+          "top": 328,
+          "width": 1976,
+          "height": 491
+        }
+      ]
+    },
+    {
+      "file": "7.jpeg",
+      "shelves": [1, 2, 3, 4, 5],
+      "note": "whole bookcase, angled"
+    },
+    {
+      "file": "9.jpeg",
+      "shelves": [1, 2, 3, 4, 5],
+      "note": "whole bookcase, straight on"
+    },
+    {
+      "file": "WhatsApp Image 2026-10-07 at 12.01.23.jpeg",
+      "shelves": [1, 2, 3, 4, 5],
+      "note": "whole bookcase, angled from the left"
+    }
+  ]
+}

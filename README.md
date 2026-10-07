@@ -47,7 +47,7 @@ Fandex runs on iPhone and the web from one codebase, backed by its own API:
 - **Your collection:** a cover grid sorted by recently added or by title (ignoring "The"/"A"), a detail screen per item, and removal with confirmation.
 - **Account deletion** in the app (required by the App Store), light and dark mode, screen-reader labels, and browser tab titles on web.
 
-Next up is AI: identify every item on a photographed shelf, and ask questions about your collection (see [Roadmap](#roadmap)).
+Next up is AI (Stage 4, in progress): photograph a shelf to add what's on it, scan barcodes book after book, and ask questions about your collection. Before building any screens, the free vision model was [measured on a real bookcase](docs/eval/shelf-recognition.md): it finds about half the English items on a one-shelf photo, so shelf photos are an assist with a review step, and rapid barcode scanning is the reliable path (see [Roadmap](#roadmap)).
 
 ## Architecture
 
@@ -109,14 +109,16 @@ apps/
     prisma/          Database schema and migrations
     src/             Modules: auth, catalog, collection, universes, health, me
     test/            End-to-end tests against a real test database
+    eval/            AI evaluation: shelf photos (not committed) vs what's really on the shelf
   mobile/            Expo app (Expo Router): iOS, Android and web
     src/app/         Routes: (tabs)/index, (tabs)/universes, (tabs)/add, (tabs)/account, universe/[slug], universe/[slug]/[character], book/[id], edit/[id], scan
     src/components/  UI components
     src/hooks/       Data hooks (search, collection, account)
     src/services/    App services and their wiring (API clients, repositories)
 packages/
-  core/              Domain model, zod contracts, ISBN utilities, catalog adapters, repository, universe seed and matching
+  core/              Domain model, zod contracts, ISBN utilities, catalog adapters, repository, universe seed and matching, AI prompts and parsers
 docs/plans/          Stage plans and task lists
+docs/eval/           AI evaluation results
 docs/screenshots/    README images
 render.yaml          Deployment (Render Blueprint)
 ```
@@ -173,13 +175,15 @@ npm run lint
 npm run format:check
 ```
 
-530 tests run in CI on every push:
+558 tests run in CI on every push:
 
-- **`packages/core` (239, Jest + ts-jest):** ISBN validation against reference values, universe and character matching against recorded real data (including look-alikes such as a book about the "Star Wars" missile defense program and Norse mythology's Thor), book/manga/comic classification against real Open Library subject data, the Open Library and Rebrickable adapters against **recorded real API responses** plus edge cases, and the repository (concurrent writes, corrupt data, restarts) over an in-memory store.
-- **`apps/api` (119, Vitest + Supertest):** config validation, caching and rate limiting, plus end-to-end tests against the real Nest app and a real PostgreSQL test database (created and migrated automatically), including sign-up/sign-in, native-app sessions, CORS, account deletion, password hashing, CSRF protection, the catalog API (validation, database caching, upstream failures) with a fake Open Library, the collection API, including isolation between users (mutation-checked), storing and backfilling universe-matching signals (resumable after failures, without erasing LEGO minifigs), and the universe API (seed sync that keeps ids and drops stale universes, links on every catalog response, your collection by universe with user isolation mutation-checked), and per-item fixes (category and links, validated, isolated per user, surviving re-matching).
+- **`packages/core` (261, Jest + ts-jest):** ISBN validation against reference values, parsing real (sometimes looping) AI replies about shelf photos, universe and character matching against recorded real data (including look-alikes such as a book about the "Star Wars" missile defense program and Norse mythology's Thor), book/manga/comic classification against real Open Library subject data, the Open Library and Rebrickable adapters against **recorded real API responses** plus edge cases, and the repository (concurrent writes, corrupt data, restarts) over an in-memory store.
+- **`apps/api` (125, Vitest + Supertest):** config validation, caching and rate limiting, the Groq client (rate limits, errors, timeouts), plus end-to-end tests against the real Nest app and a real PostgreSQL test database (created and migrated automatically), including sign-up/sign-in, native-app sessions, CORS, account deletion, password hashing, CSRF protection, the catalog API (validation, database caching, upstream failures) with a fake Open Library, the collection API, including isolation between users (mutation-checked), storing and backfilling universe-matching signals (resumable after failures, without erasing LEGO minifigs), and the universe API (seed sync that keeps ids and drops stale universes, links on every catalog response, your collection by universe with user isolation mutation-checked), and per-item fixes (category and links, validated, isolated per user, surviving re-matching).
 - **`apps/mobile` (172, jest-expo + React Native Testing Library):** screens rendered with a fake catalog, a fake account service and the real repository over an in-memory store: search states, ISBN lookup, adding and removing, navigation, sorting, accounts (sign-in, sign-up, sign-out, delete account), cloud sync (account vs device collection, moving device books into an account), LEGO search and detail, category filters, the Universes tab, universe and character pages (guest and account), universe links on items and search results, fixing an item's category, universes and characters (guest and account), "you own another edition" hints, and the barcode scanner with a mocked camera.
 
 Tests never call the network.
+
+AI quality is measured separately, because a model's answers aren't pass/fail: `npm run eval:shelf -w @fandex/api` sends the owner's shelf photos to the model and scores what it read against a hand-written list of what's really there ([results](docs/eval/shelf-recognition.md)). It calls the real API, so it doesn't run in CI.
 
 ## Concepts for .NET developers
 
@@ -211,14 +215,14 @@ Book data and cover images come from [Open Library](https://openlibrary.org), a 
 
 ## Roadmap
 
-| Stage                    | Demo at the end                                                                 |
-| ------------------------ | ------------------------------------------------------------------------------- |
-| **1. MVP** ✅            | Add books by search, ISBN or barcode; collection with covers on iPhone and web  |
-| **2. Real backend** ✅   | Accounts, cloud sync phone ↔ web, manga/comics/LEGO catalogs                    |
-| **3. Universe layer** ✅ | Franchise and character pages linking items across categories                   |
-| 4. AI                    | Shelf photo → identified items; natural-language questions about the collection |
-| 5. Pre-orders & releases | Release dates, payment reminders, push notifications                            |
-| 6. Launch                | TestFlight → App Store, shareable public collection pages                       |
+| Stage                    | Demo at the end                                                                    |
+| ------------------------ | ---------------------------------------------------------------------------------- |
+| **1. MVP** ✅            | Add books by search, ISBN or barcode; collection with covers on iPhone and web     |
+| **2. Real backend** ✅   | Accounts, cloud sync phone ↔ web, manga/comics/LEGO catalogs                       |
+| **3. Universe layer** ✅ | Franchise and character pages linking items across categories                      |
+| 4. AI                    | Shelf photo → identified items, rapid barcode scan, questions about the collection |
+| 5. Pre-orders & releases | Release dates, payment reminders, push notifications                               |
+| 6. Launch                | TestFlight → App Store, shareable public collection pages                          |
 
 ## License
 

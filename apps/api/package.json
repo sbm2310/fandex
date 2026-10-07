@@ -19,7 +19,9 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "eval:shelf": "tsx eval/eval-shelf.ts",
+    "preeval:shelf": "npm run build -w @fandex/core"
   },
   "dependencies": {
     "@better-auth/expo": "^1.7.7",
@@ -50,8 +52,10 @@
     "globals": "^16.5.0",
     "pg": "^8.23.1",
     "prisma": "^7.10.0",
+    "sharp": "^0.35.5",
     "source-map-support": "^0.5.21",
     "supertest": "^7.0.0",
+    "tsx": "^4.23.15",
     "vitest": "^4.1.2"
   }
 }
