@@ -14,6 +14,7 @@ import type { ReactNode } from 'react';
 
 import { AccountError, type AccountService, type AccountUser } from '@/services/account-service';
 import { AppServicesProvider } from '@/services/app-services';
+import { AskUnavailableError, type QuestionAsker } from '@/services/question-asker';
 import type { ShelfPhoto, ShelfScanner } from '@/services/shelf-scanner';
 
 /** A catalog whose methods are Jest mocks; by default it finds nothing. */
@@ -140,6 +141,16 @@ export class FakeAccountService implements AccountService {
  * Wraps a screen in the app's providers with test doubles and a fresh QueryClient per test
  * (no retries, so error states show immediately).
  */
+/** Questions on the API: unavailable unless a test says otherwise (the app then uses keywords). */
+export function createFakeQuestionAsker(overrides: Partial<QuestionAsker> = {}) {
+  return {
+    ask: jest.fn<ReturnType<QuestionAsker['ask']>, Parameters<QuestionAsker['ask']>>(() =>
+      Promise.reject(new AskUnavailableError('No server in tests')),
+    ),
+    ...overrides,
+  };
+}
+
 export function createWrapper({
   catalog = createFakeCatalog(),
   legoCatalog = createFakeLegoCatalog(),
@@ -147,6 +158,7 @@ export function createWrapper({
   accountCollection = createMemoryCollection(),
   account = new FakeAccountService(),
   shelfScanner = createFakeShelfScanner(),
+  questionAsker = createFakeQuestionAsker(),
 }: {
   catalog?: BookCatalog;
   legoCatalog?: LegoCatalog;
@@ -154,6 +166,7 @@ export function createWrapper({
   accountCollection?: CollectionRepository;
   account?: AccountService;
   shelfScanner?: ShelfScanner;
+  questionAsker?: QuestionAsker;
 } = {}) {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false, gcTime: Infinity } },
@@ -170,6 +183,7 @@ export function createWrapper({
             accountCollection,
             account,
             shelfScanner,
+            questionAsker,
           }}
         >
           {children}

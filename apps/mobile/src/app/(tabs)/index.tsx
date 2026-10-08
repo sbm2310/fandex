@@ -1,6 +1,8 @@
 import { sortCollection, type CollectionSort } from '@fandex/core';
+import { Link } from 'expo-router';
+import { SymbolView } from 'expo-symbols';
 import { useState } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 
 import {
   CategoryFilter,
@@ -17,6 +19,7 @@ import { SortToggle } from '@/components/sort-toggle';
 import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
 import { useCollection, useDeviceCollection } from '@/hooks/use-collection';
+import { useTheme } from '@/hooks/use-theme';
 
 export default function CollectionScreen() {
   const collection = useCollection();
@@ -87,6 +90,7 @@ export default function CollectionScreen() {
           </ThemedText>
           <SortToggle value={sort} onChange={setSort} />
         </View>
+        <AskLink />
         <CategoryFilter items={collection.data} value={activeFilter} onChange={setFilter} />
       </View>
       <CollectionGrid items={sortCollection(visible, sort)} />
@@ -94,7 +98,38 @@ export default function CollectionScreen() {
   );
 }
 
+/** Opens "Ask your collection" (looks like a search field; questions are typed there). */
+function AskLink() {
+  const colors = useTheme();
+  // Link asChild needs a single style object on its child (no arrays or style functions).
+  return (
+    <Link href="/ask" asChild>
+      <Pressable
+        accessibilityRole="link"
+        accessibilityLabel="Ask your collection, for example: What Batman stuff do I own?"
+        style={StyleSheet.flatten([styles.ask, { backgroundColor: colors.backgroundElement }])}
+      >
+        <SymbolView
+          name={{ ios: 'sparkle.magnifyingglass', android: 'manage_search', web: 'manage_search' }}
+          tintColor={colors.textSecondary}
+          size={20}
+        />
+        <ThemedText themeColor="textSecondary">Ask your collection…</ThemedText>
+      </Pressable>
+    </Link>
+  );
+}
+
 const styles = StyleSheet.create({
+  ask: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.two,
+    borderRadius: Spacing.three,
+    paddingHorizontal: Spacing.three,
+    paddingVertical: Spacing.three,
+    marginVertical: Spacing.two,
+  },
   centered: {
     flex: 1,
     alignItems: 'center',

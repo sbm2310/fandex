@@ -2,6 +2,7 @@ import type { BookCatalog, CollectionRepository, LegoCatalog } from '@fandex/cor
 import { createContext, use, type ReactNode } from 'react';
 
 import type { AccountService } from './account-service';
+import type { QuestionAsker } from './question-asker';
 import type { ShelfScanner } from './shelf-scanner';
 
 /** The app's external dependencies. The root layout provides real ones; tests provide fakes. */
@@ -15,6 +16,8 @@ export type AppServices = {
   account: AccountService;
   /** Shelf photos read by AI on the Fandex API (signed in only). */
   shelfScanner: ShelfScanner;
+  /** "Ask your collection" questions answered on the Fandex API (signed in only). */
+  questionAsker: QuestionAsker;
 };
 
 const AppServicesContext = createContext<AppServices | null>(null);
@@ -58,4 +61,8 @@ export function useAccountService(): AccountService {
 
 export function useShelfScanner(): ShelfScanner {
   return useAppServices().shelfScanner;
+}
+
+export function useQuestionAsker(): QuestionAsker {
+  return useAppServices().questionAsker;
 }

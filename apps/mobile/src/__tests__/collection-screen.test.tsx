@@ -14,6 +14,13 @@ async function renderCollection(collection = createMemoryCollection()) {
   await render(<CollectionScreen />, { wrapper: createWrapper({ deviceCollection: collection }) });
 }
 
+/** The items in the grid, by label (the "Ask your collection" link aside). */
+const itemLabels = () =>
+  screen
+    .getAllByRole('link')
+    .map((element) => element.props.accessibilityLabel as string)
+    .filter((label) => !label.startsWith('Ask your collection'));
+
 describe('Collection screen', () => {
   it('invites you to add books when the collection is empty', async () => {
     await renderCollection();
@@ -29,9 +36,7 @@ describe('Collection screen', () => {
     await renderCollection(collection);
 
     expect(await screen.findByText('2 books')).toBeOnTheScreen();
-    const labels = screen
-      .getAllByRole('link')
-      .map((element) => element.props.accessibilityLabel as string);
+    const labels = itemLabels();
     expect(labels).toEqual(['Dune, by Frank Herbert', 'The Hobbit, by J.R.R. Tolkien']);
   });
 
@@ -40,8 +45,7 @@ describe('Collection screen', () => {
     await collection.add(dune);
     await collection.add(hobbit);
     await renderCollection(collection);
-    const order = () =>
-      screen.getAllByRole('link').map((el) => el.props.accessibilityLabel as string);
+    const order = itemLabels;
     const recentOrder = ['The Hobbit, by J.R.R. Tolkien', 'Dune, by Frank Herbert'];
 
     await screen.findByText('2 books');

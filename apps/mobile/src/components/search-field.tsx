@@ -6,7 +6,7 @@ import { useTheme } from '@/hooks/use-theme';
 
 type Props = Pick<
   TextInputProps,
-  'value' | 'onChangeText' | 'placeholder' | 'accessibilityLabel'
+  'value' | 'onChangeText' | 'placeholder' | 'accessibilityLabel' | 'onSubmitEditing' | 'autoFocus'
 > & {
   busy?: boolean;
 };

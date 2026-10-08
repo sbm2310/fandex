@@ -103,9 +103,11 @@ describe('Collection filters', () => {
     await fireEvent.press(await screen.findByRole('radio', { name: 'LEGO, 1' }));
 
     expect(screen.getByText('1 set')).toBeOnTheScreen();
-    expect(screen.getAllByRole('link').map((el) => el.props.accessibilityLabel as string)).toEqual([
-      'Millennium Falcon, lego, set 75192 · 7,541 pieces',
-    ]);
+    const items = screen
+      .getAllByRole('link')
+      .map((el) => el.props.accessibilityLabel as string)
+      .filter((label) => !label.startsWith('Ask your collection'));
+    expect(items).toEqual(['Millennium Falcon, lego, set 75192 · 7,541 pieces']);
     expect(screen.getByText('Data and images from Open Library and Rebrickable')).toBeOnTheScreen();
   });
 

@@ -53,6 +53,10 @@ export default function RootLayout() {
               name="shelf-scan"
               options={{ title: 'Scan a shelf', headerBackTitle: 'Back' }}
             />
+            <Stack.Screen
+              name="ask"
+              options={{ title: 'Ask your collection', headerBackTitle: 'Back' }}
+            />
           </Stack>
         </ThemeProvider>
       </AppServicesProvider>
