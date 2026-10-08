@@ -63,3 +63,19 @@ Ministral often wrote the literal word "kind" instead of book/manga/comic (score
 Shelf photos stay, as an _assist_: one shelf per photo, two halves per request, a review screen where the user ticks what to add and can search for anything missed. Because recall is about half, Stage 4 also adds a **rapid barcode mode** (scan book after book without leaving the camera) as the reliable way to add a whole shelf. Model ids are configuration, so a better free model can be measured with this script and swapped in. Gemini shows what a stronger model achieves (Mistral's free models don't); both speak the OpenAI chat format, so the provider (base URL, key, model) is configuration too, in case a free tier with workable limits and terms appears.
 
 Not yet measured: a "copy the spine text, don't identify" prompt (one request ran before the daily limit: 3 of 5 readings real). Re-run it when changing the prompt.
+
+## Reading each photo twice (2026-10-08)
+
+The first scans on the iPhone offered titles that aren't on the shelf ("Black Clover" for a photo of Marvel trades and Vinland Saga). The model reads the real spines, then keeps going with plausible names ("Spider-Man: Blue / Black / Red / Silver / Gold", "Infinity Abyss"), and the catalog finds a real book for each. Two runs of the same photos showed that **the inventions change between readings while real titles come back**. `eval/agreement.ts` pairs two saved runs with core's `combineShelfReadings` (the code the API uses) and scores them, without calling a model:
+
+| One shelf in halves, 9 photos, 50 items | Items found | Readings that were real |
+| --------------------------------------- | ----------- | ----------------------- |
+| One reading (before)                    | 21          | 29/74 (39%)             |
+| Both readings together                  | 24          | 41/114 (36%)            |
+| **Found by both readings ("sure")**     | 14          | **18/20 (90%)**         |
+
+So the API reads each photo twice at once; what both readings found starts ticked, everything else is listed under "Less sure", unticked (nothing is dropped). Costs: twice the tokens (the global guard is now 30 scans a day for everyone), two requests in the same second (~6,400 of Groq's 8,000 tokens a minute), about 3 s more.
+
+## For reference: Claude Opus reading the photos (2026-10-08)
+
+Not a candidate for the app (no free API); asked out of curiosity, in a chat session. Claude Opus read the shelves from all six close photos together and found **25 of 26 items, with 41 of 44 readings real** — including every Hebrew series, Vinland Saga, the bottom shelf's Marvel trades and the built LEGO models with set numbers. It isn't comparable with the table above: it combined several photos per shelf, had seen some titles earlier in the conversation, and is a much larger model than any free one. It shows the photos are readable; the limit is the model.

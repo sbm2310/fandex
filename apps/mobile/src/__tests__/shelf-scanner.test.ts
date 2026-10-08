@@ -6,6 +6,7 @@ import {
   chooseCandidate,
   chosenEntries,
   initialChoices,
+  reviewOrder,
   toggleChoice,
 } from '@/utils/shelf-selection';
 
@@ -92,7 +93,9 @@ describe('ApiShelfScanner', () => {
     new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
   const photo = { uri: 'file:///shelf.jpg', width: 2000, height: 600 };
   const result: ShelfScanResponse = {
-    items: [{ reading: { kind: 'manga', title: 'Vagabond', count: 8 }, candidates: [] }],
+    items: [
+      { reading: { kind: 'manga', title: 'Vagabond', count: 8 }, sure: true, candidates: [] },
+    ],
     quota: { used: 2, limit: 5 },
   };
 
@@ -184,6 +187,7 @@ describe('shelf selection', () => {
   const items: ShelfScanItem[] = [
     {
       reading: { kind: 'manga', title: 'Vagabond', count: 8 },
+      sure: true,
       candidates: [
         { item: item('a', 'Vagabond, Vol. 1'), owned: false },
         { item: item('b', 'Vagabond VIZBIG Edition, Vol. 1'), owned: true },
@@ -191,22 +195,35 @@ describe('shelf selection', () => {
     },
     {
       reading: { kind: 'manga', title: 'Demon Slayer', count: 23 },
+      sure: true,
       candidates: [{ item: item('c', 'Demon Slayer, Vol. 1'), owned: true }],
     },
-    { reading: { kind: 'comic', title: 'UNLAND SAGA', count: 1 }, candidates: [] },
+    { reading: { kind: 'comic', title: 'UNLAND SAGA', count: 1 }, sure: true, candidates: [] },
     {
       reading: { kind: 'manga', title: 'VAGABOND', count: 1 },
+      sure: true,
       candidates: [{ item: item('a', 'Vagabond, Vol. 1'), owned: false }],
+    },
+    {
+      reading: { kind: 'manga', title: 'Black Clover', count: 1 },
+      sure: false,
+      candidates: [{ item: item('d', 'Black Clover, Vol. 1'), owned: false }],
     },
   ];
 
-  it('starts with each best match ticked, except owned ones and items with no match', () => {
+  it('starts with each sure best match ticked, except owned ones and items with no match', () => {
     expect(initialChoices(items).map((choice) => choice.checked)).toEqual([
       true,
       false,
       false,
       true,
+      false, // less sure
     ]);
+  });
+
+  it('lists sure items first', () => {
+    const mixed = [items[4]!, items[0]!, items[2]!];
+    expect(reviewOrder(mixed)).toEqual([1, 2, 0]);
   });
 
   it('adds what is ticked, once each', () => {

@@ -28,8 +28,8 @@ export type ShelfCatalog<T extends MatchableEntry> = {
   lookupSet: ((setNumber: string) => Promise<T | null>) | null;
 };
 
-export type ShelfMatch<T> = {
-  reading: ShelfReading;
+export type ShelfMatch<T, R extends ShelfReading = ShelfReading> = {
+  reading: R;
   /** Best first; empty when nothing resembled the reading (the user can search instead). */
   candidates: T[];
 };
@@ -44,7 +44,8 @@ const MIN_TITLE_SIMILARITY = 0.6;
 /** Words that say little about which book it is. */
 const STOP_WORDS = new Set(['the', 'a', 'an', 'of', 'and', 'vol', 'volume', 'book']);
 
-function words(value: string): string[] {
+/** A title's meaningful words, normalized ("The Way of Kings" → way, kings). */
+export function titleWords(value: string): string[] {
   return normalizeReading(value)
     .split(' ')
     .filter((word) => word && !STOP_WORDS.has(word));
@@ -59,22 +60,22 @@ export function titleSimilarity(
   read: string,
   entry: Pick<MatchableEntry, 'title' | 'subtitle'>,
 ): number {
-  const readWords = new Set(words(read));
+  const readWords = new Set(titleWords(read));
   if (readWords.size === 0) return 0;
-  const titleWords = [...new Set(words(entry.title))];
-  const allWords = new Set([...titleWords, ...words(entry.subtitle ?? '')]);
+  const entryWords = [...new Set(titleWords(entry.title))];
+  const allWords = new Set([...entryWords, ...titleWords(entry.subtitle ?? '')]);
   const covered = [...readWords].filter((word) => allWords.has(word)).length / readWords.size;
   const focused =
-    titleWords.length === 0
+    entryWords.length === 0
       ? 0
-      : titleWords.filter((word) => readWords.has(word)).length / titleWords.length;
+      : entryWords.filter((word) => readWords.has(word)).length / entryWords.length;
   return 0.7 * covered + 0.3 * focused;
 }
 
 /** Shares a name word (3+ letters) with any creator: "Inoue" in "井上雄彦 (Takehiko Inoue)". */
 function sameAuthor(author: string, creators: readonly string[]): boolean {
-  const authorWords = words(author).filter((word) => word.length >= 3);
-  return creators.some((creator) => words(creator).some((word) => authorWords.includes(word)));
+  const authorWords = titleWords(author).filter((word) => word.length >= 3);
+  return creators.some((creator) => titleWords(creator).some((word) => authorWords.includes(word)));
 }
 
 /** "Vagabond, Vol. 6" → 6, "Volume 1", "Book 3", "バガボンド(5)" → 5; undefined when unnumbered. */
@@ -191,12 +192,12 @@ async function candidatesFor<T extends MatchableEntry>(
  * candidates) and drops readings whose best candidate an earlier reading already claimed
  * (the same series read twice, or a book seen in both halves of the photo).
  */
-export async function matchShelfReadings<T extends MatchableEntry>(
-  readings: readonly ShelfReading[],
+export async function matchShelfReadings<T extends MatchableEntry, R extends ShelfReading>(
+  readings: readonly R[],
   catalog: ShelfCatalog<T>,
   key: (entry: T) => string,
-  onError: (reading: ShelfReading, error: unknown) => void = () => {},
-): Promise<ShelfMatch<T>[]> {
+  onError: (reading: R, error: unknown) => void = () => {},
+): Promise<ShelfMatch<T, R>[]> {
   const matches = await Promise.all(
     readings.slice(0, MAX_SHELF_READINGS).map(async (reading) => {
       const candidates = await candidatesFor(reading, catalog, key).catch((error: unknown) => {

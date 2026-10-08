@@ -50,6 +50,7 @@ const scanResult: ShelfScanResponse = {
   items: [
     {
       reading: { kind: 'manga', title: 'Vagabond', count: 8 },
+      sure: true,
       candidates: [
         { item: vagabond, owned: false },
         { item: vizbig, owned: false },
@@ -57,11 +58,14 @@ const scanResult: ShelfScanResponse = {
     },
     {
       reading: { kind: 'manga', title: 'Demon Slayer', count: 23 },
+      sure: true,
       candidates: [{ item: demonSlayer, owned: true }],
     },
-    { reading: { kind: 'manga', title: 'UNLAND SAGA', count: 11 }, candidates: [] },
+    // Found by only one of the two readings.
+    { reading: { kind: 'manga', title: 'UNLAND SAGA', count: 11 }, sure: false, candidates: [] },
     {
       reading: { kind: 'lego', title: 'Millennium Falcon', count: 1, setNumber: '75375' },
+      sure: false,
       candidates: [{ item: falcon, owned: false }],
     },
   ],
@@ -114,19 +118,18 @@ describe('Shelf scan screen', () => {
 
     expect(await screen.findByRole('header', { name: 'Found 4 items' })).toBeOnTheScreen();
     expect(shelfScanner.scan).toHaveBeenCalledWith(mockPicked);
-    expect(
-      screen.getByText('3 matched in the catalog. Tick what to add; the AI makes mistakes.'),
-    ).toBeOnTheScreen();
     expect(screen.getByText('Read “Vagabond” · 8 on the shelf')).toBeOnTheScreen();
     // Owned: shown, not offered again. Unmatched: a search instead.
     expect(screen.getByLabelText('Demon Slayer, Vol. 1 is in your collection')).toBeOnTheScreen();
     expect(screen.getByRole('link', { name: 'Search for UNLAND SAGA' })).toBeOnTheScreen();
-    expect(screen.getByRole('button', { name: 'Add 2 items' })).toBeOnTheScreen();
+    // Less sure: listed under their own heading, unticked.
+    expect(screen.getByRole('header', { name: 'Less sure' })).toBeOnTheScreen();
+    const set = screen.getByRole('checkbox', { name: 'Add Millennium Falcon (set 75375)' });
+    expect(set).not.toBeChecked();
+    expect(screen.getByRole('button', { name: 'Add 1 item' })).toBeOnTheScreen();
 
-    // Not the set after all; and the other Vagabond edition.
-    await fireEvent.press(
-      screen.getByRole('checkbox', { name: 'Add Millennium Falcon (set 75375)' }),
-    );
+    // The set is there after all; and the other Vagabond edition.
+    await fireEvent.press(set);
     await fireEvent.press(screen.getByRole('button', { name: 'Not this one? 1 other matches' }));
     await fireEvent.press(
       screen.getByRole('radio', { name: 'Choose Vagabond VIZBIG Edition, Vol. 1' }),
@@ -135,12 +138,15 @@ describe('Shelf scan screen', () => {
       screen.getByRole('checkbox', { name: 'Add Vagabond VIZBIG Edition, Vol. 1' }),
     ).toBeChecked();
 
-    await fireEvent.press(screen.getByRole('button', { name: 'Add 1 item' }));
+    await fireEvent.press(screen.getByRole('button', { name: 'Add 2 items' }));
 
-    expect(await screen.findByRole('header', { name: 'Added 1 item' })).toBeOnTheScreen();
+    expect(await screen.findByRole('header', { name: 'Added 2 items' })).toBeOnTheScreen();
     const items = await accountCollection.list();
-    expect(items.map((saved) => saved.catalog.title)).toEqual(['Vagabond VIZBIG Edition, Vol. 1']);
-    expect(items[0]!.catalog.catalogId).toBe(vizbig.id);
+    expect(items.map((saved) => saved.catalog.title).sort()).toEqual([
+      'Millennium Falcon',
+      'Vagabond VIZBIG Edition, Vol. 1',
+    ]);
+    expect(items.find((saved) => saved.category !== 'lego')!.catalog.catalogId).toBe(vizbig.id);
   });
 
   it('searches for something it could not match', async () => {

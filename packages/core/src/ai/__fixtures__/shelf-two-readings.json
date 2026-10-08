@@ -1,0 +1,168 @@
+{
+  "$comment": "Two readings by Groq (qwen/qwen3.8-27b, the app settings) of the same bottom-shelf photo, on 2026-10-07: Marvel trades, Vinland Saga and Spider-Man collections. Real titles come back; inventions differ.",
+  "first": [
+    {
+      "kind": "manga",
+      "title": "Ultramarine",
+      "count": 12
+    },
+    {
+      "kind": "lego",
+      "title": "LEGO Marvel Super Heroes",
+      "count": 1
+    },
+    {
+      "kind": "comic",
+      "title": "Spider-Man",
+      "count": 8
+    },
+    {
+      "kind": "comic",
+      "title": "Spider-Man: Big Time",
+      "count": 7
+    },
+    {
+      "kind": "comic",
+      "title": "Spider-Man: Bold and Brash",
+      "count": 6
+    },
+    {
+      "kind": "comic",
+      "title": "Spider-Man: Edge of Spider-Verse",
+      "count": 2
+    },
+    {
+      "kind": "comic",
+      "title": "Spider-Man: Amazing Spider-Man",
+      "count": 1
+    },
+    {
+      "kind": "comic",
+      "title": "Spider-Man: Web of Spider-Man",
+      "count": 1
+    },
+    {
+      "kind": "comic",
+      "title": "Spider-Man: Spider-Gwen",
+      "count": 1
+    },
+    {
+      "kind": "comic",
+      "title": "Spider-Man: The Amazing Spider-Man",
+      "count": 1
+    },
+    {
+      "kind": "comic",
+      "title": "X-Men: Apocalypse",
+      "count": 1
+    },
+    {
+      "kind": "comic",
+      "title": "X-Men: Civil War",
+      "count": 1
+    },
+    {
+      "kind": "comic",
+      "title": "X-Men: Kill Six",
+      "count": 1
+    },
+    {
+      "kind": "comic",
+      "title": "X-Men: Infinity War",
+      "count": 1
+    },
+    {
+      "kind": "comic",
+      "title": "X-Men: The Avengers",
+      "count": 1
+    },
+    {
+      "kind": "comic",
+      "title": "X-Men",
+      "count": 1
+    }
+  ],
+  "second": [
+    {
+      "kind": "comic",
+      "title": "X-Men",
+      "count": 1
+    },
+    {
+      "kind": "comic",
+      "title": "Civil War",
+      "count": 1
+    },
+    {
+      "kind": "comic",
+      "title": "Civil War: Front Line",
+      "count": 1
+    },
+    {
+      "kind": "comic",
+      "title": "Infinity War",
+      "count": 1
+    },
+    {
+      "kind": "comic",
+      "title": "Infinity Abyss",
+      "count": 1
+    },
+    {
+      "kind": "comic",
+      "title": "Deadpool",
+      "count": 1
+    },
+    {
+      "kind": "comic",
+      "title": "Marvel Knights Spider-Man",
+      "count": 1
+    },
+    {
+      "kind": "comic",
+      "title": "Spider-Man: Blue",
+      "count": 1
+    },
+    {
+      "kind": "comic",
+      "title": "Spider-Man: Black",
+      "count": 1
+    },
+    {
+      "kind": "comic",
+      "title": "Spider-Man: Red",
+      "count": 1
+    },
+    {
+      "kind": "comic",
+      "title": "Spider-Man: Silver",
+      "count": 1
+    },
+    {
+      "kind": "comic",
+      "title": "Spider-Man: Gold",
+      "count": 1
+    },
+    {
+      "kind": "comic",
+      "title": "Spider-Man: The Complete Collection Crossover Crusade",
+      "count": 1
+    },
+    {
+      "kind": "comic",
+      "title": "Spider-Man: The Complete Collection New Day",
+      "count": 1
+    },
+    {
+      "kind": "comic",
+      "title": "Spider-Man: The Complete Collection One More Day",
+      "count": 1
+    },
+    {
+      "kind": "manga",
+      "title": "Vinland Saga",
+      "count": 12,
+      "author": "Makoto Yukimura"
+    }
+  ]
+}

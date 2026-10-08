@@ -37,10 +37,10 @@ export const envSchema = z.object({
   AI_VISION_MODEL: z.string().min(1).default('qwen/qwen3.8-27b'),
   /**
    * Shelf photos a user may scan per day (UTC), and for all users together. The free plan's
-   * 200K tokens a day allow about 60 (each costs ~3,000 tokens).
+   * 200K tokens a day allow about 30 (each photo is read twice, ~3,000 tokens a reading).
    */
   AI_SHELF_SCANS_PER_USER: z.coerce.number().int().min(0).default(5),
-  AI_SHELF_SCANS_PER_DAY: z.coerce.number().int().min(0).default(60),
+  AI_SHELF_SCANS_PER_DAY: z.coerce.number().int().min(0).default(30),
   /** Comma-separated origins allowed to call the API with a session: web app + app scheme. */
   TRUSTED_ORIGINS: z
     .string()

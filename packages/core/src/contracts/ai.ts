@@ -30,6 +30,11 @@ export type ShelfCandidate = z.infer<typeof shelfCandidateSchema>;
 /** One thing on the shelf: what was read, and the catalog entries it could be (best first). */
 export const shelfScanItemSchema = z.object({
   reading: shelfReadingSchema,
+  /**
+   * Both readings of the photo found it (see combineShelfReadings). Less sure items are
+   * offered unticked. Defaults to sure for answers from before the photo was read twice.
+   */
+  sure: z.boolean().default(true),
   /** Empty when nothing in the catalog resembled the reading: offer a search instead. */
   candidates: z.array(shelfCandidateSchema),
 });

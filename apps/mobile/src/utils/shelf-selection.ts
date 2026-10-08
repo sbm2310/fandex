@@ -6,14 +6,24 @@ import { toCatalogEntry } from '@/services/catalog-mapping';
 export type ShelfChoice = { candidate: number; checked: boolean };
 
 /**
- * The starting choices: each item's best candidate, ticked unless the user already owns it
- * (items with no candidates have nothing to tick).
+ * The starting choices: each item's best candidate, ticked when both readings of the photo
+ * found it and the user doesn't own it yet (less sure items, and items with no candidates,
+ * start unticked).
  */
 export function initialChoices(items: readonly ShelfScanItem[]): ShelfChoice[] {
-  return items.map(({ candidates }) => ({
+  return items.map(({ candidates, sure }) => ({
     candidate: 0,
-    checked: candidates.length > 0 && !candidates[0]!.owned,
+    checked: sure && candidates.length > 0 && !candidates[0]!.owned,
   }));
+}
+
+/** The order to list items in (indexes into `items`): sure ones first, as the server sent them. */
+export function reviewOrder(items: readonly ShelfScanItem[]): number[] {
+  const indexes = items.map((_, index) => index);
+  return [
+    ...indexes.filter((index) => items[index]!.sure),
+    ...indexes.filter((index) => !items[index]!.sure),
+  ];
 }
 
 /** Picking another candidate ticks it, unless it's one the user owns. */

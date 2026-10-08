@@ -34,7 +34,7 @@ export class ShelfScanService {
 
   async scan(userId: string, images: readonly Uint8Array[]): Promise<ShelfScanResponse> {
     await this.quota.assertAvailable(userId, 'shelf_scan');
-    const { readings } = await this.reader.read(images);
+    const readings = await this.reader.read(images);
 
     const lego = this.catalog.legoAvailable;
     const shelfCatalog: ShelfCatalog<CatalogItemResponse> = {
@@ -63,8 +63,9 @@ export class ShelfScanService {
     );
 
     return {
-      items: matches.map(({ reading, candidates }) => ({
+      items: matches.map(({ reading: { sure, ...reading }, candidates }) => ({
         reading,
+        sure,
         candidates: candidates.map((item) => ({ item, owned: owned.has(item.id) })),
       })),
       quota: await this.quota.record(userId, 'shelf_scan'),

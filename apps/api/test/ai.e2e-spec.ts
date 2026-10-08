@@ -159,8 +159,11 @@ describe('AI (e2e)', () => {
       .send({ catalogItemId: vagabond!.candidates[0]!.item.id })
       .expect(201);
     expect(added.body.catalog.title).toBe('Vagabond VIZBIG Edition, Vol. 1');
-    // One request with both parts, core's prompt and the measured settings.
-    expect(fakeModel.chat).toHaveBeenCalledTimes(1);
+    // Both readings agreed (the fake answers the same twice).
+    expect(items.map((item) => item.sure)).toEqual([true, true]);
+    // Read twice, each a request with both parts, core's prompt and the measured settings.
+    expect(fakeModel.chat).toHaveBeenCalledTimes(2);
+    expect(fakeModel.chat.mock.calls[1]![0]).toEqual(fakeModel.chat.mock.calls[0]![0]);
     const sent = fakeModel.chat.mock.calls[0]![0];
     expect(sent).toMatchObject({ model: 'qwen/qwen3.8-27b', maxTokens: 800, temperature: 0.6 });
     expect(sent.prompt).toContain('The 2 images are parts of one photo');
@@ -168,6 +171,41 @@ describe('AI (e2e)', () => {
 
     const status = aiQuotaResponseSchema.parse((await agent.get('/api/ai/quota').expect(200)).body);
     expect(status).toEqual({ available: true, shelfScans: { used: 1, limit: 5 } });
+  });
+
+  it('puts what both readings found first, and marks what only one found as less sure', async () => {
+    await start();
+    const agent = await signUp();
+    const answer = (text: string) => ({
+      text,
+      finishReason: 'stop' as const,
+      usage: { promptTokens: 2000, completionTokens: 40 },
+    });
+    fakeModel.chat
+      .mockResolvedValueOnce(answer('manga | Black Clover | - | - | 1 | -\n' + reply))
+      .mockResolvedValueOnce(answer('manga | VAGABOND | - | - | 8 | -'));
+
+    const { items } = shelfScanResponseSchema.parse((await scan(agent).expect(200)).body);
+
+    expect(items.map((item) => [item.reading.title, item.sure])).toEqual([
+      ['Vagabond', true],
+      ['Black Clover', false],
+      ['Millennium Falcon', false],
+    ]);
+  });
+
+  it('uses the other reading when one of the two fails', async () => {
+    await start();
+    const agent = await signUp();
+    fakeModel.chat.mockRejectedValueOnce(new AiRateLimitError('Rate limit reached', 5_000));
+
+    const { items, quota } = shelfScanResponseSchema.parse((await scan(agent).expect(200)).body);
+
+    expect(items.map((item) => [item.reading.title, item.sure])).toEqual([
+      ['Vagabond', true],
+      ['Millennium Falcon', true],
+    ]);
+    expect(quota.used).toBe(1);
   });
 
   it('marks candidates the user already owns', async () => {
@@ -222,7 +260,7 @@ describe('AI (e2e)', () => {
     const { body } = await scan(fan).expect(429);
 
     expect(body.message).toBe("You've used today's 5 shelf scans. They reset at midnight UTC.");
-    expect(fakeModel.chat).toHaveBeenCalledTimes(5);
+    expect(fakeModel.chat).toHaveBeenCalledTimes(10); // two readings a scan
     await scan(friend).expect(200);
   });
 
@@ -245,7 +283,7 @@ describe('AI (e2e)', () => {
       data: { name: 'Others', email: 'others@example.com' },
     });
     await prisma.aiUsage.create({
-      data: { userId: others.id, day: usageDay(new Date()), kind: 'shelf_scan', count: 60 },
+      data: { userId: others.id, day: usageDay(new Date()), kind: 'shelf_scan', count: 30 },
     });
 
     const { body } = await scan(agent).expect(503);

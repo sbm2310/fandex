@@ -19,6 +19,7 @@ import {
   chooseCandidate,
   chosenEntries,
   initialChoices,
+  reviewOrder,
   toggleChoice,
   type ShelfChoice,
 } from '@/utils/shelf-selection';
@@ -211,7 +212,8 @@ function Review({
   const [progress, setProgress] = useState<{ done: number; failed: number } | null>(null);
   const { items } = result;
   const entries = chosenEntries(items, choices);
-  const matched = items.filter((item) => item.candidates.length > 0).length;
+  const order = reviewOrder(items);
+  const firstUnsure = order.find((index) => !items[index]!.sure);
 
   const addAll = async () => {
     let done = 0;
@@ -245,25 +247,40 @@ function Review({
   return (
     <Page>
       <FlatList
-        data={items}
-        keyExtractor={(item, index) => `${index}:${item.reading.title}`}
+        data={order}
+        keyExtractor={(index) => `${index}:${items[index]!.reading.title}`}
         ListHeaderComponent={
           <View style={styles.reviewHeader}>
             <ThemedText type="subtitle" accessibilityRole="header">
               Found {items.length === 1 ? '1 item' : `${items.length} items`}
             </ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
-              {matched} matched in the catalog. Tick what to add; the AI makes mistakes.
+              Fandex read the photo twice and ticked what it found both times. Check the list; the
+              AI makes mistakes.
             </ThemedText>
           </View>
         }
-        renderItem={({ item, index }) => (
-          <ShelfReviewItem
-            item={item}
-            choice={choices[index] ?? { candidate: 0, checked: false }}
-            onToggle={() => setChoices(toggleChoice(choices, index))}
-            onChoose={(candidate) => setChoices(chooseCandidate(items, choices, index, candidate))}
-          />
+        renderItem={({ item: index }) => (
+          <>
+            {index === firstUnsure && (
+              <View style={styles.sectionHeader}>
+                <ThemedText type="smallBold" accessibilityRole="header">
+                  Less sure
+                </ThemedText>
+                <ThemedText type="small" themeColor="textSecondary">
+                  Found in only one reading. These are often wrong; tick the ones you see.
+                </ThemedText>
+              </View>
+            )}
+            <ShelfReviewItem
+              item={items[index]!}
+              choice={choices[index] ?? { candidate: 0, checked: false }}
+              onToggle={() => setChoices(toggleChoice(choices, index))}
+              onChoose={(candidate) =>
+                setChoices(chooseCandidate(items, choices, index, candidate))
+              }
+            />
+          </>
         )}
       />
       <View style={styles.footer}>
@@ -347,6 +364,10 @@ const styles = StyleSheet.create({
   },
   reviewHeader: {
     gap: Spacing.one,
+  },
+  sectionHeader: {
+    gap: Spacing.one,
+    paddingTop: Spacing.four,
   },
   footer: {
     gap: Spacing.two,

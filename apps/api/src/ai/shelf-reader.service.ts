@@ -1,10 +1,11 @@
 import {
+  combineShelfReadings,
   parseShelfReply,
   shelfPrompt,
   SHELF_READING_SETTINGS,
-  type ParsedShelfReply,
+  type CombinedShelfReading,
 } from '@fandex/core';
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import type { Env } from '../config/env.js';
@@ -16,11 +17,15 @@ export const CHAT_MODEL = Symbol('CHAT_MODEL');
 
 /**
  * Reads a shelf photo with the vision model: the parts of one photo go in a single request
- * with core's prompt, and the reply is parsed by core (one line per item). The results are
- * guesses; nothing here is checked against a catalog.
+ * with core's prompt, and the reply is parsed by core (one line per item). The photo is read
+ * twice at once, and core's combineShelfReadings marks what both readings found as sure (the
+ * model invents titles, differently each time). The results are guesses; nothing here is
+ * checked against a catalog.
  */
 @Injectable()
 export class ShelfReader {
+  private readonly logger = new Logger(ShelfReader.name);
+
   constructor(
     @Inject(CHAT_MODEL) private readonly model: ChatModel | null,
     private readonly config: ConfigService<Env, true>,
@@ -30,7 +35,24 @@ export class ShelfReader {
     return this.model !== null;
   }
 
-  async read(images: readonly Uint8Array[]): Promise<ParsedShelfReply> {
+  async read(images: readonly Uint8Array[]): Promise<CombinedShelfReading[]> {
+    const results = await Promise.allSettled([this.readOnce(images), this.readOnce(images)]);
+    const answers = results.flatMap((result) =>
+      result.status === 'fulfilled' ? [result.value] : [],
+    );
+    const failures = results.flatMap((result) =>
+      result.status === 'rejected' ? [result.reason as unknown] : [],
+    );
+    const [first, second] = answers;
+    if (!first) throw failures[0];
+    if (second) return combineShelfReadings(first, second);
+    // One reading failed (rate limited, timed out): the other still helps, without the
+    // agreement check, as before the photo was read twice.
+    this.logger.warn(`One of two shelf readings failed: ${String(failures[0])}`);
+    return first.map((reading) => ({ ...reading, sure: true }));
+  }
+
+  private async readOnce(images: readonly Uint8Array[]) {
     if (!this.model) throw new Error('No AI provider is configured');
     const result = await this.model.chat({
       model: this.config.get('AI_VISION_MODEL', { infer: true }),
@@ -38,6 +60,6 @@ export class ShelfReader {
       images,
       ...SHELF_READING_SETTINGS,
     });
-    return parseShelfReply(result.text);
+    return parseShelfReply(result.text).readings;
   }
 }

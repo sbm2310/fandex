@@ -15,7 +15,7 @@ describe('envSchema', () => {
       AI_BASE_URL: 'https://api.groq.com/openai/v1',
       AI_VISION_MODEL: 'qwen/qwen3.8-27b',
       AI_SHELF_SCANS_PER_USER: 5,
-      AI_SHELF_SCANS_PER_DAY: 60,
+      AI_SHELF_SCANS_PER_DAY: 30,
       TRUSTED_ORIGINS: ['http://localhost:8081', 'fandex://'],
     });
   });
