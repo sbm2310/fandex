@@ -1,10 +1,11 @@
 import { isBookBarcode, parseIsbn } from '@fandex/core';
 import { CameraView, useCameraPermissions, type BarcodeScanningResult } from 'expo-camera';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useRef, useState } from 'react';
 import { Linking, Pressable, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { RapidScanner } from '@/components/rapid-scanner';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
@@ -12,8 +13,12 @@ import { useTheme } from '@/hooks/use-theme';
 
 const REJECTED_HINT_MS = 2000;
 
-/** Full-screen barcode scanner. Hands a scanned ISBN back to the Add screen. */
+/**
+ * Full-screen barcode scanner. Hands a scanned ISBN back to the Add screen; with
+ * `?mode=rapid`, keeps scanning book after book and adds them all (RapidScanner).
+ */
 export default function ScanScreen() {
+  const { mode } = useLocalSearchParams<{ mode?: string }>();
   const [permission, requestPermission] = useCameraPermissions();
 
   // Still asking the OS for the current permission status.
@@ -28,7 +33,7 @@ export default function ScanScreen() {
     );
   }
 
-  return <Scanner />;
+  return mode === 'rapid' ? <RapidScanner /> : <Scanner />;
 }
 
 function Scanner() {

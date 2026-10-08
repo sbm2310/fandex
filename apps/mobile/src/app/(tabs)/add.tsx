@@ -71,6 +71,7 @@ export default function AddScreen() {
             barcodes aren't ISBNs. */}
         {Platform.OS !== 'web' && kind === 'books' && <ScanButton />}
       </View>
+      {Platform.OS !== 'web' && kind === 'books' && <RapidScanLink />}
       <ShelfScanLink />
       <SearchResults search={search} kind={kind} />
     </Screen>
@@ -186,6 +187,32 @@ function ScanButton() {
           tintColor={colors.onAccent}
           size={24}
         />
+      </Pressable>
+    </Link>
+  );
+}
+
+/** Adding many books at once: scan barcode after barcode (no AI, works for guests). */
+function RapidScanLink() {
+  const colors = useTheme();
+  return (
+    <Link href={{ pathname: '/scan', params: { mode: 'rapid' } }} asChild>
+      <Pressable
+        accessibilityRole="link"
+        accessibilityLabel="Scan several books: barcode after barcode, then add them all"
+        style={StyleSheet.flatten([styles.shelfLink, { borderColor: colors.border }])}
+      >
+        <SymbolView
+          name={{ ios: 'barcode.viewfinder', android: 'barcode_scanner', web: 'barcode_scanner' }}
+          tintColor={colors.accent}
+          size={22}
+        />
+        <View style={styles.searchField}>
+          <ThemedText type="smallBold">Scan several books</ThemedText>
+          <ThemedText type="small" themeColor="textSecondary">
+            Barcode after barcode, then add them all
+          </ThemedText>
+        </View>
       </Pressable>
     </Link>
   );
