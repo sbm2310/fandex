@@ -12,8 +12,7 @@ describe('envSchema', () => {
       DATABASE_URL,
       BETTER_AUTH_SECRET,
       BETTER_AUTH_URL: 'http://localhost:3000',
-      AI_BASE_URL: 'https://api.groq.com/openai/v1',
-      AI_VISION_MODEL: 'qwen/qwen3.8-27b',
+      AI_PROVIDER: 'groq',
       AI_SHELF_SCANS_PER_USER: 5,
       AI_SHELF_SCANS_PER_DAY: 30,
       TRUSTED_ORIGINS: ['http://localhost:8081', 'fandex://'],
@@ -31,6 +30,13 @@ describe('envSchema', () => {
     expect(env.GROQ_API_KEY).toBeUndefined();
     expect(env).toMatchObject({ AI_SHELF_SCANS_PER_USER: 3, AI_SHELF_SCANS_PER_DAY: 0 });
     expect(envSchema.safeParse({ ...required, AI_SHELF_SCANS_PER_DAY: '-1' }).success).toBe(false);
+  });
+
+  it('accepts the known AI providers only', () => {
+    expect(envSchema.parse({ ...required, AI_PROVIDER: 'gemini-free' }).AI_PROVIDER).toBe(
+      'gemini-free',
+    );
+    expect(envSchema.safeParse({ ...required, AI_PROVIDER: 'openai' }).success).toBe(false);
   });
 
   it('coerces the port from a string', () => {

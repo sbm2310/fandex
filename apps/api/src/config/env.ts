@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { AI_PROVIDER_NAMES } from '../ai/ai-providers.js';
+
 /**
  * Environment variables the API needs, validated at startup: a missing or malformed value
  * stops the app immediately with a clear message instead of failing later at runtime.
@@ -28,16 +30,19 @@ export const envSchema = z.object({
   /** Rebrickable API key (free account) for LEGO search. Optional: without it LEGO is off. */
   REBRICKABLE_API_KEY: optionalKey,
   /**
-   * Groq API key (free plan) for the AI features. Optional: without it they answer 503. Any
-   * OpenAI-compatible provider works: set AI_BASE_URL and AI_VISION_MODEL to match.
+   * Which AI provider the AI features use (src/ai/ai-providers.ts): `groq`, `gemini-free` or
+   * `gemini` (paid). Its key is optional: without it the AI features answer 503.
    */
+  AI_PROVIDER: z.enum(AI_PROVIDER_NAMES).default('groq'),
   GROQ_API_KEY: optionalKey,
-  AI_BASE_URL: z.url().default('https://api.groq.com/openai/v1'),
-  /** Groq retires models often; see docs/eval/shelf-recognition.md before changing it. */
-  AI_VISION_MODEL: z.string().min(1).default('qwen/qwen3.8-27b'),
+  GEMINI_API_KEY: optionalKey,
+  /** Overrides of the provider's endpoint and model (see docs/eval/shelf-recognition.md first). */
+  AI_BASE_URL: z.url().optional(),
+  AI_VISION_MODEL: z.string().min(1).optional(),
   /**
-   * Shelf photos a user may scan per day (UTC), and for all users together. The free plan's
-   * 200K tokens a day allow about 30 (each photo is read twice, ~3,000 tokens a reading).
+   * Shelf photos a user may scan per day (UTC), and for all users together. Groq's free plan
+   * (200K tokens a day) allows about 30 (two readings a scan, ~3,000 tokens each); Gemini's
+   * free tier 20 requests a day (one reading a scan).
    */
   AI_SHELF_SCANS_PER_USER: z.coerce.number().int().min(0).default(5),
   AI_SHELF_SCANS_PER_DAY: z.coerce.number().int().min(0).default(30),

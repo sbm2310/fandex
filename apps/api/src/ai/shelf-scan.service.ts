@@ -1,5 +1,6 @@
 import {
   matchShelfReadings,
+  type AiProviderInfo,
   type CatalogItemResponse,
   type ShelfCatalog,
   type ShelfScanResponse,
@@ -30,6 +31,11 @@ export class ShelfScanService {
 
   get available(): boolean {
     return this.reader.available;
+  }
+
+  get provider(): AiProviderInfo {
+    const { label, usesPhotosForTraining } = this.reader.provider;
+    return { name: label, usesPhotosForTraining };
   }
 
   async scan(userId: string, images: readonly Uint8Array[]): Promise<ShelfScanResponse> {

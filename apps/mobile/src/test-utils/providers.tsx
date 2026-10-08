@@ -46,7 +46,11 @@ export function createFakeLegoCatalog(overrides: Partial<LegoCatalog> = {}) {
 export function createFakeShelfScanner(overrides: Partial<ShelfScanner> = {}) {
   return {
     quota: jest.fn<Promise<AiQuotaResponse>, []>(() =>
-      Promise.resolve({ available: true, shelfScans: { used: 0, limit: 5 } }),
+      Promise.resolve({
+        available: true,
+        shelfScans: { used: 0, limit: 5 },
+        provider: { name: 'Groq', usesPhotosForTraining: false },
+      }),
     ),
     scan: jest.fn<Promise<ShelfScanResponse>, [ShelfPhoto]>(() =>
       Promise.resolve({ items: [], quota: { used: 1, limit: 5 } }),

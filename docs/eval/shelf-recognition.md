@@ -79,3 +79,19 @@ So the API reads each photo twice at once; what both readings found starts ticke
 ## For reference: Claude Opus reading the photos (2026-10-08)
 
 Not a candidate for the app (no free API); asked out of curiosity, in a chat session. Claude Opus read the shelves from all six close photos together and found **25 of 26 items, with 41 of 44 readings real** — including every Hebrew series, Vinland Saga, the bottom shelf's Marvel trades and the built LEGO models with set numbers. It isn't comparable with the table above: it combined several photos per shelf, had seen some titles earlier in the conversation, and is a much larger model than any free one. It shows the photos are readable; the limit is the model.
+
+## Gemini on the app's settings (2026-10-08)
+
+After the first real scans with Groq were poor, the same 9 shelf photos went to Gemini's free tier (`gemini-3.5-flash`, thinking off) exactly as the app sends them: one shelf, two halves, core's prompt and settings. Two runs (19 of the free tier's 20 daily requests; one was rate limited and retried):
+
+| One shelf in halves, 9 photos, 50 items | Groq `qwen/qwen3.8-27b` | Gemini `gemini-3.5-flash` |
+| --------------------------------------- | ----------------------- | ------------------------- |
+| One reading: items found                | 21 (42%)                | **47 (94%)**              |
+| One reading: readings that were real    | 29/74 (39%)             | **86/94 (91%)**           |
+| Second run: items found                 | 21                      | 49 (98%)                  |
+| Found by both readings: found, real     | 14, 18/20               | 45, 80/85 (94%)           |
+| Tokens per request                      | ~2,400                  | ~2,570                    |
+
+Gemini read the Hebrew series too. A second reading adds little (91% → 94% real), so Gemini reads once. Several of its "not real" readings may be on the shelf after all (The Children of Húrin, The Alloy of Law, a New Avengers collection — to be confirmed by the owner); its clear misses were the two Hebrew Hunger Games books. Cost on the paid tier ($1.50 / $9 per million tokens in / out): about 0.7¢ per scan.
+
+**Decision:** production switched to `AI_PROVIDER=gemini-free` while the owner is the only user (20 requests a day for everyone; Google may use the photos to improve its products, and the app says so). Before other users: prepaid `gemini` or back to `groq`.

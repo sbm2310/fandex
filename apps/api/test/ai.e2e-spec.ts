@@ -170,7 +170,11 @@ describe('AI (e2e)', () => {
     expect(sent.images?.map((image) => Buffer.from(image))).toEqual([left, right]);
 
     const status = aiQuotaResponseSchema.parse((await agent.get('/api/ai/quota').expect(200)).body);
-    expect(status).toEqual({ available: true, shelfScans: { used: 1, limit: 5 } });
+    expect(status).toEqual({
+      available: true,
+      shelfScans: { used: 1, limit: 5 },
+      provider: { name: 'Groq', usesPhotosForTraining: false },
+    });
   });
 
   it('puts what both readings found first, and marks what only one found as less sure', async () => {
@@ -323,7 +327,7 @@ describe('AI (e2e)', () => {
     const agent = await signUp();
 
     const { body } = await agent.get('/api/ai/quota').expect(200);
-    expect(body).toEqual({ available: false, shelfScans: { used: 0, limit: 5 } });
+    expect(body).toMatchObject({ available: false, shelfScans: { used: 0, limit: 5 } });
     expect((await scan(agent).expect(503)).body.message).toBe(
       'Shelf scanning is not set up on this server.',
     );

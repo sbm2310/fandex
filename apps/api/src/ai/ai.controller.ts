@@ -57,6 +57,7 @@ export class AiController {
     return {
       available: this.shelfScans.available,
       shelfScans: await this.quota.status(session.user.id, 'shelf_scan'),
+      provider: this.shelfScans.provider,
     };
   }
 

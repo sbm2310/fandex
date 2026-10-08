@@ -32,3 +32,7 @@ services:
         sync: false
       - key: GROQ_API_KEY
         sync: false
+      # For AI_PROVIDER=gemini-free / gemini (AI_PROVIDER and the scan limits are set in the
+      # dashboard while testing alone).
+      - key: GEMINI_API_KEY
+        sync: false

@@ -113,7 +113,9 @@ describe('Shelf scan screen', () => {
     await open({ shelfScanner, accountCollection, account: await signedIn() });
 
     expect(await screen.findByText('5 scans left today')).toBeOnTheScreen();
-    expect(screen.getByText(/sent to Groq/)).toBeOnTheScreen();
+    expect(
+      screen.getByText(/sent to Groq, an AI service.*isn't stored or used to train AI/),
+    ).toBeOnTheScreen();
     await fireEvent.press(screen.getByRole('button', { name: 'Choose a photo' }));
 
     expect(await screen.findByRole('header', { name: 'Found 4 items' })).toBeOnTheScreen();
@@ -147,6 +149,22 @@ describe('Shelf scan screen', () => {
       'Vagabond VIZBIG Edition, Vol. 1',
     ]);
     expect(items.find((saved) => saved.category !== 'lego')!.catalog.catalogId).toBe(vizbig.id);
+  });
+
+  it('says when the provider may use photos to improve its products', async () => {
+    const shelfScanner = createFakeShelfScanner({
+      quota: jest.fn(async () => ({
+        available: true,
+        shelfScans: { used: 0, limit: 20 },
+        provider: { name: 'Google Gemini', usesPhotosForTraining: true },
+      })),
+    });
+    await open({ shelfScanner, account: await signedIn() });
+
+    expect(
+      await screen.findByText(/sent to Google Gemini.*may use photos to improve its products/),
+    ).toBeOnTheScreen();
+    expect(screen.queryByText(/isn't stored/)).not.toBeOnTheScreen();
   });
 
   it('searches for something it could not match', async () => {

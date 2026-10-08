@@ -1,4 +1,4 @@
-import type { ShelfScanResponse } from '@fandex/core';
+import type { AiProviderInfo, ShelfScanResponse } from '@fandex/core';
 import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
 import { useState, type ReactNode } from 'react';
@@ -173,12 +173,19 @@ export default function ShelfScanScreen() {
           {left === 1 ? '1 scan left today' : `${left} scans left today`}
         </ThemedText>
         <ThemedText type="small" themeColor="textSecondary">
-          Your photo is sent to Groq, an AI service, to read the spines. It isn&apos;t stored or
-          used to train AI.
+          {privacyNote(quota.data.provider)}
         </ThemedText>
       </View>
     </Page>
   );
+}
+
+/** Where the photo goes, as the server reports it. */
+function privacyNote(provider: AiProviderInfo | undefined): string {
+  if (!provider) return 'Your photo is sent to an AI service to read the spines.';
+  return provider.usesPhotosForTraining
+    ? `Your photo is sent to ${provider.name}, an AI service, to read the spines. Its free tier may use photos to improve its products, so don't include anything private.`
+    : `Your photo is sent to ${provider.name}, an AI service, to read the spines. It isn't stored or used to train AI.`;
 }
 
 async function choosePhoto(onPicked: (photo: ShelfPhoto) => void) {
@@ -255,8 +262,7 @@ function Review({
               Found {items.length === 1 ? '1 item' : `${items.length} items`}
             </ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
-              Fandex read the photo twice and ticked what it found both times. Check the list; the
-              AI makes mistakes.
+              Fandex ticked what it&apos;s surest about. Check the list; the AI makes mistakes.
             </ThemedText>
           </View>
         }
@@ -268,7 +274,8 @@ function Review({
                   Less sure
                 </ThemedText>
                 <ThemedText type="small" themeColor="textSecondary">
-                  Found in only one reading. These are often wrong; tick the ones you see.
+                  Found in only one of two readings of the photo. These are often wrong; tick the
+                  ones you see.
                 </ThemedText>
               </View>
             )}

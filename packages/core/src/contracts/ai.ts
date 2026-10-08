@@ -48,9 +48,19 @@ export const shelfScanResponseSchema = z.object({
 });
 export type ShelfScanResponse = z.infer<typeof shelfScanResponseSchema>;
 
-/** GET /ai/quota: whether AI is available, and today's allowance. */
+/** Who reads the photos, for the privacy note ("Your photo is sent to …"). */
+export const aiProviderInfoSchema = z.object({
+  name: z.string(),
+  /** Free tiers may use what they receive to improve the provider's products. */
+  usesPhotosForTraining: z.boolean(),
+});
+export type AiProviderInfo = z.infer<typeof aiProviderInfoSchema>;
+
+/** GET /ai/quota: whether AI is available, today's allowance, and the provider. */
 export const aiQuotaResponseSchema = z.object({
   available: z.boolean(),
   shelfScans: aiQuotaSchema,
+  /** Absent from servers older than the provider setting. */
+  provider: aiProviderInfoSchema.exactOptional(),
 });
 export type AiQuotaResponse = z.infer<typeof aiQuotaResponseSchema>;
