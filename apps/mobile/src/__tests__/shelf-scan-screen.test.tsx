@@ -108,7 +108,7 @@ describe('Shelf scan screen', () => {
     const accountCollection = createMemoryCollection();
     await open({ shelfScanner, accountCollection, account: await signedIn() });
 
-    expect(await screen.findByText('5 of 5 scans left today')).toBeOnTheScreen();
+    expect(await screen.findByText('5 scans left today')).toBeOnTheScreen();
     expect(screen.getByText(/sent to Groq/)).toBeOnTheScreen();
     await fireEvent.press(screen.getByRole('button', { name: 'Choose a photo' }));
 

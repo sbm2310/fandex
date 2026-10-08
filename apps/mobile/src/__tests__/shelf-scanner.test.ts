@@ -32,6 +32,18 @@ jest.mock('expo-image-manipulator', () => ({
   },
 }));
 
+// Expo's native fetch only uploads expo-file-system Files (see form-image.ts).
+jest.mock('expo-file-system', () => ({
+  // A Blob, so the test environment's FormData accepts it.
+  File: class MockFile extends Blob {
+    uri: string;
+    constructor(mockUri: string) {
+      super([]);
+      this.uri = mockUri;
+    }
+  },
+}));
+
 const item = (id: string, title: string, category = 'manga'): CatalogItemResponse =>
   ({
     id,
@@ -86,6 +98,8 @@ describe('ApiShelfScanner', () => {
 
   it('uploads the halves as one multipart request and returns the result', async () => {
     const apiFetch = jest.fn(async (_path: string, _init?: RequestInit) => response(200, result));
+    const append = jest.spyOn(FormData.prototype, 'append');
+    mockSaved.length = 0;
 
     expect(await new ApiShelfScanner(apiFetch).scan(photo)).toEqual(result);
 
@@ -93,6 +107,17 @@ describe('ApiShelfScanner', () => {
     expect(path).toBe('/ai/shelf-scans');
     expect(init?.method).toBe('POST');
     expect(init?.body).toBeInstanceOf(FormData);
+    // Files, not React Native's { uri, name, type } parts, which expo/fetch can't send.
+    const { File } = jest.requireMock<{ File: new (uri: string) => unknown }>('expo-file-system');
+    expect(append.mock.calls).toEqual([
+      ['images', expect.any(File), 'shelf-1.jpg'],
+      ['images', expect.any(File), 'shelf-2.jpg'],
+    ]);
+    expect(append.mock.calls.map(([, file]) => (file as unknown as { uri: string }).uri)).toEqual([
+      'file:///shelf.jpg#1',
+      'file:///shelf.jpg#2',
+    ]);
+    append.mockRestore();
   });
 
   it('reads the allowance', async () => {

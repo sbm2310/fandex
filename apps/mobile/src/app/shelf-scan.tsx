@@ -169,7 +169,7 @@ export default function ShelfScanScreen() {
         )}
 
         <ThemedText type="small" themeColor="textSecondary">
-          {left === 1 ? '1 scan left today' : `${left} of ${limit} scans left today`}
+          {left === 1 ? '1 scan left today' : `${left} scans left today`}
         </ThemedText>
         <ThemedText type="small" themeColor="textSecondary">
           Your photo is sent to Groq, an AI service, to read the spines. It isn&apos;t stored or

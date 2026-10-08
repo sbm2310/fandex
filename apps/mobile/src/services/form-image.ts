@@ -1,9 +1,12 @@
+import { File } from 'expo-file-system';
+
 import type { ShelfImage } from './shelf-photo';
 
 /**
- * Adds a JPEG file to a multipart form. React Native's FormData uploads a local file given
- * as `{ uri, name, type }` (no need to read it into memory); browsers need a Blob instead
- * (see form-image.web.ts).
+ * Adds a JPEG file to a multipart form. On iOS and Android the global `fetch` is Expo's
+ * (`expo/fetch`), which uploads `expo-file-system` `File`s but throws on React Native's
+ * `{ uri, name, type }` parts ("Unsupported FormDataPart implementation") before sending
+ * anything. Browsers need a Blob instead (see form-image.web.ts).
  */
 export async function appendJpeg(
   form: FormData,
@@ -11,5 +14,5 @@ export async function appendJpeg(
   image: ShelfImage,
   name: string,
 ): Promise<void> {
-  form.append(field, { uri: image.uri, name, type: 'image/jpeg' } as unknown as Blob);
+  form.append(field, new File(image.uri) as unknown as Blob, name);
 }
