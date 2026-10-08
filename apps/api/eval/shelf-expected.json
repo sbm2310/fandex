@@ -235,6 +235,14 @@
     },
     {
       "shelf": 5,
+      "id": "new-avengers",
+      "kind": "comic",
+      "name": "New Avengers (complete collection)",
+      "count": 1,
+      "aliases": ["new avengers"]
+    },
+    {
+      "shelf": 5,
       "id": "infinity",
       "kind": "comic",
       "name": "The Infinity Gauntlet + Infinity War",

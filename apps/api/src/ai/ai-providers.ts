@@ -13,7 +13,7 @@ export type AiProvider = {
   reasoningEffort?: string;
   /**
    * Readings per shelf photo: Groq's model invents titles, differently each time, so it reads
-   * twice and keeps what both found as sure; Gemini found 94% of items with 91% of its
+   * twice and keeps what both found as sure; Gemini found 94% of items with 94% of its
    * readings real in one reading, so a second one isn't worth twice the cost.
    */
   readingsPerScan: 1 | 2;

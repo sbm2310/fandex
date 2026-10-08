@@ -68,10 +68,10 @@ Not yet measured: a "copy the spine text, don't identify" prompt (one request ra
 
 The first scans on the iPhone offered titles that aren't on the shelf ("Black Clover" for a photo of Marvel trades and Vinland Saga). The model reads the real spines, then keeps going with plausible names ("Spider-Man: Blue / Black / Red / Silver / Gold", "Infinity Abyss"), and the catalog finds a real book for each. Two runs of the same photos showed that **the inventions change between readings while real titles come back**. `eval/agreement.ts` pairs two saved runs with core's `combineShelfReadings` (the code the API uses) and scores them, without calling a model:
 
-| One shelf in halves, 9 photos, 50 items | Items found | Readings that were real |
+| One shelf in halves, 9 photos, 52 items | Items found | Readings that were real |
 | --------------------------------------- | ----------- | ----------------------- |
-| One reading (before)                    | 21          | 29/74 (39%)             |
-| Both readings together                  | 24          | 41/114 (36%)            |
+| One reading (before)                    | 22          | 30/74 (41%)             |
+| Both readings together                  | 25          | 42/114 (37%)            |
 | **Found by both readings ("sure")**     | 14          | **18/20 (90%)**         |
 
 So the API reads each photo twice at once; what both readings found starts ticked, everything else is listed under "Less sure", unticked (nothing is dropped). Costs: twice the tokens (the global guard is now 30 scans a day for everyone), two requests in the same second (~6,400 of Groq's 8,000 tokens a minute), about 3 s more.
@@ -84,14 +84,16 @@ Not a candidate for the app (no free API); asked out of curiosity, in a chat ses
 
 After the first real scans with Groq were poor, the same 9 shelf photos went to Gemini's free tier (`gemini-3.5-flash`, thinking off) exactly as the app sends them: one shelf, two halves, core's prompt and settings. Two runs (19 of the free tier's 20 daily requests; one was rate limited and retried):
 
-| One shelf in halves, 9 photos, 50 items | Groq `qwen/qwen3.8-27b` | Gemini `gemini-3.5-flash` |
+| One shelf in halves, 9 photos, 52 items | Groq `qwen/qwen3.8-27b` | Gemini `gemini-3.5-flash` |
 | --------------------------------------- | ----------------------- | ------------------------- |
-| One reading: items found                | 21 (42%)                | **47 (94%)**              |
-| One reading: readings that were real    | 29/74 (39%)             | **86/94 (91%)**           |
-| Second run: items found                 | 21                      | 49 (98%)                  |
-| Found by both readings: found, real     | 14, 18/20               | 45, 80/85 (94%)           |
+| One reading: items found                | 22 (42%)                | **49 (94%)**              |
+| One reading: readings that were real    | 30/74 (41%)             | **88/94 (94%)**           |
+| Second run: items found                 | 18 (35%)                | 51 (98%)                  |
+| Found by both readings: found, real     | 14, 18/20               | 47, 82/85 (96%)           |
 | Tokens per request                      | ~2,400                  | ~2,570                    |
 
-Gemini read the Hebrew series too. A second reading adds little (91% → 94% real), so Gemini reads once. Several of its "not real" readings may be on the shelf after all (The Children of Húrin, The Alloy of Law, a New Avengers collection — to be confirmed by the owner); its clear misses were the two Hebrew Hunger Games books. Cost on the paid tier ($1.50 / $9 per million tokens in / out): about 0.7¢ per scan.
+(Scored against the corrected list: the owner confirmed a New Avengers collection on the bottom shelf, which Gemini had named.)
+
+Gemini read the Hebrew series too. A second reading adds little (94% → 96% real), so Gemini reads once. Its inventions were few but real: The Children of Húrin and "The Law of Alloy" (The Alloy of Law) aren't on the shelf, nor are "The Attacks" and "Summer Crows"; its misses were the two Hebrew Hunger Games books. Cost on the paid tier ($1.50 / $9 per million tokens in / out): about 0.7¢ per scan.
 
 **Decision:** production switched to `AI_PROVIDER=gemini-free` while the owner is the only user (20 requests a day for everyone; Google may use the photos to improve its products, and the app says so). Before other users: prepaid `gemini` or back to `groq`.
