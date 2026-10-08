@@ -14,3 +14,4 @@ export * from './lego-catalog';
 export * from './catalog-entry';
 export * from './universes';
 export * from './ai';
+export * from './ask';
