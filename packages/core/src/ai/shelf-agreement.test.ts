@@ -69,7 +69,7 @@ describe('combineShelfReadings', () => {
       expect.arrayContaining(['X-Men: Apocalypse', 'X-Men: Civil War', 'X-Men: Infinity War']),
     );
     // Inventions of one reading only.
-    for (const invented of ['Ultramarine', 'Spider-Man: Bold and Brash', 'Infinity Abyss']) {
+    for (const invented of ['Ultramarine', 'Spider-Man: Bold and Brash', 'X-Men: Hellfire Club']) {
       expect(combined.find((item) => item.title === invented)?.sure).toBe(false);
     }
     // Nothing is lost.

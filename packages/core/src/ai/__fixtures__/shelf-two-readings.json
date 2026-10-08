@@ -1,5 +1,5 @@
 {
-  "$comment": "Two readings by Groq (qwen/qwen3.8-27b, the app settings) of the same bottom-shelf photo, on 2026-10-07: Marvel trades, Vinland Saga and Spider-Man collections. Real titles come back; inventions differ.",
+  "$comment": "Two readings by Groq (qwen/qwen3.8-27b, the app settings) of the same bottom-shelf photo, on 2026-10-07 and 2026-10-08: Marvel trades, Vinland Saga and Spider-Man collections. Real titles come back; inventions differ.",
   "first": [
     {
       "kind": "manga",
@@ -84,85 +84,104 @@
   ],
   "second": [
     {
-      "kind": "comic",
-      "title": "X-Men",
-      "count": 1
-    },
-    {
-      "kind": "comic",
-      "title": "Civil War",
-      "count": 1
-    },
-    {
-      "kind": "comic",
-      "title": "Civil War: Front Line",
-      "count": 1
-    },
-    {
-      "kind": "comic",
-      "title": "Infinity War",
-      "count": 1
-    },
-    {
-      "kind": "comic",
-      "title": "Infinity Abyss",
-      "count": 1
-    },
-    {
-      "kind": "comic",
-      "title": "Deadpool",
-      "count": 1
-    },
-    {
-      "kind": "comic",
-      "title": "Marvel Knights Spider-Man",
-      "count": 1
-    },
-    {
-      "kind": "comic",
-      "title": "Spider-Man: Blue",
-      "count": 1
-    },
-    {
-      "kind": "comic",
-      "title": "Spider-Man: Black",
-      "count": 1
-    },
-    {
-      "kind": "comic",
-      "title": "Spider-Man: Red",
-      "count": 1
-    },
-    {
-      "kind": "comic",
-      "title": "Spider-Man: Silver",
-      "count": 1
-    },
-    {
-      "kind": "comic",
-      "title": "Spider-Man: Gold",
-      "count": 1
-    },
-    {
-      "kind": "comic",
-      "title": "Spider-Man: The Complete Collection Crossover Crusade",
-      "count": 1
-    },
-    {
-      "kind": "comic",
-      "title": "Spider-Man: The Complete Collection New Day",
-      "count": 1
-    },
-    {
-      "kind": "comic",
-      "title": "Spider-Man: The Complete Collection One More Day",
+      "kind": "manga",
+      "title": "X-Men: The Complete Archive",
       "count": 1
     },
     {
       "kind": "manga",
-      "title": "Vinland Saga",
-      "count": 12,
-      "author": "Makoto Yukimura"
+      "title": "X-Men: Civil War",
+      "count": 1
+    },
+    {
+      "kind": "manga",
+      "title": "X-Men: Millenium",
+      "count": 1
+    },
+    {
+      "kind": "manga",
+      "title": "X-Men: Hellfire Club",
+      "count": 1
+    },
+    {
+      "kind": "manga",
+      "title": "X-Men: Age of Apocalypse",
+      "count": 1
+    },
+    {
+      "kind": "manga",
+      "title": "X-Men: X-Force",
+      "count": 1
+    },
+    {
+      "kind": "manga",
+      "title": "X-Men: Inferno",
+      "count": 1
+    },
+    {
+      "kind": "manga",
+      "title": "X-Men: X-Statix",
+      "count": 1
+    },
+    {
+      "kind": "manga",
+      "title": "X-Men: Endgame",
+      "count": 1
+    },
+    {
+      "kind": "manga",
+      "title": "X-Men: Deadly Ground",
+      "count": 1
+    },
+    {
+      "kind": "manga",
+      "title": "X-Men: Death of Doctor Doom",
+      "count": 1
+    },
+    {
+      "kind": "manga",
+      "title": "X-Men: Planet Hulk",
+      "count": 1
+    },
+    {
+      "kind": "manga",
+      "title": "X-Men: War of Kings",
+      "count": 1
+    },
+    {
+      "kind": "manga",
+      "title": "X-Men: Infinity War",
+      "count": 1
+    },
+    {
+      "kind": "manga",
+      "title": "X-Men: Invincible Iron Man",
+      "count": 1
+    },
+    {
+      "kind": "manga",
+      "title": "X-Men: New Mutants",
+      "count": 1
+    },
+    {
+      "kind": "manga",
+      "title": "X-Men: Weapon X",
+      "count": 1
+    },
+    {
+      "kind": "manga",
+      "title": "X-Men: Factor Three",
+      "count": 1
+    },
+    {
+      "kind": "manga",
+      "title": "X-Men: The Complete Collection",
+      "count": 1
+    },
+    {
+      "kind": "manga",
+      "title": "X-Men: The",
+      "count": 1
     }
   ]
 }

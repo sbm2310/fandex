@@ -66,13 +66,15 @@ Not yet measured: a "copy the spine text, don't identify" prompt (one request ra
 
 ## Reading each photo twice (2026-10-08)
 
-The first scans on the iPhone offered titles that aren't on the shelf ("Black Clover" for a photo of Marvel trades and Vinland Saga). The model reads the real spines, then keeps going with plausible names ("Spider-Man: Blue / Black / Red / Silver / Gold", "Infinity Abyss"), and the catalog finds a real book for each. Two runs of the same photos showed that **the inventions change between readings while real titles come back**. `eval/agreement.ts` pairs two saved runs with core's `combineShelfReadings` (the code the API uses) and scores them, without calling a model:
+The first scans on the iPhone offered titles that aren't on the shelf ("Black Clover" for a photo of Marvel trades and Vinland Saga). The model reads the real spines, then keeps going with plausible names ("Spider-Man: Blue / Black / Red / Silver / Gold", "X-Men: Hellfire Club"), and the catalog finds a real book for each. Two runs of the same photos showed that **the inventions change between readings while real titles come back**. `eval/agreement.ts` pairs two saved runs with core's `combineShelfReadings` (the code the API uses) and scores them, without calling a model:
 
 | One shelf in halves, 9 photos, 52 items | Items found | Readings that were real |
 | --------------------------------------- | ----------- | ----------------------- |
 | One reading (before)                    | 22          | 30/74 (41%)             |
-| Both readings together                  | 25          | 42/114 (37%)            |
-| **Found by both readings ("sure")**     | 14          | **18/20 (90%)**         |
+| Both readings together                  | 26          | 36/110 (33%)            |
+| **Found by both readings ("sure")**     | 16          | **20/29 (69%)**         |
+
+**Correction (2026-10-08, Task 9):** the first version of this table reported 18 of 20 sure readings real (90%). That compared a Groq run with what turned out to be the **Mistral** run of 2026-10-07, not a second Groq run. The table above pairs two genuine Groq runs (2026-10-07 and 2026-10-08, same settings), and the test fixture was re-recorded the same way. Reading twice still helps — 69% of the ticked items are real vs 41% — but less than first reported.
 
 So the API reads each photo twice at once; what both readings found starts ticked, everything else is listed under "Less sure", unticked (nothing is dropped). Costs: twice the tokens (the global guard is now 30 scans a day for everyone), two requests in the same second (~6,400 of Groq's 8,000 tokens a minute), about 3 s more.
 
@@ -88,8 +90,8 @@ After the first real scans with Groq were poor, the same 9 shelf photos went to 
 | --------------------------------------- | ----------------------- | ------------------------- |
 | One reading: items found                | 22 (42%)                | **49 (94%)**              |
 | One reading: readings that were real    | 30/74 (41%)             | **88/94 (94%)**           |
-| Second run: items found                 | 18 (35%)                | 51 (98%)                  |
-| Found by both readings: found, real     | 14, 18/20               | 47, 82/85 (96%)           |
+| Second run: items found                 | 19 (37%)                | 51 (98%)                  |
+| Found by both readings: found, real     | 16, 20/29 (69%)         | 47, 82/85 (96%)           |
 | Tokens per request                      | ~2,400                  | ~2,570                    |
 
 (Scored against the corrected list: the owner confirmed a New Avengers collection on the bottom shelf, which Gemini had named.)

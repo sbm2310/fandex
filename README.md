@@ -8,6 +8,14 @@ Fandex is a collection app for fans who collect comics, manga, fantasy books, pr
 
 <table>
   <tr>
+    <td><img src="docs/screenshots/ask.jpg" width="200" alt="Ask your collection: 'What Middle-earth stuff do I own?' answered with The Hobbit and the Rivendell LEGO set"></td>
+    <td><img src="docs/screenshots/shelf-scan.jpg" width="200" alt="Shelf scan review: 18 items read from a photo of Marvel trades, each matched to a catalog entry with a tick box"></td>
+  </tr>
+  <tr>
+    <td align="center">Ask your collection</td>
+    <td align="center">Shelf scan review</td>
+  </tr>
+  <tr>
     <td><img src="docs/screenshots/universes.jpg" width="200" alt="Universes tab: Middle-earth, Star Wars and Wizarding World with covers, counts and characters"></td>
     <td><img src="docs/screenshots/universe.jpg" width="200" alt="Middle-earth page: description, characters with item counts, books and LEGO"></td>
     <td><img src="docs/screenshots/character.jpg" width="200" alt="Gandalf's page: the books he appears in"></td>
@@ -33,24 +41,24 @@ Fandex is a collection app for fans who collect comics, manga, fantasy books, pr
   </tr>
 </table>
 
-## Status: Stage 3 (v0.3.0)
+## Status: Stage 4 (v0.4.0)
 
 **Live demo: [fandex-4mjc.onrender.com](https://fandex-4mjc.onrender.com)** (free hosting: the first visit after a quiet spell takes about a minute while the server wakes up). API docs: [/api/docs](https://fandex-4mjc.onrender.com/api/docs).
 
 Fandex runs on iPhone and the web from one codebase, backed by its own API:
 
+- **Ask your collection:** "What Batman stuff do I own?", "How many Star Wars LEGO sets do I have?", "What did I add this month?" — an answer sentence and the matching items. Signed in, AI turns the question into a search (your collection is never sent to it); guests and offline get keyword matching on the device, labelled as such.
+- **Scan a shelf (AI):** photograph one shelf; the AI reads the spines, each reading is matched to the catalog, and you tick what to add on a review screen. Signed-in users, with a daily allowance. On a test bookcase the AI behind it (Gemini) found 94% of the items on one-shelf photos ([evaluation](docs/eval/shelf-recognition.md)).
+- **Scan several books:** keep the camera open and scan barcode after barcode; each book appears in a list as it's read (with a haptic tick, owned ones marked), then one tap adds them all. No account needed.
 - **Universes and characters:** a Universes tab groups everything you own from Middle-earth, Star Wars, the Wizarding World, DC and Marvel, across books and LEGO. Each universe page lists its characters; each character page shows every book they appear in and every set with their minifig. Items are matched automatically from Open Library's characters and places and Rebrickable's themes and minifigs, and you can fix any match (or a misfiled category) by hand.
 - **"You own another edition":** search results flag other printings of books you already own.
 - **Accounts and cloud sync:** sign up with email and password; your collection follows you between iPhone and web. Without an account it's saved on the device, and signing in offers to move those items into the account.
 - **Books, manga, comics and LEGO** in one collection, with category badges and filters. Books come from Open Library (category detected from publisher and subjects), LEGO sets from Rebrickable (search by name or set number, with pieces and theme).
 - **Look up by ISBN** or **scan a barcode** with the iPhone camera. Typos are caught by the check digit before any request is made, and only book barcodes are accepted.
-- **Scan several books:** keep the camera open and scan barcode after barcode; each book appears in a list as it's read (with a haptic tick, owned ones marked), then one tap adds them all. No account needed.
-- **Ask your collection:** "What Batman stuff do I own?", "How many Star Wars LEGO sets do I have?", "What did I add this month?" — an answer sentence and the matching items. Signed in, AI turns the question into a search (your collection is never sent to it); guests and offline get keyword matching on the device, labelled as such.
-- **Scan a shelf (AI):** photograph one shelf; the AI reads the spines, each reading is matched to the catalog, and you tick what to add on a review screen. Signed-in users, with a daily allowance.
 - **Your collection:** a cover grid sorted by recently added or by title (ignoring "The"/"A"), a detail screen per item, and removal with confirmation.
 - **Account deletion** in the app (required by the App Store), light and dark mode, screen-reader labels, and browser tab titles on web.
 
-Next up: Stage 4's polish and release. Shelf reading was [measured on a real bookcase](docs/eval/shelf-recognition.md) before and after building it: Groq's free model finds about 40% of a shelf's items and invents titles, Gemini about 94%, so the server's AI provider is a setting (see [Roadmap](#roadmap)).
+Next up is Stage 5: pre-orders and release dates (see [Roadmap](#roadmap)). What the AI sees and keeps is described under [Privacy and AI](#privacy-and-ai).
 
 ## Architecture
 
@@ -65,14 +73,21 @@ flowchart LR
     catalogApi["Catalog API<br/>(cached, rate-limited)"]
     collectionApi["Collection API<br/>(per user, with fixes)"]
     universeApi["Universes<br/>(seed sync, links)"]
+    aiApi["AI<br/>(shelf scans, Ask,<br/>daily allowances)"]
   end
   subgraph core["packages/core (pure TypeScript)"]
     adapters["OpenLibraryCatalog,<br/>RebrickableCatalog"]
     universes["Universe seed +<br/>matchUniverses"]
     domain["Domain model, zod contracts,<br/>ISBN parsing, repositories"]
+    aiCore["Shelf prompt, parser, matching;<br/>CollectionQuery + keyword fallback"]
   end
   services -->|"signed in"| auth
   services --> catalogApi
+  services -->|"signed in"| aiApi
+  aiApi --> aiCore
+  aiApi --> catalogApi
+  aiApi -->|"shelf photo halves"| gemini[("Gemini<br/>(vision)")]
+  aiApi -->|"question only"| groq[("Groq<br/>(text)")]
   services -->|"signed in"| collectionApi
   services -->|"guest"| kv[("AsyncStorage /<br/>localStorage")]
   catalogApi --> adapters
@@ -90,6 +105,7 @@ flowchart LR
 - **`apps/api`** is a NestJS API (in production it also serves the web app from the same origin). It owns the accounts (Better Auth, users stored in our PostgreSQL), caches catalog results in a shared `catalog_item` table, and stores each user's collection. A global guard protects every route unless it's marked public.
 - **`apps/mobile`** is the Expo app. Screens get their dependencies (`BookCatalog`, `CollectionRepository`, `AccountService`) from a context provider: signed in, the collection is the API-backed repository; signed out, it's the on-device one. Tests swap in fakes.
 - **The universe layer:** a hand-checked seed of universes and characters lives in `packages/core`. A pure function, `matchUniverses`, links each catalog item from the clues its source gives (title, characters, places, LEGO theme, minifigs), with guards against look-alikes (Reagan's "Star Wars" program isn't Star Wars; Norse mythology's Thor isn't Marvel's). The API stores the links per catalog item and re-matches everything on startup when the seed changes; a user's fixes are stored as differences on their own copy, so they survive re-matching.
+- **The AI layer:** two jobs, both behind one provider-neutral client (the OpenAI chat format that Groq, Gemini and Mistral all speak; the provider is a setting). _Shelf scans:_ the app cuts a one-shelf photo into two halves; the model lists what it reads, one line per item; core parses that, and every reading is searched in the catalog and ranked, so what you're offered is always a real catalog entry, and nothing is added until you tick it. _Ask:_ the model turns your question into a `CollectionQuery` (universes, characters, categories, dates, list or count) through a strict JSON schema; core runs it on your items and writes the answer, so answers are exact and the model never sees your collection. Without the AI, keyword matching answers. Both are measured against real data: the owner's bookcase for shelf reading, recorded model replies for questions.
 - **Catalog entries vs. owned copies:** a catalog entry is what a catalog says exists; a `CollectionItem` is the user's copy, with a snapshot of the catalog data so the collection still renders if the source changes or is offline.
 
 ### Notable decisions
@@ -102,7 +118,17 @@ flowchart LR
 - **Universes are computed on the device** from links that travel with each item, so guests get the same universe pages as accounts, offline, updated the moment something is added.
 - **Defensive storage:** versioned JSON documents, serialized writes (rapid taps can't overwrite each other), and unreadable data raises an error instead of being silently replaced.
 
+- **AI answers are checked, not trusted:** model replies are validated against schemas, readings only count once a catalog entry resembles them (the model invents titles and set numbers), unknown universes and characters are dropped and named in the answer, and questions are capped and counted per user and for everyone, so the free plans can't be used up by one person.
+
 Full decision log: [`CLAUDE.md`](CLAUDE.md).
+
+## Privacy and AI
+
+- **Questions ("Ask your collection")** go to [Groq](https://groq.com): only the question, today's date and the names of the universes Fandex knows. **Your collection is never sent**; the answer is computed by Fandex from your own items. Groq's terms don't allow it to train on what it receives. It may keep request logs for up to 30 days for abuse checks, unless Zero Data Retention is turned on in the Groq console.
+- **Shelf photos** are cut into two halves and resized on your phone, sent once, and **never stored** by Fandex. While Fandex has a single user (its developer), they go to **Gemini's free tier**, which may use them to improve Google's products — the scan screen says so before you pick a photo. Before others use Fandex this moves to paid Gemini (no training on inputs) or back to Groq; it's one setting (`AI_PROVIDER`).
+- **Only signed-in users** can use the AI, and **keys stay on the server**. Guests, and anyone offline, get keyword answers computed on their device, with nothing sent anywhere.
+- **What's stored:** how many AI requests you made each day (for the allowance), nothing about their content. It's deleted with your account.
+- Rebrickable's LEGO data never reaches a model (its terms forbid using it to train AI).
 
 ## Repository layout
 
@@ -112,14 +138,14 @@ apps/
     prisma/          Database schema and migrations
     src/             Modules: auth, catalog, collection, universes, ai, health, me
     test/            End-to-end tests against a real test database
-    eval/            AI evaluation: shelf photos (not committed) vs what's really on the shelf
+    eval/            AI evaluation: shelf photos (not committed) vs what's really on the shelf; recording real "Ask" replies
   mobile/            Expo app (Expo Router): iOS, Android and web
-    src/app/         Routes: (tabs)/index, (tabs)/universes, (tabs)/add, (tabs)/account, universe/[slug], universe/[slug]/[character], book/[id], edit/[id], scan, shelf-scan
+    src/app/         Routes: (tabs)/index, (tabs)/universes, (tabs)/add, (tabs)/account, universe/[slug], universe/[slug]/[character], book/[id], edit/[id], scan, shelf-scan, ask
     src/components/  UI components
     src/hooks/       Data hooks (search, collection, account)
     src/services/    App services and their wiring (API clients, repositories)
 packages/
-  core/              Domain model, zod contracts, ISBN utilities, catalog adapters, repository, universe seed and matching, AI prompts and parsers
+  core/              Domain model, zod contracts, ISBN utilities, catalog adapters, repository, universe seed and matching, AI prompts and parsers, the "Ask" query engine
 docs/plans/          Stage plans and task lists
 docs/eval/           AI evaluation results
 docs/screenshots/    README images
@@ -186,7 +212,16 @@ npm run format:check
 
 Tests never call the network.
 
-AI quality is measured separately, because a model's answers aren't pass/fail: `npm run eval:shelf -w @fandex/api` sends the owner's shelf photos to the model and scores what it read against a hand-written list of what's really there ([results](docs/eval/shelf-recognition.md), including comparisons with Gemini and Mistral). It calls the real API, so it doesn't run in CI.
+AI quality is measured separately, because a model's answers aren't pass/fail: `npm run eval:shelf -w @fandex/api` sends the owner's shelf photos to the model and scores what it read against a hand-written list of what's really there. It calls the real API, so it doesn't run in CI. On 9 one-shelf photos (52 items, the way the app sends them):
+
+| Model                                 | Items found | Readings that were real |
+| ------------------------------------- | ----------- | ----------------------- |
+| Groq `qwen/qwen3.8-27b` (free)        | 42%         | 41%                     |
+| Groq, two readings, agreed items only | 31%         | 69%                     |
+| Gemini `gemini-3.5-flash`             | **94%**     | **94%**                 |
+| Mistral `ministral-14b` (free)        | 36%         | 50%                     |
+
+Details, including Hebrew spines and built LEGO models: [docs/eval/shelf-recognition.md](docs/eval/shelf-recognition.md). For "Ask", `npx tsx eval/record-ask.ts` records the model's real replies to 12 questions (including an attempt to give it orders), which core's tests then run.
 
 ## Concepts for .NET developers
 
@@ -223,7 +258,7 @@ Book data and cover images come from [Open Library](https://openlibrary.org), a 
 | **1. MVP** ✅            | Add books by search, ISBN or barcode; collection with covers on iPhone and web     |
 | **2. Real backend** ✅   | Accounts, cloud sync phone ↔ web, manga/comics/LEGO catalogs                       |
 | **3. Universe layer** ✅ | Franchise and character pages linking items across categories                      |
-| 4. AI                    | Shelf photo → identified items, rapid barcode scan, questions about the collection |
+| **4. AI** ✅             | Shelf photo → identified items, rapid barcode scan, questions about the collection |
 | 5. Pre-orders & releases | Release dates, payment reminders, push notifications                               |
 | 6. Launch                | TestFlight → App Store, shareable public collection pages                          |
 

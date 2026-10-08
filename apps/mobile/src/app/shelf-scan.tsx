@@ -139,8 +139,8 @@ export default function ShelfScanScreen() {
           and finds them in the catalog; you choose what to add.
         </ThemedText>
         <ThemedText type="small" themeColor="textSecondary">
-          Works best with English spines and good light. It finds about half the items on a shelf,
-          so check the list before adding.
+          Works best in good light with the spines facing the camera. The AI can miss items or
+          misread a title, so check the list before adding.
         </ThemedText>
 
         {error ? (

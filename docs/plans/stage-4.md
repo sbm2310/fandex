@@ -59,7 +59,7 @@ App                                   API (NestJS)                          Groq
 
 **8. Ask in the app.** ✅ An "Ask your collection" field on the Collection tab with example questions; the answer sentence plus the matching items (tapping opens them); the keyword fallback when signed out, offline or over quota (labelled as such). _Demo:_ ask the roadmap questions on the iPhone and the web. _Built as:_ Collection tab → "Ask your collection…" opens `/ask` (example questions, answer sentence, matching items that open their detail page, AI questions left today).
 
-**9. Polish and Stage 4 demo.** Error and empty states (blurry photo, nothing recognised, quota reached), accessibility labels, a privacy section in the README (what goes to Groq, ZDR, nothing stored), README (screenshots, architecture with the AI layer, eval results), `GROQ_API_KEY` on Render, deploy, publish the iPhone update, tag `v0.4.0`. _Demo:_ the end-to-end demo above, on the deployed app.
+**9. Polish and Stage 4 demo.** ✅ Error and empty states (blurry photo, nothing recognised, quota reached), accessibility labels, a privacy section in the README (what goes to Groq, ZDR, nothing stored), README (screenshots, architecture with the AI layer, eval results), `GROQ_API_KEY` on Render, deploy, publish the iPhone update, tag `v0.4.0`. _Demo:_ the end-to-end demo above, on the deployed app.
 
 ## New concepts, introduced as they come up
 
@@ -79,3 +79,10 @@ Vision-language models and structured outputs (a JSON schema the model's reply m
 - AI quality: `npm run eval:shelf` (and recorded question replies) re-run when prompts or models change.
 - App tasks: checked on web in the browser and on the iPhone in Expo Go (published with `npm run update:ios -w @fandex/mobile`).
 - Stage demo: the end-to-end flow above, on the deployed app.
+
+## Outcome (v0.4.0, 2026-10-08)
+
+- **Providers changed from the plan:** shelf scans run on **Gemini** (`AI_PROVIDER=gemini-free` while the owner is the only user), because Groq's free vision model found 42% of a shelf's items and invented many titles while Gemini found 94% with 94% of its readings real; questions stay on **Groq** (`AI_ASK_PROVIDER`), which handles them well (12 of 12 recorded questions right). Both are settings, and Groq remains the free fallback for scans (read twice, agreed titles ticked: 69% real).
+- **Before inviting other users:** move shelf scans to prepaid Gemini (~0.7¢ a scan; $5 ≈ 700 scans; no training on inputs) or back to Groq, and turn on Zero Data Retention in the Groq console.
+- **Seen in a real Gemini scan of the bottom shelf** (18 items read, 16 matched), for a later matching pass: a run of volumes was offered from "Vinland Saga, Book Nine" (volume words aren't parsed, only "Vol. 9"); "Spider-Man/Deadpool" matched a how-to-draw book; "House of M" matched a later spin-off; a temporary Open Library error left one item unmatched. Hebrew author names normalize to nothing, so "books by Tolkien" misses Hebrew editions.
+- **Not verifiable without a phone build:** the rapid barcode scanner and camera flows were tested with mocks and are to be tried on the iPhone.
