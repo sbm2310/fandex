@@ -7,6 +7,7 @@ import {
   type CollectionUniverse,
   type ItemLinks,
   type LinkEdits,
+  type QueryableItem,
   type UpdateCollectionItemRequest,
 } from '@fandex/core';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
@@ -38,6 +39,24 @@ export class CollectionService {
       orderBy: [{ addedAt: 'desc' }, { id: 'desc' }],
     });
     return rows.map(toCollectionItemResponse);
+  }
+
+  /** The user's items as "Ask" queries see them (category and links as the user sees them). */
+  async queryable(userId: string): Promise<(QueryableItem & { id: string })[]> {
+    const rows = await this.prisma.collectionItem.findMany({
+      where: { userId },
+      include: withCatalog,
+    });
+    return rows.map((row) => ({
+      id: row.id,
+      category: row.categoryOverride ?? row.catalogItem.category,
+      addedAt: row.addedAt.toISOString(),
+      title: row.catalogItem.subtitle
+        ? `${row.catalogItem.title}: ${row.catalogItem.subtitle}`
+        : row.catalogItem.title,
+      creators: row.catalogItem.creators,
+      ...effectiveLinks(row),
+    }));
   }
 
   /**

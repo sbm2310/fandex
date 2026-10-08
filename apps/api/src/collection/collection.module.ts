@@ -8,5 +8,6 @@ import { CollectionService } from './collection.service.js';
   imports: [CatalogModule],
   controllers: [CollectionController],
   providers: [CollectionService],
+  exports: [CollectionService],
 })
 export class CollectionModule {}

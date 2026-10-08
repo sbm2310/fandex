@@ -1,6 +1,8 @@
 import { z } from 'zod';
 
 import { SHELF_ITEM_KINDS, type ShelfReading } from '../ai/shelf-reading';
+import { MAX_QUESTION_LENGTH } from '../ask/ask-model';
+import { collectionQuerySchema } from '../ask/collection-query';
 import { catalogItemSchema } from './catalog';
 
 /** What the model read on a shelf photo: a guess, to be matched to the catalog. */
@@ -62,5 +64,31 @@ export const aiQuotaResponseSchema = z.object({
   shelfScans: aiQuotaSchema,
   /** Absent from servers older than the provider setting. */
   provider: aiProviderInfoSchema.exactOptional(),
+  /** Questions asked today (absent from servers before "Ask"). */
+  questions: aiQuotaSchema.exactOptional(),
 });
 export type AiQuotaResponse = z.infer<typeof aiQuotaResponseSchema>;
+
+/** POST /ai/ask body. */
+export const askRequestSchema = z.object({
+  question: z.string().trim().min(1).max(MAX_QUESTION_LENGTH),
+});
+export type AskRequest = z.infer<typeof askRequestSchema>;
+
+/** POST /ai/ask: the query the question became, and its answer from the user's collection. */
+export const askResponseSchema = z.object({
+  query: collectionQuerySchema,
+  /** "You own 3 Batman items: 2 comics and 1 LEGO set." */
+  answer: z.string(),
+  /** The matching collection items, in the query's order. */
+  itemIds: z.array(z.uuid()),
+  /** Universes or characters the question named that Fandex doesn't know (left out). */
+  unknown: z.array(z.string()),
+  /** "ai", or "keywords" when the AI couldn't be used and keyword matching answered. */
+  method: z.enum(['ai', 'keywords']),
+  /** Why keywords answered instead of the AI, to show next to the answer. */
+  notice: z.string().exactOptional(),
+  /** Questions after this one. */
+  quota: aiQuotaSchema,
+});
+export type AskResponse = z.infer<typeof askResponseSchema>;

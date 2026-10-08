@@ -1,6 +1,13 @@
-import type { AiQuotaResponse, ShelfScanResponse } from '@fandex/core';
+import {
+  askRequestSchema,
+  type AiQuotaResponse,
+  type AskRequest,
+  type AskResponse,
+  type ShelfScanResponse,
+} from '@fandex/core';
 import {
   BadRequestException,
+  Body,
   Controller,
   Get,
   HttpCode,
@@ -28,6 +35,7 @@ import { Session, type UserSession } from '@thallesp/nestjs-better-auth';
 import type { Response } from 'express';
 
 import { AiQuotaService } from './ai-quota.service.js';
+import { QuestionAnswerer } from './question-answerer.service.js';
 import { AiProviderError, AiRateLimitError } from './chat-client.js';
 import { ShelfScanService } from './shelf-scan.service.js';
 
@@ -49,6 +57,7 @@ export class AiController {
   constructor(
     private readonly shelfScans: ShelfScanService,
     private readonly quota: AiQuotaService,
+    private readonly questions: QuestionAnswerer,
   ) {}
 
   @Get('quota')
@@ -58,7 +67,27 @@ export class AiController {
       available: this.shelfScans.available,
       shelfScans: await this.quota.status(session.user.id, 'shelf_scan'),
       provider: this.shelfScans.provider,
+      questions: await this.quota.status(session.user.id, 'question'),
     };
+  }
+
+  /**
+   * Answers a question about the signed-in user's collection. The AI turns it into a query
+   * (the collection is never sent to it); without the AI, keyword matching answers, so there's
+   * always an answer. Only questions the AI answered count towards the allowance.
+   */
+  @Post('ask')
+  @HttpCode(200)
+  @ApiOkResponse({
+    description:
+      'The query the question became, the answer, the matching item ids, and your allowance.',
+  })
+  @ApiBadRequestResponse({ description: 'No question, or one over 300 characters.' })
+  async ask(
+    @Session() session: UserSession,
+    @Body({ schema: askRequestSchema }) body: AskRequest,
+  ): Promise<AskResponse> {
+    return this.questions.ask(session.user.id, body.question);
   }
 
   /**

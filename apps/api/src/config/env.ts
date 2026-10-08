@@ -36,7 +36,9 @@ export const envSchema = z.object({
   AI_PROVIDER: z.enum(AI_PROVIDER_NAMES).default('groq'),
   GROQ_API_KEY: optionalKey,
   GEMINI_API_KEY: optionalKey,
-  /** Overrides of the provider's endpoint and model (see docs/eval/shelf-recognition.md first). */
+  /** The provider for "Ask" questions (text only, so Groq's plentiful free plan fits). */
+  AI_ASK_PROVIDER: z.enum(AI_PROVIDER_NAMES).default('groq'),
+  /** Overrides of the shelf provider's endpoint and model (see docs/eval/shelf-recognition.md first). */
   AI_BASE_URL: z.url().optional(),
   AI_VISION_MODEL: z.string().min(1).optional(),
   /**
@@ -46,6 +48,12 @@ export const envSchema = z.object({
    */
   AI_SHELF_SCANS_PER_USER: z.coerce.number().int().min(0).default(5),
   AI_SHELF_SCANS_PER_DAY: z.coerce.number().int().min(0).default(30),
+  /**
+   * "Ask" questions per user per day, and for everyone. Each is ~1,000 Groq tokens (a ~600-token
+   * prompt plus the reply's 400 maximum), so 100 a day is half the free daily tokens.
+   */
+  AI_QUESTIONS_PER_USER: z.coerce.number().int().min(0).default(30),
+  AI_QUESTIONS_PER_DAY: z.coerce.number().int().min(0).default(100),
   /** Comma-separated origins allowed to call the API with a session: web app + app scheme. */
   TRUSTED_ORIGINS: z
     .string()

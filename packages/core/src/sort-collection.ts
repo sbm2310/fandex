@@ -17,11 +17,11 @@ export function sortCollection(
   if (sort === 'recent') {
     return sorted.sort((a, b) => b.addedAt.localeCompare(a.addedAt));
   }
-  return sorted.sort((a, b) =>
-    titleSortKey(a).localeCompare(titleSortKey(b), 'en', { sensitivity: 'base', numeric: true }),
-  );
+  return sorted.sort((a, b) => compareTitles(formatTitle(a.catalog), formatTitle(b.catalog)));
 }
 
-function titleSortKey(item: CollectionItem): string {
-  return formatTitle(item.catalog).replace(/^(the|a|an)\s+/i, '');
+/** Bookshop order for two titles: leading "The/A/An" ignored, case-insensitive, numbers natural. */
+export function compareTitles(a: string, b: string): number {
+  const key = (title: string) => title.replace(/^(the|a|an)\s+/i, '');
+  return key(a).localeCompare(key(b), 'en', { sensitivity: 'base', numeric: true });
 }

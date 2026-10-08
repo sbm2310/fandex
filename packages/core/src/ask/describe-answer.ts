@@ -15,11 +15,11 @@ function count(n: number, [singular, plural]: [string, string]): string {
   return `${n} ${n === 1 ? singular : plural}`;
 }
 
-/** "a, b and c". */
-function and(parts: readonly string[]): string {
+/** "a, b and c" (or "a, b or c"). */
+function and(parts: readonly string[], word = 'and'): string {
   return parts.length <= 1
     ? (parts[0] ?? '')
-    : `${parts.slice(0, -1).join(', ')} and ${parts[parts.length - 1]}`;
+    : `${parts.slice(0, -1).join(', ')} ${word} ${parts[parts.length - 1]}`;
 }
 
 const DATE_FORMAT = new Intl.DateTimeFormat('en-US', {
@@ -28,9 +28,10 @@ const DATE_FORMAT = new Intl.DateTimeFormat('en-US', {
   year: 'numeric',
   timeZone: 'UTC',
 });
-const formatDay = (day: string) => DATE_FORMAT.format(new Date(`${day}T00:00:00Z`));
+const formatDay = (day: string, offsetDays = 0) =>
+  DATE_FORMAT.format(new Date(Date.parse(`${day}T00:00:00Z`) + offsetDays * 86_400_000));
 
-/** "Batman", "Star Wars and Middle-earth": characters first, then universes they don't imply. */
+/** "Batman", "Darth Vader or Han Solo": characters first, then universes they don't imply. */
 function subject(query: CollectionQuery, directory: UniverseDirectory): string {
   const characters = query.characters.flatMap((ref) => {
     const name = directory
@@ -44,7 +45,8 @@ function subject(query: CollectionQuery, directory: UniverseDirectory): string {
       const name = directory.find((universe) => universe.slug === slug)?.name;
       return name ? [name] : [];
     });
-  return and([...characters, ...universes]);
+  // Any of them matches, so "or".
+  return and([...characters, ...universes], 'or');
 }
 
 /** What the items are called: one category's noun, "manga volumes and comics", or "items". */
@@ -63,7 +65,10 @@ function description(query: CollectionQuery, directory: UniverseDirectory, n: nu
   if (query.creator) parts.push(`by ${query.creator}`);
   if (query.titleWords.length > 0) parts.push(`with “${query.titleWords.join(' ')}” in the title`);
   if (query.addedAfter && query.addedBefore) {
-    parts.push(`added from ${formatDay(query.addedAfter)} until ${formatDay(query.addedBefore)}`);
+    // addedBefore is exclusive: name the last day included.
+    const first = formatDay(query.addedAfter);
+    const last = formatDay(query.addedBefore, -1);
+    parts.push(first === last ? `added on ${first}` : `added from ${first} to ${last}`);
   } else if (query.addedAfter) {
     parts.push(`added since ${formatDay(query.addedAfter)}`);
   } else if (query.addedBefore) {
@@ -79,7 +84,7 @@ function description(query: CollectionQuery, directory: UniverseDirectory, n: nu
  */
 export function describeAnswer(
   query: CollectionQuery,
-  result: QueryResult,
+  result: Pick<QueryResult<unknown>, 'items' | 'categoryCounts'>,
   directory: UniverseDirectory,
   unknown: readonly string[] = [],
 ): string {

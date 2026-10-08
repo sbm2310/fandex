@@ -15,6 +15,9 @@ describe('envSchema', () => {
       AI_PROVIDER: 'groq',
       AI_SHELF_SCANS_PER_USER: 5,
       AI_SHELF_SCANS_PER_DAY: 30,
+      AI_ASK_PROVIDER: 'groq',
+      AI_QUESTIONS_PER_USER: 30,
+      AI_QUESTIONS_PER_DAY: 100,
       TRUSTED_ORIGINS: ['http://localhost:8081', 'fandex://'],
     });
   });

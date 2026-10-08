@@ -78,8 +78,7 @@ describe('createChatModel', () => {
     );
     vi.stubGlobal('fetch', fetch);
 
-    const model = createChatModel({
-      AI_PROVIDER: 'gemini-free',
+    const model = createChatModel('gemini-free', {
       GROQ_API_KEY: groqKey,
       GEMINI_API_KEY: geminiKey,
     });
@@ -91,7 +90,7 @@ describe('createChatModel', () => {
   });
 
   it("is off without the chosen provider's key", () => {
-    expect(createChatModel({ AI_PROVIDER: 'gemini-free', GROQ_API_KEY: groqKey })).toBeNull();
-    expect(createChatModel({ AI_PROVIDER: 'groq', GROQ_API_KEY: groqKey })).not.toBeNull();
+    expect(createChatModel('gemini-free', { GROQ_API_KEY: groqKey })).toBeNull();
+    expect(createChatModel('groq', { GROQ_API_KEY: groqKey })).not.toBeNull();
   });
 });

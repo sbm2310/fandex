@@ -15,6 +15,8 @@ export type ChatRequest = {
   topP?: number;
   /** For models that can think before answering ("none" turns it off where supported). */
   reasoningEffort?: string;
+  /** Makes the reply JSON matching this schema (OpenAI-style strict `json_schema`). */
+  jsonSchema?: { name: string; schema: object };
 };
 
 export type ChatResult = {
@@ -94,6 +96,12 @@ export class ChatClient implements ChatModel {
         ...(request.temperature !== undefined && { temperature: request.temperature }),
         ...(request.topP !== undefined && { top_p: request.topP }),
         ...(request.reasoningEffort !== undefined && { reasoning_effort: request.reasoningEffort }),
+        ...(request.jsonSchema && {
+          response_format: {
+            type: 'json_schema',
+            json_schema: { ...request.jsonSchema, strict: true },
+          },
+        }),
         messages: [
           {
             role: 'user',

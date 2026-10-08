@@ -10,6 +10,8 @@ export type AiProvider = {
   keyName: 'GROQ_API_KEY' | 'GEMINI_API_KEY';
   baseUrl: string;
   visionModel: string;
+  /** For text-only requests ("Ask"): the same model serves both today. */
+  textModel: string;
   reasoningEffort?: string;
   /**
    * Readings per shelf photo: Groq's model invents titles, differently each time, so it reads
@@ -27,6 +29,7 @@ const gemini = {
   baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai',
   // gemini-3.8-flash didn't answer at all on the free tier (2026-10-07); 3.5 did.
   visionModel: 'gemini-3.5-flash',
+  textModel: 'gemini-3.5-flash',
   // Gemini 3 thinks by default, spending the reply budget before answering.
   reasoningEffort: 'none',
   readingsPerScan: 1,
@@ -40,6 +43,7 @@ export const AI_PROVIDERS = {
     baseUrl: 'https://api.groq.com/openai/v1',
     // Groq retires models often.
     visionModel: 'qwen/qwen3.8-27b',
+    textModel: 'qwen/qwen3.8-27b',
     readingsPerScan: 2,
     usesPhotosForTraining: false,
   },

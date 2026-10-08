@@ -6,6 +6,12 @@ import type { Env } from '../config/env.js';
 import type { AiUsageKind } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 
+/** How the allowance is named to users. */
+const NAMES: Record<AiUsageKind, string> = {
+  shelf_scan: 'shelf scans',
+  question: 'questions',
+};
+
 /** The day a request counts towards: midnight UTC (stored as a DATE). */
 export function usageDay(now: Date): Date {
   return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
@@ -33,6 +39,11 @@ export class AiQuotaService {
           perUser: this.config.get('AI_SHELF_SCANS_PER_USER', { infer: true }),
           perDay: this.config.get('AI_SHELF_SCANS_PER_DAY', { infer: true }),
         };
+      case 'question':
+        return {
+          perUser: this.config.get('AI_QUESTIONS_PER_USER', { infer: true }),
+          perDay: this.config.get('AI_QUESTIONS_PER_DAY', { infer: true }),
+        };
     }
   }
 
@@ -44,25 +55,37 @@ export class AiQuotaService {
     return { used: row?.count ?? 0, limit: this.limits(kind).perUser };
   }
 
+  /** Whether another request fits today: "user" or "everyone" names the limit reached. */
+  async check(
+    userId: string,
+    kind: AiUsageKind,
+    now = new Date(),
+  ): Promise<{ quota: AiQuota; reached: 'user' | 'everyone' | null }> {
+    const quota = await this.status(userId, kind, now);
+    if (quota.used >= quota.limit) return { quota, reached: 'user' };
+    const everyone = await this.prisma.aiUsage.aggregate({
+      where: { day: usageDay(now), kind },
+      _sum: { count: true },
+    });
+    const full = (everyone._sum.count ?? 0) >= this.limits(kind).perDay;
+    return { quota, reached: full ? 'everyone' : null };
+  }
+
   /**
    * Throws 429 when the user has used today's allowance, or 503 when everyone together has
    * (that's the server's capacity, not the user's doing).
    */
   async assertAvailable(userId: string, kind: AiUsageKind, now = new Date()): Promise<void> {
-    const { used, limit } = await this.status(userId, kind, now);
-    if (used >= limit) {
+    const { quota, reached } = await this.check(userId, kind, now);
+    if (reached === 'user') {
       throw new HttpException(
-        `You've used today's ${limit} shelf scans. They reset at midnight UTC.`,
+        `You've used today's ${quota.limit} ${NAMES[kind]}. They reset at midnight UTC.`,
         HttpStatus.TOO_MANY_REQUESTS,
       );
     }
-    const everyone = await this.prisma.aiUsage.aggregate({
-      where: { day: usageDay(now), kind },
-      _sum: { count: true },
-    });
-    if ((everyone._sum.count ?? 0) >= this.limits(kind).perDay) {
+    if (reached === 'everyone') {
       throw new ServiceUnavailableException(
-        'Shelf scanning has reached its daily limit for everyone. Try again tomorrow.',
+        `${NAMES[kind][0]!.toUpperCase()}${NAMES[kind].slice(1)} have reached their daily limit for everyone. Try again tomorrow.`,
       );
     }
   }

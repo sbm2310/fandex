@@ -3,7 +3,8 @@ import { z } from 'zod';
 import { formatTitle } from '../catalog-book';
 import { CATEGORIES, type Category } from '../category';
 import { itemLinks, type CollectionItem } from '../collection-item';
-import { sortCollection } from '../sort-collection';
+import { compareTitles } from '../sort-collection';
+import type { CharacterRef } from '../universes/match-universes';
 import type { UniverseDirectory } from '../universes/summarize-collection';
 import { containsPhrase, normalizeText } from '../universes/normalize-name';
 
@@ -48,9 +49,36 @@ export function collectionQuery(input: CollectionQueryInput = {}): CollectionQue
   return collectionQuerySchema.parse(input);
 }
 
-export type QueryResult = {
+/**
+ * What a query looks at in an item. The app derives it from a CollectionItem
+ * (`queryableItem`); the API builds it straight from database rows.
+ */
+export type QueryableItem = {
+  /** What the user sees (their correction, if any). */
+  category: Category;
+  /** ISO timestamp. */
+  addedAt: string;
+  /** Title and subtitle ("Batman: Year One"). */
+  title: string;
+  creators: readonly string[];
+  /** Links as the user sees them (automatic plus their fixes). */
+  universes: readonly string[];
+  characters: readonly CharacterRef[];
+};
+
+export function queryableItem(item: CollectionItem): QueryableItem {
+  return {
+    category: item.category,
+    addedAt: item.addedAt,
+    title: formatTitle(item.catalog),
+    creators: item.category === 'lego' ? [] : item.catalog.authors,
+    ...itemLinks(item),
+  };
+}
+
+export type QueryResult<T = CollectionItem> = {
   /** Matching items, sorted as asked. */
-  items: CollectionItem[];
+  items: T[];
   categoryCounts: Partial<Record<Category, number>>;
 };
 
@@ -79,20 +107,19 @@ export function checkQuery(
   return { query: { ...query, universes, characters }, unknown };
 }
 
-function matches(item: CollectionItem, query: CollectionQuery): boolean {
+function matches(item: QueryableItem, query: CollectionQuery): boolean {
   if (query.categories.length > 0 && !query.categories.includes(item.category)) return false;
 
-  const links = itemLinks(item);
   if (
     query.universes.length > 0 &&
-    !query.universes.some((slug) => links.universes.includes(slug))
+    !query.universes.some((slug) => item.universes.includes(slug))
   ) {
     return false;
   }
   if (
     query.characters.length > 0 &&
     !query.characters.some((wanted) =>
-      links.characters.some(
+      item.characters.some(
         (ref) => ref.universe === wanted.universe && ref.character === wanted.character,
       ),
     )
@@ -101,7 +128,7 @@ function matches(item: CollectionItem, query: CollectionQuery): boolean {
   }
 
   if (query.titleWords.length > 0) {
-    const title = normalizeText(formatTitle(item.catalog));
+    const title = normalizeText(item.title);
     const words = query.titleWords
       .flatMap((word) => normalizeText(word).split(' '))
       .filter(Boolean);
@@ -109,8 +136,7 @@ function matches(item: CollectionItem, query: CollectionQuery): boolean {
   }
   if (query.creator !== undefined) {
     const wanted = normalizeText(query.creator);
-    const creators = item.category === 'lego' ? [] : item.catalog.authors;
-    if (!wanted || !creators.some((name) => containsPhrase(normalizeText(name), wanted))) {
+    if (!wanted || !item.creators.some((name) => containsPhrase(normalizeText(name), wanted))) {
       return false;
     }
   }
@@ -121,17 +147,35 @@ function matches(item: CollectionItem, query: CollectionQuery): boolean {
   return true;
 }
 
-/** Answers a query from the collection: within a filter any value matches, across filters all must. */
+/**
+ * Answers a query from the collection: within a filter any value matches, across filters all
+ * must. Items are CollectionItems, or anything with a `view` that describes them.
+ */
 export function runCollectionQuery(
   items: readonly CollectionItem[],
   query: CollectionQuery,
-): QueryResult {
-  const found = sortCollection(
-    items.filter((item) => matches(item, query)),
-    query.sort,
+): QueryResult;
+export function runCollectionQuery<T>(
+  items: readonly T[],
+  query: CollectionQuery,
+  view: (item: T) => QueryableItem,
+): QueryResult<T>;
+export function runCollectionQuery<T>(
+  items: readonly T[],
+  query: CollectionQuery,
+  view: (item: T) => QueryableItem = queryableItem as unknown as (item: T) => QueryableItem,
+): QueryResult<T> {
+  const found = items
+    .map((item) => ({ item, seen: view(item) }))
+    .filter(({ seen }) => matches(seen, query));
+  found.sort((a, b) =>
+    query.sort === 'title'
+      ? compareTitles(a.seen.title, b.seen.title)
+      : b.seen.addedAt.localeCompare(a.seen.addedAt),
   );
   const categoryCounts: QueryResult['categoryCounts'] = {};
-  for (const item of found)
-    categoryCounts[item.category] = (categoryCounts[item.category] ?? 0) + 1;
-  return { items: found, categoryCounts };
+  for (const { seen } of found) {
+    categoryCounts[seen.category] = (categoryCounts[seen.category] ?? 0) + 1;
+  }
+  return { items: found.map(({ item }) => item), categoryCounts };
 }
