@@ -5,7 +5,6 @@ import { CATEGORIES, type Category } from '../category';
 import { itemLinks, type CollectionItem } from '../collection-item';
 import { compareTitles } from '../sort-collection';
 import type { CharacterRef } from '../universes/match-universes';
-import type { UniverseDirectory } from '../universes/summarize-collection';
 import { containsPhrase, normalizeText } from '../universes/normalize-name';
 
 /**
@@ -81,31 +80,6 @@ export type QueryResult<T = CollectionItem> = {
   items: T[];
   categoryCounts: Partial<Record<Category, number>>;
 };
-
-/**
- * Drops universes and characters the directory doesn't know (a model may invent a slug such
- * as "batman-universe"), so an answer is never "you own nothing" because of a typo. Returns
- * what was dropped, for the answer to mention.
- */
-export function checkQuery(
-  query: CollectionQuery,
-  directory: UniverseDirectory,
-): { query: CollectionQuery; unknown: string[] } {
-  const unknown: string[] = [];
-  const universes = query.universes.filter((slug) => {
-    const known = directory.some((universe) => universe.slug === slug);
-    if (!known) unknown.push(slug);
-    return known;
-  });
-  const characters = query.characters.filter((ref) => {
-    const known = directory
-      .find((universe) => universe.slug === ref.universe)
-      ?.characters.some((character) => character.slug === ref.character);
-    if (!known) unknown.push(`${ref.universe}/${ref.character}`);
-    return known;
-  });
-  return { query: { ...query, universes, characters }, unknown };
-}
 
 function matches(item: QueryableItem, query: CollectionQuery): boolean {
   if (query.categories.length > 0 && !query.categories.includes(item.category)) return false;

@@ -11,17 +11,28 @@ import { ConfigService } from '@nestjs/config';
 import type { Env } from '../config/env.js';
 
 import { AI_PROVIDERS, type AiProvider } from './ai-providers.js';
-import type { ChatModel } from './chat-client.js';
+import { AiProviderError, type ChatModel } from './chat-client.js';
 
-/** Injection token for the AI provider (Groq in production, a fake in tests); null without a key. */
+/** Injection token for the shelf provider (AI_PROVIDER; a fake in tests); null without a key. */
 export const CHAT_MODEL = Symbol('CHAT_MODEL');
+/**
+ * Groq, used when the shelf provider is another one and fails (Gemini's free tier sometimes
+ * doesn't answer at all); null when the shelf provider is Groq itself or there's no Groq key.
+ */
+export const SHELF_FALLBACK_MODEL = Symbol('SHELF_FALLBACK_MODEL');
+
+/** Failures worth another provider: timeouts, overload, rate limits, network errors. */
+function providerFailed(error: unknown): boolean {
+  return error instanceof AiProviderError || error instanceof TypeError;
+}
 
 /**
  * Reads a shelf photo with the vision model: the parts of one photo go in a single request
  * with core's prompt, and the reply is parsed by core (one line per item). With Groq the photo
  * is read twice at once, and core's combineShelfReadings marks what both readings found as
  * sure (its model invents titles, differently each time); Gemini reads once. The results are
- * guesses; nothing here is checked against a catalog.
+ * guesses; nothing here is checked against a catalog. If the shelf provider fails and isn't
+ * Groq, Groq reads the photo instead (when there's a Groq key).
  */
 @Injectable()
 export class ShelfReader {
@@ -29,6 +40,7 @@ export class ShelfReader {
 
   constructor(
     @Inject(CHAT_MODEL) private readonly model: ChatModel | null,
+    @Inject(SHELF_FALLBACK_MODEL) private readonly fallback: ChatModel | null,
     private readonly config: ConfigService<Env, true>,
   ) {}
 
@@ -41,11 +53,36 @@ export class ShelfReader {
     return AI_PROVIDERS[this.config.get('AI_PROVIDER', { infer: true })];
   }
 
+  /** The provider that reads a photo when the main one fails, if any. */
+  get fallbackProvider(): AiProvider | null {
+    return this.fallback ? AI_PROVIDERS.groq : null;
+  }
+
   async read(images: readonly Uint8Array[]): Promise<CombinedShelfReading[]> {
-    if (this.provider.readingsPerScan === 1) {
-      return (await this.readOnce(images)).map((reading) => ({ ...reading, sure: true }));
+    if (!this.model) throw new Error('No AI provider is configured');
+    const model = this.config.get('AI_VISION_MODEL', { infer: true });
+    try {
+      return await this.readWith(this.model, this.provider, images, model);
+    } catch (error) {
+      if (!this.fallback || !providerFailed(error)) throw error;
+      this.logger.warn(
+        `${this.provider.label} failed (${error instanceof Error ? error.message : String(error)}); reading with Groq instead`,
+      );
+      return this.readWith(this.fallback, AI_PROVIDERS.groq, images);
     }
-    const results = await Promise.allSettled([this.readOnce(images), this.readOnce(images)]);
+  }
+
+  private async readWith(
+    client: ChatModel,
+    provider: AiProvider,
+    images: readonly Uint8Array[],
+    model = provider.visionModel,
+  ): Promise<CombinedShelfReading[]> {
+    const readOnce = () => this.readOnce(client, provider, images, model);
+    if (provider.readingsPerScan === 1) {
+      return (await readOnce()).map((reading) => ({ ...reading, sure: true }));
+    }
+    const results = await Promise.allSettled([readOnce(), readOnce()]);
     const answers = results.flatMap((result) =>
       result.status === 'fulfilled' ? [result.value] : [],
     );
@@ -61,11 +98,14 @@ export class ShelfReader {
     return first.map((reading) => ({ ...reading, sure: true }));
   }
 
-  private async readOnce(images: readonly Uint8Array[]) {
-    if (!this.model) throw new Error('No AI provider is configured');
-    const { visionModel, reasoningEffort } = this.provider;
-    const result = await this.model.chat({
-      model: this.config.get('AI_VISION_MODEL', { infer: true }) ?? visionModel,
+  private async readOnce(
+    client: ChatModel,
+    { reasoningEffort }: AiProvider,
+    images: readonly Uint8Array[],
+    model: string,
+  ) {
+    const result = await client.chat({
+      model,
       ...(reasoningEffort && { reasoningEffort }),
       prompt: shelfPrompt(images.length),
       images,

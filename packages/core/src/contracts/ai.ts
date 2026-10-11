@@ -55,6 +55,8 @@ export const aiProviderInfoSchema = z.object({
   name: z.string(),
   /** Free tiers may use what they receive to improve the provider's products. */
   usesPhotosForTraining: z.boolean(),
+  /** Who reads the photo instead when that provider is busy or down. */
+  fallbackName: z.string().exactOptional(),
 });
 export type AiProviderInfo = z.infer<typeof aiProviderInfoSchema>;
 

@@ -23,7 +23,7 @@ const COMIC = /graphic novels?|comic books?|comics & graphic novels|comic strips
  * adaptation (The Hobbit: 4 comic subjects out of 93) carries comic subjects too. Comic/manga
  * subjects must make up at least this share of the work's subjects to count.
  */
-export const MIN_SUBJECT_SHARE = 0.1;
+const MIN_SUBJECT_SHARE = 0.1;
 
 /**
  * Decides whether an Open Library edition is a book, manga or comic: first from the edition's

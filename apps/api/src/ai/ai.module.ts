@@ -10,7 +10,7 @@ import { ASK_MODEL, QuestionAnswerer } from './question-answerer.service.js';
 import { AiQuotaService } from './ai-quota.service.js';
 import { AiController } from './ai.controller.js';
 import { ChatClient } from './chat-client.js';
-import { CHAT_MODEL, ShelfReader } from './shelf-reader.service.js';
+import { CHAT_MODEL, SHELF_FALLBACK_MODEL, ShelfReader } from './shelf-reader.service.js';
 import { ShelfScanService } from './shelf-scan.service.js';
 
 type ProviderKeys = Pick<Env, 'GROQ_API_KEY' | 'GEMINI_API_KEY'>;
@@ -46,6 +46,14 @@ const keys = (config: ConfigService<Env, true>): ProviderKeys => ({
           ...keys(config),
           AI_BASE_URL: config.get('AI_BASE_URL', { infer: true }),
         }),
+    },
+    {
+      provide: SHELF_FALLBACK_MODEL,
+      inject: [ConfigService],
+      useFactory: (config: ConfigService<Env, true>) =>
+        config.get('AI_PROVIDER', { infer: true }) === 'groq'
+          ? null
+          : createChatModel('groq', keys(config)),
     },
     {
       provide: ASK_MODEL,

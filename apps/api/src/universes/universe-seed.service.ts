@@ -9,7 +9,7 @@ import { UniverseLinker } from './universe-linker.service.js';
 const SYNC_NAME = 'universe-seed';
 
 /** Changes whenever the seed or the matching rules change. */
-export function seedHash(
+function seedHash(
   seed: readonly UniverseSeed[] = UNIVERSE_SEED,
   matcherVersion = UNIVERSE_MATCHER_VERSION,
 ): string {

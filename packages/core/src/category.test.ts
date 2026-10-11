@@ -1,14 +1,4 @@
-import { isBookCategory, isCategory } from './category';
-
-describe('isCategory', () => {
-  it.each(['book', 'manga', 'comic', 'lego'])('accepts %s', (category) => {
-    expect(isCategory(category)).toBe(true);
-  });
-
-  it('rejects an unsupported category', () => {
-    expect(isCategory('vinyl')).toBe(false);
-  });
-});
+import { isBookCategory } from './category';
 
 describe('isBookCategory', () => {
   it.each(['book', 'manga', 'comic'])('accepts %s', (category) => {

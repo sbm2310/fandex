@@ -26,7 +26,7 @@ type ActiveCollection =
  * The collection screens should use right now: the account's when signed in, the device's when
  * signed out. Cache keys include the mode (and user), so the two never mix.
  */
-export function useActiveCollection(): ActiveCollection {
+function useActiveCollection(): ActiveCollection {
   const repositories = useCollectionRepositories();
   const currentUser = useCurrentUser();
   if (currentUser.isPending) return { status: 'loading' };

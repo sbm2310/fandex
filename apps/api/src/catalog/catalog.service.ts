@@ -34,7 +34,7 @@ export const BOOK_CATALOG = Symbol('BOOK_CATALOG');
 export const LEGO_CATALOG = Symbol('LEGO_CATALOG');
 
 /** Cached ISBN and set entries are refreshed from the source after this long. */
-export const ISBN_CACHE_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
+const ISBN_CACHE_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
 
 /**
  * Catalog lookups for the apps. Results are cached in our database (`catalog_item`), so every

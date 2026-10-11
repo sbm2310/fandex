@@ -5,7 +5,7 @@ import { useDebouncedValue } from './use-debounced-value';
 
 import { useCatalog, useLegoCatalog } from '@/services/app-services';
 
-export const MIN_QUERY_LENGTH = 2;
+const MIN_QUERY_LENGTH = 2;
 const DEBOUNCE_MS = 400;
 
 /** What the user is searching: books (incl. manga and comics) or LEGO sets. */

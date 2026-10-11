@@ -14,7 +14,7 @@ export const CATEGORY_LABELS: Record<Category, string> = {
 };
 
 /** True for categories worth a badge: books are the default, so they don't get one. */
-export function hasBadge(category: Category): boolean {
+function hasBadge(category: Category): boolean {
   return category !== 'book';
 }
 

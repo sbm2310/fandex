@@ -40,9 +40,9 @@ import { AiProviderError, AiRateLimitError } from './chat-client.js';
 import { ShelfScanService } from './shelf-scan.service.js';
 
 /** The parts of one shelf photo (the app sends two halves; the provider accepts up to 3). */
-export const MAX_SHELF_IMAGES = 3;
+const MAX_SHELF_IMAGES = 3;
 /** Per part. A half of a phone photo, resized for the model, is a few hundred KB. */
-export const MAX_SHELF_IMAGE_BYTES = 2 * 1024 * 1024;
+const MAX_SHELF_IMAGE_BYTES = 2 * 1024 * 1024;
 
 const isJpeg = (bytes: Uint8Array) => bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff;
 

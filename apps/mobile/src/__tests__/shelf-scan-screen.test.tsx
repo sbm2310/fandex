@@ -156,13 +156,15 @@ describe('Shelf scan screen', () => {
       quota: jest.fn(async () => ({
         available: true,
         shelfScans: { used: 0, limit: 20 },
-        provider: { name: 'Google Gemini', usesPhotosForTraining: true },
+        provider: { name: 'Google Gemini', usesPhotosForTraining: true, fallbackName: 'Groq' },
       })),
     });
     await open({ shelfScanner, account: await signedIn() });
 
     expect(
-      await screen.findByText(/sent to Google Gemini.*may use photos to improve its products/),
+      await screen.findByText(
+        /sent to Google Gemini.*may use photos to improve its products.*If it's busy, Groq reads the photo instead/,
+      ),
     ).toBeOnTheScreen();
     expect(screen.queryByText(/isn't stored/)).not.toBeOnTheScreen();
   });

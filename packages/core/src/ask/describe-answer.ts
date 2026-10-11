@@ -80,7 +80,7 @@ function description(query: CollectionQuery, directory: UniverseDirectory, n: nu
 /**
  * The answer as one or two sentences: "You own 12 Batman items: 8 comics and 4 LEGO sets."
  * `unknown` lists universes or characters the query named that Fandex doesn't know (from
- * checkQuery); they were left out, and the answer says so.
+ * resolveModelQuery); they were left out, and the answer says so.
  */
 export function describeAnswer(
   query: CollectionQuery,

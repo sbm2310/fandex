@@ -7,7 +7,7 @@ import { UNIVERSE_SEED } from '../universes/universe-seed';
 
 import replies from './__fixtures__/ask-replies.json';
 import { askPrompt, modelQueryJsonSchema, resolveModelQuery } from './ask-model';
-import { checkQuery, collectionQuery, runCollectionQuery } from './collection-query';
+import { collectionQuery, runCollectionQuery } from './collection-query';
 import { describeAnswer } from './describe-answer';
 import { parseQuestionLocally } from './parse-question';
 
@@ -154,22 +154,6 @@ describe('runCollectionQuery', () => {
       "Harry Potter and the Philosopher's Stone",
       'The Hobbit',
     ]);
-  });
-});
-
-describe('checkQuery', () => {
-  it('drops universes and characters Fandex does not know, and says which', () => {
-    const { query, unknown } = checkQuery(
-      collectionQuery({
-        universes: ['dc', 'batman-universe'],
-        characters: [ref('dc', 'batman'), ref('marvel', 'batman')],
-      }),
-      UNIVERSE_SEED,
-    );
-
-    expect(query.universes).toEqual(['dc']);
-    expect(query.characters).toEqual([ref('dc', 'batman')]);
-    expect(unknown).toEqual(['batman-universe', 'marvel/batman']);
   });
 });
 

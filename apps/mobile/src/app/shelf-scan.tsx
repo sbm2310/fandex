@@ -183,9 +183,12 @@ export default function ShelfScanScreen() {
 /** Where the photo goes, as the server reports it. */
 function privacyNote(provider: AiProviderInfo | undefined): string {
   if (!provider) return 'Your photo is sent to an AI service to read the spines.';
-  return provider.usesPhotosForTraining
+  const where = provider.usesPhotosForTraining
     ? `Your photo is sent to ${provider.name}, an AI service, to read the spines. Its free tier may use photos to improve its products, so don't include anything private.`
     : `Your photo is sent to ${provider.name}, an AI service, to read the spines. It isn't stored or used to train AI.`;
+  return provider.fallbackName
+    ? `${where} If it's busy, ${provider.fallbackName} reads the photo instead.`
+    : where;
 }
 
 async function choosePhoto(onPicked: (photo: ShelfPhoto) => void) {

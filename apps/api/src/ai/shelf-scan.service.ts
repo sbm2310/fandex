@@ -35,7 +35,12 @@ export class ShelfScanService {
 
   get provider(): AiProviderInfo {
     const { label, usesPhotosForTraining } = this.reader.provider;
-    return { name: label, usesPhotosForTraining };
+    const fallback = this.reader.fallbackProvider;
+    return {
+      name: label,
+      usesPhotosForTraining,
+      ...(fallback && { fallbackName: fallback.label }),
+    };
   }
 
   async scan(userId: string, images: readonly Uint8Array[]): Promise<ShelfScanResponse> {
