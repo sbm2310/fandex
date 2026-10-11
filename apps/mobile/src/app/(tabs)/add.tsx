@@ -4,6 +4,7 @@ import { SymbolView } from 'expo-symbols';
 import { useState, type ReactNode } from 'react';
 import { ActivityIndicator, FlatList, Platform, Pressable, StyleSheet, View } from 'react-native';
 
+import { AddFigureForm } from '@/components/add-figure-form';
 import { AddToCollectionButton } from '@/components/add-to-collection-button';
 import { EntryRow } from '@/components/entry-row';
 import { OtherEditionNote } from '@/components/other-editions';
@@ -17,9 +18,13 @@ import { useCatalogSearch, type SearchKind } from '@/hooks/use-catalog-search';
 import { useTheme } from '@/hooks/use-theme';
 import { catalogErrorMessage } from '@/services/catalog-error-message';
 
-const KIND_OPTIONS: SegmentedOption<SearchKind>[] = [
+/** What's being added: books and LEGO are searched in their catalogs; figures are described. */
+type AddKind = SearchKind | 'figure';
+
+const KIND_OPTIONS: SegmentedOption<AddKind>[] = [
   { value: 'books', label: 'Books' },
   { value: 'lego', label: 'LEGO' },
+  { value: 'figure', label: 'Figures' },
 ];
 
 export default function AddScreen() {
@@ -34,7 +39,7 @@ export default function AddScreen() {
   const incoming = params.isbn ?? params.q;
   const incomingKind: SearchKind = params.kind === 'lego' && !params.isbn ? 'lego' : 'books';
   const [input, setInput] = useState(incoming ?? '');
-  const [kind, setKind] = useState<SearchKind>(incomingKind);
+  const [kind, setKind] = useState<AddKind>(incomingKind);
   const [appliedScan, setAppliedScan] = useState(params.scan);
   // Put a new scan into the search field (adjusting state during render, as React recommends
   // over an effect: https://react.dev/learn/you-might-not-need-an-effect).
@@ -45,7 +50,11 @@ export default function AddScreen() {
       setKind(incomingKind);
     }
   }
-  const search = useCatalogSearch(input, kind);
+  // Figures have no catalog: nothing to search while that option is picked.
+  const search = useCatalogSearch(
+    kind === 'figure' ? '' : input,
+    kind === 'figure' ? 'books' : kind,
+  );
 
   return (
     <Screen>
@@ -55,26 +64,31 @@ export default function AddScreen() {
         options={KIND_OPTIONS}
         value={kind}
         onChange={setKind}
-        accessibilityLabel="Search for"
+        accessibilityLabel="What to add"
       />
-      <View style={styles.searchRow}>
-        <View style={styles.searchField}>
-          <SearchField
-            value={input}
-            onChangeText={setInput}
-            placeholder={kind === 'lego' ? 'Set name or number' : 'Title, author or ISBN'}
-            accessibilityLabel={kind === 'lego' ? 'Search LEGO sets' : 'Search books'}
-            busy={search.isFetching && !search.isPending}
-          />
-        </View>
-        {/* Book barcodes only: camera scanning is unreliable in browsers, and LEGO box
+      {kind === 'figure' ? (
+        <AddFigureForm />
+      ) : (
+        <>
+          <View style={styles.searchRow}>
+            <View style={styles.searchField}>
+              <SearchField
+                value={input}
+                onChangeText={setInput}
+                placeholder={kind === 'lego' ? 'Set name or number' : 'Title, author or ISBN'}
+                accessibilityLabel={kind === 'lego' ? 'Search LEGO sets' : 'Search books'}
+                busy={search.isFetching && !search.isPending}
+              />
+            </View>
+            {/* Book barcodes only: camera scanning is unreliable in browsers, and LEGO box
             barcodes aren't ISBNs. */}
-        {Platform.OS !== 'web' && kind === 'books' && <ScanButton />}
-      </View>
-      {Platform.OS !== 'web' && kind === 'books' && <RapidScanLink />}
-      <ShelfScanLink />
-      <AddFigureLink />
-      <SearchResults search={search} kind={kind} />
+            {Platform.OS !== 'web' && kind === 'books' && <ScanButton />}
+          </View>
+          {Platform.OS !== 'web' && kind === 'books' && <RapidScanLink />}
+          <ShelfScanLink />
+          <SearchResults search={search} kind={kind} />
+        </>
+      )}
     </Screen>
   );
 }
@@ -238,32 +252,6 @@ function ShelfScanLink() {
           <ThemedText type="smallBold">Scan a shelf</ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
             Add several items from one photo
-          </ThemedText>
-        </View>
-      </Pressable>
-    </Link>
-  );
-}
-
-/** For what no catalog has: figures, added by hand. */
-function AddFigureLink() {
-  const colors = useTheme();
-  return (
-    <Link href="/add-figure" asChild>
-      <Pressable
-        accessibilityRole="link"
-        accessibilityLabel="Add a figure by hand: Hot Toys and other figures"
-        style={StyleSheet.flatten([styles.shelfLink, { borderColor: colors.border }])}
-      >
-        <SymbolView
-          name={{ ios: 'figure.stand', android: 'person', web: 'person' }}
-          tintColor={colors.accent}
-          size={22}
-        />
-        <View style={styles.searchField}>
-          <ThemedText type="smallBold">Add a figure by hand</ThemedText>
-          <ThemedText type="small" themeColor="textSecondary">
-            Hot Toys and other figures no catalog has
           </ThemedText>
         </View>
       </Pressable>

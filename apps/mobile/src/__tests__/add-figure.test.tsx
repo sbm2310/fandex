@@ -2,7 +2,6 @@ import { createFigure, type CatalogItemResponse } from '@fandex/core';
 import { fireEvent, renderRouter, screen } from 'expo-router/testing-library';
 
 import AddScreen from '@/app/(tabs)/add';
-import AddFigureScreen from '@/app/add-figure';
 import BookScreen from '@/app/book/[id]';
 import { toCatalogEntry } from '@/services/catalog-mapping';
 import { moveDeviceCollectionToAccount } from '@/services/move-to-account';
@@ -24,13 +23,15 @@ async function signedIn() {
   return account;
 }
 
-async function open(options: Parameters<typeof createWrapper>[0], url = '/add-figure') {
+/** The Add tab with "Figures" picked. */
+async function open(options: Parameters<typeof createWrapper>[0]) {
   // renderRouter's promise carries router helpers; keep the reference, then await it.
   const app = renderRouter(
-    { '(tabs)/add': AddScreen, 'add-figure': AddFigureScreen, 'book/[id]': BookScreen },
-    { initialUrl: url, wrapper: createWrapper(options) },
+    { '(tabs)/add': AddScreen, 'book/[id]': BookScreen },
+    { initialUrl: '/add', wrapper: createWrapper(options) },
   );
   await app;
+  await fireEvent.press(screen.getByRole('radio', { name: 'Figures' }));
   return { app };
 }
 
@@ -41,14 +42,13 @@ async function fillIn({ name, brand, image }: { name: string; brand?: string; im
 }
 
 describe('Add a figure', () => {
-  it('is opened from the Add tab', async () => {
-    const { app } = await open({}, '/add');
+  it('is a choice on the Add tab, next to Books and LEGO, with no search', async () => {
+    await open({});
 
-    await fireEvent.press(
-      screen.getByRole('link', { name: 'Add a figure by hand: Hot Toys and other figures' }),
-    );
-
-    expect(app.getPathname()).toBe('/add-figure');
+    expect(screen.getByLabelText('Name')).toBeOnTheScreen();
+    expect(screen.queryByLabelText('Search books')).not.toBeOnTheScreen();
+    await fireEvent.press(screen.getByRole('radio', { name: 'Books' }));
+    expect(screen.getByLabelText('Search books')).toBeOnTheScreen();
   });
 
   it('saves a guest’s figure on the device, linked to its universe, and opens it', async () => {

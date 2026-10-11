@@ -54,10 +54,6 @@ export default function RootLayout() {
               options={{ title: 'Scan a shelf', headerBackTitle: 'Back' }}
             />
             <Stack.Screen
-              name="add-figure"
-              options={{ title: 'Add a figure', headerBackTitle: 'Back' }}
-            />
-            <Stack.Screen
               name="ask"
               options={{ title: 'Ask your collection', headerBackTitle: 'Back' }}
             />
