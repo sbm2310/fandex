@@ -259,7 +259,7 @@ Book data and cover images come from [Open Library](https://openlibrary.org), a 
 | **2. Real backend** ✅   | Accounts, cloud sync phone ↔ web, manga/comics/LEGO catalogs                       |
 | **3. Universe layer** ✅ | Franchise and character pages linking items across categories                      |
 | **4. AI** ✅             | Shelf photo → identified items, rapid barcode scan, questions about the collection |
-| 5. Pre-orders & releases | Release dates, payment reminders, push notifications                               |
+| 5. Pre-orders & releases | Pre-orders (custom figures too), payments due, release dates and slips             |
 | 6. Launch                | TestFlight → App Store, shareable public collection pages                          |
 
 ## License

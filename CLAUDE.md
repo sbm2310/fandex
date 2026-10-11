@@ -53,7 +53,7 @@ Verify current terms, rate limits and attribution requirements for each API befo
 | 2. Real backend ✅ (v0.2.0)   | Weeks 2–4 | Accounts, cloud sync phone ↔ web, unified catalog search across all sources                      |
 | 3. Universe layer ✅ (v0.3.0) | Month 2   | Franchise/character pages linking items across categories (missing-item suggestions deferred)    |
 | 4. AI ✅ (v0.4.0)             | Month 3   | Shelf photo → identified items; natural-language questions about the collection                  |
-| 5. Pre-orders & releases      | Month 4   | Release dates, payment reminders, push notifications (event-driven)                              |
+| 5. Pre-orders & releases      | Month 4   | Pre-orders (custom figures too), payments due, release dates and slips, an Upcoming tab          |
 | 6. Launch                     | After     | TestFlight → App Store, shareable public collection pages, beta users from collector communities |
 
 ## Stage 1 decisions (settled 2026-10-04)
@@ -157,12 +157,23 @@ Full plan and task list: [`docs/plans/stage-4.md`](docs/plans/stage-4.md).
 - **Rapid barcode scan** (added after Task 1): scan book after book, then add them all — the reliable bulk-add path; no AI, works for guests.
 - **Ask your collection:** the model turns the question into a `CollectionQuery`; core runs it on the collection. The collection (and any Rebrickable content) is never sent to the model. Keyword fallback when AI is unavailable.
 
+## Stage 5 decisions (settled 2026-10-11)
+
+Full plan and task list: [`docs/plans/stage-5.md`](docs/plans/stage-5.md).
+
+- **Reminders in the app only:** an Upcoming tab (needs attention first) with a badge count; no notifications for now (push needs the Apple Developer account, Stage 6), so no scheduled jobs.
+- **Custom items and a `figure` category:** items not in any catalog (Hot Toys…) are created by hand, private to their owner (`catalog_item.source = custom` + `owner_id`), universe-linked like other items; guests can create them too.
+- **Release dates:** entered by the owner; for books, Open Library's future publish date when it has one, re-checked when pre-orders are opened (at most daily), changes recorded as slips. Brickset/Metron not used (terms unconfirmed).
+- **A pre-order holds** price, deposit, balance and its due date (money as integer minor units + currency, default USD), expected release (day + precision) with its change history, store/order number/link, status; "Arrived" moves it into the collection in one transaction.
+- **Pre-orders need an account** (cross-device payments and dates; no device→account sync path).
+- **Ask learns pre-orders** ("What's arriving this month?", "How much do I still owe?"), still without sending them to the model.
+
 ## Open questions (deferred to later stages)
 
 - Email provider for verification and password reset (free tiers only) — needs a domain we own
 - "You're missing…" suggestions (series gaps, manga volumes, LEGO sets in a theme) — after Stage 3; needs series/volume data (Wikidata has series order for well-known works)
 - Premium figures catalog (AI-read box details + community contributions) — after Stage 4
-- Apple Developer account — not needed for Stage 2 (email + password works in Expo Go); buy when adding Apple sign-in, push notifications (Stage 5) or TestFlight
+- Apple Developer account — not needed so far (email + password works in Expo Go; Stage 5 chose in-app reminders over push); buy when adding Apple sign-in, push notifications or TestFlight (Stage 6)
 
 ## Working agreements
 
