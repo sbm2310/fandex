@@ -9,7 +9,8 @@ import { useTheme } from '@/hooks/use-theme';
 type Props = {
   title: string;
   message: string;
-  action?: { label: string; href: Href };
+  /** A link somewhere else, or something to do here ("Try again"). */
+  action?: { label: string; href: Href } | { label: string; onPress: () => void };
 };
 
 export function EmptyState({ title, message, action }: Props) {
@@ -23,7 +24,7 @@ export function EmptyState({ title, message, action }: Props) {
       <ThemedText themeColor="textSecondary" style={styles.centered}>
         {message}
       </ThemedText>
-      {action && (
+      {action && 'href' in action ? (
         // Link asChild needs a single style object on its child (no arrays or style functions).
         <Link href={action.href} asChild>
           <Pressable
@@ -34,7 +35,17 @@ export function EmptyState({ title, message, action }: Props) {
             </ThemedText>
           </Pressable>
         </Link>
-      )}
+      ) : action ? (
+        <Pressable
+          accessibilityRole="button"
+          onPress={action.onPress}
+          style={StyleSheet.flatten([styles.button, { backgroundColor: colors.accent }])}
+        >
+          <ThemedText type="smallBold" themeColor="onAccent">
+            {action.label}
+          </ThemedText>
+        </Pressable>
+      ) : null}
     </View>
   );
 }

@@ -257,6 +257,37 @@ describe('A pre-order', () => {
     });
   });
 
+  it('asks a signed-out visitor to sign in instead of loading forever, also when editing', async () => {
+    await open('/preorder/0199b5a0-0000-7000-9000-000000000001/edit');
+
+    expect(await screen.findByText('Sign in to see your pre-orders.')).toBeOnTheScreen();
+  });
+
+  it("says it couldn't load, rather than that it's gone, and tries again", async () => {
+    const { preorders, id } = await withOne();
+    preorders.list.mockRejectedValueOnce(new Error("Can't reach Fandex"));
+    await open(`/preorder/${id}`, { preorders, account: await signedIn() });
+
+    expect(await screen.findByText("Couldn't load this pre-order")).toBeOnTheScreen();
+    await fireEvent.press(screen.getByRole('button', { name: 'Try again' }));
+
+    expect(await screen.findByRole('button', { name: 'Edit' })).toBeOnTheScreen();
+  });
+
+  it("shows the server's reason when an action is refused", async () => {
+    const { preorders, id } = await withOne();
+    preorders.arrive.mockRejectedValueOnce(
+      Object.assign(new Error('Refused'), { detail: 'This pre-order was cancelled' }),
+    );
+    await open(`/preorder/${id}`, { preorders, account: await signedIn() });
+
+    await fireEvent.press(
+      await screen.findByRole('button', { name: 'It arrived: add to collection' }),
+    );
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('This pre-order was cancelled');
+  });
+
   it('arrives into the collection and opens the item', async () => {
     const { preorders, id } = await withOne();
     const { app } = await open(`/preorder/${id}`, { preorders, account: await signedIn() });
@@ -377,6 +408,16 @@ describe('the Upcoming tab', () => {
 
     await waitFor(() => expect(result.current.groups).toBeDefined());
     expect(result.current.attentionCount).toBe(1);
+  });
+
+  it("offers to try again when the pre-orders couldn't load", async () => {
+    const preorders = createFakePreorders();
+    preorders.list.mockRejectedValueOnce(new Error("Can't reach Fandex"));
+    await open('/upcoming', { preorders, account: await signedIn() });
+
+    await fireEvent.press(await screen.findByRole('button', { name: 'Try again' }));
+
+    expect(await screen.findByText('Nothing on order')).toBeOnTheScreen();
   });
 
   it('says how to start when there are none', async () => {

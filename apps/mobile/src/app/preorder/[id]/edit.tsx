@@ -2,7 +2,7 @@ import type { UpdatePreorderRequest } from '@fandex/core';
 import { router, useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
 
-import { EmptyState } from '@/components/empty-state';
+import { PreorderUnavailable } from '@/components/preorder-unavailable';
 import { PageTitle } from '@/components/page-title';
 import { PreorderForm, type PreorderFields } from '@/components/preorder-form';
 import { ThemedText } from '@/components/themed-text';
@@ -29,10 +29,10 @@ function toUpdate(fields: PreorderFields): UpdatePreorderRequest {
 
 export default function EditPreorderScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { preorder, isPending, userPending } = usePreorder(id);
+  const { preorder, isPending, isError, signedIn, userPending, refetch } = usePreorder(id);
   const update = useUpdatePreorder();
 
-  if (userPending || isPending) {
+  if (userPending || (signedIn && isPending)) {
     return (
       <ThemedView style={[styles.fill, styles.centered]}>
         <PageTitle title="Edit pre-order" />
@@ -43,8 +43,7 @@ export default function EditPreorderScreen() {
   if (!preorder) {
     return (
       <ThemedView style={styles.fill}>
-        <PageTitle title="Not found" />
-        <EmptyState title="No such pre-order" message="It may have been deleted." />
+        <PreorderUnavailable signedIn={signedIn} failed={isError} retry={() => void refetch()} />
       </ThemedView>
     );
   }

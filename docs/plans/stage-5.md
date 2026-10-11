@@ -55,7 +55,7 @@ _Spike (2026-10-11):_ Open Library does list upcoming editions, imported from pu
 
 **7. Ask about pre-orders.** ✅ `CollectionQuery` gains `scope: collection | preorders` and pre-order filters (arriving after/before, balance due, delayed); `runPreorderQuery` and answers ("2 pre-orders arrive this month: …", "You still owe $280 on 1 pre-order"); prompt, schema and keyword fallback updated; real replies re-recorded. _Demo:_ ask the demo's questions on the iPhone.
 
-**8. Polish and Stage 5 demo.** Empty and error states, accessibility labels, README (screenshots of Upcoming and a pre-order, the model), deploy, publish the iPhone update, tag `v0.5.0`. _Demo:_ the end-to-end demo above, on the deployed app.
+**8. Polish and Stage 5 demo.** ✅ Empty and error states, accessibility labels, README (screenshots of Upcoming and a pre-order, the model), deploy, publish the iPhone update, tag `v0.5.0`. _Demo:_ the end-to-end demo above, on the deployed app.
 
 ## Risks
 

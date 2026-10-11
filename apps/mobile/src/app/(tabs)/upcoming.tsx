@@ -16,7 +16,7 @@ import { attentionText } from '@/utils/preorder-text';
  * by expected date, with what's still owed. The tab's badge counts the first group.
  */
 export default function UpcomingScreen() {
-  const { groups, closed, isPending, isError, signedIn, userPending } = useUpcoming();
+  const { groups, closed, isPending, isError, signedIn, userPending, refetch } = useUpcoming();
 
   if (userPending || (signedIn && isPending)) {
     return (
@@ -47,6 +47,7 @@ export default function UpcomingScreen() {
         <EmptyState
           title="Couldn't load your pre-orders"
           message="Can't reach the Fandex server. Check your connection and try again."
+          action={{ label: 'Try again', onPress: () => void refetch() }}
         />
       </Screen>
     );

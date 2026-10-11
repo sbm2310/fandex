@@ -11,7 +11,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, Linking, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import { Button } from '@/components/button';
-import { EmptyState } from '@/components/empty-state';
+import { PreorderUnavailable } from '@/components/preorder-unavailable';
 import { EntryRow } from '@/components/entry-row';
 import { PageTitle } from '@/components/page-title';
 import { ThemedText } from '@/components/themed-text';
@@ -27,12 +27,13 @@ import { useTheme } from '@/hooks/use-theme';
 import { toCatalogEntry } from '@/services/catalog-mapping';
 import { confirm } from '@/utils/confirm';
 import { attentionText, day } from '@/utils/preorder-text';
+import { preorderErrorMessage } from '@/utils/preorder-error';
 import { localToday } from '@/utils/today';
 
 /** A pre-order: what's owed and when, its dates and their history, and what to do next. */
 export default function PreorderScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { preorder, isPending, signedIn, userPending } = usePreorder(id);
+  const { preorder, isPending, isError, signedIn, userPending, refetch } = usePreorder(id);
 
   if (userPending || (signedIn && isPending)) {
     return (
@@ -45,16 +46,7 @@ export default function PreorderScreen() {
   if (!preorder) {
     return (
       <ThemedView style={styles.fill}>
-        <PageTitle title="Not found" />
-        <EmptyState
-          title="No such pre-order"
-          message={signedIn ? 'It may have been deleted.' : 'Sign in to see your pre-orders.'}
-          action={
-            signedIn
-              ? { label: 'Upcoming', href: '/upcoming' }
-              : { label: 'Sign in', href: '/account' }
-          }
-        />
+        <PreorderUnavailable signedIn={signedIn} failed={isError} retry={() => void refetch()} />
       </ThemedView>
     );
   }
@@ -71,6 +63,8 @@ function PreorderDetail({ preorder }: { preorder: PreorderResponse }) {
   const left = balanceLeft(preorder);
   const reasons = needsAttention(preorder, localToday());
   const slips = describeSlips(preorder.history);
+  // The server's reason when it refused ("This pre-order was cancelled"), else a general one.
+  const failure = arrive.error ?? update.error ?? remove.error;
   const status =
     preorder.status === 'arrived'
       ? `Arrived${preorder.arrivedAt ? ` ${day(preorder.arrivedAt.slice(0, 10))}` : ''}`
@@ -213,9 +207,9 @@ function PreorderDetail({ preorder }: { preorder: PreorderResponse }) {
               busy={remove.isPending}
               onPress={() => void onDelete()}
             />
-            {arrive.isError || update.isError || remove.isError ? (
+            {failure ? (
               <ThemedText type="smallBold" accessibilityRole="alert">
-                Couldn&apos;t update the pre-order. Check your connection and try again.
+                {preorderErrorMessage(failure, "Couldn't update the pre-order. Try again.")}
               </ThemedText>
             ) : null}
           </View>

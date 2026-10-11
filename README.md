@@ -8,10 +8,14 @@ Fandex is a collection app for fans who collect comics, manga, fantasy books, pr
 
 <table>
   <tr>
+    <td><img src="docs/screenshots/upcoming.jpg" width="200" alt="Upcoming tab: 4 pre-orders on order, $1,015.99 still owed; a Gandalf figure's balance due October 15 needs attention, then One Piece 113 (expected November 10, 2026, from Open Library) and a Darth Vader figure later"></td>
+    <td><img src="docs/screenshots/preorder.jpg" width="200" alt="A Hot Toys Darth Vader pre-order: $380 price, $76 paid, $304 left due December 15, expected June 2027, delayed once from March 2027, Sideshow order number, date history and actions"></td>
     <td><img src="docs/screenshots/ask.jpg" width="200" alt="Ask your collection: 'What Middle-earth stuff do I own?' answered with The Hobbit and the Rivendell LEGO set"></td>
     <td><img src="docs/screenshots/shelf-scan.jpg" width="200" alt="Shelf scan review: 18 items read from a photo of Marvel trades, each matched to a catalog entry with a tick box"></td>
   </tr>
   <tr>
+    <td align="center">Upcoming</td>
+    <td align="center">A pre-order</td>
     <td align="center">Ask your collection</td>
     <td align="center">Shelf scan review</td>
   </tr>
@@ -41,15 +45,15 @@ Fandex is a collection app for fans who collect comics, manga, fantasy books, pr
   </tr>
 </table>
 
-## Status: Stage 4 (v0.4.0)
+## Status: Stage 5 (v0.5.0)
 
 **Live demo: [fandex-4mjc.onrender.com](https://fandex-4mjc.onrender.com)** (free hosting: the first visit after a quiet spell takes about a minute while the server wakes up). API docs: [/api/docs](https://fandex-4mjc.onrender.com/api/docs).
 
 Fandex runs on iPhone and the web from one codebase, backed by its own API:
 
-- **Pre-orders:** what's on order, from search or for a figure you describe — price, what you've paid and when the rest is due, the expected release (a day, a month, a quarter or a year, as stores announce them), the store and order link. Every change of the date is kept ("Delayed once, originally March 2027"), and "It arrived" moves it into your collection. Needs an account.
+- **Pre-orders:** what's on order, from search or for a figure you describe — price, what you've paid and when the rest is due, the expected release (a day, a month, a quarter or a year, as stores announce them), the store and order link. Every change of the date is kept ("Delayed once, originally March 2027"), and "It arrived" moves it into your collection. For an upcoming book, Fandex fills in the release date Open Library lists and checks it daily, recording a move as a delay. Needs an account.
 - **Upcoming tab:** what needs doing first — a balance due within a week or overdue, an expected date that has passed, something arriving this week — then what's arriving this month, later, and with no date yet, with the total still owed. The tab's badge counts what needs attention (the reminder, instead of notifications).
-- **Ask your collection:** "What Batman stuff do I own?", "How many Star Wars LEGO sets do I have?", "What did I add this month?" — an answer sentence and the matching items. Signed in, AI turns the question into a search (your collection is never sent to it); guests and offline get keyword matching on the device, labelled as such.
+- **Ask your collection:** "What Batman stuff do I own?", "How many Star Wars LEGO sets do I have?", "What's arriving this month?", "How much do I still owe?" — an answer sentence and the matching items or pre-orders. Signed in, AI turns the question into a search (your collection is never sent to it); guests and offline get keyword matching on the device, labelled as such.
 - **Scan a shelf (AI):** photograph one shelf; the AI reads the spines, each reading is matched to the catalog, and you tick what to add on a review screen. Signed-in users, with a daily allowance. On a test bookcase the AI behind it (Gemini) found 94% of the items on one-shelf photos ([evaluation](docs/eval/shelf-recognition.md)).
 - **Scan several books:** keep the camera open and scan barcode after barcode; each book appears in a list as it's read (with a haptic tick, owned ones marked), then one tap adds them all. No account needed.
 - **Universes and characters:** a Universes tab groups everything you own from Middle-earth, Star Wars, the Wizarding World, DC and Marvel, across books and LEGO. Each universe page lists its characters; each character page shows every book they appear in and every set with their minifig. Items are matched automatically from Open Library's characters and places and Rebrickable's themes and minifigs, and you can fix any match (or a misfiled category) by hand.
@@ -60,7 +64,7 @@ Fandex runs on iPhone and the web from one codebase, backed by its own API:
 - **Your collection:** a cover grid sorted by recently added or by title (ignoring "The"/"A"), a detail screen per item, and removal with confirmation.
 - **Account deletion** in the app (required by the App Store), light and dark mode, screen-reader labels, and browser tab titles on web.
 
-Next up is Stage 5: pre-orders and release dates (see [Roadmap](#roadmap)). What the AI sees and keeps is described under [Privacy and AI](#privacy-and-ai).
+Next up is Stage 6: launch — TestFlight, the App Store and shareable collection pages (see [Roadmap](#roadmap)). What the AI sees and keeps is described under [Privacy and AI](#privacy-and-ai).
 
 ## Architecture
 
@@ -75,6 +79,7 @@ flowchart LR
     catalogApi["Catalog API<br/>(cached, rate-limited)"]
     collectionApi["Collection API<br/>(per user, with fixes)"]
     universeApi["Universes<br/>(seed sync, links)"]
+    preorderApi["Pre-orders<br/>(per user, date history,<br/>daily date checks)"]
     aiApi["AI<br/>(shelf scans, Ask,<br/>daily allowances)"]
   end
   subgraph core["packages/core (pure TypeScript)"]
@@ -82,6 +87,7 @@ flowchart LR
     universes["Universe seed +<br/>matchUniverses"]
     domain["Domain model, zod contracts,<br/>ISBN parsing, repositories"]
     aiCore["Shelf prompt, parser, matching;<br/>CollectionQuery + keyword fallback"]
+    preorderCore["Pre-order rules: money,<br/>release dates, Upcoming, slips"]
   end
   services -->|"signed in"| auth
   services --> catalogApi
@@ -91,6 +97,10 @@ flowchart LR
   aiApi -->|"shelf photo halves"| gemini[("Gemini<br/>(vision)")]
   aiApi -->|"question only"| groq[("Groq<br/>(text)")]
   services -->|"signed in"| collectionApi
+  services -->|"signed in"| preorderApi
+  preorderApi --> preorderCore
+  preorderApi --> catalogApi
+  preorderApi --> pg
   services -->|"guest"| kv[("AsyncStorage /<br/>localStorage")]
   catalogApi --> adapters
   catalogApi --> universeApi
@@ -107,7 +117,8 @@ flowchart LR
 - **`apps/api`** is a NestJS API (in production it also serves the web app from the same origin). It owns the accounts (Better Auth, users stored in our PostgreSQL), caches catalog results in a shared `catalog_item` table, and stores each user's collection. A global guard protects every route unless it's marked public.
 - **`apps/mobile`** is the Expo app. Screens get their dependencies (`BookCatalog`, `CollectionRepository`, `AccountService`) from a context provider: signed in, the collection is the API-backed repository; signed out, it's the on-device one. Tests swap in fakes.
 - **The universe layer:** a hand-checked seed of universes and characters lives in `packages/core`. A pure function, `matchUniverses`, links each catalog item from the clues its source gives (title, characters, places, LEGO theme, minifigs), with guards against look-alikes (Reagan's "Star Wars" program isn't Star Wars; Norse mythology's Thor isn't Marvel's). The API stores the links per catalog item and re-matches everything on startup when the seed changes; a user's fixes are stored as differences on their own copy, so they survive re-matching.
-- **The AI layer:** two jobs, both behind one provider-neutral client (the OpenAI chat format that Groq, Gemini and Mistral all speak; the provider is a setting). _Shelf scans:_ the app cuts a one-shelf photo into two halves; the model lists what it reads, one line per item; core parses that, and every reading is searched in the catalog and ranked, so what you're offered is always a real catalog entry, and nothing is added until you tick it. _Ask:_ the model turns your question into a `CollectionQuery` (universes, characters, categories, dates, list or count) through a strict JSON schema; core runs it on your items and writes the answer, so answers are exact and the model never sees your collection. Without the AI, keyword matching answers. Both are measured against real data: the owner's bookcase for shelf reading, recorded model replies for questions.
+- **The AI layer:** two jobs, both behind one provider-neutral client (the OpenAI chat format that Groq, Gemini and Mistral all speak; the provider is a setting). _Shelf scans:_ the app cuts a one-shelf photo into two halves; the model lists what it reads, one line per item; core parses that, and every reading is searched in the catalog and ranked, so what you're offered is always a real catalog entry, and nothing is added until you tick it. _Ask:_ the model turns your question into a `CollectionQuery` (your items or your pre-orders; universes, characters, categories, dates, arriving when, still owed, delayed; list or count) through a strict JSON schema; core runs it on your items or pre-orders and writes the answer, so answers are exact and the model never sees your collection. Without the AI, keyword matching answers. Both are measured against real data: the owner's bookcase for shelf reading, recorded model replies for questions.
+- **Pre-orders:** the rules live in core as pure functions with "today" passed in (what needs attention, the Upcoming groups, delays), so the API, the app and Ask agree. Money is integer minor units with a currency, never floats; release dates are a day plus a precision (day, month, quarter, year), compared by the end of their period. Every change of the expected date is a row in a history table, which is where "delayed twice, originally March" comes from.
 - **Catalog entries vs. owned copies:** a catalog entry is what a catalog says exists; a `CollectionItem` is the user's copy, with a snapshot of the catalog data so the collection still renders if the source changes or is offline.
 
 ### Notable decisions
@@ -126,7 +137,7 @@ Full decision log: [`CLAUDE.md`](CLAUDE.md).
 
 ## Privacy and AI
 
-- **Questions ("Ask your collection")** go to [Groq](https://groq.com): only the question, today's date and the names of the universes Fandex knows. **Your collection is never sent**; the answer is computed by Fandex from your own items. Groq's terms don't allow it to train on what it receives. It may keep request logs for up to 30 days for abuse checks, unless Zero Data Retention is turned on in the Groq console.
+- **Questions ("Ask your collection")** go to [Groq](https://groq.com): only the question, today's date and the names of the universes Fandex knows. **Your collection and your pre-orders are never sent**; the answer is computed by Fandex from your own data. Groq's terms don't allow it to train on what it receives. It may keep request logs for up to 30 days for abuse checks, unless Zero Data Retention is turned on in the Groq console.
 - **Shelf photos** are cut into two halves and resized on your phone, sent once, and **never stored** by Fandex. While Fandex has a single user (its developer), they go to **Gemini's free tier**, which may use them to improve Google's products — the scan screen says so before you pick a photo. If Gemini is busy or doesn't answer, Groq reads the photo instead (the note says that too). Before others use Fandex this moves to paid Gemini (no training on inputs) or back to Groq; it's one setting (`AI_PROVIDER`).
 - **Only signed-in users** can use the AI, and **keys stay on the server**. Guests, and anyone offline, get keyword answers computed on their device, with nothing sent anywhere.
 - **What's stored:** how many AI requests you made each day (for the allowance), nothing about their content. It's deleted with your account.
@@ -206,11 +217,11 @@ npm run lint
 npm run format:check
 ```
 
-767 tests run in CI on every push:
+838 tests run in CI on every push:
 
-- **`packages/core` (351, Jest + ts-jest):** ISBN validation against reference values, parsing real (sometimes looping) AI replies about shelf photos, comparing two real readings of one shelf to separate real titles from invented ones, pre-order rules with a pinned "today" (money in exact minor units, release dates by day, month or quarter, what needs attention, delays — mutation-checked), answering questions about a sample collection (the roadmap's questions through recorded real model replies and the keyword fallback, users' own fixes respected — mutation-checked), matching what the AI read to recorded real Open Library and Rebrickable results (misreadings, invented set numbers, Marvel's Civil War among history books — rules mutation-checked), universe and character matching against recorded real data (including look-alikes such as a book about the "Star Wars" missile defense program and Norse mythology's Thor), book/manga/comic classification against real Open Library subject data, the Open Library and Rebrickable adapters against **recorded real API responses** plus edge cases, and the repository (concurrent writes, corrupt data, restarts) over an in-memory store.
-- **`apps/api` (181, Vitest + Supertest):** config validation, caching and rate limiting, the AI client (rate limits, errors, timeouts), the AI provider setting (Groq or Gemini: endpoint, key, readings per scan, Groq taking over a scan when Gemini fails), questions about your collection (answered only from your own items, the collection never sent to the model, keyword fallback when the AI is unavailable or over the allowance and not counted — mutation-checked), shelf-photo scanning with a fake model (each photo read twice on Groq, what only one reading found marked less sure, uploads, catalog candidates marked when owned, daily allowances per user and for everyone, isolation between users, provider failures not counted — mutation-checked), simultaneous searches saving the same books (a deadlock found by a real scan), plus end-to-end tests against the real Nest app and a real PostgreSQL test database (created and migrated automatically), including sign-up/sign-in, native-app sessions, CORS, account deletion, password hashing, CSRF protection, the catalog API (validation, database caching, upstream failures) with a fake Open Library, the collection API, including isolation between users (mutation-checked), storing and backfilling universe-matching signals (resumable after failures, without erasing LEGO minifigs), and the universe API (seed sync that keeps ids and drops stale universes, links on every catalog response, your collection by universe with user isolation mutation-checked), per-item fixes (category and links, validated, isolated per user, surviving re-matching), pre-orders (scoped per user, every change of the expected date kept, paid never above the price, "arrived" moving the item into the collection once — mutation-checked), and figures added by hand (private to their owner — mutation-checked — linked to universes from the name, deleted with the copy or the account).
-- **`apps/mobile` (235, jest-expo + React Native Testing Library):** screens rendered with a fake catalog, a fake account service and the real repository over an in-memory store: search states, ISBN lookup, adding and removing, navigation, sorting, accounts (sign-in, sign-up, sign-out, delete account), cloud sync (account vs device collection, moving device books into an account), LEGO search and detail, category filters, the Universes tab, universe and character pages (guest and account), universe links on items and search results, fixing an item's category, universes and characters (guest and account), "you own another edition" hints, the barcode scanner with a mocked camera (one book, or book after book with repeat reads ignored and failed lookups retried), asking about your collection (AI answers from a fake server, keyword answers on the device for guests and offline, waiting for the account before answering), pre-orders (form with exact amounts and a date picker for days, months and quarters, full edits that clear emptied fields, arriving into the collection, a figure saved only with its pre-order, the Upcoming tab's groups, owed total and badge count), adding a figure by hand (on the device for guests, on the server when signed in, moved into an account on sign-in), and shelf scanning with a mocked photo picker (cutting the photo into halves, uploading them as files, review with less sure items unticked, fixes, adding what's ticked, allowance and busy errors).
+- **`packages/core` (403, Jest + ts-jest):** ISBN validation against reference values, reading Open Library's free-text publish dates ("Nov 10th 2026", "28.06.2027", "2027") as release dates, questions about pre-orders (what arrives when, what's still owed per currency, what was delayed — rules mutation-checked), parsing real (sometimes looping) AI replies about shelf photos, comparing two real readings of one shelf to separate real titles from invented ones, pre-order rules with a pinned "today" (money in exact minor units, release dates by day, month or quarter, what needs attention, delays — mutation-checked), answering questions about a sample collection (the roadmap's questions through recorded real model replies and the keyword fallback, users' own fixes respected — mutation-checked), matching what the AI read to recorded real Open Library and Rebrickable results (misreadings, invented set numbers, Marvel's Civil War among history books — rules mutation-checked), universe and character matching against recorded real data (including look-alikes such as a book about the "Star Wars" missile defense program and Norse mythology's Thor), book/manga/comic classification against real Open Library subject data, the Open Library and Rebrickable adapters against **recorded real API responses** plus edge cases, and the repository (concurrent writes, corrupt data, restarts) over an in-memory store.
+- **`apps/api` (189, Vitest + Supertest):** config validation, caching and rate limiting, the AI client (rate limits, errors, timeouts), the AI provider setting (Groq or Gemini: endpoint, key, readings per scan, Groq taking over a scan when Gemini fails), questions about your collection (answered only from your own items, the collection never sent to the model, keyword fallback when the AI is unavailable or over the allowance and not counted — mutation-checked), shelf-photo scanning with a fake model (each photo read twice on Groq, what only one reading found marked less sure, uploads, catalog candidates marked when owned, daily allowances per user and for everyone, isolation between users, provider failures not counted — mutation-checked), simultaneous searches saving the same books (a deadlock found by a real scan), plus end-to-end tests against the real Nest app and a real PostgreSQL test database (created and migrated automatically), including sign-up/sign-in, native-app sessions, CORS, account deletion, password hashing, CSRF protection, the catalog API (validation, database caching, upstream failures) with a fake Open Library, the collection API, including isolation between users (mutation-checked), storing and backfilling universe-matching signals (resumable after failures, without erasing LEGO minifigs), and the universe API (seed sync that keeps ids and drops stale universes, links on every catalog response, your collection by universe with user isolation mutation-checked), per-item fixes (category and links, validated, isolated per user, surviving re-matching), pre-orders (scoped per user, every change of the expected date kept, paid never above the price, "arrived" moving the item into the collection once — mutation-checked), book release dates followed daily from Open Library (only while the pre-order follows its date, never to a vaguer date, a move recorded once even when listed at the same moment — mutation-checked), questions about pre-orders (answered only from your own — mutation-checked), and figures added by hand (private to their owner — mutation-checked — linked to universes from the name, deleted with the copy or the account).
+- **`apps/mobile` (246, jest-expo + React Native Testing Library):** screens rendered with a fake catalog, a fake account service and the real repository over an in-memory store: search states, ISBN lookup, adding and removing, navigation, sorting, accounts (sign-in, sign-up, sign-out, delete account), cloud sync (account vs device collection, moving device books into an account), LEGO search and detail, category filters, the Universes tab, universe and character pages (guest and account), universe links on items and search results, fixing an item's category, universes and characters (guest and account), "you own another edition" hints, the barcode scanner with a mocked camera (one book, or book after book with repeat reads ignored and failed lookups retried), asking about your collection (AI answers from a fake server, keyword answers on the device for guests and offline, waiting for the account before answering), pre-orders (form with exact amounts and a date picker for days, months and quarters, full edits that clear emptied fields, arriving into the collection, a figure saved only with its pre-order, the Upcoming tab's groups, owed total and badge count, Open Library's date offered for an upcoming book, "couldn't load" with a retry instead of "not found", the server's reason when an action is refused), questions about pre-orders (guests told they need an account), adding a figure by hand (on the device for guests, on the server when signed in, moved into an account on sign-in), and shelf scanning with a mocked photo picker (cutting the photo into halves, uploading them as files, review with less sure items unticked, fixes, adding what's ticked, allowance and busy errors).
 
 Tests never call the network.
 
@@ -223,7 +234,7 @@ AI quality is measured separately, because a model's answers aren't pass/fail: `
 | Gemini `gemini-3.5-flash`             | **94%**     | **94%**                 |
 | Mistral `ministral-14b` (free)        | 36%         | 50%                     |
 
-Details, including Hebrew spines and built LEGO models: [docs/eval/shelf-recognition.md](docs/eval/shelf-recognition.md). For "Ask", `npx tsx eval/record-ask.ts` records the model's real replies to 12 questions (including an attempt to give it orders), which core's tests then run.
+Details, including Hebrew spines and built LEGO models: [docs/eval/shelf-recognition.md](docs/eval/shelf-recognition.md). For "Ask", `npx tsx eval/record-ask.ts` records the model's real replies to 18 questions (5 about pre-orders, and an attempt to give it orders), which core's tests then run.
 
 ## Concepts for .NET developers
 
@@ -261,7 +272,7 @@ Book data and cover images come from [Open Library](https://openlibrary.org), a 
 | **2. Real backend** ✅   | Accounts, cloud sync phone ↔ web, manga/comics/LEGO catalogs                       |
 | **3. Universe layer** ✅ | Franchise and character pages linking items across categories                      |
 | **4. AI** ✅             | Shelf photo → identified items, rapid barcode scan, questions about the collection |
-| 5. Pre-orders & releases | Pre-orders (custom figures too), payments due, release dates and slips             |
+| **5. Pre-orders** ✅     | Pre-orders (custom figures too), payments due, release dates and slips, Upcoming   |
 | 6. Launch                | TestFlight → App Store, shareable public collection pages                          |
 
 ## License
