@@ -1,0 +1,48 @@
+{
+  "numFound": 1,
+  "start": 0,
+  "numFoundExact": true,
+  "num_found": 1,
+  "documentation_url": "https://openlibrary.org/dev/docs/api/search",
+  "q": "edition_key:OL62647322M",
+  "offset": null,
+  "docs": [
+    {
+      "author_name": ["Olivie Blake"],
+      "cover_i": 15262328,
+      "first_publish_year": 2027,
+      "key": "/works/OL46069097W",
+      "title": "Clara & the Devil, Volume 2",
+      "subject": [
+        "Series:Clara-&-the-Devil",
+        "Graphic Novels",
+        "Fantasy",
+        "Adult",
+        "Comics",
+        "Fiction",
+        "Graphic Novels Comics",
+        "Horror",
+        "LGBT",
+        "LGBTQ+",
+        "Queer",
+        "Romance"
+      ],
+      "editions": {
+        "numFound": 1,
+        "start": 0,
+        "numFoundExact": true,
+        "docs": [
+          {
+            "key": "/books/OL62647322M",
+            "title": "Clara & the Devil, Volume 2",
+            "cover_i": 15262328,
+            "publisher": ["23rd Street Books"],
+            "publish_date": ["2027-03-02"],
+            "publish_year": [2027],
+            "isbn": ["9781250365392", "1250365392"]
+          }
+        ]
+      }
+    }
+  ]
+}

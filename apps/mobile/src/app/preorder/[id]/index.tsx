@@ -127,7 +127,13 @@ function PreorderDetail({ preorder }: { preorder: PreorderResponse }) {
             <Fact
               label="Expected"
               value={
-                preorder.expectedRelease ? formatRelease(preorder.expectedRelease) : 'No date yet'
+                preorder.expectedRelease
+                  ? `${formatRelease(preorder.expectedRelease)}${
+                      preorder.followsCatalogDate && preorder.status === 'ordered'
+                        ? ' (Open Library, checked daily)'
+                        : ''
+                    }`
+                  : 'No date yet'
               }
             />
             {slips ? <Fact label="Changes" value={slips} /> : null}

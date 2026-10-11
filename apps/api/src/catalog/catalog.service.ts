@@ -10,6 +10,7 @@ import {
   type BookCatalog,
   type CatalogBook,
   type CatalogItemResponse,
+  type CatalogRequestOptions,
   type CatalogSearchKind,
   type CatalogSet,
   type Isbn13,
@@ -140,6 +141,26 @@ export class CatalogService {
     });
     const links = await this.linker.link(row.id, readMatchSignals(row));
     return toCatalogItemResponse(row, links);
+  }
+
+  /**
+   * Asks Open Library about a book edition again (by its edition key) and stores what it says
+   * now, e.g. a moved release date. An edition it no longer knows keeps its data. Returns
+   * whether the source answered; failures are the caller's to ignore or report.
+   */
+  async refreshEdition(id: string, options: CatalogRequestOptions = {}): Promise<boolean> {
+    const row = await this.prisma.catalogItem.findUnique({
+      where: { id },
+      select: { source: true, externalId: true },
+    });
+    if (row?.source !== 'openlibrary' || !/^OL\d+M$/.test(row.externalId)) return false;
+    const books = await this.catalog.search(`edition_key:${row.externalId}`, options);
+    const book = books.find((entry) => entry.externalId === row.externalId);
+    if (book) await this.save(book);
+    // Checked all the same, so it isn't asked again on every request.
+    else
+      await this.prisma.catalogItem.updateMany({ where: { id }, data: { fetchedAt: new Date() } });
+    return true;
   }
 
   /** Inserts or refreshes the item for this source record, links it, and returns it with our id. */

@@ -1,4 +1,5 @@
 import {
+  followCatalogDate,
   type CollectionItemResponse,
   type CreatePreorderInput,
   type Currency,
@@ -10,10 +11,13 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 
 import { toCatalogItemResponse } from '../catalog/catalog-item.mapper.js';
+import { CatalogService } from '../catalog/catalog.service.js';
+import { fromDay, releaseOf, sameRelease, toDay } from '../common/days.js';
 import { CollectionService } from '../collection/collection.service.js';
 import type { Prisma } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
@@ -25,16 +29,26 @@ const withDetails = {
 } as const satisfies Prisma.PreorderInclude;
 type PreorderRow = Prisma.PreorderGetPayload<{ include: typeof withDetails }>;
 
-/** YYYY-MM-DD ↔ the DATE column (midnight UTC). */
-const toDay = (value: string) => new Date(`${value}T00:00:00Z`);
-const fromDay = (value: Date) => value.toISOString().slice(0, 10);
+/** Open Library is asked about a pre-ordered book at most this often. */
+const DATE_CHECK_INTERVAL_MS = 24 * 60 * 60 * 1000;
+/** Per listing, at most this many books are checked, within this time (the rest wait). */
+const DATE_CHECKS_PER_LIST = 5;
+const DATE_CHECK_BUDGET_MS = 4000;
 
-function releaseOf(date: Date | null, precision: ReleaseDate['precision'] | null) {
-  return date && precision ? { date: fromDay(date), precision } : null;
+/** Whether a pre-order with this expected release follows its catalog item's date. */
+function followsCatalog(
+  catalogItem: {
+    source: string;
+    publishDate: Date | null;
+    publishPrecision: ReleaseDate['precision'] | null;
+  },
+  release: ReleaseDate | null,
+): boolean {
+  return (
+    catalogItem.source === 'openlibrary' &&
+    sameRelease(release, releaseOf(catalogItem.publishDate, catalogItem.publishPrecision))
+  );
 }
-
-const sameRelease = (a: ReleaseDate | null, b: ReleaseDate | null) =>
-  a?.date === b?.date && a?.precision === b?.precision;
 
 /**
  * Pre-orders: what the user has on order, what it costs and when it's due. Every query is
@@ -44,12 +58,18 @@ const sameRelease = (a: ReleaseDate | null, b: ReleaseDate | null) =>
  */
 @Injectable()
 export class PreordersService {
+  private readonly logger = new Logger(PreordersService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly collection: CollectionService,
+    private readonly catalog: CatalogService,
   ) {}
 
-  async list(userId: string): Promise<PreorderResponse[]> {
+  /** The user's pre-orders, after bringing book release dates up to date with Open Library. */
+  async list(userId: string, now = new Date()): Promise<PreorderResponse[]> {
+    await this.checkCatalogDates(userId, now);
+    await this.followCatalogDates(userId);
     const rows = await this.prisma.preorder.findMany({
       where: { userId },
       include: withDetails,
@@ -66,7 +86,7 @@ export class PreordersService {
     // Like adding to the collection: someone else's custom item is reported as missing.
     const catalogItem = await this.prisma.catalogItem.findUnique({
       where: { id: input.catalogItemId },
-      select: { ownerId: true },
+      select: { ownerId: true, source: true, publishDate: true, publishPrecision: true },
     });
     if (!catalogItem || (catalogItem.ownerId !== null && catalogItem.ownerId !== userId)) {
       throw new NotFoundException('No such catalog item');
@@ -82,6 +102,8 @@ export class PreordersService {
         balanceDueDate: input.balanceDueDate ? toDay(input.balanceDueDate) : null,
         releaseDate: release ? toDay(release.date) : null,
         releasePrecision: release?.precision ?? null,
+        // Started from Open Library's date (or none yet, like Open Library): keep following it.
+        followsCatalogDate: followsCatalog(catalogItem, release),
         store: input.store ?? null,
         orderNumber: input.orderNumber ?? null,
         orderUrl: input.orderUrl ?? null,
@@ -132,6 +154,8 @@ export class PreordersService {
       if (!sameRelease(before, after)) {
         data.releaseDate = after ? toDay(after.date) : null;
         data.releasePrecision = after?.precision ?? null;
+        // The user's own date stops following the catalog, unless it's the catalog's again.
+        data.followsCatalogDate = followsCatalog(row.catalogItem, after);
         data.dateChanges = {
           create: {
             fromDate: before ? toDay(before.date) : null,
@@ -191,6 +215,88 @@ export class PreordersService {
     ]);
   }
 
+  /**
+   * Asks Open Library again about open book pre-orders' editions not checked for a day (a few
+   * per listing, within a time budget, spaced like every other request). Best effort: if it
+   * can't be reached, the dates stay as they are and the next listing tries again.
+   */
+  private async checkCatalogDates(userId: string, now: Date): Promise<void> {
+    const due = await this.prisma.catalogItem.findMany({
+      where: {
+        source: 'openlibrary',
+        fetchedAt: { lt: new Date(now.getTime() - DATE_CHECK_INTERVAL_MS) },
+        preorders: { some: { userId, status: 'ordered', followsCatalogDate: true } },
+      },
+      select: { id: true },
+      orderBy: { fetchedAt: 'asc' },
+      take: DATE_CHECKS_PER_LIST,
+    });
+    if (due.length === 0) return;
+    const signal = AbortSignal.timeout(DATE_CHECK_BUDGET_MS);
+    for (const { id } of due) {
+      if (signal.aborted) return;
+      try {
+        await this.catalog.refreshEdition(id, { signal });
+      } catch (error) {
+        this.logger.warn(`Could not check the release date of ${id}: ${String(error)}`);
+      }
+    }
+  }
+
+  /**
+   * Moves open pre-orders that follow their book's Open Library date to that date, recording
+   * each move (a slip, when later) with Open Library as its source.
+   */
+  private async followCatalogDates(userId: string): Promise<void> {
+    const rows = await this.prisma.preorder.findMany({
+      where: {
+        userId,
+        status: 'ordered',
+        followsCatalogDate: true,
+        catalogItem: { publishDate: { not: null } },
+      },
+      select: {
+        id: true,
+        releaseDate: true,
+        releasePrecision: true,
+        catalogItem: { select: { publishDate: true, publishPrecision: true } },
+      },
+    });
+    for (const row of rows) {
+      const before = releaseOf(row.releaseDate, row.releasePrecision);
+      const after = followCatalogDate(
+        before,
+        releaseOf(row.catalogItem.publishDate, row.catalogItem.publishPrecision),
+      );
+      if (!after) continue;
+      await this.prisma.$transaction(async (tx) => {
+        // Only if nothing changed it meanwhile (another listing, or the user), so a move is
+        // recorded once.
+        const { count } = await tx.preorder.updateMany({
+          where: {
+            id: row.id,
+            status: 'ordered',
+            followsCatalogDate: true,
+            releaseDate: row.releaseDate,
+            releasePrecision: row.releasePrecision,
+          },
+          data: { releaseDate: toDay(after.date), releasePrecision: after.precision },
+        });
+        if (count === 0) return;
+        await tx.preorderDateChange.create({
+          data: {
+            preorderId: row.id,
+            fromDate: row.releaseDate,
+            fromPrecision: row.releasePrecision,
+            toDate: toDay(after.date),
+            toPrecision: after.precision,
+            source: 'openlibrary',
+          },
+        });
+      });
+    }
+  }
+
   private async find(userId: string, id: string): Promise<PreorderRow> {
     const row = await this.prisma.preorder.findFirst({
       where: { id, userId },
@@ -212,6 +318,7 @@ function toPreorderResponse(row: PreorderRow): PreorderResponse {
     paid: row.paid,
     ...(row.balanceDueDate && { balanceDueDate: fromDay(row.balanceDueDate) }),
     ...(release && { expectedRelease: release }),
+    followsCatalogDate: row.followsCatalogDate,
     ...(row.store !== null && { store: row.store }),
     ...(row.orderNumber !== null && { orderNumber: row.orderNumber }),
     ...(row.orderUrl !== null && { orderUrl: row.orderUrl }),

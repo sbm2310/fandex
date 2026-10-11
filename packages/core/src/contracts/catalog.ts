@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { CATEGORIES } from '../category';
 import { parseSetNumber } from '../catalog-set';
 import { parseIsbn } from '../isbn';
+import { releaseDateSchema } from './release-date';
 import { characterRefSchema, slugSchema } from './universe';
 
 /** A catalog entry as the API returns it: cached in our database, with our own id. */
@@ -16,6 +17,8 @@ export const catalogItemSchema = z.object({
   subtitle: z.string().optional(),
   creators: z.array(z.string()),
   year: z.number().int().optional(),
+  /** Books: the edition's publication date as precise as Open Library knows it (upcoming too). */
+  publishDate: releaseDateSchema.optional(),
   publisher: z.string().optional(),
   isbn13: z.string().length(13).optional(),
   /** Open Library work id ("OL27482W"): the same book in every edition. */

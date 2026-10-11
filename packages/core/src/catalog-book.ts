@@ -1,5 +1,6 @@
 import type { BookCategory } from './category';
 import type { Isbn13 } from './isbn';
+import type { ReleaseDate } from './preorders/release-date';
 import type { MatchSignals } from './universes/match-signals';
 import type { CharacterRef } from './universes/match-universes';
 
@@ -28,6 +29,11 @@ export type CatalogBook = {
   subtitle?: string;
   authors: string[];
   publishedYear?: number;
+  /**
+   * The edition's publication date, as precise as the source knows it. For an upcoming
+   * edition it's the expected release, which a pre-order can start from.
+   */
+  publishDate?: ReleaseDate;
   publisher?: string;
   isbn13?: Isbn13;
   coverUrl?: string;

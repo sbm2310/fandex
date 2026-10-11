@@ -1,4 +1,5 @@
 import {
+  CatalogError,
   collectionResponseSchema,
   describeSlips,
   preorderSchema,
@@ -218,5 +219,164 @@ describe('Pre-orders (e2e)', () => {
     expect(await prisma.preorder.count()).toBe(0);
     expect(await prisma.preorderDateChange.count()).toBe(0);
     expect(await prisma.catalogItem.count({ where: { source: 'custom' } })).toBe(0);
+  });
+
+  describe('book release dates from Open Library', () => {
+    const DAY = 24 * 60 * 60 * 1000;
+    const march2 = { date: '2027-03-02', precision: 'day' } as const;
+    // An upcoming edition, as Open Library lists it (recorded: "Clara & the Devil, Volume 2").
+    let upcoming: CatalogBook;
+    let upcomingId: string;
+
+    beforeEach(async () => {
+      upcoming = {
+        source: 'openlibrary',
+        externalId: 'OL62647322M',
+        category: 'book',
+        title: 'Clara & the Devil, Volume 2',
+        authors: ['Laura Sebastian'],
+        publishDate: march2,
+        matchSignals: { title: 'Clara & the Devil, Volume 2' },
+      } as CatalogBook;
+      fakeBooks.search.mockImplementation(async (query) =>
+        query.includes('clara') || query === `edition_key:${upcoming.externalId}`
+          ? [upcoming]
+          : [windAndTruth],
+      );
+      const { body } = await request(app.getHttpServer())
+        .get('/api/catalog/search')
+        .query({ q: 'clara and the devil' })
+        .expect(200);
+      upcomingId = body.items[0].id;
+      expect(body.items[0].publishDate).toEqual(march2);
+      fakeBooks.search.mockClear();
+    });
+
+    /** Open Library was last asked about the book two days ago, and now says `publishDate`. */
+    async function openLibraryNowSays(publishDate: CatalogBook['publishDate']) {
+      upcoming = { ...upcoming, ...(publishDate ? { publishDate } : { publishDate: undefined }) };
+      await prisma.catalogItem.update({
+        where: { id: upcomingId },
+        data: { fetchedAt: new Date(Date.now() - 2 * DAY) },
+      });
+    }
+
+    const list = async (agent: Agent) =>
+      preordersResponseSchema.parse((await agent.get('/api/preorders').expect(200)).body).preorders;
+
+    it("follows Open Library's date when the pre-order started from it", async () => {
+      const agent = await signUp();
+      const { id, followsCatalogDate } = await create(agent, {
+        catalogItemId: upcomingId,
+        expectedRelease: march2,
+      });
+      expect(followsCatalogDate).toBe(true);
+
+      await openLibraryNowSays({ date: '2027-05-18', precision: 'day' });
+      const [moved] = await list(agent);
+
+      expect(fakeBooks.search).toHaveBeenCalledExactlyOnceWith(
+        'edition_key:OL62647322M',
+        expect.anything(),
+      );
+      expect(moved).toMatchObject({ id, expectedRelease: { date: '2027-05-18' } });
+      expect(moved!.history.map((change) => [change.to?.date, change.source])).toEqual([
+        ['2027-03-02', 'user'],
+        ['2027-05-18', 'openlibrary'],
+      ]);
+      expect(describeSlips(moved!.history)).toBe('Delayed once, originally March 2, 2027');
+
+      // Checked today already: the next listing doesn't ask again or record anything twice.
+      const [again] = await list(agent);
+      expect(fakeBooks.search).toHaveBeenCalledOnce();
+      expect(again!.history).toHaveLength(2);
+    });
+
+    it('fills in a date Open Library learns later', async () => {
+      const agent = await signUp();
+      await openLibraryNowSays(undefined);
+      await request(app.getHttpServer()).get('/api/catalog/search').query({ q: 'clara' });
+      const { followsCatalogDate } = await create(agent, { catalogItemId: upcomingId });
+      expect(followsCatalogDate).toBe(true);
+
+      await openLibraryNowSays(march2);
+      const [filled] = await list(agent);
+
+      expect(filled!.expectedRelease).toEqual(march2);
+      expect(filled!.history).toMatchObject([{ from: null, to: march2, source: 'openlibrary' }]);
+    });
+
+    it("leaves the user's own date alone", async () => {
+      const agent = await signUp();
+      const own = await create(agent, {
+        catalogItemId: upcomingId,
+        expectedRelease: { date: '2027-04-01', precision: 'month' },
+      });
+      const changed = await create(agent, { catalogItemId: upcomingId, expectedRelease: march2 });
+      // Changing it by hand stops following Open Library…
+      const patched = await patch(agent, changed.id, {
+        expectedRelease: { date: '2027-07-01', precision: 'month' },
+      });
+      expect([own.followsCatalogDate, patched.followsCatalogDate]).toEqual([false, false]);
+
+      await openLibraryNowSays({ date: '2027-05-18', precision: 'day' });
+      const preorders = await list(agent);
+
+      // …so nothing is asked or moved.
+      expect(fakeBooks.search).not.toHaveBeenCalled();
+      expect(preorders.map((p) => p.expectedRelease?.date).sort()).toEqual([
+        '2027-04-01',
+        '2027-07-01',
+      ]);
+    });
+
+    it('moves only open pre-orders, and never to a vaguer date', async () => {
+      const agent = await signUp();
+      const cancelled = await create(agent, { catalogItemId: upcomingId, expectedRelease: march2 });
+      await patch(agent, cancelled.id, { status: 'cancelled' });
+      const open = await create(agent, { catalogItemId: upcomingId, expectedRelease: march2 });
+
+      await openLibraryNowSays({ date: '2027-01-01', precision: 'year' });
+      expect((await list(agent)).every((p) => p.expectedRelease?.date === march2.date)).toBe(true);
+
+      await openLibraryNowSays({ date: '2027-06-01', precision: 'month' });
+      const preorders = await list(agent);
+      expect(preorders.find((p) => p.id === open.id)?.expectedRelease).toEqual({
+        date: '2027-06-01',
+        precision: 'month',
+      });
+      expect(preorders.find((p) => p.id === cancelled.id)?.expectedRelease).toEqual(march2);
+    });
+
+    it('still lists pre-orders when Open Library is down, and tries again next time', async () => {
+      const agent = await signUp();
+      await create(agent, { catalogItemId: upcomingId, expectedRelease: march2 });
+      await openLibraryNowSays({ date: '2027-05-18', precision: 'day' });
+      fakeBooks.search.mockRejectedValueOnce(
+        new CatalogError('openlibrary', 'network', 'Could not reach Open Library'),
+      );
+
+      expect((await list(agent))[0]!.expectedRelease).toEqual(march2);
+      expect((await list(agent))[0]!.expectedRelease?.date).toBe('2027-05-18');
+      expect(fakeBooks.search).toHaveBeenCalledTimes(2);
+    });
+
+    it('records a move once when pre-orders are listed at the same time', async () => {
+      const agent = await signUp();
+      await create(agent, { catalogItemId: upcomingId, expectedRelease: march2 });
+      await openLibraryNowSays({ date: '2027-05-18', precision: 'day' });
+      // Open Library answers all three only once each has asked, so they act at the same time.
+      let release!: () => void;
+      const allAsked = new Promise<void>((resolve) => (release = resolve));
+      fakeBooks.search.mockImplementation(async () => {
+        if (fakeBooks.search.mock.calls.length === 3) release();
+        await allAsked;
+        return [upcoming];
+      });
+
+      await Promise.all([list(agent), list(agent), list(agent)]);
+
+      expect(await prisma.preorderDateChange.count({ where: { source: 'openlibrary' } })).toBe(1);
+    });
   });
 });

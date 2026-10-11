@@ -1,4 +1,4 @@
-import type { NewFigure } from '@fandex/core';
+import { releaseDateSchema, type NewFigure, type ReleaseDate } from '@fandex/core';
 import { router, useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
 
@@ -18,6 +18,9 @@ type Params = {
   /** …or a figure described on the Add tab, saved only when the pre-order is. */
   figure?: string;
   title?: string;
+  /** A book's release date from Open Library (YYYY-MM-DD and its precision), offered as is. */
+  release?: string;
+  releasePrecision?: string;
   brand?: string;
   line?: string;
   scale?: string;
@@ -30,6 +33,7 @@ export default function NewPreorderScreen() {
   const { data: user, isPending } = useCurrentUser();
   const create = useCreatePreorder();
   const title = params.title ?? 'this item';
+  const suggestedRelease = catalogRelease(params);
 
   if (isPending) {
     return (
@@ -87,6 +91,7 @@ export default function NewPreorderScreen() {
           </View>
           <PreorderForm
             submitLabel="Save pre-order"
+            {...(suggestedRelease && { suggestedRelease })}
             busy={create.isPending}
             error={create.isError ? preorderErrorMessage(create.error) : undefined}
             onSubmit={(fields) =>
@@ -105,6 +110,12 @@ export default function NewPreorderScreen() {
       </ScrollView>
     </ThemedView>
   );
+}
+
+/** The release date in the URL, if it's a valid one. */
+function catalogRelease({ release, releasePrecision }: Params): ReleaseDate | undefined {
+  const parsed = releaseDateSchema.safeParse({ date: release, precision: releasePrecision });
+  return parsed.success ? parsed.data : undefined;
 }
 
 const styles = StyleSheet.create({

@@ -198,6 +198,11 @@ export function createFakePreorders(catalog: Record<string, CatalogItemResponse>
         id: `0199b5a0-0000-7000-9000-${String(next).padStart(12, '0')}`,
         status: 'ordered',
         catalog: item(catalogItemId),
+        // Like the API: a book's pre-order started from Open Library's date keeps following it.
+        followsCatalogDate:
+          item(catalogItemId).source === 'openlibrary' &&
+          item(catalogItemId).publishDate?.date === parsed.expectedRelease?.date &&
+          item(catalogItemId).publishDate?.precision === parsed.expectedRelease?.precision,
         history: parsed.expectedRelease
           ? [{ from: null, to: parsed.expectedRelease, changedAt: now(), source: 'user' }]
           : [],

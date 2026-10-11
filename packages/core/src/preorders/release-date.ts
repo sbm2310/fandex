@@ -99,3 +99,23 @@ export function addDays(day: string, days: number): string {
   const [year, month, date] = parts(day);
   return iso(year, month, date + days);
 }
+
+/**
+ * Where a pre-order that follows its catalog's date (Open Library's, for books) should move,
+ * or null to stay put: the catalog's date when it differs, unless it only says less about the
+ * same time ("2027" or "March 2027" after "March 2, 2027"). A vaguer date for another time
+ * ("June 2027") is still a move.
+ */
+export function followCatalogDate(
+  current: ReleaseDate | null,
+  catalog: ReleaseDate | null,
+): ReleaseDate | null {
+  if (!catalog) return null;
+  if (!current) return catalog;
+  if (current.date === catalog.date && current.precision === catalog.precision) return null;
+  const vaguer =
+    RELEASE_PRECISIONS.indexOf(catalog.precision) > RELEASE_PRECISIONS.indexOf(current.precision);
+  const covers =
+    catalog.date <= current.date && releasePeriodEnd(current) <= releasePeriodEnd(catalog);
+  return vaguer && covers ? null : catalog;
+}

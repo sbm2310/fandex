@@ -3,6 +3,7 @@ import { formatTitle, type CatalogBook } from '../catalog-book';
 import { classifyBookCategory } from '../classify-book-category';
 import { parseIsbn, type Isbn13 } from '../isbn';
 import { CatalogError } from './catalog-error';
+import { parseOpenLibraryDate } from './open-library-date';
 
 /**
  * Open Library (https://openlibrary.org/developers/api) — free, keyless and CORS-enabled.
@@ -50,6 +51,7 @@ const FIELDS = [
   'editions.isbn',
   'editions.publisher',
   'editions.publish_year',
+  'editions.publish_date',
   'editions.cover_i',
 ].join(',');
 
@@ -76,6 +78,8 @@ type EditionDoc = {
   isbn?: string[];
   publisher?: string[];
   publish_year?: number[];
+  /** Free text: "2026-12-08", "Nov 10th 2026", "2027"… (see parseOpenLibraryDate). */
+  publish_date?: string[];
   cover_i?: number;
 };
 
@@ -183,6 +187,10 @@ export class OpenLibraryCatalog implements BookCatalog {
 
     const year = edition?.publish_year?.[0] ?? work.first_publish_year;
     if (year) book.publishedYear = year;
+
+    // Publisher feeds list upcoming editions with their release day, which pre-orders use.
+    const publishDate = parseOpenLibraryDate(edition?.publish_date?.[0]);
+    if (publishDate) book.publishDate = publishDate;
 
     const publisher = cleanText(edition?.publisher?.[0]);
     if (publisher) book.publisher = publisher;

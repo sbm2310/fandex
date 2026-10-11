@@ -26,6 +26,8 @@ export type PreorderFields = Omit<CreatePreorderRequest, 'catalogItemId'>;
 type Props = {
   /** The pre-order being edited; empty for a new one. */
   initial?: PreorderResponse;
+  /** For a new pre-order of an upcoming book: Open Library's release date, filled in. */
+  suggestedRelease?: ReleaseDate;
   submitLabel: string;
   busy: boolean;
   /** Shown above the button when saving failed. */
@@ -37,7 +39,14 @@ type Props = {
  * A pre-order's price and payments, dates and store. Amounts are typed as text and parsed
  * exactly by core (never floats); empty optional fields are sent as "none".
  */
-export function PreorderForm({ initial, submitLabel, busy, error, onSubmit }: Props) {
+export function PreorderForm({
+  initial,
+  suggestedRelease,
+  submitLabel,
+  busy,
+  error,
+  onSubmit,
+}: Props) {
   const colors = useTheme();
   const [currency, setCurrency] = useState<Currency>(initial?.currency ?? 'USD');
   const [price, setPrice] = useState(
@@ -49,7 +58,13 @@ export function PreorderForm({ initial, submitLabel, busy, error, onSubmit }: Pr
   const [dueDate, setDueDate] = useState<ReleaseDate | null>(
     initial?.balanceDueDate ? { date: initial.balanceDueDate, precision: 'day' } : null,
   );
-  const [release, setRelease] = useState<ReleaseDate | null>(initial?.expectedRelease ?? null);
+  const [release, setRelease] = useState<ReleaseDate | null>(
+    initial?.expectedRelease ?? suggestedRelease ?? null,
+  );
+  const fromOpenLibrary =
+    suggestedRelease !== undefined &&
+    release?.date === suggestedRelease.date &&
+    release.precision === suggestedRelease.precision;
   const [store, setStore] = useState(initial?.store ?? '');
   const [orderNumber, setOrderNumber] = useState(initial?.orderNumber ?? '');
   const [orderUrl, setOrderUrl] = useState(initial?.orderUrl ?? '');
@@ -143,6 +158,11 @@ export function PreorderForm({ initial, submitLabel, busy, error, onSubmit }: Pr
         precisions={['day', 'month', 'quarter', 'year']}
         startFrom={localToday()}
       />
+      {fromOpenLibrary ? (
+        <ThemedText type="small" themeColor="textSecondary">
+          From Open Library. Fandex checks it daily and moves the date if it changes.
+        </ThemedText>
+      ) : null}
       <FormField
         label="Store (optional)"
         value={store}

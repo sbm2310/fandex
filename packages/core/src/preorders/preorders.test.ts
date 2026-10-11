@@ -14,6 +14,7 @@ import {
   addDays,
   compareReleases,
   daysBetween,
+  followCatalogDate,
   formatRelease,
   releaseDate,
   releasePeriodEnd,
@@ -91,6 +92,42 @@ describe('release dates', () => {
     expect(compareReleases(march, q1)).toBeLessThan(0);
     expect(daysBetween('2026-10-11', '2026-10-18')).toBe(7);
     expect(addDays('2026-12-30', 3)).toBe('2027-01-02');
+  });
+});
+
+describe('followCatalogDate', () => {
+  const march2 = releaseDate('2027-03-02', 'day');
+  const march = releaseDate('2027-03-01', 'month');
+
+  it("takes the catalog's date when none is set", () => {
+    expect(followCatalogDate(null, march2)).toEqual(march2);
+  });
+
+  it('moves to a different date, earlier or later', () => {
+    const june = releaseDate('2027-06-15', 'day');
+    expect(followCatalogDate(march2, june)).toEqual(june);
+    expect(followCatalogDate(june, march2)).toEqual(march2);
+  });
+
+  it('becomes more precise', () => {
+    expect(followCatalogDate(march, march2)).toEqual(march2);
+  });
+
+  it('moves to a vaguer date for another time', () => {
+    const june = releaseDate('2027-06-01', 'month');
+    expect(followCatalogDate(march2, june)).toEqual(june);
+    expect(followCatalogDate(march, releaseDate('2028-01-01', 'year'))).toEqual(
+      releaseDate('2028-01-01', 'year'),
+    );
+  });
+
+  it('stays when the catalog has the same date, none, or a vaguer one for the same time', () => {
+    expect(followCatalogDate(march2, releaseDate('2027-03-02', 'day'))).toBeNull();
+    expect(followCatalogDate(march2, null)).toBeNull();
+    expect(followCatalogDate(null, null)).toBeNull();
+    expect(followCatalogDate(march2, march)).toBeNull();
+    expect(followCatalogDate(march2, releaseDate('2027-01-01', 'year'))).toBeNull();
+    expect(followCatalogDate(march2, releaseDate('2027-01-01', 'quarter'))).toBeNull();
   });
 });
 

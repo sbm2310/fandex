@@ -8,6 +8,7 @@ import {
   type NewFigure,
 } from '@fandex/core';
 
+import { releaseOf, toDay } from '../common/days.js';
 import type { CatalogItem, Prisma } from '../generated/prisma/client.js';
 import type { ItemLinks } from '../universes/item-links.js';
 
@@ -43,6 +44,8 @@ function fromBook(book: CatalogBook): Prisma.CatalogItemCreateInput {
     subtitle: book.subtitle ?? null,
     creators: book.authors,
     year: book.publishedYear ?? null,
+    publishDate: book.publishDate ? toDay(book.publishDate.date) : null,
+    publishPrecision: book.publishDate?.precision ?? null,
     publisher: book.publisher ?? null,
     isbn13: book.isbn13 ?? null,
     coverUrl: book.coverUrl ?? null,
@@ -104,6 +107,7 @@ export function needsSignals(row: Pick<CatalogItem, 'category' | 'matchSignals'>
 
 /** A stored row as the API returns it, with its links (null columns become absent fields). */
 export function toCatalogItemResponse(row: CatalogItem, links: ItemLinks): CatalogItemResponse {
+  const publishDate = releaseOf(row.publishDate, row.publishPrecision);
   return {
     id: row.id,
     category: row.category,
@@ -113,6 +117,7 @@ export function toCatalogItemResponse(row: CatalogItem, links: ItemLinks): Catal
     ...(row.subtitle !== null && { subtitle: row.subtitle }),
     creators: row.creators,
     ...(row.year !== null && { year: row.year }),
+    ...(publishDate && { publishDate }),
     ...(row.publisher !== null && { publisher: row.publisher }),
     ...(row.isbn13 !== null && { isbn13: row.isbn13 }),
     ...(row.workKey !== null && { workKey: row.workKey }),

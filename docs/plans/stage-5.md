@@ -49,7 +49,9 @@ App                                         API (NestJS)                        
 
 **5. Upcoming tab.** ✅ A fifth tab: needs attention (balance due soon or overdue, arriving this week), arriving this month, later, date unknown, with totals still owed; a badge with the attention count. Check the web tab bar at phone width (five tabs). _Demo:_ the tab with its badge.
 
-**6. Book release dates from Open Library.** Spike first: how often Open Library has future publish dates for upcoming editions (check a few real pre-orders). Then: offer Open Library's date when creating a book pre-order, re-check pre-ordered books when pre-orders are listed (at most daily per book, same spacing and cache), record a changed date as a slip with its source. Recorded fixtures. _Demo:_ a book pre-order with its date filled in.
+**6. Book release dates from Open Library.** ✅ Spike first: how often Open Library has future publish dates for upcoming editions (check a few real pre-orders). Then: offer Open Library's date when creating a book pre-order, re-check pre-ordered books when pre-orders are listed (at most daily per book, same spacing and cache), record a changed date as a slip with its source. Recorded fixtures. _Demo:_ a book pre-order with its date filled in.
+
+_Spike (2026-10-11):_ Open Library does list upcoming editions, imported from publisher feeds, usually 1–5 months ahead and mostly to the day: VIZ manga (One Piece 113 "Nov 10th 2026", Chainsaw Man 22, Frieren 15, Kingdom), Macmillan/Tor and Hachette novels (2027 dates), some DC/Marvel trades for the current season. Thin beyond that: nothing found for Star Wars, Tolkien or Marvel in 2027, and some upcoming books carry only a year ("2027"). Only ~76 works had a 2027 date at all. `publish_date` is free text in a dozen shapes ("2026-12-08", "Feb 2nd 2027", "March 16, 2027", "28.06.2027", "01/12/2027", "Mayo, 2026"), so core parses it to a release date as precise as it allows. Worth doing for manga and big-publisher books; figures and most comics still rely on the owner's date. The upcoming entries checked were found by searching for future dates, not real pre-orders, so real coverage of the owner's pre-orders is still to be seen.
 
 **7. Ask about pre-orders.** `CollectionQuery` gains `scope: collection | preorders` and pre-order filters (arriving after/before, balance due, delayed); `runPreorderQuery` and answers ("2 pre-orders arrive this month: …", "You still owe $280 on 1 pre-order"); prompt, schema and keyword fallback updated; real replies re-recorded. _Demo:_ ask the demo's questions on the iPhone.
 
@@ -57,6 +59,6 @@ App                                         API (NestJS)                        
 
 ## Risks
 
-- **Open Library rarely knows future dates** — then book pre-orders rely on what you enter, like figures; Task 6 starts with a spike to find out.
+- **Open Library rarely knows future dates** — then book pre-orders rely on what you enter, like figures. Task 6's spike: it knows many upcoming manga and big-publisher books, to the day, but little else.
 - **Five tabs** — the web tab bar already needed tightening at phone width with four.
 - **No reminders outside the app** — by choice; the Upcoming badge is the reminder. Revisit with the Apple account (push) in Stage 6.

@@ -1,0 +1,49 @@
+{
+  "numFound": 1,
+  "start": 0,
+  "numFoundExact": true,
+  "num_found": 1,
+  "documentation_url": "https://openlibrary.org/dev/docs/api/search",
+  "q": "isbn:9781974766703",
+  "offset": null,
+  "docs": [
+    {
+      "author_name": ["\u5c3e\u7530\u6804\u4e00\u90ce"],
+      "cover_i": 15136769,
+      "first_publish_year": 2025,
+      "key": "/works/OL44054261W",
+      "subtitle": "\u30ed\u30ad\u8a95\u751f",
+      "title": "ONE PIECE 113",
+      "subject": [
+        "franchise:ONE PIECE",
+        "series:ONE PIECE",
+        "form:manga",
+        "form:manga volume",
+        "form:graphic novel",
+        "genre:adventure",
+        "genre:comedy drama",
+        "genre:science fantasy",
+        "intended public:sh\u014dnen",
+        "universe:ONE PIECE",
+        "pirate",
+        "collectionID:OPmga"
+      ],
+      "editions": {
+        "numFound": 1,
+        "start": 0,
+        "numFoundExact": true,
+        "docs": [
+          {
+            "key": "/books/OL61590608M",
+            "title": "ONE PIECE 113",
+            "subtitle": "The Birth of Loki",
+            "publisher": ["VIZ Media"],
+            "publish_date": ["Nov 10th 2026"],
+            "publish_year": [2026],
+            "isbn": ["9781974766703", "1974766705"]
+          }
+        ]
+      }
+    }
+  ]
+}

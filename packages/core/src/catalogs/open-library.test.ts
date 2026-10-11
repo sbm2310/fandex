@@ -4,6 +4,8 @@ import batmanFixture from './__fixtures__/openlibrary-isbn-batman-year-one.json'
 import onePieceFixture from './__fixtures__/openlibrary-isbn-one-piece.json';
 import harryPotterFixture from './__fixtures__/openlibrary-isbn-harry-potter.json';
 import notFoundFixture from './__fixtures__/openlibrary-isbn-not-found.json';
+import upcomingOnePieceFixture from './__fixtures__/openlibrary-isbn-upcoming-one-piece-113.json';
+import upcomingClaraFixture from './__fixtures__/openlibrary-edition-upcoming-clara-and-the-devil-2.json';
 import searchFixture from './__fixtures__/openlibrary-search-hobbit.json';
 import { CatalogError } from './catalog-error';
 import { OpenLibraryCatalog } from './open-library';
@@ -194,6 +196,36 @@ describe('OpenLibraryCatalog.search', () => {
   });
 });
 
+describe('OpenLibraryCatalog.search by edition key', () => {
+  it('finds that edition with its release date', async () => {
+    const { catalog } = catalogReturning(jsonResponse(upcomingClaraFixture));
+
+    const [book] = await catalog.search('edition_key:OL62647322M');
+
+    expect(book).toMatchObject({
+      externalId: 'OL62647322M',
+      title: 'Clara & the Devil, Volume 2',
+      isbn13: '9781250365392',
+      publishDate: { date: '2027-03-02', precision: 'day' },
+    });
+  });
+
+  it('leaves the date out when the edition has none it can read', async () => {
+    const { catalog } = catalogReturning(
+      oneWork({
+        key: '/works/OL1W',
+        title: 'Undated',
+        editions: { docs: [{ key: '/books/OL1M', title: 'Undated', publish_date: ['n.d.'] }] },
+      }),
+    );
+
+    const [book] = await catalog.search('undated');
+
+    expect(book).toBeDefined();
+    expect(book).not.toHaveProperty('publishDate');
+  });
+});
+
 describe('OpenLibraryCatalog.lookupIsbn', () => {
   it('returns the matching edition', async () => {
     const { catalog, requestedUrl } = catalogReturning(jsonResponse(isbnFixture));
@@ -219,6 +251,17 @@ describe('OpenLibraryCatalog.lookupIsbn', () => {
         subjects: isbnFixture.docs[0]?.subject,
       },
     });
+  });
+
+  it('reads the release date of an upcoming edition', async () => {
+    const { catalog, requestedUrl } = catalogReturning(jsonResponse(upcomingOnePieceFixture));
+
+    const book = await catalog.lookupIsbn(isbn('9781974766703'));
+
+    expect(requestedUrl().searchParams.get('fields')).toContain('editions.publish_date');
+    // Recorded as "Nov 10th 2026".
+    expect(book?.publishDate).toEqual({ date: '2026-11-10', precision: 'day' });
+    expect(book?.publishedYear).toBe(2026);
   });
 
   it('keeps the characters and places Open Library lists, for universe matching', async () => {

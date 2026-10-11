@@ -9,8 +9,10 @@ import PreorderScreen from '@/app/preorder/[id]/index';
 import NewPreorderScreen from '@/app/preorder/new';
 import { useUpcoming } from '@/hooks/use-preorders';
 import { ApiPreorders } from '@/services/preorders';
+import { toCatalogBook } from '@/services/catalog-mapping';
 import {
   FakeAccountService,
+  createFakeCatalog,
   createFakeCustomItems,
   createFakePreorders,
   createWrapper,
@@ -147,6 +149,79 @@ describe('New pre-order', () => {
     await open(`/preorder/new?catalogId=${book.id}&title=x`);
 
     expect(await screen.findByText('Sign in to track pre-orders')).toBeOnTheScreen();
+  });
+});
+
+describe("an upcoming book's release date", () => {
+  const upcoming: CatalogItemResponse = {
+    ...book,
+    id: '0199b5a0-0000-7000-8000-000000000002',
+    externalId: 'OL62647322M',
+    title: 'Clara & the Devil, Volume 2',
+    publishDate: { date: '2027-03-02', precision: 'day' },
+  };
+  const searchFinding = (item: CatalogItemResponse) =>
+    createFakeCatalog({ search: jest.fn(async () => [toCatalogBook(item)!]) });
+
+  it("starts the pre-order with Open Library's date, which it then follows", async () => {
+    const preorders = createFakePreorders({ [upcoming.id]: upcoming });
+    await open('/add?q=clara&scan=1', {
+      catalog: searchFinding(upcoming),
+      preorders,
+      account: await signedIn(),
+    });
+
+    await fireEvent.press(
+      await screen.findByRole('link', { name: 'Pre-order Clara & the Devil, Volume 2' }),
+    );
+
+    expect(
+      await screen.findByText(
+        'From Open Library. Fandex checks it daily and moves the date if it changes.',
+      ),
+    ).toBeOnTheScreen();
+    await fireEvent.press(screen.getByRole('button', { name: 'Save pre-order' }));
+    expect(preorders.create).toHaveBeenCalledWith(
+      expect.objectContaining({ expectedRelease: { date: '2027-03-02', precision: 'day' } }),
+    );
+    expect(
+      await screen.findByLabelText('Expected: March 2, 2027 (Open Library, checked daily)'),
+    ).toBeOnTheScreen();
+  });
+
+  it('drops the note once the date is changed by hand', async () => {
+    await open(
+      `/preorder/new?catalogId=${upcoming.id}&title=Clara&release=2027-03-02&releasePrecision=day`,
+      { account: await signedIn() },
+    );
+    expect(await screen.findByText(/^From Open Library/)).toBeOnTheScreen();
+
+    await fireEvent.press(screen.getByRole('radio', { name: 'Month' }));
+
+    expect(screen.queryByText(/^From Open Library/)).toBeNull();
+  });
+
+  it("doesn't offer a date that has passed, or a broken one", async () => {
+    const published = {
+      ...upcoming,
+      publishDate: { date: '2026-09-01', precision: 'day' },
+    } as const;
+    await open('/add?q=clara&scan=1', {
+      catalog: searchFinding(published),
+      account: await signedIn(),
+    });
+    await fireEvent.press(
+      await screen.findByRole('link', { name: 'Pre-order Clara & the Devil, Volume 2' }),
+    );
+    expect(await screen.findByRole('button', { name: 'Set expected release' })).toBeOnTheScreen();
+    expect(screen.queryByText(/^From Open Library/)).toBeNull();
+  });
+
+  it('ignores a release date in the link that is not a date', async () => {
+    await open(`/preorder/new?catalogId=${upcoming.id}&title=x&release=soon&releasePrecision=day`, {
+      account: await signedIn(),
+    });
+    expect(await screen.findByRole('button', { name: 'Set expected release' })).toBeOnTheScreen();
   });
 });
 

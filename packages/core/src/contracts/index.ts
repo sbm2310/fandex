@@ -4,3 +4,4 @@ export * from './collection';
 export * from './universe';
 export * from './ai';
 export * from './preorders';
+export * from './release-date';

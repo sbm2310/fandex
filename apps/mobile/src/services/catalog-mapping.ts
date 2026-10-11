@@ -20,6 +20,7 @@ export function toCatalogBook(item: CatalogItemResponse): CatalogBook | null {
     authors: item.creators,
     ...(item.subtitle && { subtitle: item.subtitle }),
     ...(item.year !== undefined && { publishedYear: item.year }),
+    ...(item.publishDate && { publishDate: item.publishDate }),
     ...(item.publisher && { publisher: item.publisher }),
     ...(item.isbn13 && { isbn13: item.isbn13 as Isbn13 }),
     ...(item.workKey && { workKey: item.workKey }),

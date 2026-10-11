@@ -2,15 +2,10 @@ import { z } from 'zod';
 
 import { CURRENCIES } from '../preorders/money';
 import { DATE_CHANGE_SOURCES, PREORDER_STATUSES } from '../preorders/preorder';
-import { RELEASE_PRECISIONS, releaseDate } from '../preorders/release-date';
 import { catalogItemSchema } from './catalog';
+import { releaseDateSchema } from './release-date';
 
 const day = z.iso.date(); // YYYY-MM-DD
-
-/** An expected release; any day in the period is accepted and normalized to its first day. */
-export const releaseDateSchema = z
-  .object({ date: day, precision: z.enum(RELEASE_PRECISIONS) })
-  .transform(({ date, precision }) => releaseDate(date, precision));
 
 export const dateChangeSchema = z.object({
   from: releaseDateSchema.nullable(),
@@ -45,6 +40,8 @@ export const preorderSchema = z.object({
   paid: amount,
   balanceDueDate: day.optional(),
   expectedRelease: releaseDateSchema.optional(),
+  /** The expected release is the catalog's (Open Library's) and moves when it does. */
+  followsCatalogDate: z.boolean().default(false),
   store: z.string().optional(),
   orderNumber: z.string().optional(),
   orderUrl: z.string().optional(),
