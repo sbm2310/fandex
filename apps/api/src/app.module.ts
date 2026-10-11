@@ -29,6 +29,8 @@ import { UniversesModule } from './universes/universes.module.js';
     AuthModule.forRootAsync({
       inject: [PrismaService, ConfigService],
       useFactory: (prisma: PrismaService, config: ConfigService<Env, true>) => ({
+        // CORS is set up in setup-app.ts instead: the module's own allows no PATCH.
+        disableTrustedOriginsCors: true,
         auth: createAuth(prisma, {
           NODE_ENV: config.get('NODE_ENV', { infer: true }),
           BETTER_AUTH_SECRET: config.get('BETTER_AUTH_SECRET', { infer: true }),

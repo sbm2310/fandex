@@ -8,6 +8,23 @@ import type { PrismaClient } from '../generated/prisma/client.js';
 type AuthEnv = Pick<Env, 'NODE_ENV' | 'BETTER_AUTH_SECRET' | 'BETTER_AUTH_URL' | 'TRUSTED_ORIGINS'>;
 
 /**
+ * Origins allowed to make cookie-authenticated requests (CSRF protection and CORS): the web
+ * app, the native app's scheme, and, in development only, Expo Go's exp:// URLs. The API's
+ * own origin is always trusted: in production it also serves the web app.
+ */
+export function trustedOrigins(
+  env: Pick<Env, 'NODE_ENV' | 'BETTER_AUTH_URL' | 'TRUSTED_ORIGINS'>,
+): string[] {
+  return [
+    ...new Set([
+      new URL(env.BETTER_AUTH_URL).origin,
+      ...env.TRUSTED_ORIGINS,
+      ...(env.NODE_ENV === 'development' ? ['exp://', 'exp://**'] : []),
+    ]),
+  ];
+}
+
+/**
  * The Better Auth instance: email + password accounts stored in our PostgreSQL via Prisma.
  * Its routes are mounted under /api/auth (sign-up/email, sign-in/email, sign-out, get-session…).
  */
@@ -22,16 +39,7 @@ export function createAuth(prisma: PrismaClient, env: AuthEnv) {
       minPasswordLength: 8,
       maxPasswordLength: 128,
     },
-    // Origins allowed to make cookie-authenticated requests (CSRF protection + CORS): the web
-    // app, the native app's scheme, and, in development only, Expo Go's exp:// URLs.
-    // The API's own origin is always trusted: in production it also serves the web app.
-    trustedOrigins: [
-      ...new Set([
-        new URL(env.BETTER_AUTH_URL).origin,
-        ...env.TRUSTED_ORIGINS,
-        ...(env.NODE_ENV === 'development' ? ['exp://', 'exp://**'] : []),
-      ]),
-    ],
+    trustedOrigins: trustedOrigins(env),
     // Native apps don't send an Origin header; the Expo plugin uses the app's scheme instead.
     plugins: [expo()],
     // In-app account deletion (an App Store requirement). The client must send the password.

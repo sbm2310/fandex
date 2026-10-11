@@ -7,6 +7,7 @@ import { FormField } from './form-field';
 import { ThemedText } from './themed-text';
 
 import { Spacing } from '@/constants/theme';
+import { useCurrentUser } from '@/hooks/use-account';
 import { useAddFigure } from '@/hooks/use-add-figure';
 import { useTheme } from '@/hooks/use-theme';
 
@@ -20,6 +21,7 @@ const SCALES = ['1/6', '1/4', '1/12', 'Life-size'] as const;
 export function AddFigureForm() {
   const colors = useTheme();
   const addFigure = useAddFigure();
+  const { data: user } = useCurrentUser();
   const [title, setTitle] = useState('');
   const [brand, setBrand] = useState('');
   const [line, setLine] = useState('');
@@ -28,6 +30,15 @@ export function AddFigureForm() {
 
   const imageInvalid = coverUrl.trim() !== '' && !/^https:\/\/\S+$/.test(coverUrl.trim());
   const canSave = title.trim() !== '' && !imageInvalid && !addFigure.isPending;
+
+  /** On order, not here yet: describe the pre-order next (the figure is saved with it). */
+  const preorder = () => {
+    if (!canSave) return;
+    router.push({
+      pathname: '/preorder/new',
+      params: { figure: '1', title: title.trim(), brand, line, scale, coverUrl: coverUrl.trim() },
+    });
+  };
 
   const save = () => {
     if (!canSave) return;
@@ -124,6 +135,15 @@ export function AddFigureForm() {
           disabled={!canSave}
           busy={addFigure.isPending}
         />
+        {/* Pre-orders live in an account. */}
+        {user ? (
+          <Button
+            label="It's on pre-order"
+            variant="secondary"
+            onPress={preorder}
+            disabled={!canSave}
+          />
+        ) : null}
       </View>
     </ScrollView>
   );

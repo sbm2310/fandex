@@ -1,6 +1,12 @@
 import {
   createFigure,
+  createPreorderRequestSchema,
+  preorderSchema,
   KeyValueCollectionRepository,
+  type CatalogItemResponse,
+  type CreatePreorderRequest,
+  type PreorderResponse,
+  type UpdatePreorderRequest,
   type AiQuotaResponse,
   type ShelfScanResponse,
   type BookCatalog,
@@ -16,6 +22,7 @@ import type { ReactNode } from 'react';
 import { AccountError, type AccountService, type AccountUser } from '@/services/account-service';
 import { AppServicesProvider } from '@/services/app-services';
 import type { CustomItems } from '@/services/custom-items';
+import type { Preorders } from '@/services/preorders';
 import { AskUnavailableError, type QuestionAsker } from '@/services/question-asker';
 import type { ShelfPhoto, ShelfScanner } from '@/services/shelf-scanner';
 
@@ -161,6 +168,77 @@ export function createFakeCustomItems(overrides: Partial<CustomItems> = {}) {
   };
 }
 
+/**
+ * Pre-orders kept in memory with the server's main rules (history from the first date, paid ≤
+ * price checked by the form, arrive closes it). `catalog` supplies the items they're for.
+ */
+export function createFakePreorders(catalog: Record<string, CatalogItemResponse> = {}) {
+  let list: PreorderResponse[] = [];
+  let next = 0;
+  const now = () => new Date('2026-10-11T09:00:00.000Z').toISOString();
+  const item = (id: string): CatalogItemResponse =>
+    catalog[id] ?? {
+      id,
+      category: 'figure',
+      source: 'custom',
+      externalId: id,
+      title: 'Figure',
+      creators: [],
+      universes: [],
+      characters: [],
+    };
+  const service = {
+    list: jest.fn(async () => list),
+    create: jest.fn(async (request: CreatePreorderRequest) => {
+      next += 1;
+      const parsed = createPreorderRequestSchema.parse(request);
+      const { catalogItemId, ...fields } = parsed;
+      const created: PreorderResponse = preorderSchema.parse({
+        ...Object.fromEntries(Object.entries(fields).filter(([, value]) => value !== undefined)),
+        id: `0199b5a0-0000-7000-9000-${String(next).padStart(12, '0')}`,
+        status: 'ordered',
+        catalog: item(catalogItemId),
+        history: parsed.expectedRelease
+          ? [{ from: null, to: parsed.expectedRelease, changedAt: now(), source: 'user' }]
+          : [],
+        createdAt: now(),
+      });
+      list = [created, ...list];
+      return created;
+    }),
+    update: jest.fn(async (id: string, changes: UpdatePreorderRequest) => {
+      const current = list.find((preorder) => preorder.id === id)!;
+      const merged = { ...current } as Record<string, unknown>;
+      for (const [key, value] of Object.entries(changes)) {
+        if (value === null) delete merged[key];
+        else if (value !== undefined) merged[key] = value;
+      }
+      const updated = preorderSchema.parse(merged);
+      list = list.map((preorder) => (preorder.id === id ? updated : preorder));
+      return updated;
+    }),
+    arrive: jest.fn(async (id: string) => {
+      const arrived = {
+        ...list.find((preorder) => preorder.id === id)!,
+        status: 'arrived' as const,
+      };
+      list = list.map((preorder) => (preorder.id === id ? arrived : preorder));
+      return {
+        preorder: arrived,
+        item: {
+          id: '0199b5a0-0000-7000-a000-000000000001',
+          addedAt: now(),
+          catalog: arrived.catalog,
+        },
+      };
+    }),
+    remove: jest.fn(async (id: string) => {
+      list = list.filter((preorder) => preorder.id !== id);
+    }),
+  };
+  return service;
+}
+
 /** Questions on the API: unavailable unless a test says otherwise (the app then uses keywords). */
 export function createFakeQuestionAsker(overrides: Partial<QuestionAsker> = {}) {
   return {
@@ -180,6 +258,7 @@ export function createWrapper({
   shelfScanner = createFakeShelfScanner(),
   questionAsker = createFakeQuestionAsker(),
   customItems = createFakeCustomItems(),
+  preorders = createFakePreorders(),
 }: {
   catalog?: BookCatalog;
   legoCatalog?: LegoCatalog;
@@ -189,6 +268,7 @@ export function createWrapper({
   shelfScanner?: ShelfScanner;
   questionAsker?: QuestionAsker;
   customItems?: CustomItems;
+  preorders?: Preorders;
 } = {}) {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false, gcTime: Infinity } },
@@ -207,6 +287,7 @@ export function createWrapper({
             shelfScanner,
             questionAsker,
             customItems,
+            preorders,
           }}
         >
           {children}

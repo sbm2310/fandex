@@ -54,6 +54,22 @@ export default function RootLayout() {
               options={{ title: 'Scan a shelf', headerBackTitle: 'Back' }}
             />
             <Stack.Screen
+              name="preorders"
+              options={{ title: 'Pre-orders', headerBackTitle: 'Back' }}
+            />
+            <Stack.Screen
+              name="preorder/new"
+              options={{ title: 'Pre-order', headerBackTitle: 'Back' }}
+            />
+            <Stack.Screen
+              name="preorder/[id]/index"
+              options={{ title: '', headerBackTitle: 'Back' }}
+            />
+            <Stack.Screen
+              name="preorder/[id]/edit"
+              options={{ presentation: 'modal', title: 'Edit pre-order' }}
+            />
+            <Stack.Screen
               name="ask"
               options={{ title: 'Ask your collection', headerBackTitle: 'Back' }}
             />

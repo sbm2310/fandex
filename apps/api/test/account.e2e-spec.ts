@@ -60,6 +60,16 @@ describe('Account (e2e)', () => {
       expect(response.headers['access-control-allow-credentials']).toBe('true');
     });
 
+    it('lets the web app edit with PATCH (items, pre-orders)', async () => {
+      const response = await request(app.getHttpServer())
+        .options('/api/preorders/x')
+        .set('Origin', WEB)
+        .set('Access-Control-Request-Method', 'PATCH');
+
+      expect(response.headers['access-control-allow-methods']).toContain('PATCH');
+      expect(response.headers['access-control-allow-origin']).toBe(WEB);
+    });
+
     it('does not allow other sites', async () => {
       const response = await request(app.getHttpServer())
         .options('/api/me')

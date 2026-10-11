@@ -9,6 +9,7 @@ import { AddToCollectionButton } from '@/components/add-to-collection-button';
 import { EntryRow } from '@/components/entry-row';
 import { OtherEditionNote } from '@/components/other-editions';
 import { PageTitle } from '@/components/page-title';
+import { PreorderLink } from '@/components/preorder-link';
 import { Screen } from '@/components/screen';
 import { SearchField } from '@/components/search-field';
 import { SegmentedControl, type SegmentedOption } from '@/components/segmented-control';
@@ -156,7 +157,12 @@ function SearchResults({
         <EntryRow
           entry={item}
           accessory={<AddToCollectionButton entry={item} />}
-          note={<OtherEditionNote entry={item} />}
+          note={
+            <View style={styles.notes}>
+              <OtherEditionNote entry={item} />
+              <PreorderLink entry={item} />
+            </View>
+          }
         />
       )}
       keyboardShouldPersistTaps="handled"
@@ -277,6 +283,9 @@ function RetryButton({ onPress }: { onPress: () => void }) {
 }
 
 const styles = StyleSheet.create({
+  notes: {
+    gap: Spacing.one,
+  },
   searchRow: {
     flexDirection: 'row',
     alignItems: 'center',

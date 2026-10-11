@@ -3,6 +3,7 @@ import { createContext, use, type ReactNode } from 'react';
 
 import type { AccountService } from './account-service';
 import type { CustomItems } from './custom-items';
+import type { Preorders } from './preorders';
 import type { QuestionAsker } from './question-asker';
 import type { ShelfScanner } from './shelf-scanner';
 
@@ -21,6 +22,8 @@ export type AppServices = {
   questionAsker: QuestionAsker;
   /** Figures added by hand, saved on the Fandex API (signed in). */
   customItems: CustomItems;
+  /** The signed-in user's pre-orders on the Fandex API. */
+  preorders: Preorders;
 };
 
 const AppServicesContext = createContext<AppServices | null>(null);
@@ -72,4 +75,8 @@ export function useQuestionAsker(): QuestionAsker {
 
 export function useCustomItems(): CustomItems {
   return useAppServices().customItems;
+}
+
+export function usePreorderService(): Preorders {
+  return useAppServices().preorders;
 }
