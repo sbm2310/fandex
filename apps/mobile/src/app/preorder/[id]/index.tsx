@@ -51,7 +51,7 @@ export default function PreorderScreen() {
           message={signedIn ? 'It may have been deleted.' : 'Sign in to see your pre-orders.'}
           action={
             signedIn
-              ? { label: 'Your pre-orders', href: '/preorders' }
+              ? { label: 'Upcoming', href: '/upcoming' }
               : { label: 'Sign in', href: '/account' }
           }
         />
@@ -85,7 +85,7 @@ function PreorderDetail({ preorder }: { preorder: PreorderResponse }) {
       confirmLabel: 'Delete',
       destructive: true,
     });
-    if (yes) remove.mutate(preorder.id, { onSuccess: () => router.replace('/preorders') });
+    if (yes) remove.mutate(preorder.id, { onSuccess: () => router.replace('/upcoming') });
   };
 
   return (

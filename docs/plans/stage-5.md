@@ -47,7 +47,7 @@ App                                         API (NestJS)                        
 
 **4. Pre-orders in the app.** ✅ "Pre-order" from a search result, an item page or a custom item; a form (price, deposit, balance due date, expected date and precision, store, order number, link, notes); a pre-order page with its history; edit, cancel, "Arrived". Account only (guests see why). _Demo:_ pre-order the custom Gandalf and a book on the iPhone.
 
-**5. Upcoming tab.** A fifth tab: needs attention (balance due soon or overdue, arriving this week), arriving this month, later, date unknown, with totals still owed; a badge with the attention count. Check the web tab bar at phone width (five tabs). _Demo:_ the tab with its badge.
+**5. Upcoming tab.** ✅ A fifth tab: needs attention (balance due soon or overdue, arriving this week), arriving this month, later, date unknown, with totals still owed; a badge with the attention count. Check the web tab bar at phone width (five tabs). _Demo:_ the tab with its badge.
 
 **6. Book release dates from Open Library.** Spike first: how often Open Library has future publish dates for upcoming editions (check a few real pre-orders). Then: offer Open Library's date when creating a book pre-order, re-check pre-ordered books when pre-orders are listed (at most daily per book, same spacing and cache), record a changed date as a slip with its source. Recorded fixtures. _Demo:_ a book pre-order with its date filled in.
 

@@ -19,7 +19,6 @@ import { SortToggle } from '@/components/sort-toggle';
 import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
 import { useCollection, useDeviceCollection } from '@/hooks/use-collection';
-import { usePreorders } from '@/hooks/use-preorders';
 import { useTheme } from '@/hooks/use-theme';
 
 export default function CollectionScreen() {
@@ -92,25 +91,10 @@ export default function CollectionScreen() {
           <SortToggle value={sort} onChange={setSort} />
         </View>
         <AskLink />
-        <PreordersLink />
         <CategoryFilter items={collection.data} value={activeFilter} onChange={setFilter} />
       </View>
       <CollectionGrid items={sortCollection(visible, sort)} />
     </Screen>
-  );
-}
-
-/** "3 pre-orders" for a signed-in user who has some (the Upcoming tab will take over). */
-function PreordersLink() {
-  const { data } = usePreorders();
-  const open = data?.filter((preorder) => preorder.status === 'ordered').length ?? 0;
-  if (!data || data.length === 0) return null;
-  return (
-    <Link href="/preorders" accessibilityLabel={`Your pre-orders: ${open} on order`}>
-      <ThemedText type="small" themeColor="accent">
-        {open === 1 ? '1 pre-order on order' : `${open} pre-orders on order`} ›
-      </ThemedText>
-    </Link>
   );
 }
 

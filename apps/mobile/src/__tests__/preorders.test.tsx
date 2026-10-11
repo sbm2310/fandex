@@ -1,12 +1,13 @@
 import type { CatalogItemResponse } from '@fandex/core';
-import { fireEvent, renderRouter, screen } from 'expo-router/testing-library';
+import { fireEvent, renderHook, renderRouter, screen, waitFor } from 'expo-router/testing-library';
 
 import AddScreen from '@/app/(tabs)/add';
+import UpcomingScreen from '@/app/(tabs)/upcoming';
 import BookScreen from '@/app/book/[id]';
 import EditPreorderScreen from '@/app/preorder/[id]/edit';
 import PreorderScreen from '@/app/preorder/[id]/index';
 import NewPreorderScreen from '@/app/preorder/new';
-import PreordersScreen from '@/app/preorders';
+import { useUpcoming } from '@/hooks/use-preorders';
 import { ApiPreorders } from '@/services/preorders';
 import {
   FakeAccountService,
@@ -43,7 +44,7 @@ async function open(url: string, options: Parameters<typeof createWrapper>[0] = 
     {
       '(tabs)/add': AddScreen,
       'book/[id]': BookScreen,
-      preorders: PreordersScreen,
+      '(tabs)/upcoming': UpcomingScreen,
       'preorder/new': NewPreorderScreen,
       'preorder/[id]/index': PreorderScreen,
       'preorder/[id]/edit': EditPreorderScreen,
@@ -202,18 +203,117 @@ describe('A pre-order', () => {
     await fireEvent.press(screen.getByRole('button', { name: 'Reopen' }));
     expect(await screen.findByText('On order')).toBeOnTheScreen();
   });
+});
 
-  it('is listed, and opens from the list', async () => {
-    const { preorders, id } = await withOne({
-      expectedRelease: { date: '2027-03-01', precision: 'quarter' },
+describe('the Upcoming tab', () => {
+  const figure: CatalogItemResponse = {
+    ...book,
+    id: '0199b5a0-0000-7000-8000-000000000002',
+    category: 'figure',
+    source: 'custom',
+    externalId: 'custom-2',
+    title: 'Gandalf the Grey',
+    creators: ['Hot Toys'],
+  };
+  const lego: CatalogItemResponse = {
+    ...book,
+    id: '0199b5a0-0000-7000-8000-000000000003',
+    category: 'lego',
+    source: 'rebrickable',
+    externalId: '75192-1',
+    title: 'Millennium Falcon',
+    creators: [],
+  };
+
+  async function withSeveral() {
+    const preorders = createFakePreorders({
+      [book.id]: book,
+      [figure.id]: figure,
+      [lego.id]: lego,
     });
-    const { app } = await open('/preorders', { preorders, account: await signedIn() });
+    // Balance due in 4 days: needs attention.
+    const gandalf = await preorders.create({
+      catalogItemId: figure.id,
+      price: 35000,
+      paid: 7000,
+      balanceDueDate: '2026-10-15',
+      expectedRelease: { date: '2027-03-01', precision: 'month' },
+    });
+    // Expected this month, nothing to pay.
+    await preorders.create({
+      catalogItemId: book.id,
+      price: 3599,
+      paid: 3599,
+      expectedRelease: { date: '2026-10-28', precision: 'day' },
+    });
+    // No date yet.
+    await preorders.create({ catalogItemId: lego.id, price: 10000 });
+    return { preorders, gandalf };
+  }
 
-    await fireEvent.press(
-      await screen.findByRole('link', { name: 'Wind and Truth: On order, expected Q1 2027' }),
-    );
+  it('puts what needs attention first, then by date, with what is still owed', async () => {
+    const { preorders } = await withSeveral();
+    await open('/upcoming', { preorders, account: await signedIn() });
 
-    expect(app.getPathname()).toBe(`/preorder/${id}`);
+    expect(await screen.findByText('3 pre-orders on order')).toBeOnTheScreen();
+    // $280.00 left on the figure + $100.00 on the set.
+    expect(screen.getByLabelText('Still owed: $380.00')).toBeOnTheScreen();
+    expect(screen.getByRole('header', { name: 'Needs attention · 1' })).toBeOnTheScreen();
+    expect(
+      screen.getByRole('link', {
+        name: 'Gandalf the Grey: On order, expected March 2027. Balance of $280.00 due October 15, 2026',
+      }),
+    ).toBeOnTheScreen();
+    expect(screen.getByRole('header', { name: 'Arriving this month · 1' })).toBeOnTheScreen();
+    expect(
+      screen.getByRole('link', { name: 'Wind and Truth: On order, expected October 28, 2026' }),
+    ).toBeOnTheScreen();
+    expect(screen.getByRole('header', { name: 'Date not known yet · 1' })).toBeOnTheScreen();
+    expect(screen.queryByRole('header', { name: /^Later/ })).toBeNull();
+  });
+
+  it('opens a pre-order from its row', async () => {
+    const { preorders, gandalf } = await withSeveral();
+    const { app } = await open('/upcoming', { preorders, account: await signedIn() });
+
+    await fireEvent.press(await screen.findByRole('link', { name: /^Gandalf the Grey/ }));
+
+    expect(app.getPathname()).toBe(`/preorder/${gandalf.id}`);
+  });
+
+  it('keeps arrived and cancelled pre-orders at the end, out of the totals', async () => {
+    const preorders = createFakePreorders({ [book.id]: book });
+    const created = await preorders.create({ catalogItemId: book.id, price: 3599 });
+    await preorders.update(created.id, { status: 'cancelled' });
+    await open('/upcoming', { preorders, account: await signedIn() });
+
+    const section = await screen.findByRole('header', { name: 'Arrived or cancelled · 1' });
+    expect(section).toBeOnTheScreen();
+    expect(screen.getByText('0 pre-orders on order')).toBeOnTheScreen();
+    expect(screen.queryByText(/Still owed/)).toBeNull();
+    expect(screen.getByRole('link', { name: 'Wind and Truth: Cancelled' })).toBeOnTheScreen();
+  });
+
+  it("counts what needs attention for the tab's badge", async () => {
+    const { preorders } = await withSeveral();
+    const { result } = await renderHook(() => useUpcoming(), {
+      wrapper: createWrapper({ preorders, account: await signedIn() }),
+    });
+
+    await waitFor(() => expect(result.current.groups).toBeDefined());
+    expect(result.current.attentionCount).toBe(1);
+  });
+
+  it('says how to start when there are none', async () => {
+    await open('/upcoming', { account: await signedIn() });
+
+    expect(await screen.findByText('Nothing on order')).toBeOnTheScreen();
+  });
+
+  it('asks guests to sign in', async () => {
+    await open('/upcoming');
+
+    expect(await screen.findByText('Sign in to track pre-orders')).toBeOnTheScreen();
   });
 });
 

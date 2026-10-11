@@ -1,14 +1,16 @@
-import type {
-  CreatePreorderRequest,
-  NewFigure,
-  PreorderResponse,
-  UpdatePreorderRequest,
+import {
+  groupUpcoming,
+  type CreatePreorderRequest,
+  type NewFigure,
+  type PreorderResponse,
+  type UpdatePreorderRequest,
 } from '@fandex/core';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { useCurrentUser } from './use-account';
 
 import { useCustomItems, usePreorderService } from '@/services/app-services';
+import { localToday } from '@/utils/today';
 
 const preordersKey = (userId: string | undefined) => ['preorders', userId] as const;
 
@@ -97,4 +99,15 @@ export function useDeletePreorder() {
         list.filter((preorder) => preorder.id !== id),
       ),
   });
+}
+
+/**
+ * The Upcoming tab's groups for today (open pre-orders only) and the pre-orders that are done,
+ * plus `attentionCount` for the tab's badge (0 when signed out).
+ */
+export function useUpcoming() {
+  const preorders = usePreorders();
+  const groups = preorders.data ? groupUpcoming(preorders.data, localToday()) : undefined;
+  const closed = preorders.data?.filter((preorder) => preorder.status !== 'ordered') ?? [];
+  return { ...preorders, groups, closed, attentionCount: groups?.attention.length ?? 0 };
 }
