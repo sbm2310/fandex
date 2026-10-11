@@ -81,6 +81,8 @@ export const createPreorderRequestSchema = z
   })
   .refine(paidWithinPrice, paidMessage);
 export type CreatePreorderRequest = z.input<typeof createPreorderRequestSchema>;
+/** A create request after validation: defaults filled, text trimmed, dates normalized. */
+export type CreatePreorderInput = z.output<typeof createPreorderRequestSchema>;
 
 /**
  * PATCH /preorders/:id. Fields left out stay as they are; null clears one. Status can move
@@ -104,3 +106,4 @@ export const updatePreorderRequestSchema = z
     message: 'Nothing to change',
   });
 export type UpdatePreorderRequest = z.input<typeof updatePreorderRequestSchema>;
+export type UpdatePreorderInput = z.output<typeof updatePreorderRequestSchema>;

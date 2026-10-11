@@ -197,7 +197,10 @@ export class CollectionService {
     if (!row) throw new NotFoundException('No such item in your collection');
     await this.prisma.$transaction([
       this.prisma.collectionItem.deleteMany({ where: { id, userId } }),
-      this.prisma.catalogItem.deleteMany({ where: { id: row.catalogItemId, ownerId: userId } }),
+      // A custom item still on a pre-order (an arrived one keeps its history) stays.
+      this.prisma.catalogItem.deleteMany({
+        where: { id: row.catalogItemId, ownerId: userId, preorders: { none: {} } },
+      }),
     ]);
   }
 }

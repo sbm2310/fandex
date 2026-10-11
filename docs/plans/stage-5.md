@@ -43,7 +43,7 @@ App                                         API (NestJS)                        
 
 **2. Pre-orders in core.** ✅ `preorderSchema` and request contracts; money as minor units + currency; `balanceDue`, `needsAttention(preorder, today)`, `groupUpcoming(preorders, today)` (needs attention, this month, later, no date), `describeSlips(history)`, `formatMoney`. Thorough tests with fixed dates. _Demo:_ tests.
 
-**3. Pre-orders in the API.** Tables `preorder` and `preorder_date_change` (migration); `GET/POST/PATCH/DELETE /preorders` (signed in, scoped by user, 404 for others' — mutation-checked); every change of the expected date recorded; `POST /preorders/:id/arrive` adds the item to the collection and closes the pre-order in one transaction (idempotent). e2e tests. _Demo:_ `curl` a pre-order through its life.
+**3. Pre-orders in the API.** ✅ Tables `preorder` and `preorder_date_change` (migration); `GET/POST/PATCH/DELETE /preorders` (signed in, scoped by user, 404 for others' — mutation-checked); every change of the expected date recorded; `POST /preorders/:id/arrive` adds the item to the collection and closes the pre-order in one transaction (idempotent). e2e tests. _Demo:_ `curl` a pre-order through its life.
 
 **4. Pre-orders in the app.** "Pre-order" from a search result, an item page or a custom item; a form (price, deposit, balance due date, expected date and precision, store, order number, link, notes); a pre-order page with its history; edit, cancel, "Arrived". Account only (guests see why). _Demo:_ pre-order the custom Gandalf and a book on the iPhone.
 

@@ -9,6 +9,7 @@ import { CollectionModule } from './collection/collection.module.js';
 import { envSchema, type Env } from './config/env.js';
 import { HealthModule } from './health/health.module.js';
 import { MeModule } from './me/me.module.js';
+import { PreordersModule } from './preorders/preorders.module.js';
 import { PrismaModule } from './prisma/prisma.module.js';
 import { PrismaService } from './prisma/prisma.service.js';
 import { UniversesModule } from './universes/universes.module.js';
@@ -42,6 +43,7 @@ import { UniversesModule } from './universes/universes.module.js';
     CatalogModule,
     CollectionModule,
     AiModule,
+    PreordersModule,
   ],
 })
 export class AppModule {}
