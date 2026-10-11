@@ -8,8 +8,8 @@ import { collectionQuery, type CollectionQuery } from './collection-query';
 /**
  * The keyword fallback for when the AI isn't available (no key, the daily allowance used up,
  * the provider down): finds universe, character and category names in the question, "how
- * many", a few date phrases, and questions Fandex can't answer yet. Anything subtler needs
- * the model.
+ * many", a few date phrases, pre-order questions (arriving, owed, delayed), and questions
+ * Fandex can't answer yet. Anything subtler needs the model.
  */
 
 /** Other ways people name a universe in a question (on top of its name and title aliases). */
@@ -33,24 +33,39 @@ const UNSUPPORTED: [string[], string][] = [
     ['missing', 'gaps', 'complete the series', 'next volume'],
     "Fandex doesn't know which volumes a series has yet, so it can't tell what's missing.",
   ],
-  [
-    [
-      'pre order',
-      'preorder',
-      'pre ordered',
-      'preordered',
-      'arriving',
-      'release',
-      'releases',
-      'coming out',
-    ],
-    "pre-orders and release dates aren't tracked yet.",
-  ],
-  [
-    ['worth', 'value', 'price', 'prices', 'cost', 'paid', 'spent'],
-    "Fandex doesn't track prices or values.",
-  ],
 ];
+
+/** Questions about the collection's money (pre-orders' balances are another matter). */
+const VALUE_WORDS = ['worth', 'value', 'price', 'prices', 'cost', 'paid', 'spent'];
+const VALUE_REASON = "Fandex doesn't track what items are worth or what you spent on them.";
+
+/** Words that make a question about pre-orders. */
+const PREORDER_WORDS = [
+  'pre order',
+  'pre orders',
+  'preorder',
+  'preorders',
+  'pre ordered',
+  'preordered',
+  'on order',
+  'arriving',
+  'arrive',
+  'arrives',
+  'coming out',
+  'come out',
+  'upcoming',
+  'release',
+  'releases',
+  'owe',
+  'owed',
+  'balance',
+  'left to pay',
+  'delayed',
+  'slipped',
+  'pushed back',
+];
+const OWED_WORDS = ['owe', 'owed', 'balance', 'left to pay', 'due', 'pay'];
+const DELAYED_WORDS = ['delayed', 'slipped', 'pushed back', 'late'];
 
 /** One-word character names that are everyday words in a question ("my child's books"). */
 const COMMON_WORDS = new Set(['child', 'merry']);
@@ -59,6 +74,37 @@ const ALL_ITEMS = ['everything', 'my collection', 'what do i own', 'what do i ha
 
 function utcDay(date: Date): string {
   return date.toISOString().slice(0, 10);
+}
+
+/** When pre-orders arrive: this week, this or next month, this or next year, soon. */
+function arrivalRange(
+  text: string,
+  today: Date,
+): Pick<CollectionQuery, 'arrivingAfter' | 'arrivingBefore'> {
+  const y = today.getUTCFullYear();
+  const m = today.getUTCMonth();
+  const d = today.getUTCDate();
+  const day = (year: number, month: number, date = 1) =>
+    utcDay(new Date(Date.UTC(year, month, date)));
+  const range = (arrivingAfter: string, arrivingBefore: string) => ({
+    arrivingAfter,
+    arrivingBefore,
+  });
+  if (containsPhrase(text, 'today')) return range(day(y, m, d), day(y, m, d + 1));
+  if (containsPhrase(text, 'this week')) {
+    const monday = d - ((today.getUTCDay() + 6) % 7);
+    return range(day(y, m, monday), day(y, m, monday + 7));
+  }
+  if (containsPhrase(text, 'next week')) {
+    const monday = d - ((today.getUTCDay() + 6) % 7) + 7;
+    return range(day(y, m, monday), day(y, m, monday + 7));
+  }
+  if (containsPhrase(text, 'this month')) return range(day(y, m), day(y, m + 1));
+  if (containsPhrase(text, 'next month')) return range(day(y, m + 1), day(y, m + 2));
+  if (containsPhrase(text, 'this year')) return range(day(y, 0), day(y + 1, 0));
+  if (containsPhrase(text, 'next year')) return range(day(y + 1, 0), day(y + 2, 0));
+  if (containsPhrase(text, 'soon')) return range(day(y, m, d), day(y, m, d + 30));
+  return {};
 }
 
 function dateRange(text: string, today: Date): Pick<CollectionQuery, 'addedAfter' | 'addedBefore'> {
@@ -107,12 +153,14 @@ export function parseQuestionLocally(
   }: { seed?: readonly UniverseSeed[]; today?: Date } = {},
 ): CollectionQuery {
   let text = normalizeText(question);
+  const says = (phrases: readonly string[]) =>
+    phrases.some((phrase) => containsPhrase(text, normalizeText(phrase)));
 
   for (const [phrases, reason] of UNSUPPORTED) {
-    if (phrases.some((phrase) => containsPhrase(text, normalizeText(phrase)))) {
-      return collectionQuery({ unsupported: reason });
-    }
+    if (says(phrases)) return collectionQuery({ unsupported: reason });
   }
+  const preorders = says(PREORDER_WORDS);
+  if (!preorders && says(VALUE_WORDS)) return collectionQuery({ unsupported: VALUE_REASON });
 
   // Universes first, longest phrases first, so "Harry Potter books" is the Wizarding World
   // (not the character) and "Star Wars" isn't read again as anything else.
@@ -155,8 +203,29 @@ export function parseQuestionLocally(
     }
   }
 
-  const dates = dateRange(text, today);
   const counting = containsPhrase(text, 'how many') || containsPhrase(text, 'number of');
+  const sort =
+    containsPhrase(text, 'alphabetical') || containsPhrase(text, 'a to z') ? 'title' : 'recent';
+  // A character already says which universe it's from.
+  const items = {
+    universes: universes.filter((slug) => !characters.some((ref) => ref.universe === slug)),
+    characters,
+    categories,
+    sort,
+    answer: counting ? 'count' : 'list',
+  } as const;
+
+  if (preorders) {
+    return collectionQuery({
+      ...items,
+      scope: 'preorders',
+      ...arrivalRange(text, today),
+      balanceDue: says(OWED_WORDS),
+      delayed: says(DELAYED_WORDS),
+    });
+  }
+
+  const dates = dateRange(text, today);
   const recognized =
     universes.length > 0 ||
     characters.length > 0 ||
@@ -169,14 +238,5 @@ export function parseQuestionLocally(
     });
   }
 
-  return collectionQuery({
-    // A character already says which universe it's from.
-    universes: universes.filter((slug) => !characters.some((ref) => ref.universe === slug)),
-    characters,
-    categories,
-    ...dates,
-    sort:
-      containsPhrase(text, 'alphabetical') || containsPhrase(text, 'a to z') ? 'title' : 'recent',
-    answer: counting ? 'count' : 'list',
-  });
+  return collectionQuery({ ...items, ...dates });
 }

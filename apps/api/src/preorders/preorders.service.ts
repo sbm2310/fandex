@@ -1,5 +1,7 @@
 import {
   followCatalogDate,
+  queryablePreorder,
+  type QueryablePreorder,
   type CollectionItemResponse,
   type CreatePreorderInput,
   type Currency,
@@ -76,6 +78,15 @@ export class PreordersService {
       orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
     });
     return rows.map(toPreorderResponse);
+  }
+
+  /** The user's pre-orders as "Ask" sees them, as stored (no date checks: a question is quick). */
+  async queryable(userId: string): Promise<(QueryablePreorder & { id: string })[]> {
+    const rows = await this.prisma.preorder.findMany({ where: { userId }, include: withDetails });
+    return rows.map((row) => {
+      const preorder = toPreorderResponse(row);
+      return { id: preorder.id, ...queryablePreorder(preorder) };
+    });
   }
 
   async get(userId: string, id: string): Promise<PreorderResponse> {

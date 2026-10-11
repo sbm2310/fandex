@@ -5,6 +5,7 @@ import {
   parseQuestionLocally,
   resolveModelQuery,
   runCollectionQuery,
+  runPreorderQuery,
   UNIVERSE_SEED,
   type AskResponse,
   type CollectionQuery,
@@ -13,6 +14,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { CollectionService } from '../collection/collection.service.js';
+import { PreordersService } from '../preorders/preorders.service.js';
 import type { Env } from '../config/env.js';
 
 import { AI_PROVIDERS, type AiProvider } from './ai-providers.js';
@@ -32,8 +34,8 @@ type Interpretation = Pick<AskResponse, 'method' | 'unknown'> & {
 
 /**
  * "Ask your collection": the model turns the question into a CollectionQuery (it gets the
- * question, today's date and the universe names, never the collection), core runs it on the
- * user's items and writes the answer. Without the model, or when it's busy, over the
+ * question, today's date and the universe names, never the collection or the pre-orders),
+ * core runs it on the user's items or pre-orders and writes the answer. Without the model, or when it's busy, over the
  * allowance or replies with something unusable, core's keyword matching answers instead, so a
  * question always gets an answer. Only questions the model answered are counted.
  */
@@ -46,6 +48,7 @@ export class QuestionAnswerer {
     private readonly config: ConfigService<Env, true>,
     private readonly quota: AiQuotaService,
     private readonly collection: CollectionService,
+    private readonly preorders: PreordersService,
   ) {}
 
   get available(): boolean {
@@ -53,12 +56,12 @@ export class QuestionAnswerer {
   }
 
   async ask(userId: string, question: string, now = new Date()): Promise<AskResponse> {
-    const [interpretation, items] = await Promise.all([
-      this.interpret(userId, question, now),
-      this.collection.queryable(userId),
-    ]);
-    const { query, unknown, method, notice } = interpretation;
-    const result = runCollectionQuery(items, query, (item) => item);
+    const { query, unknown, method, notice } = await this.interpret(userId, question, now);
+    // Each item keeps its id, so the answer can name the matches.
+    const result =
+      query.scope === 'preorders'
+        ? runPreorderQuery(await this.preorders.queryable(userId), query, (item) => item)
+        : runCollectionQuery(await this.collection.queryable(userId), query, (item) => item);
     return {
       query,
       answer: describeAnswer(query, result, UNIVERSE_SEED, unknown),

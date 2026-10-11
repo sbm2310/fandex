@@ -82,7 +82,10 @@ export const askResponseSchema = z.object({
   query: collectionQuerySchema,
   /** "You own 3 Batman items: 2 comics and 1 LEGO set." */
   answer: z.string(),
-  /** The matching collection items, in the query's order. */
+  /**
+   * The matches, in the query's order: collection item ids, or pre-order ids when the
+   * query's scope is "preorders".
+   */
   itemIds: z.array(z.uuid()),
   /** Universes or characters the question named that Fandex doesn't know (left out). */
   unknown: z.array(z.string()),

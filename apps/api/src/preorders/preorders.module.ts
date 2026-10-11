@@ -10,5 +10,6 @@ import { PreordersService } from './preorders.service.js';
   imports: [CatalogModule, CollectionModule],
   controllers: [PreordersController],
   providers: [PreordersService],
+  exports: [PreordersService],
 })
 export class PreordersModule {}

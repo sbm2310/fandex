@@ -6,6 +6,7 @@ import { ActivityIndicator, FlatList, Pressable, StyleSheet, View } from 'react-
 import { Button } from '@/components/button';
 import { EntryRow } from '@/components/entry-row';
 import { PageTitle } from '@/components/page-title';
+import { PreorderRow } from '@/components/preorder-row';
 import { SearchField } from '@/components/search-field';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -98,29 +99,41 @@ function Examples({ onPick }: { onPick: (question: string) => void }) {
 }
 
 function Answer({ result }: { result: AskResult }) {
+  const header = (
+    <View style={styles.answer}>
+      <ThemedText type="subtitle" accessibilityRole="header" accessibilityLiveRegion="polite">
+        {result.answer}
+      </ThemedText>
+      {result.notice ? (
+        <ThemedText type="small" themeColor="textSecondary">
+          {result.notice}
+        </ThemedText>
+      ) : null}
+      {result.method === 'ai' && result.questionsLeft !== undefined ? (
+        <ThemedText type="small" themeColor="textSecondary">
+          {result.questionsLeft === 1
+            ? '1 AI question left today'
+            : `${result.questionsLeft} AI questions left today`}
+        </ThemedText>
+      ) : null}
+    </View>
+  );
+  if (result.preorders.length > 0) {
+    return (
+      <FlatList
+        data={result.preorders}
+        keyExtractor={(preorder) => preorder.id}
+        ListHeaderComponent={header}
+        renderItem={({ item }) => <PreorderRow preorder={item} />}
+        contentContainerStyle={styles.list}
+      />
+    );
+  }
   return (
     <FlatList
       data={result.items}
       keyExtractor={(item) => item.id}
-      ListHeaderComponent={
-        <View style={styles.answer}>
-          <ThemedText type="subtitle" accessibilityRole="header" accessibilityLiveRegion="polite">
-            {result.answer}
-          </ThemedText>
-          {result.notice ? (
-            <ThemedText type="small" themeColor="textSecondary">
-              {result.notice}
-            </ThemedText>
-          ) : null}
-          {result.method === 'ai' && result.questionsLeft !== undefined ? (
-            <ThemedText type="small" themeColor="textSecondary">
-              {result.questionsLeft === 1
-                ? '1 AI question left today'
-                : `${result.questionsLeft} AI questions left today`}
-            </ThemedText>
-          ) : null}
-        </View>
-      }
+      ListHeaderComponent={header}
       renderItem={({ item }) => (
         <Link href={{ pathname: '/book/[id]', params: { id: item.id } }} asChild>
           <Pressable

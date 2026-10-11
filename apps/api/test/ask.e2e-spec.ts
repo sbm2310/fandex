@@ -32,6 +32,7 @@ const wayOfKings = book('OL3M', 'The Way of Kings', ['Brandon Sanderson']);
 
 /** What the model replies for "What Batman stuff do I own?" (as Groq did, recorded in core). */
 const batmanReply = JSON.stringify({
+  scope: 'collection',
   universes: ['dc'],
   characters: ['Batman'],
   categories: [],
@@ -39,9 +40,23 @@ const batmanReply = JSON.stringify({
   creator: null,
   addedAfter: null,
   addedBefore: null,
+  arrivingAfter: null,
+  arrivingBefore: null,
+  balanceDue: false,
+  delayed: false,
   sort: 'recent',
   answer: 'list',
   unsupported: null,
+});
+
+/** What the model replies for "What's arriving this month?" in October 2026 (recorded in core). */
+const arrivingReply = JSON.stringify({
+  ...JSON.parse(batmanReply),
+  scope: 'preorders',
+  universes: [],
+  characters: [],
+  arrivingAfter: '2026-10-01',
+  arrivingBefore: '2026-11-01',
 });
 
 const fakeBooks = {
@@ -237,15 +252,90 @@ describe('Ask (e2e)', () => {
         ...JSON.parse(batmanReply),
         universes: [],
         characters: [],
-        unsupported: 'Pre-orders are not tracked yet.',
+        unsupported: 'Item value is not tracked.',
       }),
       finishReason: 'stop',
       usage: { promptTokens: 580, completionTokens: 60 },
     });
 
-    const response = await ask(agent, "What's arriving this month?");
+    const response = await ask(agent, "What's my most valuable item?");
 
-    expect(response.answer).toBe("I can't answer that yet: Pre-orders are not tracked yet.");
+    expect(response.answer).toBe("I can't answer that yet: Item value is not tracked.");
     expect(response.itemIds).toEqual([]);
+  });
+
+  describe('about pre-orders', () => {
+    const preorder = (agent: ReturnType<typeof request.agent>, body: object) =>
+      agent
+        .post('/api/preorders')
+        .send(body)
+        .expect(201)
+        .then((response) => response.body.id as string);
+
+    it("answers from the user's open pre-orders, without sending them", async () => {
+      await start();
+      fakeModel.chat.mockResolvedValue({
+        text: arrivingReply,
+        finishReason: 'stop',
+        usage: { promptTokens: 700, completionTokens: 80 },
+      });
+      const fan = await signUp('fan@example.com');
+      const friend = await signUp('friend@example.com');
+      const october = { date: '2026-10-01', precision: 'month' };
+      const arriving = await preorder(fan, {
+        catalogItemId: catalogIds['Batman: Year One'],
+        price: 2500,
+        paid: 500,
+        expectedRelease: october,
+      });
+      await preorder(fan, {
+        catalogItemId: catalogIds['The Way of Kings'],
+        expectedRelease: { date: '2027-03-01', precision: 'month' },
+      });
+      const cancelled = await preorder(fan, {
+        catalogItemId: catalogIds['Batman: The Killing Joke'],
+        expectedRelease: october,
+      });
+      await fan.patch(`/api/preorders/${cancelled}`).send({ status: 'cancelled' }).expect(200);
+      await preorder(friend, {
+        catalogItemId: catalogIds['Batman: The Killing Joke'],
+        expectedRelease: october,
+      });
+
+      const response = await ask(fan, "What's arriving this month?");
+
+      expect(response).toMatchObject({
+        query: { scope: 'preorders', arrivingAfter: '2026-10-01', arrivingBefore: '2026-11-01' },
+        answer: 'You have 1 pre-order arriving in October 2026. Still owed: $20.00.',
+        itemIds: [arriving],
+        method: 'ai',
+      });
+      const sent = fakeModel.chat.mock.calls[0]![0].prompt;
+      expect(sent).not.toContain('Year One');
+      expect(sent).not.toContain('Killing Joke');
+    });
+
+    it('answers what is owed with keywords too', async () => {
+      await start(null);
+      const agent = await signUp();
+      await preorder(agent, {
+        catalogItemId: catalogIds['Batman: Year One'],
+        price: 35000,
+        paid: 7000,
+      });
+      await preorder(agent, {
+        catalogItemId: catalogIds['The Way of Kings'],
+        price: 2999,
+        paid: 2999,
+      });
+
+      const response = await ask(agent, 'How much do I still owe?');
+
+      expect(response).toMatchObject({
+        method: 'keywords',
+        query: { scope: 'preorders', balanceDue: true },
+        answer: 'You still owe $280.00 on 1 pre-order.',
+      });
+    });
   });
 });

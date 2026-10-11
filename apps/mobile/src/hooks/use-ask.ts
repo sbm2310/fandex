@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { useCurrentUser } from './use-account';
 import { useCollection } from './use-collection';
+import { usePreorders } from './use-preorders';
 
 import { useQuestionAsker } from '@/services/app-services';
 import { answerFromServer, answerOnDevice, type AskResult } from '@/utils/ask';
@@ -14,12 +15,14 @@ import { answerFromServer, answerOnDevice, type AskResult } from '@/utils/ask';
 export function useAsk() {
   const { data: user, isPending: userPending } = useCurrentUser();
   const collection = useCollection();
+  const preorders = usePreorders();
   const asker = useQuestionAsker();
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: async (question: string): Promise<AskResult> => {
       const items = collection.data ?? [];
+      const ownPreorders = preorders.data ?? [];
       if (!user) {
         return answerOnDevice(
           question,
@@ -29,22 +32,31 @@ export function useAsk() {
       }
       try {
         const response = await asker.ask(question);
-        // An answer naming items this device hasn't seen yet: refresh the collection.
-        const known = new Set(items.map((item) => item.id));
+        // An answer naming items this device hasn't seen yet: refresh them.
+        const aboutPreorders = response.query.scope === 'preorders';
+        const known = new Set((aboutPreorders ? ownPreorders : items).map((item) => item.id));
         if (response.itemIds.some((id) => !known.has(id))) {
-          void queryClient.invalidateQueries({ queryKey: ['collection'] });
+          void queryClient.invalidateQueries({
+            queryKey: [aboutPreorders ? 'preorders' : 'collection'],
+          });
         }
-        return answerFromServer(question, response, items);
+        return answerFromServer(question, response, items, ownPreorders);
       } catch {
         return answerOnDevice(
           question,
           items,
           "Couldn't reach Fandex, so this was answered on your device with keyword matching.",
+          { preorders: ownPreorders },
         );
       }
     },
   });
-  // Who's asking and their collection must be known first, or a signed-in user's question
-  // would be answered as a guest's, over an empty list.
-  return { ...mutation, ready: !userPending && collection.data !== undefined };
+  // Who's asking and their collection (and pre-orders, signed in) must be known first, or a
+  // signed-in user's question would be answered as a guest's, over an empty list. Pre-orders
+  // that fail to load don't block questions about the collection.
+  const preordersSettled = !user || preorders.data !== undefined || preorders.isError;
+  return {
+    ...mutation,
+    ready: !userPending && collection.data !== undefined && preordersSettled,
+  };
 }

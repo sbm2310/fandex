@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { formatTitle } from '../catalog-book';
+import type { Currency } from '../preorders/money';
 import { CATEGORIES, type Category } from '../category';
 import { itemLinks, type CollectionItem } from '../collection-item';
 import { compareTitles } from '../sort-collection';
@@ -16,7 +17,16 @@ import { containsPhrase, normalizeText } from '../universes/normalize-name';
 
 const isoDate = z.iso.date(); // YYYY-MM-DD
 
+export const QUERY_SCOPES = ['collection', 'preorders'] as const;
+export type QueryScope = (typeof QUERY_SCOPES)[number];
+
 export const collectionQuerySchema = z.object({
+  /**
+   * What the question is about: owned items, or open pre-orders (what's on order). The
+   * universe, character, category, title and creator filters work on both; "added" means
+   * pre-ordered for pre-orders.
+   */
+  scope: z.enum(QUERY_SCOPES).default('collection'),
   /** Universe slugs ("star-wars"); an item matches if it's in any of them. */
   universes: z.array(z.string()).default([]),
   /** Characters by slug; an item matches if it features any of them. */
@@ -31,12 +41,23 @@ export const collectionQuerySchema = z.object({
   addedAfter: isoDate.exactOptional(),
   /** Added before this day (UTC), exclusive. */
   addedBefore: isoDate.exactOptional(),
+  /**
+   * Pre-orders only: expected to arrive on or after this day, and before `arrivingBefore`
+   * (exclusive), judged by the end of the expected period ("March 2027" arrives by March 31).
+   */
+  arrivingAfter: isoDate.exactOptional(),
+  arrivingBefore: isoDate.exactOptional(),
+  /** Pre-orders only: just those with part of the price still to pay. */
+  balanceDue: z.boolean().default(false),
+  /** Pre-orders only: just those whose expected date has moved later. */
+  delayed: z.boolean().default(false),
+  /** "recent": newest first (pre-orders: soonest expected first); "title": A to Z. */
   sort: z.enum(['recent', 'title']).default('recent'),
   /** A list of the items, or just how many there are. */
   answer: z.enum(['list', 'count']).default('list'),
   /**
-   * Set when the question can't be answered from the collection with these filters ("Which
-   * volumes am I missing?" needs series data; "What's arriving?" needs pre-orders), saying why.
+   * Set when the question can't be answered with these filters ("Which volumes am I missing?"
+   * needs series data; "What's it worth?" needs prices), saying why.
    */
   unsupported: z.string().exactOptional(),
 });
@@ -84,9 +105,12 @@ export type QueryResult<T = CollectionItem> = {
   /** Matching items, sorted as asked. */
   items: T[];
   categoryCounts: Partial<Record<Category, number>>;
+  /** Pre-orders only: what's still owed on the matches, per currency (minor units). */
+  owed?: Partial<Record<Currency, number>>;
 };
 
-function matches(item: QueryableItem, query: CollectionQuery): boolean {
+/** Whether an item (or a pre-order's item) passes the filters both scopes share. */
+export function matchesItem(item: QueryableItem, query: CollectionQuery): boolean {
   if (query.categories.length > 0 && !query.categories.includes(item.category)) return false;
 
   if (
@@ -146,7 +170,7 @@ export function runCollectionQuery<T>(
 ): QueryResult<T> {
   const found = items
     .map((item) => ({ item, seen: view(item) }))
-    .filter(({ seen }) => matches(seen, query));
+    .filter(({ seen }) => matchesItem(seen, query));
   found.sort((a, b) =>
     query.sort === 'title'
       ? compareTitles(a.seen.title, b.seen.title)

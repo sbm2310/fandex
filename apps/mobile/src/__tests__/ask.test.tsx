@@ -1,12 +1,14 @@
-import type { AskResponse } from '@fandex/core';
+import { collectionQuery, type AskResponse, type CatalogItemResponse } from '@fandex/core';
 import { fireEvent, renderRouter, screen } from 'expo-router/testing-library';
 
 import CollectionScreen from '@/app/(tabs)/index';
 import AskScreen from '@/app/ask';
 import BookScreen from '@/app/book/[id]';
+import PreorderScreen from '@/app/preorder/[id]/index';
 import { ApiQuestionAsker, AskUnavailableError } from '@/services/question-asker';
 import {
   FakeAccountService,
+  createFakePreorders,
   createFakeQuestionAsker,
   createMemoryCollection,
   createWrapper,
@@ -15,7 +17,9 @@ import {
   linkedHobbit,
   rivendell,
 } from '@/test-utils/providers';
-import { answerFromServer, answerOnDevice } from '@/utils/ask';
+import { answerFromServer, answerOnDevice, PREORDERS_NEED_ACCOUNT } from '@/utils/ask';
+
+jest.mock('@/utils/today', () => ({ localToday: () => '2026-10-11' }));
 
 async function signedIn() {
   const account = new FakeAccountService();
@@ -38,6 +42,7 @@ async function open(options: Parameters<typeof createWrapper>[0], url = '/ask') 
       '(tabs)/index': CollectionScreen,
       ask: AskScreen,
       'book/[id]': BookScreen,
+      'preorder/[id]/index': PreorderScreen,
     },
     { initialUrl: url, wrapper: createWrapper(options) },
   );
@@ -48,14 +53,7 @@ async function open(options: Parameters<typeof createWrapper>[0], url = '/ask') 
 }
 
 const response = (overrides: Partial<AskResponse>): AskResponse => ({
-  query: {
-    universes: [],
-    characters: [],
-    categories: [],
-    titleWords: [],
-    sort: 'recent',
-    answer: 'list',
-  },
+  query: collectionQuery(),
   answer: '',
   itemIds: [],
   unknown: [],
@@ -166,6 +164,86 @@ describe('Ask screen', () => {
     );
 
     expect(app.getPathname()).toBe('/ask');
+  });
+});
+
+describe('Ask about pre-orders', () => {
+  const figure: CatalogItemResponse = {
+    id: '0199b5a0-0000-7000-8000-0000000000f1',
+    category: 'figure',
+    source: 'custom',
+    externalId: 'x',
+    title: 'Darth Vader',
+    creators: ['Hot Toys'],
+    universes: ['star-wars'],
+    characters: [],
+  };
+
+  /** A signed-in user with one pre-order: $350, $70 paid, expected October 2026. */
+  async function withPreorder() {
+    const preorders = createFakePreorders({ [figure.id]: figure });
+    const vader = await preorders.create({
+      catalogItemId: figure.id,
+      price: 35000,
+      paid: 7000,
+      expectedRelease: { date: '2026-10-01', precision: 'month' },
+    });
+    return { preorders, vader };
+  }
+
+  it("shows the server's answer with the pre-orders, and opens one", async () => {
+    const { preorders, vader } = await withPreorder();
+    const questionAsker = createFakeQuestionAsker({
+      ask: jest.fn(async () =>
+        response({
+          query: collectionQuery({ scope: 'preorders', balanceDue: true }),
+          answer: 'You still owe $280.00 on 1 pre-order.',
+          itemIds: [vader.id],
+        }),
+      ),
+    });
+    const { app } = await open({
+      accountCollection: await collection(),
+      preorders,
+      questionAsker,
+      account: await signedIn(),
+    });
+
+    await fireEvent.press(screen.getByRole('button', { name: 'Ask: How much do I still owe?' }));
+
+    expect(
+      await screen.findByRole('header', { name: 'You still owe $280.00 on 1 pre-order.' }),
+    ).toBeOnTheScreen();
+    await fireEvent.press(
+      screen.getByRole('link', { name: 'Darth Vader: On order, expected October 2026' }),
+    );
+    expect(app.getPathname()).toBe(`/preorder/${vader.id}`);
+  });
+
+  it("answers from the device's copy when Fandex can't be reached", async () => {
+    const { preorders } = await withPreorder();
+    await open({
+      accountCollection: await collection(),
+      preorders,
+      questionAsker: createFakeQuestionAsker(), // rejects: unavailable
+      account: await signedIn(),
+    });
+
+    await fireEvent.press(screen.getByRole('button', { name: 'Ask: How much do I still owe?' }));
+
+    expect(
+      await screen.findByRole('header', { name: 'You still owe $280.00 on 1 pre-order.' }),
+    ).toBeOnTheScreen();
+  });
+
+  it('tells a guest that pre-orders need an account', async () => {
+    const questionAsker = createFakeQuestionAsker();
+    await open({ deviceCollection: await collection(), questionAsker });
+
+    await fireEvent.press(screen.getByRole('button', { name: "Ask: What's arriving this month?" }));
+
+    expect(await screen.findByRole('header', { name: PREORDERS_NEED_ACCOUNT })).toBeOnTheScreen();
+    expect(questionAsker.ask).not.toHaveBeenCalled();
   });
 });
 
