@@ -2,6 +2,7 @@ import {
   isBookCategory,
   type CatalogBook,
   type CatalogEntry,
+  type CatalogFigure,
   type CatalogItemResponse,
   type CatalogSet,
   type Isbn13,
@@ -46,6 +47,24 @@ export function toCatalogSet(item: CatalogItemResponse): CatalogSet | null {
   };
 }
 
+/** API catalog item → the app's CatalogFigure (figures added by hand). */
+export function toCatalogFigure(item: CatalogItemResponse): CatalogFigure | null {
+  if (item.category !== 'figure' || item.source !== 'custom') return null;
+  const [brand] = item.creators;
+  return {
+    source: 'custom',
+    externalId: item.externalId,
+    category: 'figure',
+    catalogId: item.id,
+    title: item.title,
+    ...(brand && { brand }),
+    ...(item.subtitle && { line: item.subtitle }),
+    ...(item.scale && { scale: item.scale }),
+    ...(item.coverUrl && { coverUrl: item.coverUrl }),
+    ...links(item),
+  };
+}
+
 /**
  * Universe links travel with the entry, so a guest collection saved on the device knows its
  * universes too. Left out when empty, to keep stored snapshots small.
@@ -57,7 +76,9 @@ function links(item: CatalogItemResponse): Pick<CatalogEntry, 'universes' | 'cha
   };
 }
 
-/** Either kind, for items that can be books or sets (e.g. the collection). */
+/** Any kind, for items that can be books, sets or figures (e.g. the collection). */
 export function toCatalogEntry(item: CatalogItemResponse): CatalogEntry | null {
-  return item.category === 'lego' ? toCatalogSet(item) : toCatalogBook(item);
+  if (item.category === 'lego') return toCatalogSet(item);
+  if (item.category === 'figure') return toCatalogFigure(item);
+  return toCatalogBook(item);
 }

@@ -8,10 +8,10 @@ import { Spacing } from '@/constants/theme';
 import { useMoveToAccount } from '@/hooks/use-move-to-account';
 import { useTheme } from '@/hooks/use-theme';
 
-const books = (count: number) => `${count} ${count === 1 ? 'book' : 'books'}`;
+const items = (count: number) => `${count} ${count === 1 ? 'item' : 'items'}`;
 
 /**
- * Shown while signed in if books are still saved only on this device (added before signing in):
+ * Shown while signed in if items are still saved only on this device (added before signing in):
  * offers to move them into the account so they sync. The screen passes the count once it has
  * read the device collection, so the banner never pops in after the grid (no layout shift).
  */
@@ -29,8 +29,8 @@ export function MoveToAccountBanner({ deviceCount: count }: { deviceCount: numbe
       >
         <ThemedText type="small">
           {failed === 0
-            ? `Moved ${books(moved)} to your account.`
-            : `Moved ${books(moved)} to your account. ${books(failed)} couldn't be matched to the catalog and stay on this device.`}
+            ? `Moved ${items(moved)} to your account.`
+            : `Moved ${items(moved)} to your account. ${items(failed)} couldn't be matched to the catalog and stay on this device.`}
         </ThemedText>
       </View>
     );
@@ -41,7 +41,7 @@ export function MoveToAccountBanner({ deviceCount: count }: { deviceCount: numbe
   return (
     <View style={[styles.banner, { backgroundColor: colors.backgroundElement }]}>
       <ThemedText type="smallBold">
-        {books(count)} {count === 1 ? 'is' : 'are'} saved only on this device
+        {items(count)} {count === 1 ? 'is' : 'are'} saved only on this device
       </ThemedText>
       <ThemedText type="small" themeColor="textSecondary">
         Move {count === 1 ? 'it' : 'them'} to your account to see {count === 1 ? 'it' : 'them'} on
@@ -49,7 +49,7 @@ export function MoveToAccountBanner({ deviceCount: count }: { deviceCount: numbe
       </ThemedText>
       {move.isError && (
         <ThemedText type="small" style={{ color: colors.danger }}>
-          Couldn&apos;t move your books. Check your connection and try again.
+          Couldn&apos;t move your items. Check your connection and try again.
         </ThemedText>
       )}
       <View style={styles.actions}>

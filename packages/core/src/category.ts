@@ -1,8 +1,8 @@
 /**
- * Collectible categories Fandex supports. Books, manga and comics come from Open Library;
- * LEGO arrives with its own catalog. Figures will follow.
+ * Collectible categories Fandex supports. Books, manga and comics come from Open Library,
+ * LEGO from Rebrickable; figures are added by hand (no public catalog covers them).
  */
-export const CATEGORIES = ['book', 'manga', 'comic', 'lego'] as const;
+export const CATEGORIES = ['book', 'manga', 'comic', 'lego', 'figure'] as const;
 
 export type Category = (typeof CATEGORIES)[number];
 

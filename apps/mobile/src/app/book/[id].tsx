@@ -1,4 +1,4 @@
-import { formatTitle, isEdited, itemLinks, type CollectionItem } from '@fandex/core';
+import { formatTitle, isBookItem, isEdited, itemLinks, type CollectionItem } from '@fandex/core';
 import { router, useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
@@ -48,8 +48,9 @@ export default function BookDetailScreen() {
 
 function BookDetail({ item }: { item: CollectionItem }) {
   const { catalog } = item;
-  const isSet = item.category === 'lego';
-  const byline = item.category === 'lego' ? undefined : item.catalog.authors.join(', ');
+  // Sets and figures are product photos: shown whole rather than cropped like book covers.
+  const contain = item.category === 'lego' || item.category === 'figure';
+  const byline = isBookItem(item) ? item.catalog.authors.join(', ') : undefined;
 
   return (
     <ThemedView style={styles.fill}>
@@ -61,7 +62,7 @@ function BookDetail({ item }: { item: CollectionItem }) {
               coverUrl={catalog.coverUrl}
               title={catalog.title}
               width={180}
-              fit={isSet ? 'contain' : 'cover'}
+              fit={contain ? 'contain' : 'cover'}
             />
           </View>
 
@@ -93,6 +94,12 @@ function BookDetail({ item }: { item: CollectionItem }) {
                   }
                 />
                 <Fact label="Released" value={item.catalog.year?.toString()} />
+              </>
+            ) : item.category === 'figure' ? (
+              <>
+                <Fact label="Brand" value={item.catalog.brand} />
+                <Fact label="Line" value={item.catalog.line} />
+                <Fact label="Scale" value={item.catalog.scale} />
               </>
             ) : (
               <>

@@ -89,10 +89,10 @@ describe('Collection sync', () => {
         accountCollection,
       });
 
-      expect(await screen.findByText('2 books are saved only on this device')).toBeOnTheScreen();
+      expect(await screen.findByText('2 items are saved only on this device')).toBeOnTheScreen();
       await fireEvent.press(screen.getByRole('button', { name: 'Move to my account' }));
 
-      expect(await screen.findByText('Moved 2 books to your account.')).toBeOnTheScreen();
+      expect(await screen.findByText('Moved 2 items to your account.')).toBeOnTheScreen();
       expect(await screen.findByText('2 books')).toBeOnTheScreen();
       await expect(deviceCollection.list()).resolves.toEqual([]);
       await expect(accountCollection.list()).resolves.toHaveLength(2);
@@ -106,7 +106,7 @@ describe('Collection sync', () => {
       await fireEvent.press(await screen.findByRole('button', { name: 'Move to my account' }));
 
       expect(
-        await screen.findByText(/1 book couldn't be matched to the catalog/),
+        await screen.findByText(/1 item couldn't be matched to the catalog/),
       ).toBeOnTheScreen();
       await expect(deviceCollection.list()).resolves.toHaveLength(1);
     });

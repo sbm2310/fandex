@@ -39,7 +39,7 @@ App                                         API (NestJS)                        
 
 ## Tasks (each leaves the app working)
 
-**1. Figure category and custom items.** Core: `figure` category, a `CatalogCustom` entry type (name, brand, line, scale, image URL; universes matched from the name with core's matcher), contracts. API: `catalog_item.source = custom` with `owner_id` (migration), `POST /catalog/custom` and `PATCH`/`DELETE` for the owner, excluded from search, isolation tests (mutation-checked). App: Add tab → "Add by hand" form (works for guests: saved straight into the device collection), Figure badge and filter. _Demo:_ add "Hot Toys Gandalf the Grey" by hand; it appears in the collection and on the Middle-earth page.
+**1. Figure category and custom items.** ✅ Core: `figure` category, a `CatalogCustom` entry type (name, brand, line, scale, image URL; universes matched from the name with core's matcher), contracts. API: `catalog_item.source = custom` with `owner_id` (migration), `POST /catalog/custom` and `PATCH`/`DELETE` for the owner, excluded from search, isolation tests (mutation-checked). App: Add tab → "Add by hand" form (works for guests: saved straight into the device collection), Figure badge and filter. _Demo:_ add "Hot Toys Gandalf the Grey" by hand; it appears in the collection and on the Middle-earth page.
 
 **2. Pre-orders in core.** `preorderSchema` and request contracts; money as minor units + currency; `balanceDue`, `needsAttention(preorder, today)`, `groupUpcoming(preorders, today)` (needs attention, this month, later, no date), `describeSlips(history)`, `formatMoney`. Thorough tests with fixed dates. _Demo:_ tests.
 

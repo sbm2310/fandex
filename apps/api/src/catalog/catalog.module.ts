@@ -7,6 +7,7 @@ import { UniversesModule } from '../universes/universes.module.js';
 
 import { CatalogSignalsService } from './catalog-signals.service.js';
 import { CatalogController } from './catalog.controller.js';
+import { CustomItemsController } from './custom-items.controller.js';
 import { BOOK_CATALOG, CatalogService, LEGO_CATALOG } from './catalog.service.js';
 import { RateLimitedCatalog } from './rate-limited-catalog.js';
 import { RequestSpacer } from './request-spacer.js';
@@ -16,7 +17,7 @@ const OPEN_LIBRARY_USER_AGENT = 'Fandex/0.2 (https://github.com/sbm2310/fandex)'
 
 @Module({
   imports: [UniversesModule],
-  controllers: [CatalogController],
+  controllers: [CatalogController, CustomItemsController],
   providers: [
     CatalogService,
     CatalogSignalsService,

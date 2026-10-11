@@ -70,7 +70,12 @@ export function queryableItem(item: CollectionItem): QueryableItem {
     category: item.category,
     addedAt: item.addedAt,
     title: formatTitle(item.catalog),
-    creators: item.category === 'lego' ? [] : item.catalog.authors,
+    creators:
+      item.category === 'lego'
+        ? []
+        : item.category === 'figure'
+          ? [item.catalog.brand ?? ''].filter(Boolean)
+          : item.catalog.authors,
     ...itemLinks(item),
   };
 }

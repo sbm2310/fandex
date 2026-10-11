@@ -1,4 +1,4 @@
-import { formatTitle, type CatalogEntry, type CollectionItem } from '@fandex/core';
+import { formatTitle, isBookItem, type CatalogEntry, type CollectionItem } from '@fandex/core';
 import { Link } from 'expo-router';
 
 import { ThemedText } from './themed-text';
@@ -30,7 +30,7 @@ function OwnedEditionLink({
   text: string;
 }) {
   const what = count === 1 ? 'another edition' : `${count} other editions`;
-  const year = item.category === 'lego' ? undefined : item.catalog.publishedYear;
+  const year = isBookItem(item) ? item.catalog.publishedYear : undefined;
   return (
     <Link
       href={{ pathname: '/book/[id]', params: { id: item.id } }}

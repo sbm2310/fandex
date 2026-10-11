@@ -49,9 +49,11 @@ export function CollectionGrid({ items }: { items: CollectionItem[] }) {
   );
 }
 
-/** The short line under a grid cover: first author, or "Set 75192". */
+/** The short line under a grid cover: first author, "Set 75192", or a figure's brand. */
 function gridSubtitle(item: CollectionItem): string | undefined {
-  return item.category === 'lego' ? `Set ${item.catalog.setNumber}` : item.catalog.authors[0];
+  if (item.category === 'lego') return `Set ${item.catalog.setNumber}`;
+  if (item.category === 'figure') return item.catalog.brand;
+  return item.catalog.authors[0];
 }
 
 /** One cover with its title, linking to the item's detail screen. */
@@ -74,7 +76,7 @@ export function GridItem({ item, width }: { item: CollectionItem; width: number 
           coverUrl={item.catalog.coverUrl}
           title={title}
           width={width}
-          fit={item.category === 'lego' ? 'contain' : 'cover'}
+          fit={item.category === 'lego' || item.category === 'figure' ? 'contain' : 'cover'}
         />
         <CategoryBadge category={item.category} />
         <ThemedText type="smallBold" numberOfLines={2}>

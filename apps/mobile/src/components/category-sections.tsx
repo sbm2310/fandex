@@ -11,10 +11,11 @@ const SECTION_TITLES: Record<Category, string> = {
   manga: 'Manga',
   comic: 'Comics',
   lego: 'LEGO',
+  figure: 'Figures',
 };
 
 /**
- * Items grouped by category (Books, Manga, Comics, LEGO), each group a wrapping grid of
+ * Items grouped by category (Books, Manga, Comics, LEGO, Figures), each group a wrapping grid of
  * covers. For a universe's or character's items: dozens, not thousands, so no virtualization.
  */
 export function CategorySections({ items }: { items: readonly CollectionItem[] }) {

@@ -1,9 +1,11 @@
 import {
+  figureMatchSignals,
   matchSignalsSchema,
   type CatalogBook,
   type CatalogItemResponse,
   type CatalogSet,
   type MatchSignals,
+  type NewFigure,
 } from '@fandex/core';
 
 import type { CatalogItem, Prisma } from '../generated/prisma/client.js';
@@ -47,6 +49,28 @@ function fromBook(book: CatalogBook): Prisma.CatalogItemCreateInput {
     ...(book.workKey && { workKey: book.workKey }),
     ...signalsData(book.matchSignals),
     fetchedAt: new Date(),
+  };
+}
+
+/**
+ * A figure added by hand, as stored: its brand is the creator and its line the subtitle, so
+ * search, sorting and "Ask" treat them like an author and a subtitle. Private to its owner.
+ */
+export function figureData(
+  figure: NewFigure,
+  { ownerId, externalId }: { ownerId: string; externalId: string },
+): Prisma.CatalogItemUncheckedCreateInput {
+  return {
+    category: 'figure',
+    source: 'custom',
+    externalId,
+    ownerId,
+    title: figure.title,
+    subtitle: figure.line ?? null,
+    creators: figure.brand ? [figure.brand] : [],
+    scale: figure.scale ?? null,
+    coverUrl: figure.coverUrl ?? null,
+    matchSignals: toJson(figureMatchSignals(figure)),
   };
 }
 
@@ -97,6 +121,7 @@ export function toCatalogItemResponse(row: CatalogItem, links: ItemLinks): Catal
     ...(row.pieceCount !== null && { pieceCount: row.pieceCount }),
     ...(row.theme !== null && { theme: row.theme }),
     ...(row.subtheme !== null && { subtheme: row.subtheme }),
+    ...(row.scale !== null && { scale: row.scale }),
     universes: links.universes,
     characters: links.characters,
   };

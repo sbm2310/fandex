@@ -1,4 +1,4 @@
-import type { CollectionItem } from './collection-item';
+import { isBookItem, type CollectionItem } from './collection-item';
 import { sortCollection } from './sort-collection';
 
 function item(title: string, addedAt: string, subtitle?: string): CollectionItem {
@@ -53,9 +53,7 @@ describe('sortCollection', () => {
     ];
 
     expect(
-      sortCollection(series, 'title').map((i) =>
-        i.category === 'lego' ? undefined : i.catalog.subtitle,
-      ),
+      sortCollection(series, 'title').map((i) => (isBookItem(i) ? i.catalog.subtitle : undefined)),
     ).toEqual(['Volume 1', 'Volume 2', 'Volume 10']);
   });
 

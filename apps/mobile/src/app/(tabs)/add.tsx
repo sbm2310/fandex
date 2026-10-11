@@ -73,6 +73,7 @@ export default function AddScreen() {
       </View>
       {Platform.OS !== 'web' && kind === 'books' && <RapidScanLink />}
       <ShelfScanLink />
+      <AddFigureLink />
       <SearchResults search={search} kind={kind} />
     </Screen>
   );
@@ -237,6 +238,32 @@ function ShelfScanLink() {
           <ThemedText type="smallBold">Scan a shelf</ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
             Add several items from one photo
+          </ThemedText>
+        </View>
+      </Pressable>
+    </Link>
+  );
+}
+
+/** For what no catalog has: figures, added by hand. */
+function AddFigureLink() {
+  const colors = useTheme();
+  return (
+    <Link href="/add-figure" asChild>
+      <Pressable
+        accessibilityRole="link"
+        accessibilityLabel="Add a figure by hand: Hot Toys and other figures"
+        style={StyleSheet.flatten([styles.shelfLink, { borderColor: colors.border }])}
+      >
+        <SymbolView
+          name={{ ios: 'figure.stand', android: 'person', web: 'person' }}
+          tintColor={colors.accent}
+          size={22}
+        />
+        <View style={styles.searchField}>
+          <ThemedText type="smallBold">Add a figure by hand</ThemedText>
+          <ThemedText type="small" themeColor="textSecondary">
+            Hot Toys and other figures no catalog has
           </ThemedText>
         </View>
       </Pressable>

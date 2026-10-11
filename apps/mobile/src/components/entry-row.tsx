@@ -1,4 +1,4 @@
-import { formatTitle, type CatalogEntry } from '@fandex/core';
+import { figureDetails, formatTitle, type CatalogEntry } from '@fandex/core';
 import type { ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
 
@@ -19,8 +19,12 @@ type Props = {
   showUniverses?: boolean;
 };
 
-/** The two secondary lines for a result: authors + year/publisher, or set number/pieces + theme/year. */
+/**
+ * The two secondary lines for a result: authors + year/publisher, set number/pieces +
+ * theme/year, or a figure's brand/scale + line.
+ */
 export function entryDetails(entry: CatalogEntry): [string | undefined, string | undefined] {
+  if (entry.category === 'figure') return [figureDetails(entry), entry.line];
   if (entry.category === 'lego') {
     const pieces = entry.pieceCount && `${entry.pieceCount.toLocaleString('en-US')} pieces`;
     return [
@@ -39,6 +43,8 @@ export function EntryRow({ entry, accessory, note, showUniverses = true }: Props
   const title = formatTitle(entry);
   const [first, second] = entryDetails(entry);
   const isSet = entry.category === 'lego';
+  // Sets and figures are product photos: shown whole, in a square, rather than cropped.
+  const photo = isSet || entry.category === 'figure';
   const label = [
     title,
     categoryForLabel(entry.category),
@@ -56,8 +62,8 @@ export function EntryRow({ entry, accessory, note, showUniverses = true }: Props
             coverUrl={entry.coverUrl}
             title={entry.title}
             width={COVER_WIDTH}
-            fit={isSet ? 'contain' : 'cover'}
-            aspectRatio={isSet ? 1 : 1.5}
+            fit={photo ? 'contain' : 'cover'}
+            aspectRatio={photo ? 1 : 1.5}
           />
           <View style={styles.text}>
             <CategoryBadge category={entry.category} />

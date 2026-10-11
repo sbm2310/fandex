@@ -1,4 +1,5 @@
 import {
+  isBookItem,
   UNIVERSE_SEED,
   formatTitle,
   isEdited,
@@ -97,14 +98,13 @@ function EditItem({ item }: { item: CollectionItem }) {
 
   function onSave() {
     save({
-      ...(item.category !== 'lego' &&
-        category !== item.category && { category: category as BookCategory }),
+      ...(isBookItem(item) && category !== item.category && { category: category as BookCategory }),
       links: { universes, characters },
     });
   }
 
   function onReset() {
-    save({ ...(item.category !== 'lego' && { category: null }), links: null });
+    save({ ...(isBookItem(item) && { category: null }), links: null });
   }
 
   return (
@@ -119,7 +119,8 @@ function EditItem({ item }: { item: CollectionItem }) {
             <ThemedText themeColor="textSecondary">{title}</ThemedText>
           </View>
 
-          {item.category !== 'lego' && (
+          {/* Books, manga and comics can be refiled; LEGO sets and figures can't. */}
+          {isBookItem(item) && (
             <View style={styles.section}>
               <ThemedText type="smallBold" accessibilityRole="header">
                 Category

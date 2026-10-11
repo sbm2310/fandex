@@ -11,6 +11,7 @@ export const CATEGORY_LABELS: Record<Category, string> = {
   manga: 'Manga',
   comic: 'Comic',
   lego: 'LEGO',
+  figure: 'Figure',
 };
 
 /** True for categories worth a badge: books are the default, so they don't get one. */
@@ -18,7 +19,7 @@ function hasBadge(category: Category): boolean {
   return category !== 'book';
 }
 
-/** A small label for manga, comics and LEGO. Renders nothing for plain books. */
+/** A small label for manga, comics, LEGO and figures. Renders nothing for plain books. */
 export function CategoryBadge({ category }: { category: Category }) {
   const colors = useTheme();
   if (!hasBadge(category)) return null;

@@ -19,11 +19,14 @@ enum Category {
   manga
   comic
   lego
+  figure
 }
 
 enum CatalogSource {
   openlibrary
   rebrickable
+  /// Added by hand by its owner (figures); private to them.
+  custom
 }
 
 /// A catalog entry fetched from an external source and cached here, shared by all users.
@@ -44,6 +47,11 @@ model CatalogItem {
   /// LEGO: top-level theme ("Star Wars") and sub-theme.
   theme        String?
   subtheme     String?
+  /// Figures: "1/6".
+  scale        String?
+  /// Custom items only: the user who added it (only they can see or own it).
+  ownerId      String?       @map("owner_id") @db.Uuid
+  owner        User?         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   /// Open Library work id ("OL27482W"): the same book in any edition.
   workKey      String?       @map("work_key")
   /// What the source says about the item's fiction (characters, places, LEGO themes and
@@ -60,6 +68,7 @@ model CatalogItem {
   @@unique([source, externalId])
   @@index([isbn13])
   @@index([workKey])
+  @@index([ownerId])
   @@map("catalog_item")
 }
 
@@ -69,7 +78,9 @@ model CollectionItem {
   userId           String      @map("user_id") @db.Uuid
   user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   catalogItemId    String      @map("catalog_item_id") @db.Uuid
-  catalogItem      CatalogItem @relation(fields: [catalogItemId], references: [id], onDelete: Restrict)
+  // NoAction, not Restrict: still can't delete an owned catalog item, but the check runs at the
+  // end of the statement, so deleting a user removes their custom items and copies together.
+  catalogItem      CatalogItem @relation(fields: [catalogItemId], references: [id], onDelete: NoAction)
   addedAt          DateTime    @default(now()) @map("added_at") @db.Timestamptz
   notes            String?
   /// The user's correction of the catalog's category (books only); null = the catalog's.
@@ -101,6 +112,7 @@ model User {
   accounts      Account[]
   collection    CollectionItem[]
   aiUsage       AiUsage[]
+  customItems   CatalogItem[]
 
   @@map("user")
 }

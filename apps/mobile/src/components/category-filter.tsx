@@ -13,6 +13,7 @@ const PLURAL_LABELS: Record<Category, string> = {
   manga: 'Manga',
   comic: 'Comics',
   lego: 'LEGO',
+  figure: 'Figures',
 };
 
 /** How many items of each category the collection has (only categories present). */
@@ -30,6 +31,7 @@ const NOUNS: Record<Category | 'all', [string, string]> = {
   manga: ['manga', 'manga'],
   comic: ['comic', 'comics'],
   lego: ['set', 'sets'],
+  figure: ['figure', 'figures'],
   all: ['item', 'items'],
 };
 

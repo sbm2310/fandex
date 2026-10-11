@@ -14,13 +14,16 @@ import {
   type CatalogSet,
   type Isbn13,
   type LegoCatalog,
+  type NewFigure,
 } from '@fandex/core';
+import { randomUUID } from 'node:crypto';
 
 import { TtlCache } from '../common/ttl-cache.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { linksFromRow, linksInclude } from '../universes/item-links.js';
 import { UniverseLinker } from '../universes/universe-linker.service.js';
 import {
+  figureData,
   needsSignals,
   readMatchSignals,
   toCatalogItemData,
@@ -125,6 +128,18 @@ export class CatalogService {
     if (book) return this.save(book);
     if (stored) return toCatalogItemResponse(stored, linksFromRow(stored));
     throw new NotFoundException(`No book found for ISBN ${isbn}`);
+  }
+
+  /**
+   * Saves a figure the user describes (no catalog has them), linked to the universes and
+   * characters its name and line mention. Only its owner can see it or add it.
+   */
+  async createFigure(ownerId: string, figure: NewFigure): Promise<CatalogItemResponse> {
+    const row = await this.prisma.catalogItem.create({
+      data: figureData(figure, { ownerId, externalId: randomUUID() }),
+    });
+    const links = await this.linker.link(row.id, readMatchSignals(row));
+    return toCatalogItemResponse(row, links);
   }
 
   /** Inserts or refreshes the item for this source record, links it, and returns it with our id. */

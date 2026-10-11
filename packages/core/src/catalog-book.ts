@@ -9,8 +9,8 @@ import type { CharacterRef } from './universes/match-universes';
  */
 export type BookSource = 'openlibrary';
 
-/** Every external catalog Fandex reads from: books and LEGO sets. */
-export type CatalogSource = BookSource | 'rebrickable';
+/** Where catalog entries come from: Open Library, Rebrickable, or the owner (figures by hand). */
+export type CatalogSource = BookSource | 'rebrickable' | 'custom';
 
 /**
  * A book as a catalog describes it: something that exists, whether or not the user owns it.

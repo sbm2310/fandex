@@ -1,6 +1,6 @@
 import type { CatalogBook } from './catalog-book';
-import type { CatalogEntry } from './catalog-entry';
-import type { CollectionItem } from './collection-item';
+import { isBookEntry, type CatalogEntry } from './catalog-entry';
+import { isBookItem, type CollectionItem } from './collection-item';
 
 /**
  * True if two catalog entries describe the same edition: same ISBN when both have one,
@@ -12,9 +12,9 @@ export function isSameBook(a: CatalogBook, b: CatalogBook): boolean {
   return a.source === b.source && a.externalId === b.externalId;
 }
 
-/** Same edition (books) or same set (LEGO: same Rebrickable set number, incl. version). */
+/** Same edition (books), same set (LEGO: set number incl. version) or the same figure. */
 export function isSameEntry(a: CatalogEntry, b: CatalogEntry): boolean {
-  if (a.category !== 'lego' && b.category !== 'lego') return isSameBook(a, b);
+  if (isBookEntry(a) && isBookEntry(b)) return isSameBook(a, b);
   return a.source === b.source && a.externalId === b.externalId;
 }
 
@@ -27,10 +27,10 @@ export function findOtherEditions(
   entry: CatalogEntry,
   items: readonly CollectionItem[],
 ): CollectionItem[] {
-  if (entry.category === 'lego' || !entry.workKey) return [];
+  if (!isBookEntry(entry) || !entry.workKey) return [];
   return items.filter(
     (item) =>
-      item.category !== 'lego' &&
+      isBookItem(item) &&
       item.catalog.workKey === entry.workKey &&
       !isSameBook(item.catalog, entry),
   );

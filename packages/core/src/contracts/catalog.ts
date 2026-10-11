@@ -9,7 +9,8 @@ import { characterRefSchema, slugSchema } from './universe';
 export const catalogItemSchema = z.object({
   id: z.uuid(),
   category: z.enum(CATEGORIES),
-  source: z.enum(['openlibrary', 'rebrickable']),
+  /** "custom": a figure its owner added by hand (private to them). */
+  source: z.enum(['openlibrary', 'rebrickable', 'custom']),
   externalId: z.string(),
   title: z.string(),
   subtitle: z.string().optional(),
@@ -27,6 +28,8 @@ export const catalogItemSchema = z.object({
   /** LEGO: top-level theme ("Star Wars") and sub-theme ("Ultimate Collector Series"). */
   theme: z.string().optional(),
   subtheme: z.string().optional(),
+  /** Figures only: "1/6". (A figure's brand is its creator, its line the subtitle.) */
+  scale: z.string().optional(),
   /** The universes this item belongs to (slugs; see GET /universes), in seed order. */
   universes: z.array(slugSchema).default([]),
   /** The characters in it, each with its universe. */
@@ -67,3 +70,25 @@ export const isbnParamSchema = z.string().transform((value, ctx) => {
   }
   return isbn;
 });
+
+const optionalText = (max: number) =>
+  z
+    .string()
+    .trim()
+    .max(max)
+    .transform((value) => value || undefined)
+    .optional();
+
+/** POST /catalog/custom: a figure added by hand. Blank optional fields are dropped. */
+export const createFigureRequestSchema = z.object({
+  title: z.string().trim().min(1).max(200),
+  brand: optionalText(100),
+  line: optionalText(150),
+  scale: optionalText(30),
+  /** A picture of it on the web (https only). */
+  coverUrl: z
+    .url({ protocol: /^https$/, error: 'The image must be an https:// link' })
+    .max(2000)
+    .optional(),
+});
+export type CreateFigureRequest = z.infer<typeof createFigureRequestSchema>;

@@ -1,4 +1,5 @@
 import {
+  createFigure,
   KeyValueCollectionRepository,
   type AiQuotaResponse,
   type ShelfScanResponse,
@@ -14,6 +15,7 @@ import type { ReactNode } from 'react';
 
 import { AccountError, type AccountService, type AccountUser } from '@/services/account-service';
 import { AppServicesProvider } from '@/services/app-services';
+import type { CustomItems } from '@/services/custom-items';
 import { AskUnavailableError, type QuestionAsker } from '@/services/question-asker';
 import type { ShelfPhoto, ShelfScanner } from '@/services/shelf-scanner';
 
@@ -141,6 +143,24 @@ export class FakeAccountService implements AccountService {
  * Wraps a screen in the app's providers with test doubles and a fresh QueryClient per test
  * (no retries, so error states show immediately).
  */
+/** Figures saved on the API: given a catalog id, as the server would. */
+export function createFakeCustomItems(overrides: Partial<CustomItems> = {}) {
+  let next = 0;
+  return {
+    createFigure: jest.fn<
+      ReturnType<CustomItems['createFigure']>,
+      Parameters<CustomItems['createFigure']>
+    >(async (figure) => {
+      next += 1;
+      return {
+        ...createFigure(figure, { externalId: `fig-${next}` }),
+        catalogId: `0199b5a0-0000-7000-8000-${String(next).padStart(12, '0')}`,
+      };
+    }),
+    ...overrides,
+  };
+}
+
 /** Questions on the API: unavailable unless a test says otherwise (the app then uses keywords). */
 export function createFakeQuestionAsker(overrides: Partial<QuestionAsker> = {}) {
   return {
@@ -159,6 +179,7 @@ export function createWrapper({
   account = new FakeAccountService(),
   shelfScanner = createFakeShelfScanner(),
   questionAsker = createFakeQuestionAsker(),
+  customItems = createFakeCustomItems(),
 }: {
   catalog?: BookCatalog;
   legoCatalog?: LegoCatalog;
@@ -167,6 +188,7 @@ export function createWrapper({
   account?: AccountService;
   shelfScanner?: ShelfScanner;
   questionAsker?: QuestionAsker;
+  customItems?: CustomItems;
 } = {}) {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false, gcTime: Infinity } },
@@ -184,6 +206,7 @@ export function createWrapper({
             account,
             shelfScanner,
             questionAsker,
+            customItems,
           }}
         >
           {children}

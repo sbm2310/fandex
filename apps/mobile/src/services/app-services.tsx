@@ -2,6 +2,7 @@ import type { BookCatalog, CollectionRepository, LegoCatalog } from '@fandex/cor
 import { createContext, use, type ReactNode } from 'react';
 
 import type { AccountService } from './account-service';
+import type { CustomItems } from './custom-items';
 import type { QuestionAsker } from './question-asker';
 import type { ShelfScanner } from './shelf-scanner';
 
@@ -18,6 +19,8 @@ export type AppServices = {
   shelfScanner: ShelfScanner;
   /** "Ask your collection" questions answered on the Fandex API (signed in only). */
   questionAsker: QuestionAsker;
+  /** Figures added by hand, saved on the Fandex API (signed in). */
+  customItems: CustomItems;
 };
 
 const AppServicesContext = createContext<AppServices | null>(null);
@@ -65,4 +68,8 @@ export function useShelfScanner(): ShelfScanner {
 
 export function useQuestionAsker(): QuestionAsker {
   return useAppServices().questionAsker;
+}
+
+export function useCustomItems(): CustomItems {
+  return useAppServices().customItems;
 }

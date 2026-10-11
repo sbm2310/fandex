@@ -13,6 +13,7 @@ const NOUNS: Record<Category, [string, string]> = {
   manga: ['manga', 'manga'],
   comic: ['comic', 'comics'],
   lego: ['LEGO set', 'LEGO sets'],
+  figure: ['figure', 'figures'],
 };
 
 /** "2 books · 1 LEGO set", in category order. */

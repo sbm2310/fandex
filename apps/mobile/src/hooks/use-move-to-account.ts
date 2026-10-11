@@ -1,6 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { useCatalog, useCollectionRepositories, useLegoCatalog } from '@/services/app-services';
+import {
+  useCatalog,
+  useCollectionRepositories,
+  useCustomItems,
+  useLegoCatalog,
+} from '@/services/app-services';
 import { moveDeviceCollectionToAccount } from '@/services/move-to-account';
 
 /** Moves this device's books into the signed-in account, then refreshes both collections. */
@@ -8,9 +13,11 @@ export function useMoveToAccount() {
   const { device, account } = useCollectionRepositories();
   const catalog = useCatalog();
   const legoCatalog = useLegoCatalog();
+  const customItems = useCustomItems();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: () => moveDeviceCollectionToAccount({ device, account, catalog, legoCatalog }),
+    mutationFn: () =>
+      moveDeviceCollectionToAccount({ device, account, catalog, legoCatalog, customItems }),
     onSettled: () => queryClient.invalidateQueries({ queryKey: ['collection'] }),
   });
 }

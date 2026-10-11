@@ -309,6 +309,7 @@ describe('real model replies (Groq, recorded)', () => {
     ['Books by Brandon Sanderson', 'You own 2 books by Brandon Sanderson.'],
     ['Which Harry Potter books do I have, alphabetically?', 'You own 1 Wizarding World book.'],
     ['Do I own The Way of Kings?', 'You own 1 item with “way kings” in the title.'],
+    ['Which Hot Toys figures do I have?', "You don't own any figures yet."],
   ])('“%s”', (question, expected) => {
     expect(answer(question).text).toBe(expected);
   });
@@ -376,7 +377,7 @@ describe('resolveModelQuery', () => {
 
   it('rejects a reply that is not the shape asked for', () => {
     expect(() => resolveModelQuery({ universes: 'dc' })).toThrow();
-    expect(() => resolveModelQuery(reply({ categories: ['figure'] }))).toThrow();
+    expect(() => resolveModelQuery(reply({ categories: ['vinyl'] }))).toThrow();
   });
 
   it('asks with the universes, today and the question, and a schema listing every field', () => {

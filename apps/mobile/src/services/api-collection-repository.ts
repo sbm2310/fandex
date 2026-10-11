@@ -3,6 +3,7 @@ import {
   collectionItemSchema,
   collectionResponseSchema,
   isBookCategory,
+  isBookItem,
   type CatalogEntry,
   type CollectionItem,
   type CollectionItemChanges,
@@ -58,9 +59,7 @@ export class ApiCollectionRepository implements CollectionRepository {
   }
 
   async findByIsbn(isbn: Isbn13): Promise<CollectionItem | undefined> {
-    return (await this.list()).find(
-      (item) => item.category !== 'lego' && item.catalog.isbn13 === isbn,
-    );
+    return (await this.list()).find((item) => isBookItem(item) && item.catalog.isbn13 === isbn);
   }
 
   private async request(path: string, init: RequestInit = {}, acceptable: number[] = []) {
@@ -87,6 +86,7 @@ function toCollectionItem(item: CollectionItemResponse): CollectionItem | null {
     ...(item.linkEdits && { linkEdits: item.linkEdits }),
   };
   if (catalog.category === 'lego') return { ...base, category: 'lego', catalog };
+  if (catalog.category === 'figure') return { ...base, category: 'figure', catalog };
   // The user's corrected category, if any (older servers don't send one).
   const category =
     item.category && isBookCategory(item.category) ? item.category : catalog.category;

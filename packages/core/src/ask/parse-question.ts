@@ -24,6 +24,7 @@ const CATEGORY_WORDS: [Category, string[]][] = [
   ['manga', ['manga', 'mangas']],
   ['comic', ['comic', 'comics', 'graphic novel', 'graphic novels', 'trade paperbacks']],
   ['lego', ['lego', 'legos', 'lego set', 'lego sets', 'sets']],
+  ['figure', ['figure', 'figures', 'statue', 'statues', 'collectible figures']],
 ];
 
 /** Questions that need data Fandex doesn't have yet, and why. */

@@ -1,6 +1,7 @@
 import type { CatalogBook } from './catalog-book';
 import type { CatalogEntry } from './catalog-entry';
 import {
+  isBookItem,
   applyItemChanges,
   createCollectionItem,
   type CollectionItem,
@@ -89,9 +90,7 @@ export class KeyValueCollectionRepository implements CollectionRepository {
   }
 
   async findByIsbn(isbn: Isbn13): Promise<CollectionItem | undefined> {
-    return (await this.list()).find(
-      (item) => item.category !== 'lego' && item.catalog.isbn13 === isbn,
-    );
+    return (await this.list()).find((item) => isBookItem(item) && item.catalog.isbn13 === isbn);
   }
 
   private serialize<T>(operation: () => Promise<T>): Promise<T> {

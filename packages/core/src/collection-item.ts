@@ -1,5 +1,6 @@
 import type { CatalogBook } from './catalog-book';
 import type { CatalogEntry } from './catalog-entry';
+import type { CatalogFigure } from './catalog-figure';
 import type { CatalogSet } from './catalog-set';
 import type { BookCategory } from './category';
 import { applyLinkEdits, diffLinks, type ItemLinks, type LinkEdits } from './universes/link-edits';
@@ -22,7 +23,15 @@ type CollectionItemBase = {
  */
 export type CollectionItem =
   | (CollectionItemBase & { category: BookCategory; catalog: CatalogBook })
-  | (CollectionItemBase & { category: 'lego'; catalog: CatalogSet });
+  | (CollectionItemBase & { category: 'lego'; catalog: CatalogSet })
+  | (CollectionItemBase & { category: 'figure'; catalog: CatalogFigure });
+
+export type BookItem = Extract<CollectionItem, { catalog: CatalogBook }>;
+
+/** Books, manga and comics (the items with authors, ISBNs and a correctable category). */
+export function isBookItem(item: CollectionItem): item is BookItem {
+  return item.category !== 'lego' && item.category !== 'figure';
+}
 
 /** Builds a new collection item. The id and clock are passed in so callers (and tests) control them. */
 export function createCollectionItem(
@@ -30,9 +39,14 @@ export function createCollectionItem(
   { id, now }: { id: string; now: Date },
 ): CollectionItem {
   const addedAt = now.toISOString();
-  return catalog.category === 'lego'
-    ? { id, category: 'lego', catalog, addedAt }
-    : { id, category: catalog.category, catalog, addedAt };
+  switch (catalog.category) {
+    case 'lego':
+      return { id, category: 'lego', catalog, addedAt };
+    case 'figure':
+      return { id, category: 'figure', catalog, addedAt };
+    default:
+      return { id, category: catalog.category, catalog, addedAt };
+  }
 }
 
 /** The universes and characters the user sees for an item (automatic links plus their fixes). */
@@ -57,7 +71,7 @@ export type CollectionItemChanges = {
   links?: ItemLinks | null;
 };
 
-/** Thrown for changes an item can't take (a LEGO set has no other category). */
+/** Thrown for changes an item can't take (a LEGO set or a figure has no other category). */
 export class InvalidItemChangeError extends Error {
   override readonly name = 'InvalidItemChangeError';
 }
@@ -69,8 +83,12 @@ export function applyItemChanges(
 ): CollectionItem {
   let next: CollectionItem = item;
   if (changes.category !== undefined) {
-    if (next.category === 'lego') {
-      throw new InvalidItemChangeError("A LEGO set's category can't be changed");
+    if (!isBookItem(next)) {
+      throw new InvalidItemChangeError(
+        next.category === 'lego'
+          ? "A LEGO set's category can't be changed"
+          : "A figure's category can't be changed",
+      );
     }
     next = { ...next, category: changes.category ?? next.catalog.category };
   }

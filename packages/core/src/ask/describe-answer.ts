@@ -9,6 +9,7 @@ const NOUNS: Record<Category, [singular: string, plural: string]> = {
   manga: ['manga volume', 'manga volumes'],
   comic: ['comic', 'comics'],
   lego: ['LEGO set', 'LEGO sets'],
+  figure: ['figure', 'figures'],
 };
 
 function count(n: number, [singular, plural]: [string, string]): string {

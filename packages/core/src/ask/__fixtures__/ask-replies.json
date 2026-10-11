@@ -7,7 +7,7 @@
     },
     {
       "question": "Which manga series am I missing volumes of?",
-      "reply": "{\"addedAfter\": null, \"addedBefore\": null, \"answer\": \"list\", \"categories\": [\"manga\"], \"characters\": [], \"creator\": null, \"sort\": \"recent\", \"titleWords\": [], \"universes\": [], \"unsupported\": \"Series completeness data isn't available yet.\"}"
+      "reply": "{\"addedAfter\": null, \"addedBefore\": null, \"answer\": \"list\", \"categories\": [], \"characters\": [], \"creator\": null, \"sort\": \"recent\", \"titleWords\": [], \"universes\": [], \"unsupported\": \"Series completeness data isn't available yet.\"}"
     },
     {
       "question": "What's arriving this month?",
@@ -40,6 +40,10 @@
     {
       "question": "Do I own The Way of Kings?",
       "reply": "{\"addedAfter\": null, \"addedBefore\": null, \"answer\": \"list\", \"categories\": [], \"characters\": [], \"creator\": null, \"sort\": \"recent\", \"titleWords\": [\"way\", \"kings\"], \"universes\": [], \"unsupported\": null}"
+    },
+    {
+      "question": "Which Hot Toys figures do I have?",
+      "reply": "{\"addedAfter\": null, \"addedBefore\": null, \"answer\": \"list\", \"categories\": [\"figure\"], \"characters\": [], \"creator\": null, \"sort\": \"recent\", \"titleWords\": [], \"universes\": [], \"unsupported\": null}"
     },
     {
       "question": "What's my most valuable item?",

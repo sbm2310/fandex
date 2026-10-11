@@ -90,6 +90,14 @@ export class CollectionService {
     userId: string,
     catalogItemId: string,
   ): Promise<{ item: CollectionItemResponse; created: boolean }> {
+    // Someone else's custom item is reported as missing, like any unknown id.
+    const catalogItem = await this.prisma.catalogItem.findUnique({
+      where: { id: catalogItemId },
+      select: { ownerId: true },
+    });
+    if (!catalogItem || (catalogItem.ownerId !== null && catalogItem.ownerId !== userId)) {
+      throw new NotFoundException('No such catalog item');
+    }
     try {
       const row = await this.prisma.collectionItem.create({
         data: { userId, catalogItemId },
@@ -131,8 +139,12 @@ export class CollectionService {
 
     const data: Prisma.CollectionItemUpdateInput = {};
     if (changes.category !== undefined) {
-      if (row.catalogItem.category === 'lego') {
-        throw new BadRequestException("A LEGO set's category can't be changed");
+      if (row.catalogItem.category === 'lego' || row.catalogItem.category === 'figure') {
+        throw new BadRequestException(
+          row.catalogItem.category === 'lego'
+            ? "A LEGO set's category can't be changed"
+            : "A figure's category can't be changed",
+        );
       }
       const override = changes.category ?? null;
       data.categoryOverride = override === row.catalogItem.category ? null : override;
@@ -173,10 +185,20 @@ export class CollectionService {
     }
   }
 
-  /** Removes the user's item. Someone else's item is reported as not found, not forbidden. */
+  /**
+   * Removes the user's item, and with it a custom item they added (nobody else can own it).
+   * Someone else's item is reported as not found, not forbidden.
+   */
   async remove(userId: string, id: string): Promise<void> {
-    const { count } = await this.prisma.collectionItem.deleteMany({ where: { id, userId } });
-    if (count === 0) throw new NotFoundException('No such item in your collection');
+    const row = await this.prisma.collectionItem.findFirst({
+      where: { id, userId },
+      select: { catalogItemId: true },
+    });
+    if (!row) throw new NotFoundException('No such item in your collection');
+    await this.prisma.$transaction([
+      this.prisma.collectionItem.deleteMany({ where: { id, userId } }),
+      this.prisma.catalogItem.deleteMany({ where: { id: row.catalogItemId, ownerId: userId } }),
+    ]);
   }
 }
 
