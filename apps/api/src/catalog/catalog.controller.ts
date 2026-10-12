@@ -3,6 +3,7 @@ import {
   catalogSearchQuerySchema,
   isbnParamSchema,
   setNumberParamSchema,
+  workKeyParamSchema,
   type CatalogItemResponse,
   type CatalogSearchKind,
   type CatalogSearchResponse,
@@ -52,6 +53,19 @@ export class CatalogController {
     @Param('setNumber', { schema: setNumberParamSchema }) setNum: string,
   ): Promise<CatalogItemResponse> {
     return this.catalog.lookupSet(setNum);
+  }
+
+  @Get('work/:workKey')
+  @ApiOkResponse({
+    description:
+      'An edition of this Open Library work (English when there is one), e.g. a book missing from a series.',
+  })
+  @ApiBadRequestResponse({ description: 'Not an Open Library work id.' })
+  @ApiNotFoundResponse({ description: 'Open Library has no edition of it.' })
+  lookupWork(
+    @Param('workKey', { schema: workKeyParamSchema }) workKey: string,
+  ): Promise<CatalogItemResponse> {
+    return this.catalog.lookupWork(workKey);
   }
 
   @Get('isbn/:isbn')

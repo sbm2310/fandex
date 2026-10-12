@@ -26,7 +26,7 @@
 
 ```
 App (device)                                   API                                      Sources
- owned books' workKeys ─► GET /series/works?keys=… ─► series + series_entry (cached 30 d) ◄── Wikidata SPARQL
+ owned books' workKeys ─► GET /series/works?keys=… ─► series + work_series (cached 30 d) ◄── Wikidata SPARQL
  owned manga/comics ─► core parseVolume → gaps                                            (by Open Library work id)
  next volume? ────────► GET /series/next?title=&volume= ─► Open Library search (cached)
  missing book: Add / Pre-order ─► GET /catalog/work/:workKey ─► catalog_item (an English edition)
@@ -42,7 +42,7 @@ App (device)                                   API                              
 
 **2. Wikidata series in core.** ✅ `WikidataSeriesCatalog.seriesForWork(workKey)` → `{ series: { id, name }, entries: [{ workKey, title, ordinal, published }] }` (numbered entries; side stories separate; the series the work is numbered in when there are several), contracts, recorded real responses. _Demo:_ tests.
 
-**3. Series in the API.** Tables `series`, `series_entry`, `work_series` (work → series, including "none", re-checked after 30 days); `GET /api/series/works?keys=` (public, ≤ 50 keys, spaced Wikidata calls, a busy Wikidata → what's cached); `GET /api/catalog/work/:workKey` (an English edition, saved like any search result). e2e tests. _Demo:_ `curl` the Stormlight Archive.
+**3. Series in the API.** ✅ Tables `series` (entries and extras as validated JSON, read and replaced whole) and `work_series` (work → series, including "none", re-checked after 30 days); `GET /api/series/works?keys=` (public, ≤ 50 keys, spaced Wikidata calls, a busy Wikidata → what's cached); `GET /api/catalog/work/:workKey` (an English edition, saved like any search result). e2e tests. _Demo:_ `curl` the Stormlight Archive.
 
 **4. Next volume.** `GET /api/series/next?title=&volume=` searches Open Library for volume n+1 and returns it only if its title parses as the same series and number (with its release date when upcoming). _Demo:_ One Piece 114, February 2027.
 

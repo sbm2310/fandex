@@ -132,6 +132,17 @@ export class CatalogService {
   }
 
   /**
+   * An edition of an Open Library work (Open Library's best match, English when there is one),
+   * saved like any search result: how a book missing from a series becomes something to add.
+   */
+  async lookupWork(workKey: string): Promise<CatalogItemResponse> {
+    const items = await this.search(`key:/works/${workKey}`);
+    const item = items.find((candidate) => candidate.workKey === workKey);
+    if (!item) throw new NotFoundException(`No edition of ${workKey}`);
+    return item;
+  }
+
+  /**
    * Saves a figure the user describes (no catalog has them), linked to the universes and
    * characters its name and line mention. Only its owner can see it or add it.
    */

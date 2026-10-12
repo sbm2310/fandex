@@ -11,6 +11,7 @@ import { HealthModule } from './health/health.module.js';
 import { MeModule } from './me/me.module.js';
 import { PreordersModule } from './preorders/preorders.module.js';
 import { PrismaModule } from './prisma/prisma.module.js';
+import { SeriesModule } from './series/series.module.js';
 import { PrismaService } from './prisma/prisma.service.js';
 import { UniversesModule } from './universes/universes.module.js';
 
@@ -46,6 +47,7 @@ import { UniversesModule } from './universes/universes.module.js';
     CollectionModule,
     AiModule,
     PreordersModule,
+    SeriesModule,
   ],
 })
 export class AppModule {}

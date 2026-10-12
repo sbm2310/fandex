@@ -26,3 +26,21 @@ export const workSeriesResponseSchema = z.object({
   series: z.array(bookSeriesSchema),
 });
 export type WorkSeriesResponse = z.infer<typeof workSeriesResponseSchema>;
+
+const workKey = z.string().regex(/^OL\d+W$/, 'Not an Open Library work id');
+
+/** Path parameter: an Open Library work id ("OL27482W"). */
+export const workKeyParamSchema = workKey;
+
+/** Query for GET /series/works: up to 50 comma-separated work ids, each once. */
+export const workKeysQuerySchema = z
+  .string()
+  .transform((value) => [
+    ...new Set(
+      value
+        .split(',')
+        .map((key) => key.trim())
+        .filter(Boolean),
+    ),
+  ])
+  .pipe(z.array(workKey).min(1).max(50));

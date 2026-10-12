@@ -330,3 +330,31 @@ model PreorderDateChange {
   @@index([preorderId, changedAt])
   @@map("preorder_date_change")
 }
+
+/// A book series from Wikidata (Stage 6), cached: its main line and extras as stored JSON
+/// (BookSeries in @fandex/core; validated on read). Shared by all users.
+model Series {
+  wikidataId String   @id @map("wikidata_id")
+  name       String
+  /// SeriesEntry[]: the main line, in order.
+  entries    Json
+  /// SeriesEntry[]: novellas, companions, unnumbered books.
+  extras     Json
+  fetchedAt  DateTime @default(now()) @map("fetched_at") @db.Timestamptz
+
+  works WorkSeries[]
+
+  @@map("series")
+}
+
+/// Which series an Open Library work belongs to, as Wikidata said when last asked (null: none).
+/// Every work of a fetched series is recorded too, so one query answers for the whole series.
+model WorkSeries {
+  workKey          String   @id @map("work_key")
+  seriesWikidataId String?  @map("series_wikidata_id")
+  series           Series?  @relation(fields: [seriesWikidataId], references: [wikidataId], onDelete: SetNull)
+  checkedAt        DateTime @default(now()) @map("checked_at") @db.Timestamptz
+
+  @@index([seriesWikidataId])
+  @@map("work_series")
+}
