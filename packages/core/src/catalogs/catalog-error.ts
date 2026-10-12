@@ -8,7 +8,7 @@ export class CatalogError extends Error {
 
   constructor(
     /** The external catalog, or the Fandex API when the app reaches catalogs through it. */
-    readonly source: CatalogSource | 'fandex-api',
+    readonly source: CatalogSource | 'wikidata' | 'fandex-api',
     readonly kind: CatalogErrorKind,
     message: string,
     readonly status?: number,

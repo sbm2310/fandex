@@ -1,0 +1,293 @@
+{
+  "head": {
+    "vars": [
+      "series",
+      "seriesLabel",
+      "bookOrdinal",
+      "member",
+      "memberLabel",
+      "ordinal",
+      "workKey",
+      "published"
+    ]
+  },
+  "results": {
+    "bindings": [
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q7766706"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q2136877"
+        },
+        "bookOrdinal": {
+          "type": "literal",
+          "value": "1"
+        },
+        "ordinal": {
+          "type": "literal",
+          "value": "1"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL15358691W"
+        },
+        "published": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2010-08-31T00:00:00Z"
+        },
+        "seriesLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "The Stormlight Archive"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "The Way of Kings"
+        }
+      },
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q7766706"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q8034469"
+        },
+        "bookOrdinal": {
+          "type": "literal",
+          "value": "1"
+        },
+        "ordinal": {
+          "type": "literal",
+          "value": "2"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL16813053W"
+        },
+        "published": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2014-03-04T00:00:00Z"
+        },
+        "seriesLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "The Stormlight Archive"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Words of Radiance"
+        }
+      },
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q7766706"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q28312017"
+        },
+        "bookOrdinal": {
+          "type": "literal",
+          "value": "1"
+        },
+        "ordinal": {
+          "type": "literal",
+          "value": "3"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL17834026W"
+        },
+        "published": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2017-11-14T00:00:00Z"
+        },
+        "seriesLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "The Stormlight Archive"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Oathbringer"
+        }
+      },
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q7766706"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q85797066"
+        },
+        "bookOrdinal": {
+          "type": "literal",
+          "value": "1"
+        },
+        "ordinal": {
+          "type": "literal",
+          "value": "4"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL24154052W"
+        },
+        "published": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2020-11-17T00:00:00Z"
+        },
+        "seriesLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "The Stormlight Archive"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Rhythm of War"
+        }
+      },
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q7766706"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q111281407"
+        },
+        "bookOrdinal": {
+          "type": "literal",
+          "value": "1"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL24139894W"
+        },
+        "published": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2020-01-01T00:00:00Z"
+        },
+        "seriesLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "The Stormlight Archive"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Dawnshard"
+        }
+      },
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q7766706"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q111281412"
+        },
+        "bookOrdinal": {
+          "type": "literal",
+          "value": "1"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL19631308W"
+        },
+        "published": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2016-01-01T00:00:00Z"
+        },
+        "seriesLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "The Stormlight Archive"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Edgedancer"
+        }
+      },
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q7766706"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q126679146"
+        },
+        "bookOrdinal": {
+          "type": "literal",
+          "value": "1"
+        },
+        "ordinal": {
+          "type": "literal",
+          "value": "5"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL37577930W"
+        },
+        "published": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2024-12-06T00:00:00Z"
+        },
+        "seriesLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "The Stormlight Archive"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Wind and Truth"
+        }
+      },
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q7766706"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q141079175"
+        },
+        "bookOrdinal": {
+          "type": "literal",
+          "value": "1"
+        },
+        "seriesLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "The Stormlight Archive"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "The Stormlight Archive (Part One)"
+        }
+      }
+    ]
+  }
+}

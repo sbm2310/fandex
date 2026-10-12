@@ -1,0 +1,203 @@
+{
+  "head": {
+    "vars": [
+      "series",
+      "seriesLabel",
+      "bookOrdinal",
+      "member",
+      "memberLabel",
+      "ordinal",
+      "workKey",
+      "published"
+    ]
+  },
+  "results": {
+    "bindings": [
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q60979203"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q101987009"
+        },
+        "bookOrdinal": {
+          "type": "literal",
+          "value": "2"
+        },
+        "ordinal": {
+          "type": "literal",
+          "value": "1"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL17352669W"
+        },
+        "published": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2015-01-01T00:00:00Z"
+        },
+        "seriesLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "A Court of Thorns and Roses"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "A Court of Thorns and Roses"
+        }
+      },
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q60979203"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q101987239"
+        },
+        "bookOrdinal": {
+          "type": "literal",
+          "value": "2"
+        },
+        "ordinal": {
+          "type": "literal",
+          "value": "2"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL17860744W"
+        },
+        "published": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2016-01-01T00:00:00Z"
+        },
+        "seriesLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "A Court of Thorns and Roses"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "A Court of Mist and Fury"
+        }
+      },
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q60979203"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q101987946"
+        },
+        "bookOrdinal": {
+          "type": "literal",
+          "value": "2"
+        },
+        "ordinal": {
+          "type": "literal",
+          "value": "3"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL17823218W"
+        },
+        "published": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2017-01-01T00:00:00Z"
+        },
+        "seriesLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "A Court of Thorns and Roses"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "A Court of Wings and Ruin"
+        }
+      },
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q60979203"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q101988228"
+        },
+        "bookOrdinal": {
+          "type": "literal",
+          "value": "2"
+        },
+        "ordinal": {
+          "type": "literal",
+          "value": "3.1"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL19655889W"
+        },
+        "published": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2018-01-01T00:00:00Z"
+        },
+        "seriesLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "A Court of Thorns and Roses"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "A Court of Frost and Starlight"
+        }
+      },
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q60979203"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q101988654"
+        },
+        "bookOrdinal": {
+          "type": "literal",
+          "value": "2"
+        },
+        "ordinal": {
+          "type": "literal",
+          "value": "4"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL21703979W"
+        },
+        "published": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2021-02-16T00:00:00Z"
+        },
+        "seriesLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "A Court of Thorns and Roses"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "A Court of Silver Flames"
+        }
+      }
+    ]
+  }
+}

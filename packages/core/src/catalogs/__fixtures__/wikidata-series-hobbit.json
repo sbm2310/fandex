@@ -1,0 +1,17 @@
+{
+  "head": {
+    "vars": [
+      "series",
+      "seriesLabel",
+      "bookOrdinal",
+      "member",
+      "memberLabel",
+      "ordinal",
+      "workKey",
+      "published"
+    ]
+  },
+  "results": {
+    "bindings": []
+  }
+}

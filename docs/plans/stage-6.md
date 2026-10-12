@@ -40,7 +40,7 @@ App (device)                                   API                              
 
 **1. Volumes in core.** ✅ `parseVolume` and `volumeGaps` for manga and comics (series name normalized, "Vol."/"Volume"/"#"/trailing number for manga only, traps rejected), with the spike's real titles as tests. _Demo:_ tests.
 
-**2. Wikidata series in core.** `WikidataSeriesCatalog.seriesForWork(workKey)` → `{ series: { id, name }, entries: [{ workKey, title, ordinal, published }] }` (numbered entries; side stories separate; the series the work is numbered in when there are several), contracts, recorded real responses. _Demo:_ tests.
+**2. Wikidata series in core.** ✅ `WikidataSeriesCatalog.seriesForWork(workKey)` → `{ series: { id, name }, entries: [{ workKey, title, ordinal, published }] }` (numbered entries; side stories separate; the series the work is numbered in when there are several), contracts, recorded real responses. _Demo:_ tests.
 
 **3. Series in the API.** Tables `series`, `series_entry`, `work_series` (work → series, including "none", re-checked after 30 days); `GET /api/series/works?keys=` (public, ≤ 50 keys, spaced Wikidata calls, a busy Wikidata → what's cached); `GET /api/catalog/work/:workKey` (an English edition, saved like any search result). e2e tests. _Demo:_ `curl` the Stormlight Archive.
 

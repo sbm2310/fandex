@@ -1,0 +1,542 @@
+{
+  "head": {
+    "vars": [
+      "series",
+      "seriesLabel",
+      "bookOrdinal",
+      "member",
+      "memberLabel",
+      "ordinal",
+      "workKey",
+      "published"
+    ]
+  },
+  "results": {
+    "bindings": [
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q268100"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q2062781"
+        },
+        "bookOrdinal": {
+          "type": "literal",
+          "value": "1"
+        },
+        "ordinal": {
+          "type": "literal",
+          "value": "2"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL5738150W"
+        },
+        "published": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2007-08-21T00:00:00Z"
+        },
+        "seriesLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Mistborn"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Mistborn: The Well of Ascension"
+        }
+      },
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q18535364"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q2062781"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL5738150W"
+        },
+        "published": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2007-08-21T00:00:00Z"
+        },
+        "seriesLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Cosmere"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Mistborn: The Well of Ascension"
+        }
+      },
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q18535364"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q2464217"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL5738147W"
+        },
+        "published": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2005-04-21T00:00:00Z"
+        },
+        "seriesLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Cosmere"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Elantris"
+        }
+      },
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q268100"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q2778373"
+        },
+        "bookOrdinal": {
+          "type": "literal",
+          "value": "1"
+        },
+        "ordinal": {
+          "type": "literal",
+          "value": "1"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL5738148W"
+        },
+        "published": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2006-07-17T00:00:00Z"
+        },
+        "seriesLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Mistborn"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Mistborn: The Final Empire"
+        }
+      },
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q18535364"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q2778373"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL5738148W"
+        },
+        "published": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2006-07-17T00:00:00Z"
+        },
+        "seriesLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Cosmere"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Mistborn: The Final Empire"
+        }
+      },
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q268100"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q3859308"
+        },
+        "bookOrdinal": {
+          "type": "literal",
+          "value": "1"
+        },
+        "ordinal": {
+          "type": "literal",
+          "value": "3"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL5738154W"
+        },
+        "published": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2008-10-14T00:00:00Z"
+        },
+        "seriesLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Mistborn"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Mistborn: The Hero of Ages"
+        }
+      },
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q18535364"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q3859308"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL5738154W"
+        },
+        "published": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2008-10-14T00:00:00Z"
+        },
+        "seriesLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Cosmere"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Mistborn: The Hero of Ages"
+        }
+      },
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q268100"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q6880077"
+        },
+        "bookOrdinal": {
+          "type": "literal",
+          "value": "1"
+        },
+        "ordinal": {
+          "type": "literal",
+          "value": "4"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL16597059W"
+        },
+        "published": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2011-11-08T00:00:00Z"
+        },
+        "seriesLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Mistborn"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Mistborn: The Alloy of Law"
+        }
+      },
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q268100"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q16387049"
+        },
+        "bookOrdinal": {
+          "type": "literal",
+          "value": "1"
+        },
+        "ordinal": {
+          "type": "literal",
+          "value": "5"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL17349393W"
+        },
+        "published": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2015-10-06T00:00:00Z"
+        },
+        "seriesLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Mistborn"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Mistborn: Shadows of Self"
+        }
+      },
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q268100"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q21707281"
+        },
+        "bookOrdinal": {
+          "type": "literal",
+          "value": "1"
+        },
+        "ordinal": {
+          "type": "literal",
+          "value": "6"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL17349394W"
+        },
+        "published": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2016-01-26T00:00:00Z"
+        },
+        "seriesLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Mistborn"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Mistborn: The Bands of Mourning"
+        }
+      },
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q268100"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q22911769"
+        },
+        "bookOrdinal": {
+          "type": "literal",
+          "value": "1"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL19913857W"
+        },
+        "published": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2016-01-30T00:00:00Z"
+        },
+        "seriesLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Mistborn"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Mistborn: Secret History"
+        }
+      },
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q18535364"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q22911769"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL19913857W"
+        },
+        "published": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2016-01-30T00:00:00Z"
+        },
+        "seriesLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Cosmere"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Mistborn: Secret History"
+        }
+      },
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q18535364"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q28127676"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL17770504W"
+        },
+        "published": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2016-11-22T00:00:00Z"
+        },
+        "seriesLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Cosmere"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Arcanum Unbounded: The Cosmere Collection"
+        }
+      },
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q268100"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q111635058"
+        },
+        "bookOrdinal": {
+          "type": "literal",
+          "value": "1"
+        },
+        "ordinal": {
+          "type": "literal",
+          "value": "7"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL26769924W"
+        },
+        "published": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2022-11-15T00:00:00Z"
+        },
+        "seriesLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Mistborn"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Mistborn: The Lost Metal"
+        }
+      },
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q18535364"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q111635058"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL26769924W"
+        },
+        "published": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2022-11-15T00:00:00Z"
+        },
+        "seriesLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Cosmere"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Mistborn: The Lost Metal"
+        }
+      },
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q18535364"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q115966015"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL28687656W"
+        },
+        "published": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2023-01-01T00:00:00Z"
+        },
+        "seriesLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Cosmere"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Tress of the Emerald Sea"
+        }
+      }
+    ]
+  }
+}

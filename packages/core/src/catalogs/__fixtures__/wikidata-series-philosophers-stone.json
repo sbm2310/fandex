@@ -1,0 +1,407 @@
+{
+  "head": {
+    "vars": [
+      "series",
+      "seriesLabel",
+      "bookOrdinal",
+      "member",
+      "memberLabel",
+      "ordinal",
+      "workKey",
+      "published"
+    ]
+  },
+  "results": {
+    "bindings": [
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q8337"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q43361"
+        },
+        "bookOrdinal": {
+          "type": "literal",
+          "value": "1"
+        },
+        "ordinal": {
+          "type": "literal",
+          "value": "1"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL82563W"
+        },
+        "published": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "1997-06-26T00:00:00Z"
+        },
+        "seriesLabel": {
+          "xml:lang": "mul",
+          "type": "literal",
+          "value": "Harry Potter"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Harry Potter and the Philosopher's Stone"
+        }
+      },
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q8337"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q46751"
+        },
+        "bookOrdinal": {
+          "type": "literal",
+          "value": "1"
+        },
+        "ordinal": {
+          "type": "literal",
+          "value": "4"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL82560W"
+        },
+        "published": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2000-07-08T00:00:00Z"
+        },
+        "seriesLabel": {
+          "xml:lang": "mul",
+          "type": "literal",
+          "value": "Harry Potter"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Harry Potter and the Goblet of Fire"
+        }
+      },
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q8337"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q46758"
+        },
+        "bookOrdinal": {
+          "type": "literal",
+          "value": "1"
+        },
+        "ordinal": {
+          "type": "literal",
+          "value": "7"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL82586W"
+        },
+        "seriesLabel": {
+          "xml:lang": "mul",
+          "type": "literal",
+          "value": "Harry Potter"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Harry Potter and the Deathly Hallows"
+        }
+      },
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q8337"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q46758"
+        },
+        "bookOrdinal": {
+          "type": "literal",
+          "value": "1"
+        },
+        "ordinal": {
+          "type": "literal",
+          "value": "7"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL21718549W"
+        },
+        "seriesLabel": {
+          "xml:lang": "mul",
+          "type": "literal",
+          "value": "Harry Potter"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Harry Potter and the Deathly Hallows"
+        }
+      },
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q8337"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q46887"
+        },
+        "bookOrdinal": {
+          "type": "literal",
+          "value": "1"
+        },
+        "ordinal": {
+          "type": "literal",
+          "value": "6"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL82565W"
+        },
+        "published": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2005-07-16T00:00:00Z"
+        },
+        "seriesLabel": {
+          "xml:lang": "mul",
+          "type": "literal",
+          "value": "Harry Potter"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Harry Potter and the Half-Blood Prince"
+        }
+      },
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q8337"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q47209"
+        },
+        "bookOrdinal": {
+          "type": "literal",
+          "value": "1"
+        },
+        "ordinal": {
+          "type": "literal",
+          "value": "2"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL82537W"
+        },
+        "published": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "1998-01-01T00:00:00Z"
+        },
+        "seriesLabel": {
+          "xml:lang": "mul",
+          "type": "literal",
+          "value": "Harry Potter"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Harry Potter and the Chamber of Secrets"
+        }
+      },
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q8337"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q47598"
+        },
+        "bookOrdinal": {
+          "type": "literal",
+          "value": "1"
+        },
+        "ordinal": {
+          "type": "literal",
+          "value": "3"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL82536W"
+        },
+        "published": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "1999-07-01T00:00:00Z"
+        },
+        "seriesLabel": {
+          "xml:lang": "mul",
+          "type": "literal",
+          "value": "Harry Potter"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Harry Potter and the Prisoner of Azkaban"
+        }
+      },
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q8337"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q80817"
+        },
+        "bookOrdinal": {
+          "type": "literal",
+          "value": "1"
+        },
+        "ordinal": {
+          "type": "literal",
+          "value": "5"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL82548W"
+        },
+        "published": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2003-06-21T00:00:00Z"
+        },
+        "seriesLabel": {
+          "xml:lang": "mul",
+          "type": "literal",
+          "value": "Harry Potter"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Harry Potter and the Order of the Phoenix"
+        }
+      },
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q8337"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q1148668"
+        },
+        "bookOrdinal": {
+          "type": "literal",
+          "value": "1"
+        },
+        "ordinal": {
+          "type": "literal",
+          "value": "0.5"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL45029097W"
+        },
+        "published": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2008-01-01T00:00:00Z"
+        },
+        "seriesLabel": {
+          "xml:lang": "mul",
+          "type": "literal",
+          "value": "Harry Potter"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Harry Potter prequel"
+        }
+      },
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q8337"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q77808986"
+        },
+        "bookOrdinal": {
+          "type": "literal",
+          "value": "1"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL17360811W"
+        },
+        "published": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2016-07-31T00:00:00Z"
+        },
+        "seriesLabel": {
+          "xml:lang": "mul",
+          "type": "literal",
+          "value": "Harry Potter"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Harry Potter and the Cursed Child"
+        }
+      },
+      {
+        "series": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q8337"
+        },
+        "member": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q20711488"
+        },
+        "bookOrdinal": {
+          "type": "literal",
+          "value": "1"
+        },
+        "workKey": {
+          "type": "literal",
+          "value": "OL27254095M"
+        },
+        "published": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2016-07-31T00:00:00Z"
+        },
+        "seriesLabel": {
+          "xml:lang": "mul",
+          "type": "literal",
+          "value": "Harry Potter"
+        },
+        "memberLabel": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Harry Potter and the Cursed Child"
+        }
+      }
+    ]
+  }
+}
