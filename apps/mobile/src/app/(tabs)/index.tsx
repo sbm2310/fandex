@@ -91,6 +91,11 @@ export default function CollectionScreen() {
           <SortToggle value={sort} onChange={setSort} />
         </View>
         <AskLink />
+        <Link href="/series" accessibilityLabel="Your series: what you're missing and what's next">
+          <ThemedText type="small" themeColor="accent">
+            Your series ›
+          </ThemedText>
+        </Link>
         <CategoryFilter items={collection.data} value={activeFilter} onChange={setFilter} />
       </View>
       <CollectionGrid items={sortCollection(visible, sort)} />

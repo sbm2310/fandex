@@ -2,7 +2,9 @@ import type { BookSeries, CatalogBook } from '@fandex/core';
 import { fireEvent, renderRouter, screen } from 'expo-router/testing-library';
 
 import AddScreen from '@/app/(tabs)/add';
+import CollectionScreen from '@/app/(tabs)/index';
 import BookDetailScreen from '@/app/book/[id]';
+import SeriesScreen from '@/app/series';
 import {
   createFakeCatalog,
   createFakeSeriesCatalog,
@@ -151,5 +153,112 @@ describe('manga volumes on the item page', () => {
     await fireEvent.press(await screen.findByRole('link', { name: 'Search for One Piece' }));
 
     expect(app.getPathname()).toBe('/add');
+  });
+});
+
+describe('the Series view', () => {
+  const manga = (title: string, extra: Partial<CatalogBook> = {}): CatalogBook => ({
+    source: 'openlibrary',
+    externalId: title,
+    category: 'manga',
+    title,
+    authors: [],
+    ...extra,
+  });
+
+  async function openSeries(
+    owned: CatalogBook[],
+    services: Parameters<typeof createWrapper>[0] = {},
+  ) {
+    const deviceCollection = createMemoryCollection();
+    for (const entry of owned) await deviceCollection.add(entry);
+    const app = renderRouter(
+      { '(tabs)/index': CollectionScreen, series: SeriesScreen, 'book/[id]': BookDetailScreen },
+      { initialUrl: '/series', wrapper: createWrapper({ deviceCollection, ...services }) },
+    );
+    await app;
+    return { getPathname: () => app.getPathname() };
+  }
+
+  const owned = [
+    wayOfKings,
+    wordsOfRadiance,
+    manga('One Piece, Vol. 1'),
+    manga('One Piece, Vol. 3'),
+    manga('Naruto, Vol. 1'),
+    manga('Naruto, Vol. 2'),
+    manga('Akira'),
+  ];
+  const vol4 = manga('One Piece, Vol. 4', {
+    catalogId: 'cat-op-4',
+    publishDate: { date: '2027-02-02', precision: 'day' },
+  });
+  const services = () => ({
+    seriesCatalog: createFakeSeriesCatalog({ series: [stormlight] }),
+    catalog: createFakeCatalog({
+      search: jest.fn(async (query: string) => (query === 'one piece 4' ? [vol4] : [])),
+    }),
+  });
+
+  it("lists each series with what's missing and what's next, incomplete first", async () => {
+    await openSeries(owned, services());
+
+    // The next volume is there once the search answers.
+    expect(
+      await screen.findByLabelText(
+        'One Piece, Manga. You have 2 of 3 volumes. Missing volume 2. Next: volume 4, out February 2, 2027',
+      ),
+    ).toBeOnTheScreen();
+    expect(screen.getByText('2 of 3 have something missing.')).toBeOnTheScreen();
+    const rows = screen.getAllByRole('link').map((row) => row.props.accessibilityLabel as string);
+    expect(rows).toEqual([
+      'One Piece, Manga. You have 2 of 3 volumes. Missing volume 2. Next: volume 4, out February 2, 2027',
+      'The Stormlight Archive, Books. You have 2 of 5 books. Missing books 3–5',
+      'Naruto, Manga. You have 2 of 2 volumes. Complete',
+    ]);
+  });
+
+  it("opens an owned item of the series, whose page has what's missing", async () => {
+    const app = await openSeries(owned, services());
+
+    await fireEvent.press(await screen.findByLabelText(/^The Stormlight Archive, Books/));
+
+    // The most recently added book of the series.
+    expect(app.getPathname()).toBe('/book/item-2');
+    expect(
+      await screen.findByRole('header', { name: 'Book 2 of 5 in The Stormlight Archive' }),
+    ).toBeOnTheScreen();
+  });
+
+  it('still lists manga when book series fail to load, and tries again', async () => {
+    const seriesCatalog = createFakeSeriesCatalog({ series: [stormlight] });
+    seriesCatalog.seriesForWorks.mockRejectedValueOnce(new Error("Can't reach Fandex"));
+    await openSeries(owned, { ...services(), seriesCatalog });
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(/Couldn.t load your book series/);
+    expect(screen.getByLabelText(/^One Piece, Manga/)).toBeOnTheScreen();
+    await fireEvent.press(screen.getByRole('button', { name: 'Try again' }));
+
+    expect(await screen.findByLabelText(/^The Stormlight Archive, Books/)).toBeOnTheScreen();
+  });
+
+  it('explains itself when there are no series', async () => {
+    await openSeries([manga('Akira')], services());
+
+    expect(await screen.findByText('No series yet')).toBeOnTheScreen();
+  });
+
+  it('is opened from the Collection tab', async () => {
+    const deviceCollection = createMemoryCollection();
+    await deviceCollection.add(wayOfKings);
+    const app = renderRouter(
+      { '(tabs)/index': CollectionScreen, series: SeriesScreen },
+      { initialUrl: '/', wrapper: createWrapper({ deviceCollection, ...services() }) },
+    );
+    await app;
+
+    await fireEvent.press(await screen.findByLabelText(/^Your series/));
+
+    expect(app.getPathname()).toBe('/series');
   });
 });

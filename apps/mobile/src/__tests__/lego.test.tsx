@@ -106,7 +106,9 @@ describe('Collection filters', () => {
     const items = screen
       .getAllByRole('link')
       .map((el) => el.props.accessibilityLabel as string)
-      .filter((label) => !label.startsWith('Ask your collection'));
+      .filter(
+        (label) => !label.startsWith('Ask your collection') && !label.startsWith('Your series'),
+      );
     expect(items).toEqual(['Millennium Falcon, lego, set 75192 · 7,541 pieces']);
     expect(screen.getByText('Data and images from Open Library and Rebrickable')).toBeOnTheScreen();
   });

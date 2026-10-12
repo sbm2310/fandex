@@ -48,7 +48,7 @@ App (device)                                   API                              
 
 **5. Item page.** ✅ "Book 2 of 5 in The Stormlight Archive", the missing numbered entries and the next volume, each with Add / Pre-order (catalog entry fetched on demand). _Demo:_ the item page in the Simulator.
 
-**6. Series view.** Your incomplete series (books and volumes), what's missing and what's next; from the Collection tab. _Demo:_ the list.
+**6. Series view.** ✅ Your incomplete series (books and volumes), what's missing and what's next; from the Collection tab. _Demo:_ the list.
 
 **7. Ask about series.** "Which manga series am I missing volumes of?" / "What am I missing from Stormlight?" answered from the collection and cached series (scope `series`); prompt, schema, keyword fallback, replies re-recorded. _Demo:_ ask it.
 

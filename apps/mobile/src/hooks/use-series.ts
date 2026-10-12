@@ -3,6 +3,8 @@ import {
   isBookItem,
   seriesProgress,
   volumeGaps,
+  type BookSeries,
+  type CatalogBook,
   type CollectionItem,
   type SeriesEntry,
 } from '@fandex/core';
@@ -91,4 +93,118 @@ export function useVolumeSeries(item: CollectionItem) {
   });
 
   return { series, volume, next: next.data ?? null };
+}
+
+/** One line of the Series view: a book series or a manga/comic series, owned in part or whole. */
+export type SeriesSummary = {
+  id: string;
+  kind: 'book' | 'manga' | 'comic';
+  name: string;
+  /** Owned books (by place) or volumes, out of `total` (the series' length, or the highest volume owned). */
+  owned: number;
+  total: number;
+  /** Missing places or volume numbers (main line only). */
+  missing: number[];
+  /** An owned item, whose page has the details and the Add / Pre-order buttons. */
+  itemId: string;
+  /** The next manga/comic volume, when the catalog has it. */
+  next?: { volume: number; publishDate?: CatalogBook['publishDate'] };
+};
+
+/** Asks the API for at most this many works at once. */
+const WORKS_PER_REQUEST = 50;
+
+/**
+ * Every series the collection has something of: book series (Wikidata, one request for all
+ * owned books) and manga/comic series (volume numbers), with what's missing and, for volumes,
+ * the next one (shared with item pages' cache). Incomplete series first, then by name.
+ */
+export function useSeriesOverview() {
+  const collection = useCollection();
+  const seriesCatalog = useSeriesCatalog();
+  const catalog = useCatalog();
+  const items = collection.data ?? [];
+
+  const books = items.filter(isBookItem).filter((item) => item.category === 'book');
+  const workKeys = [
+    ...new Set(books.flatMap((item) => (item.catalog.workKey ? [item.catalog.workKey] : []))),
+  ].sort();
+  const bookSeries = useQuery({
+    queryKey: ['series', 'works', workKeys],
+    queryFn: async () => {
+      const found = new Map<string, BookSeries>();
+      for (let i = 0; i < workKeys.length; i += WORKS_PER_REQUEST) {
+        const chunk = await seriesCatalog.seriesForWorks(workKeys.slice(i, i + WORKS_PER_REQUEST));
+        for (const [key, series] of chunk) found.set(key, series);
+      }
+      return found;
+    },
+    enabled: collection.data !== undefined && workKeys.length > 0,
+    staleTime: STALE_MS,
+  });
+
+  const volumeSeries = volumeGaps(
+    items.filter(isBookItem).map((owned) => ({
+      id: owned.id,
+      category: owned.category,
+      title: owned.catalog.title,
+      subtitle: owned.catalog.subtitle,
+    })),
+  );
+  const nexts = useQueries({
+    queries: volumeSeries.map((series) => ({
+      queryKey: ['series', 'next', series.category, series.key, series.highest],
+      queryFn: () => findNextVolume(series, (query) => catalog.search(query)),
+      staleTime: STALE_MS,
+    })),
+  });
+
+  const summaries: SeriesSummary[] = [];
+  const owned = ownedWorkKeys(items);
+  const seen = new Set<string>();
+  for (const book of books) {
+    const series = book.catalog.workKey ? bookSeries.data?.get(book.catalog.workKey) : undefined;
+    if (!series || seen.has(series.wikidataId)) continue;
+    seen.add(series.wikidataId);
+    const progress = seriesProgress(series, owned);
+    summaries.push({
+      id: `book:${series.wikidataId}`,
+      kind: 'book',
+      name: series.name,
+      owned: progress.owned.length,
+      total: series.entries.length,
+      missing: progress.missing.flatMap((entry) => entry.ordinal ?? []),
+      itemId: book.id,
+    });
+  }
+  volumeSeries.forEach((series, index) => {
+    const next = nexts[index]?.data;
+    const [firstCopy] = [...series.items.values()].flat();
+    summaries.push({
+      id: `${series.category}:${series.key}`,
+      kind: series.category,
+      name: series.name,
+      owned: series.owned.length,
+      total: series.highest,
+      missing: series.missing,
+      itemId: firstCopy!.id,
+      ...(next && {
+        next: {
+          volume: next.volume,
+          ...(next.entry.publishDate && { publishDate: next.entry.publishDate }),
+        },
+      }),
+    });
+  });
+  summaries.sort(
+    (a, b) =>
+      Number(b.missing.length > 0) - Number(a.missing.length > 0) || a.name.localeCompare(b.name),
+  );
+
+  return {
+    summaries,
+    isPending: collection.isPending || (workKeys.length > 0 && bookSeries.isPending),
+    bookSeriesFailed: bookSeries.isError,
+    retry: () => void bookSeries.refetch(),
+  };
 }

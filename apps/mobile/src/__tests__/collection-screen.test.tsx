@@ -14,12 +14,14 @@ async function renderCollection(collection = createMemoryCollection()) {
   await render(<CollectionScreen />, { wrapper: createWrapper({ deviceCollection: collection }) });
 }
 
-/** The items in the grid, by label (the "Ask your collection" link aside). */
+/** The items in the grid, by label (the "Ask your collection" and "Your series" links aside). */
 const itemLabels = () =>
   screen
     .getAllByRole('link')
     .map((element) => element.props.accessibilityLabel as string)
-    .filter((label) => !label.startsWith('Ask your collection'));
+    .filter(
+      (label) => !label.startsWith('Ask your collection') && !label.startsWith('Your series'),
+    );
 
 describe('Collection screen', () => {
   it('invites you to add books when the collection is empty', async () => {

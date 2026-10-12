@@ -1,0 +1,37 @@
+appId: host.exp.Exponent
+name: A guest's Series view lists a book series and a manga series with what's missing and next (live data)
+tags:
+  - guest
+---
+- runFlow:
+    file: common/open.yaml
+    env:
+      ROUTE: add
+- tapOn: 'Search books'
+- inputText: 'the way of kings sanderson'
+- extendedWaitUntil:
+    visible: 'Add The Way of Kings'
+    timeout: 30000
+- tapOn: 'Add The Way of Kings'
+- assertVisible: 'The Way of Kings is in your collection'
+- tapOn: 'Clear text'
+- inputText: 'jujutsu kaisen 26'
+- extendedWaitUntil:
+    visible: 'Add Jujutsu Kaisen, Vol. 26'
+    timeout: 30000
+- tapOn: 'Add Jujutsu Kaisen, Vol. 26'
+- assertVisible: 'Jujutsu Kaisen, Vol. 26 is in your collection'
+
+- hideKeyboard
+- tapOn:
+    text: 'Collection'
+    retryTapIfNoChange: true
+- tapOn: 'Your series: .*'
+# Live data: the series' length and the next volume may change over time.
+- extendedWaitUntil:
+    visible: "The Stormlight Archive, Books\\. You have 1 of \\d+ books\\. Missing books 2–\\d+"
+    timeout: 30000
+- extendedWaitUntil:
+    visible: "Jujutsu Kaisen, Manga\\. You have 1 of 26 volumes\\. Missing volumes 1–25\\. Next: volume 27.*"
+    timeout: 30000
+- takeScreenshot: output/series-view
