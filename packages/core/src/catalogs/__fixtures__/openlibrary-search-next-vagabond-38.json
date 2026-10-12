@@ -1,0 +1,248 @@
+{
+  "numFound": 8,
+  "start": 0,
+  "numFoundExact": true,
+  "num_found": 8,
+  "documentation_url": "https://openlibrary.org/dev/docs/api/search",
+  "q": "vagabond 38",
+  "offset": null,
+  "docs": [
+    {
+      "author_name": ["John Thurston Dove"],
+      "cover_i": 12191272,
+      "first_publish_year": 1985,
+      "key": "/works/OL26199228W",
+      "title": "Strange vagabond of God",
+      "subject": ["Missionaries", "Biography"],
+      "place": ["Zimbabwe"],
+      "person": ["John Bradburne"],
+      "editions": {
+        "numFound": 1,
+        "start": 0,
+        "numFoundExact": true,
+        "docs": [
+          {
+            "key": "/books/OL11375081M",
+            "title": "Strange Vagabond of God",
+            "subtitle": "The Story of John Bradburne",
+            "cover_i": 12191272,
+            "publisher": ["Irish Books & Media, Incorporated"],
+            "publish_date": ["1985"],
+            "publish_year": [1985],
+            "isbn": ["9780907085560", "0907085563"]
+          }
+        ]
+      }
+    },
+    {
+      "author_name": ["Roberto Bolaño"],
+      "cover_i": 3744911,
+      "first_publish_year": 1997,
+      "key": "/works/OL712031W",
+      "title": "Llamadas telefónicas",
+      "subject": [
+        "Romance literature",
+        "Chilean poetry",
+        "Chilean poetry--20th century",
+        "Pq8098.12.o38 l63 1997",
+        "863",
+        "Fiction, romance, short stories",
+        "Translations into English",
+        "English Short stories",
+        "Fiction, short stories (single author)",
+        "Mexico city (mexico), fiction",
+        "Chilean literature",
+        "Chilean Authors"
+      ],
+      "person": ["Roberto Bolaño (1953-)"],
+      "editions": {
+        "numFound": 1,
+        "start": 0,
+        "numFoundExact": true,
+        "docs": [
+          {
+            "key": "/books/OL17206965M",
+            "title": "Last evenings on Earth",
+            "publisher": ["New Directions Books"],
+            "publish_date": ["2006"],
+            "publish_year": [2006],
+            "isbn": ["9780811216340", "0811216349"]
+          }
+        ]
+      }
+    },
+    {
+      "author_name": ["Joe O'Shea"],
+      "cover_i": 10209609,
+      "first_publish_year": 2012,
+      "key": "/works/OL20883730W",
+      "title": "An account of murder, mutiny & mayhem",
+      "subject": [
+        "Criminals",
+        "Rogues and vagabonds",
+        "Anecdotes",
+        "Criminals, biography",
+        "Criminals, ireland"
+      ],
+      "place": ["Ireland"],
+      "editions": {
+        "numFound": 1,
+        "start": 0,
+        "numFoundExact": true,
+        "docs": [
+          {
+            "key": "/books/OL28284640M",
+            "title": "An account of murder, mutiny & mayhem",
+            "subtitle": "concerning the affairs of the blackest-hearted villains from Irish history",
+            "cover_i": 10209609,
+            "publisher": ["O'Brien Press, Limited, The"],
+            "publish_date": ["2012"],
+            "publish_year": [2012],
+            "isbn": ["9781847172990", "1847172997"]
+          }
+        ]
+      }
+    },
+    {
+      "author_name": ["Sandy M. Bradley"],
+      "cover_i": 12572583,
+      "first_publish_year": 2013,
+      "key": "/works/OL27057616W",
+      "title": "The long overdue library book",
+      "subject": ["Libraries", "Anecdotes", "Librarians"],
+      "editions": {
+        "numFound": 1,
+        "start": 0,
+        "numFoundExact": true,
+        "docs": [
+          {
+            "key": "/books/OL36689776M",
+            "title": "The long overdue library book",
+            "subtitle": "stories librarians tell each other",
+            "cover_i": 12572583,
+            "publisher": ["[CreateSpace]"],
+            "publish_date": ["2013"],
+            "publish_year": [2013],
+            "isbn": ["9781490572437", "1490572430"]
+          }
+        ]
+      }
+    },
+    {
+      "author_name": ["Anna Kirwan"],
+      "cover_i": 7429451,
+      "first_publish_year": 1991,
+      "key": "/works/OL2497191W",
+      "title": "The Jewel of Life",
+      "subject": ["Fantasy"],
+      "editions": {
+        "numFound": 1,
+        "start": 0,
+        "numFoundExact": true,
+        "docs": [
+          {
+            "key": "/books/OL1876680M",
+            "title": "The Jewel of Life",
+            "cover_i": 7429451,
+            "publisher": ["Harcourt Brace Jovanovich, Publishers"],
+            "publish_date": ["1991"],
+            "publish_year": [1991],
+            "isbn": ["0152007504", "9780152007508"]
+          }
+        ]
+      }
+    },
+    {
+      "author_name": ["Gebrüder Grimm [Brothers Grimm]"],
+      "cover_i": 7895815,
+      "first_publish_year": 1900,
+      "key": "/works/OL15227618W",
+      "title": "Grimm's Complete Fairy Tales",
+      "subject": [
+        "Fairy tales",
+        "Tales, germany",
+        "German literature, translations into english",
+        "Children's fiction"
+      ],
+      "editions": {
+        "numFound": 1,
+        "start": 0,
+        "numFoundExact": true,
+        "docs": [
+          {
+            "key": "/books/OL24197373M",
+            "title": "Grimm's Complete Fairy Tales",
+            "cover_i": 6377119,
+            "publisher": ["International Collectors Library"],
+            "publish_date": ["1900"],
+            "publish_year": [1900]
+          }
+        ]
+      }
+    },
+    {
+      "author_name": ["William Blake"],
+      "cover_i": 15163853,
+      "first_publish_year": 1795,
+      "key": "/works/OL44804572W",
+      "title": "Songs of Innocence and of Experience",
+      "subject": [
+        "Poetry",
+        "Romanticism",
+        "Social Criticism",
+        "Spirituality",
+        "Childhood",
+        "18th Century",
+        "Mysticism"
+      ],
+      "place": ["London", "The Thames", "Charter'd streets"],
+      "person": ["William Blake", "The Lamb", "The Tyger", "The Chimney Sweeper"],
+      "editions": {
+        "numFound": 1,
+        "start": 0,
+        "numFoundExact": true,
+        "docs": [
+          {
+            "key": "/books/OL61270142M",
+            "title": "Songs of innocence and of experience",
+            "subtitle": "shewing the two contrary states of the human soul",
+            "publisher": ["William Blake"],
+            "publish_date": ["1795"],
+            "publish_year": [1795]
+          }
+        ]
+      }
+    },
+    {
+      "author_name": ["Nathaniel Schmidt"],
+      "cover_i": 9677403,
+      "first_publish_year": 1911,
+      "key": "/works/OL17314903W",
+      "title": "The Messages Of The Poets",
+      "subject": [
+        "Hebrew poetry",
+        "Criticism, interpretation",
+        "Bible",
+        "Introductions",
+        "English Paraphrases",
+        "History and criticism"
+      ],
+      "editions": {
+        "numFound": 1,
+        "start": 0,
+        "numFoundExact": true,
+        "docs": [
+          {
+            "key": "/books/OL25889046M",
+            "title": "The Messages Of The Poets",
+            "subtitle": "The Books Of Job And Canticles And Some Minor Poems In The Old Testment, With Introductions, Metrical Translations, And Paraphrases",
+            "cover_i": 9677403,
+            "publisher": ["Charles Scribner's Sons"],
+            "publish_date": ["1911"],
+            "publish_year": [1911]
+          }
+        ]
+      }
+    }
+  ]
+}

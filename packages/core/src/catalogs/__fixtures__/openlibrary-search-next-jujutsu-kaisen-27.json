@@ -1,0 +1,54 @@
+{
+  "numFound": 2,
+  "start": 0,
+  "numFoundExact": true,
+  "num_found": 2,
+  "documentation_url": "https://openlibrary.org/dev/docs/api/search",
+  "q": "jujutsu kaisen 27",
+  "offset": null,
+  "docs": [
+    {
+      "author_name": ["Gege Akutami"],
+      "first_publish_year": 2025,
+      "key": "/works/OL44548526W",
+      "title": "Jujutsu Kaisen, Vol. 27",
+      "editions": {
+        "numFound": 1,
+        "start": 0,
+        "numFoundExact": true,
+        "docs": [
+          {
+            "key": "/books/OL60832904M",
+            "title": "Jujutsu Kaisen, Vol. 27",
+            "publisher": ["Viz Media"],
+            "publish_date": ["2025"],
+            "publish_year": [2025],
+            "isbn": ["9781974755592", "1974755592"]
+          }
+        ]
+      }
+    },
+    {
+      "author_name": ["David davo"],
+      "first_publish_year": 2021,
+      "key": "/works/OL30742902W",
+      "title": "Books Anime Jujutsu Kaisen Dojo",
+      "editions": {
+        "numFound": 1,
+        "start": 0,
+        "numFoundExact": true,
+        "docs": [
+          {
+            "key": "/books/OL42249579M",
+            "title": "Books Anime Jujutsu Kaisen Dojo",
+            "subtitle": "8. 5 X 11 Inch / 21. 59 X 27. 94 Cm 192 Pages",
+            "publisher": ["Independently Published"],
+            "publish_date": ["2021"],
+            "publish_year": [2021],
+            "isbn": ["9798594480001"]
+          }
+        ]
+      }
+    }
+  ]
+}

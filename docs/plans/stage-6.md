@@ -28,7 +28,7 @@
 App (device)                                   API                                      Sources
  owned books' workKeys ─► GET /series/works?keys=… ─► series + work_series (cached 30 d) ◄── Wikidata SPARQL
  owned manga/comics ─► core parseVolume → gaps                                            (by Open Library work id)
- next volume? ────────► GET /series/next?title=&volume= ─► Open Library search (cached)
+ next volume? ────────► GET /catalog/search "<series> <n+1>" (core picks it) ─► Open Library (cached)
  missing book: Add / Pre-order ─► GET /catalog/work/:workKey ─► catalog_item (an English edition)
  Ask "missing volumes" ─► POST /ai/ask → query scope "series" → core on the user's items + cached series
 ```
@@ -44,7 +44,7 @@ App (device)                                   API                              
 
 **3. Series in the API.** ✅ Tables `series` (entries and extras as validated JSON, read and replaced whole) and `work_series` (work → series, including "none", re-checked after 30 days); `GET /api/series/works?keys=` (public, ≤ 50 keys, spaced Wikidata calls, a busy Wikidata → what's cached); `GET /api/catalog/work/:workKey` (an English edition, saved like any search result). e2e tests. _Demo:_ `curl` the Stormlight Archive.
 
-**4. Next volume.** `GET /api/series/next?title=&volume=` searches Open Library for volume n+1 and returns it only if its title parses as the same series and number (with its release date when upcoming). _Demo:_ One Piece 114, February 2027.
+**4. Next volume.** ✅ _Changed from the first plan:_ no new endpoint. Core's `findNextVolume(series, search)` searches with the app's existing book search (through the API, cached and spaced) for "<series> <n+1>" and `pickVolume` accepts only a result whose title reads as the same series and number (read as the series' category, since results are often misfiled; the right category, then a known date, then an ISBN first). Works for guests too. Tested on recorded real searches; live: One Piece 114 (February 2, 2027), Hunter × Hunter 38, Jujutsu Kaisen 27, none for Vagabond 38 (on hiatus). Known gap: Open Library sometimes picks a non-English edition (One Piece 114 is Carlsen's German one). _Demo:_ One Piece 114, February 2027.
 
 **5. Item page.** "Book 2 of 5 in The Stormlight Archive", the missing numbered entries and the next volume, each with Add / Pre-order (catalog entry fetched on demand). _Demo:_ the item page in the Simulator.
 
