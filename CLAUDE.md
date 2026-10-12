@@ -47,14 +47,15 @@ Verify current terms, rate limits and attribution requirements for each API befo
 
 ## Roadmap
 
-| Stage                         | Target    | Demo at the end                                                                                  |
-| ----------------------------- | --------- | ------------------------------------------------------------------------------------------------ |
-| 1. MVP ✅ (v0.1.0)            | ~Week 1   | App on iPhone + web: add items by search or ISBN scan, see the collection with covers            |
-| 2. Real backend ✅ (v0.2.0)   | Weeks 2–4 | Accounts, cloud sync phone ↔ web, unified catalog search across all sources                      |
-| 3. Universe layer ✅ (v0.3.0) | Month 2   | Franchise/character pages linking items across categories (missing-item suggestions deferred)    |
-| 4. AI ✅ (v0.4.0)             | Month 3   | Shelf photo → identified items; natural-language questions about the collection                  |
-| 5. Pre-orders ✅ (v0.5.0)     | Month 4   | Pre-orders (custom figures too), payments due, release dates and slips, an Upcoming tab          |
-| 6. Launch                     | After     | TestFlight → App Store, shareable public collection pages, beta users from collector communities |
+| Stage                         | Target    | Demo at the end                                                                                                      |
+| ----------------------------- | --------- | -------------------------------------------------------------------------------------------------------------------- |
+| 1. MVP ✅ (v0.1.0)            | ~Week 1   | App on iPhone + web: add items by search or ISBN scan, see the collection with covers                                |
+| 2. Real backend ✅ (v0.2.0)   | Weeks 2–4 | Accounts, cloud sync phone ↔ web, unified catalog search across all sources                                          |
+| 3. Universe layer ✅ (v0.3.0) | Month 2   | Franchise/character pages linking items across categories (missing-item suggestions deferred)                        |
+| 4. AI ✅ (v0.4.0)             | Month 3   | Shelf photo → identified items; natural-language questions about the collection                                      |
+| 5. Pre-orders ✅ (v0.5.0)     | Month 4   | Pre-orders (custom figures too), payments due, release dates and slips, an Upcoming tab                              |
+| 6. "You're missing…"          | Month 5   | Book series (Wikidata) and manga/comic volumes: what's missing and what's next, on item pages, a Series view and Ask |
+| 7. Launch                     | After     | TestFlight → App Store, shareable public collection pages, beta users from collector communities                     |
 
 ## Stage 1 decisions (settled 2026-10-04)
 
@@ -179,10 +180,20 @@ Full plan and task list: [`docs/plans/stage-5.md`](docs/plans/stage-5.md).
 - **Pre-orders need an account** (cross-device payments and dates; no device→account sync path).
 - **Ask learns pre-orders** ("What's arriving this month?", "How much do I still owe?"), still without sending them to the model (done in Task 7).
 
+## Stage 6 decisions (settled 2026-10-12)
+
+Full plan and task list: [`docs/plans/stage-6.md`](docs/plans/stage-6.md).
+
+- **Scope:** book series from **Wikidata** (by the owned book's Open Library work id, `P648` → series `P179` with ordinals `P1545`; CC0, no key, ≤ 5 parallel queries and 60 s of query time a minute, descriptive User-Agent) and manga/comic volumes parsed from titles, plus the next volume from Open Library. LEGO themes later.
+- **Shown on** the item page, a Series view and Ask. **Actions:** Add / Pre-order only (no dismissing, no wishlist yet).
+- **Numbered entries only** count as missing (novellas and fractional ordinals are side stories); volumes from 1 to the highest owned, plus the next.
+- **Works for guests:** series data public and cached on the server (30 days), what's missing computed on the device.
+- **Not deployed** until the owner says so (the owner isn't deploying for now).
+
 ## Open questions (deferred to later stages)
 
 - Email provider for verification and password reset (free tiers only) — needs a domain we own
-- "You're missing…" suggestions (series gaps, manga volumes, LEGO sets in a theme) — after Stage 3; needs series/volume data (Wikidata has series order for well-known works)
+- "You're missing…" for LEGO themes (sets in a theme you collect) — Stage 6 covers book series and manga/comic volumes
 - Premium figures catalog (AI-read box details + community contributions) — after Stage 4
 - Apple Developer account — not needed so far (email + password works in Expo Go; Stage 5 chose in-app reminders over push); buy when adding Apple sign-in, push notifications or TestFlight (Stage 6)
 
