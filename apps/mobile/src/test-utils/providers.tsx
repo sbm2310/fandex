@@ -1,4 +1,5 @@
 import {
+  type BookSeries,
   createFigure,
   createPreorderRequestSchema,
   preorderSchema,
@@ -23,6 +24,7 @@ import { AccountError, type AccountService, type AccountUser } from '@/services/
 import { AppServicesProvider } from '@/services/app-services';
 import type { CustomItems } from '@/services/custom-items';
 import type { Preorders } from '@/services/preorders';
+import type { SeriesCatalog } from '@/services/series-catalog';
 import { AskUnavailableError, type QuestionAsker } from '@/services/question-asker';
 import type { ShelfPhoto, ShelfScanner } from '@/services/shelf-scanner';
 
@@ -254,6 +256,29 @@ export function createFakeQuestionAsker(overrides: Partial<QuestionAsker> = {}) 
   };
 }
 
+/**
+ * Book series for tests: each series answers for every work in it; `works` are the editions
+ * found for missing books (by work key). Methods are Jest mocks.
+ */
+export function createFakeSeriesCatalog({
+  series = [],
+  works = {},
+}: { series?: BookSeries[]; works?: Record<string, CatalogBook> } = {}) {
+  return {
+    seriesForWorks: jest.fn(async (workKeys: readonly string[]) => {
+      const found = new Map<string, BookSeries>();
+      for (const key of workKeys) {
+        const match = series.find((s) =>
+          [...s.entries, ...s.extras].some((entry) => entry.workKey === key),
+        );
+        if (match) found.set(key, match);
+      }
+      return found;
+    }),
+    lookupWork: jest.fn(async (workKey: string) => works[workKey] ?? null),
+  } satisfies SeriesCatalog;
+}
+
 export function createWrapper({
   catalog = createFakeCatalog(),
   legoCatalog = createFakeLegoCatalog(),
@@ -264,6 +289,7 @@ export function createWrapper({
   questionAsker = createFakeQuestionAsker(),
   customItems = createFakeCustomItems(),
   preorders = createFakePreorders(),
+  seriesCatalog = createFakeSeriesCatalog(),
 }: {
   catalog?: BookCatalog;
   legoCatalog?: LegoCatalog;
@@ -274,6 +300,7 @@ export function createWrapper({
   questionAsker?: QuestionAsker;
   customItems?: CustomItems;
   preorders?: Preorders;
+  seriesCatalog?: SeriesCatalog;
 } = {}) {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false, gcTime: Infinity } },
@@ -293,6 +320,7 @@ export function createWrapper({
             questionAsker,
             customItems,
             preorders,
+            seriesCatalog,
           }}
         >
           {children}

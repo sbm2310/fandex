@@ -5,6 +5,7 @@ import type { AccountService } from './account-service';
 import type { CustomItems } from './custom-items';
 import type { Preorders } from './preorders';
 import type { QuestionAsker } from './question-asker';
+import type { SeriesCatalog } from './series-catalog';
 import type { ShelfScanner } from './shelf-scanner';
 
 /** The app's external dependencies. The root layout provides real ones; tests provide fakes. */
@@ -24,6 +25,8 @@ export type AppServices = {
   customItems: CustomItems;
   /** The signed-in user's pre-orders on the Fandex API. */
   preorders: Preorders;
+  /** Book series and the books missing from them (public, also for guests). */
+  seriesCatalog: SeriesCatalog;
 };
 
 const AppServicesContext = createContext<AppServices | null>(null);
@@ -79,4 +82,8 @@ export function useCustomItems(): CustomItems {
 
 export function usePreorderService(): Preorders {
   return useAppServices().preorders;
+}
+
+export function useSeriesCatalog(): SeriesCatalog {
+  return useAppServices().seriesCatalog;
 }

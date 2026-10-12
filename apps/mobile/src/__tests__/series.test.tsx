@@ -1,0 +1,155 @@
+import type { BookSeries, CatalogBook } from '@fandex/core';
+import { fireEvent, renderRouter, screen } from 'expo-router/testing-library';
+
+import AddScreen from '@/app/(tabs)/add';
+import BookDetailScreen from '@/app/book/[id]';
+import {
+  createFakeCatalog,
+  createFakeSeriesCatalog,
+  createMemoryCollection,
+  createWrapper,
+  hobbit,
+} from '@/test-utils/providers';
+
+jest.mock('@/utils/today', () => ({ localToday: () => '2026-10-12' }));
+
+const book = (title: string, workKey: string, extra: Partial<CatalogBook> = {}): CatalogBook => ({
+  source: 'openlibrary',
+  externalId: `${workKey}-edition`,
+  category: 'book',
+  title,
+  authors: ['Brandon Sanderson'],
+  workKey,
+  ...extra,
+});
+const wayOfKings = book('The Way of Kings', 'OL15358691W');
+const wordsOfRadiance = book('Words of Radiance', 'OL16813053W');
+const oathbringer = book('Oathbringer', 'OL17834026W', { catalogId: 'cat-oathbringer' });
+const bookSix = book('Book Six', 'OL99W', {
+  catalogId: 'cat-six',
+  publishDate: { date: '2031-03-01', precision: 'day' },
+});
+
+const stormlight: BookSeries = {
+  wikidataId: 'Q7766706',
+  name: 'The Stormlight Archive',
+  entries: [
+    { wikidataId: 'Q1', title: 'The Way of Kings', workKey: 'OL15358691W', ordinal: 1 },
+    { wikidataId: 'Q2', title: 'Words of Radiance', workKey: 'OL16813053W', ordinal: 2 },
+    { wikidataId: 'Q3', title: 'Oathbringer', workKey: 'OL17834026W', ordinal: 3 },
+    { wikidataId: 'Q4', title: 'Rhythm of War', ordinal: 4, published: '2020-11-17' },
+    { wikidataId: 'Q6', title: 'Book Six', workKey: 'OL99W', ordinal: 5, published: '2031-03-01' },
+  ],
+  extras: [{ wikidataId: 'Q9', title: 'Edgedancer', workKey: 'OL19631308W' }],
+};
+
+async function openItem(
+  owned: CatalogBook[],
+  services: Parameters<typeof createWrapper>[0] = {},
+  id = 'item-1',
+) {
+  const deviceCollection = createMemoryCollection();
+  for (const entry of owned) await deviceCollection.add(entry);
+  const app = renderRouter(
+    { 'book/[id]': BookDetailScreen, '(tabs)/add': AddScreen },
+    { initialUrl: `/book/${id}`, wrapper: createWrapper({ deviceCollection, ...services }) },
+  );
+  await app;
+  return { getPathname: () => app.getPathname() };
+}
+
+describe('a book series on the item page', () => {
+  const services = () => ({
+    seriesCatalog: createFakeSeriesCatalog({
+      series: [stormlight],
+      works: { OL17834026W: oathbringer, OL99W: bookSix },
+    }),
+  });
+
+  it("shows the book's place and what's missing, to add or pre-order", async () => {
+    await openItem([wayOfKings, wordsOfRadiance], services());
+
+    expect(
+      await screen.findByRole('header', { name: 'Book 1 of 5 in The Stormlight Archive' }),
+    ).toBeOnTheScreen();
+    expect(screen.getByText("You have 2 of 5. You're missing:")).toBeOnTheScreen();
+    // A missing book with an edition: Add, and its place.
+    expect(await screen.findByRole('button', { name: 'Add Oathbringer' })).toBeOnTheScreen();
+    expect(screen.getByText('Book 3')).toBeOnTheScreen();
+    // An upcoming one: when it's out, and Pre-order.
+    expect(await screen.findByText('Book 5 · Out March 1, 2031')).toBeOnTheScreen();
+    expect(screen.getByRole('link', { name: 'Pre-order Book Six' })).toBeOnTheScreen();
+    // No Open Library work: its title, and a search instead.
+    expect(screen.getByText('Rhythm of War')).toBeOnTheScreen();
+    expect(screen.getByRole('link', { name: 'Search for Rhythm of War' })).toBeOnTheScreen();
+    // Novellas aren't missing books.
+    expect(screen.queryByText('Edgedancer')).not.toBeOnTheScreen();
+  });
+
+  it('adds a missing book to the collection, which then counts as owned', async () => {
+    await openItem([wayOfKings], services());
+    expect(await screen.findByText("You have 1 of 5. You're missing:")).toBeOnTheScreen();
+
+    await fireEvent.press(await screen.findByRole('button', { name: 'Add Oathbringer' }));
+
+    expect(await screen.findByText("You have 2 of 5. You're missing:")).toBeOnTheScreen();
+    expect(screen.queryByRole('button', { name: 'Add Oathbringer' })).not.toBeOnTheScreen();
+  });
+
+  it('says so when the whole series is there', async () => {
+    const complete = { ...stormlight, entries: stormlight.entries.slice(0, 2) };
+    await openItem([wayOfKings, wordsOfRadiance], {
+      seriesCatalog: createFakeSeriesCatalog({ series: [complete] }),
+    });
+
+    expect(
+      await screen.findByRole('header', { name: 'Book 1 of 2 in The Stormlight Archive' }),
+    ).toBeOnTheScreen();
+    expect(screen.getByText('You have all 2 books.')).toBeOnTheScreen();
+  });
+
+  it('shows nothing for a book in no series', async () => {
+    const seriesCatalog = createFakeSeriesCatalog();
+    await openItem([{ ...hobbit, workKey: 'OL27482W' }], { seriesCatalog });
+
+    expect(await screen.findByRole('header', { name: 'The Hobbit' })).toBeOnTheScreen();
+    expect(seriesCatalog.seriesForWorks).toHaveBeenCalledWith(['OL27482W']);
+    expect(screen.queryByText(/ of .* in /)).not.toBeOnTheScreen();
+  });
+});
+
+describe('manga volumes on the item page', () => {
+  const volume = (title: string, extra: Partial<CatalogBook> = {}): CatalogBook => ({
+    source: 'openlibrary',
+    externalId: title,
+    category: 'manga',
+    title,
+    authors: ['Eiichiro Oda'],
+    ...extra,
+  });
+
+  it("shows the volume, what's missing up to the highest owned, and the next one", async () => {
+    const vol4 = volume('One Piece, Vol. 4', {
+      catalogId: 'cat-op-4',
+      publishDate: { date: '2027-02-02', precision: 'day' },
+    });
+    const catalog = createFakeCatalog({ search: jest.fn(async () => [vol4]) });
+
+    await openItem([volume('One Piece, Vol. 1'), volume('ONE PIECE 3')], { catalog }, 'item-2');
+
+    expect(await screen.findByRole('header', { name: 'Volume 3 of One Piece' })).toBeOnTheScreen();
+    expect(screen.getByText("You have 2 of 3. You're missing volume 2.")).toBeOnTheScreen();
+    expect(screen.getByRole('link', { name: 'Search for One Piece' })).toBeOnTheScreen();
+    expect(catalog.search).toHaveBeenCalledWith('one piece 4');
+    expect(await screen.findByText('Next: volume 4, out February 2, 2027')).toBeOnTheScreen();
+    expect(screen.getByRole('link', { name: 'Pre-order One Piece, Vol. 4' })).toBeOnTheScreen();
+  });
+
+  it('opens a search for the missing volumes', async () => {
+    const app = await openItem([volume('One Piece, Vol. 1'), volume('One Piece, Vol. 3')]);
+
+    await fireEvent.press(await screen.findByRole('link', { name: 'Search for One Piece' }));
+
+    expect(app.getPathname()).toBe('/add');
+  });
+});

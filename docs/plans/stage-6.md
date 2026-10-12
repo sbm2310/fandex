@@ -46,7 +46,7 @@ App (device)                                   API                              
 
 **4. Next volume.** ✅ _Changed from the first plan:_ no new endpoint. Core's `findNextVolume(series, search)` searches with the app's existing book search (through the API, cached and spaced) for "<series> <n+1>" and `pickVolume` accepts only a result whose title reads as the same series and number (read as the series' category, since results are often misfiled; the right category, then a known date, then an ISBN first). Works for guests too. Tested on recorded real searches; live: One Piece 114 (February 2, 2027), Hunter × Hunter 38, Jujutsu Kaisen 27, none for Vagabond 38 (on hiatus). Known gap: Open Library sometimes picks a non-English edition (One Piece 114 is Carlsen's German one). _Demo:_ One Piece 114, February 2027.
 
-**5. Item page.** "Book 2 of 5 in The Stormlight Archive", the missing numbered entries and the next volume, each with Add / Pre-order (catalog entry fetched on demand). _Demo:_ the item page in the Simulator.
+**5. Item page.** ✅ "Book 2 of 5 in The Stormlight Archive", the missing numbered entries and the next volume, each with Add / Pre-order (catalog entry fetched on demand). _Demo:_ the item page in the Simulator.
 
 **6. Series view.** Your incomplete series (books and volumes), what's missing and what's next; from the Collection tab. _Demo:_ the list.
 

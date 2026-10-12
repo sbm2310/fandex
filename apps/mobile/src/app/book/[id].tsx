@@ -8,6 +8,7 @@ import { AlsoOwnedEditions } from '@/components/other-editions';
 import { CATEGORY_LABELS } from '@/components/category-badge';
 import { EmptyState } from '@/components/empty-state';
 import { PageTitle } from '@/components/page-title';
+import { SeriesSection } from '@/components/series-section';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { CharacterChips, UniverseChips } from '@/components/universe-links';
@@ -112,6 +113,8 @@ function BookDetail({ item }: { item: CollectionItem }) {
           </View>
 
           <Links item={item} />
+
+          <SeriesSection item={item} />
 
           <View style={styles.fix}>
             {isEdited(item) && (

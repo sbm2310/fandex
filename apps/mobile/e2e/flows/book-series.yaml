@@ -1,0 +1,33 @@
+appId: host.exp.Exponent
+name: A guest's book shows its series and the books missing from it (live Wikidata and Open Library)
+tags:
+  - guest
+---
+- runFlow:
+    file: common/open.yaml
+    env:
+      ROUTE: add
+- tapOn: 'Search books'
+- inputText: 'the way of kings sanderson'
+- extendedWaitUntil:
+    visible: 'Add The Way of Kings'
+    timeout: 30000
+- tapOn: 'Add The Way of Kings'
+- assertVisible: 'The Way of Kings is in your collection'
+
+- hideKeyboard
+- tapOn:
+    text: 'Collection'
+    retryTapIfNoChange: true
+- extendedWaitUntil:
+    visible: 'Ask your collection, .*'
+    timeout: 15000
+- tapOn: 'The Way of Kings, .*'
+# Wikidata knows the Stormlight Archive; how many books it lists may grow.
+- scrollUntilVisible:
+    element: "Book 1 of \\d+ in The Stormlight Archive"
+    timeout: 30000
+- extendedWaitUntil:
+    visible: 'Add Words of Radiance'
+    timeout: 30000
+- takeScreenshot: output/book-series
