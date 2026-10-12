@@ -38,7 +38,7 @@ App (device)                                   API                              
 
 ## Tasks (each leaves the app working)
 
-**1. Volumes in core.** `parseVolume` and `volumeGaps` for manga and comics (series name normalized, "Vol."/"Volume"/"#"/trailing number for manga only, traps rejected), with the spike's real titles as tests. _Demo:_ tests.
+**1. Volumes in core.** ✅ `parseVolume` and `volumeGaps` for manga and comics (series name normalized, "Vol."/"Volume"/"#"/trailing number for manga only, traps rejected), with the spike's real titles as tests. _Demo:_ tests.
 
 **2. Wikidata series in core.** `WikidataSeriesCatalog.seriesForWork(workKey)` → `{ series: { id, name }, entries: [{ workKey, title, ordinal, published }] }` (numbered entries; side stories separate; the series the work is numbered in when there are several), contracts, recorded real responses. _Demo:_ tests.
 

@@ -136,6 +136,8 @@ Verify current terms, rate limits and attribution requirements for each API befo
 - **Web focus rings:** RN style types can't express `outline-style: none`; web-only CSS lives in `src/global.css`.
 - **Read the versioned Expo docs** before touching Expo APIs (see `apps/mobile/AGENTS.md`).
 
+- **Volumes from titles** (Stage 6 Task 1, `packages/core/src/series/volumes.ts`): `parseVolume` reads manga/comic titles — "Vol. 24", "Volume 7", "#5", a subtitle "Volume 6 (…)", and a bare trailing number for **manga only** ("ONE PIECE 113"; comics have "Spider-Man 2099") — rejecting bundles ("Vol. 19-24", box sets), 0 and 4-digit numbers. Series key: `normalizeName` (no leading "the"), "×" → "x", other scripts kept as typed. `volumeGaps` groups by category + key, lists `missing` from 1 to the highest owned; `formatVolumeRanges` → "1–3, 5 and 7–112". On the local catalog, 110 of 494 manga/comics parsed as volumes, all plausible; edition lines (VIZBIG) stay separate series.
+
 ## Stage 2 decisions (settled 2026-10-05)
 
 Full plan and task list: [`docs/plans/stage-2.md`](docs/plans/stage-2.md).

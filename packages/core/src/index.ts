@@ -17,3 +17,4 @@ export * from './universes';
 export * from './ai';
 export * from './ask';
 export * from './preorders';
+export * from './series';
