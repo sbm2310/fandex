@@ -1,0 +1,94 @@
+appId: host.exp.Exponent
+name: >-
+  An account pre-orders an upcoming book with Open Library's date, sees it on Upcoming,
+  marks it arrived, and is deleted
+tags:
+  - account
+---
+# A throwaway account on the local API, deleted at the end.
+- runScript: ../scripts/create-account.js
+
+- runFlow:
+    file: common/open.yaml
+    env:
+      ROUTE: account
+- tapOn: 'Email'
+- inputText: ${output.email}
+- tapOn: 'Password'
+- inputText: ${output.password}
+# With the keyboard up, the first tap on a button only ends the editing.
+- hideKeyboard
+# The button, not the heading of the same name.
+- tapOn:
+    text: 'Sign in'
+    below: 'Password'
+# iOS may offer to save the password, a moment after signing in.
+- extendedWaitUntil:
+    visible:
+      text: 'Not Now|Sign out'
+    timeout: 20000
+- runFlow:
+    when:
+      visible: 'Not Now'
+    commands:
+      - tapOn: 'Not Now'
+- extendedWaitUntil:
+    visible: 'Sign out'
+    timeout: 20000
+
+# Clara & the Devil, Volume 2: Open Library lists it for March 2, 2027 (see CLAUDE.md, Task 6).
+- openLink: ${APP_URL}/--/add
+- tapOn: 'Search books'
+- inputText: 'clara & the devil'
+- hideKeyboard
+- extendedWaitUntil:
+    visible: 'Pre-order Clara & the Devil, Volume 2'
+    timeout: 30000
+- tapOn: 'Pre-order Clara & the Devil, Volume 2'
+- extendedWaitUntil:
+    visible: 'Expected release: March 2, 2027'
+    timeout: 15000
+- tapOn: 'Price (optional)'
+- inputText: '20'
+- tapOn: 'Paid so far'
+- inputText: '5'
+# Number pads have no return key: tap outside the field, as a person would.
+- tapOn: 'Clara & the Devil, Volume 2'
+- scrollUntilVisible:
+    element: 'From Open Library. Fandex checks it daily and moves the date if it changes.'
+- scrollUntilVisible:
+    element: 'Save pre-order'
+- tapOn: 'Save pre-order'
+# Each fact is one element, "Label: value" (regex: escape ( ) and $).
+- extendedWaitUntil:
+    visible: "Expected: March 2, 2027 \\(Open Library, checked daily\\)"
+    timeout: 20000
+- assertVisible: "Balance left: \\$15.00"
+
+# The pre-order page covers the tabs; open the Upcoming tab by link.
+- openLink: ${APP_URL}/--/upcoming
+- extendedWaitUntil:
+    visible: "Still owed: \\$15.00"
+    timeout: 20000
+- tapOn: 'Clara & the Devil, Volume 2: .*'
+- tapOn: 'It arrived: add to collection'
+# It opens the item, now in the collection.
+- extendedWaitUntil:
+    visible: 'Added'
+    timeout: 20000
+- scrollUntilVisible:
+    element: 'Remove Clara & the Devil, Volume 2 from collection'
+
+# Clean up: delete the account (and its collection and pre-orders).
+- openLink: ${APP_URL}/--/account
+- scrollUntilVisible:
+    element: 'Delete account'
+- tapOn: 'Delete account'
+- tapOn: 'Password'
+- inputText: ${output.password}
+- hideKeyboard
+- tapOn: 'Delete permanently'
+- tapOn: 'Delete'
+- extendedWaitUntil:
+    visible: 'New to Fandex? Create an account'
+    timeout: 20000

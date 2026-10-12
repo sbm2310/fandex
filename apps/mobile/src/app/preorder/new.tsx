@@ -81,7 +81,12 @@ export default function NewPreorderScreen() {
   return (
     <ThemedView style={styles.fill}>
       <PageTitle title={`Pre-order ${title}`} />
-      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+      <ScrollView
+        contentContainerStyle={styles.content}
+        keyboardShouldPersistTaps="handled"
+        // Number pads have no return key on iPhone: scrolling puts the keyboard away.
+        keyboardDismissMode="on-drag"
+      >
         <View style={styles.column}>
           <View style={styles.heading}>
             <ThemedText type="subtitle" accessibilityRole="header">

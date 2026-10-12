@@ -1,0 +1,3 @@
+# Maestro workspace: the flows to run (common/ holds shared steps, not tests).
+flows:
+  - flows/*.yaml

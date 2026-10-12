@@ -57,7 +57,8 @@
     "lint": "expo lint",
     "test": "jest",
     "build:web": "expo export --platform web --output-dir dist",
-    "update:ios": "EXPO_PUBLIC_API_URL=https://fandex-4mjc.onrender.com npx eas-cli@latest update --auto --platform ios"
+    "update:ios": "EXPO_PUBLIC_API_URL=https://fandex-4mjc.onrender.com npx eas-cli@latest update --auto --platform ios",
+    "e2e:ios": "sh e2e/run.sh"
   },
   "private": true,
   "jest": {

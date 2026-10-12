@@ -12,7 +12,13 @@ export function FormField({ label, ...inputProps }: Props) {
   const colors = useTheme();
   return (
     <View style={styles.container}>
-      <ThemedText type="smallBold" themeColor="textSecondary">
+      {/* Hidden from screen readers (and UI tests): the input carries the label, so it's read once. */}
+      <ThemedText
+        type="smallBold"
+        themeColor="textSecondary"
+        accessibilityElementsHidden
+        importantForAccessibility="no"
+      >
         {label}
       </ThemedText>
       <TextInput

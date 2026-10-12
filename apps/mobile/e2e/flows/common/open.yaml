@@ -1,0 +1,28 @@
+# Opens Fandex in Expo Go with nothing saved and signed out (a fresh guest), at the screen ROUTE names
+# ("add", "account", "ask?q=…"). APP_URL is the Expo dev server, as Expo Go reaches it.
+appId: host.exp.Exponent
+---
+# The session lives in the iOS Keychain (SecureStore), which clearing the app's data keeps.
+- clearKeychain
+- launchApp:
+    clearState: true
+- openLink: ${APP_URL}/--/${ROUTE}
+# Expo Go introduces its developer menu once after its data is cleared, then opens the menu
+# itself over the app; both get out of the way.
+- extendedWaitUntil:
+    visible:
+      text: 'Continue|Collection'
+    timeout: 120000
+- runFlow:
+    when:
+      visible: 'Continue'
+    commands:
+      - tapOn: 'Continue'
+- runFlow:
+    when:
+      visible: 'Toggle element inspector'
+    commands:
+      - tapOn: 'Close'
+- extendedWaitUntil:
+    visible: 'Collection'
+    timeout: 30000

@@ -1,0 +1,37 @@
+appId: host.exp.Exponent
+name: A guest adds a book from search, finds it in the collection, and removes it
+tags:
+  - guest
+---
+- runFlow:
+    file: common/open.yaml
+    env:
+      ROUTE: add
+- tapOn: 'Search books'
+- inputText: 'the hobbit'
+- extendedWaitUntil:
+    visible: 'Add The Hobbit'
+    timeout: 30000
+- tapOn: 'Add The Hobbit'
+- assertVisible: 'The Hobbit is in your collection'
+
+# The search field keeps focus; a tab tap only ends the editing unless the keyboard goes first.
+- hideKeyboard
+- tapOn:
+    text: 'Collection'
+    retryTapIfNoChange: true
+# Only the Collection tab has the Ask field; the Simulator can take a moment to switch.
+- extendedWaitUntil:
+    visible: 'Ask your collection, .*'
+    timeout: 15000
+- tapOn: 'The Hobbit, by J.R.R. Tolkien'
+- extendedWaitUntil:
+    visible: 'Middle-earth universe'
+    timeout: 15000
+- assertVisible: 'Gandalf'
+- scrollUntilVisible:
+    element: 'Remove The Hobbit from collection'
+- tapOn: 'Remove The Hobbit from collection'
+# The native confirmation alert.
+- tapOn: 'Remove'
+- assertVisible: 'Your collection is empty'

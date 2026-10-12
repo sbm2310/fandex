@@ -55,7 +55,12 @@ export function AddFigureForm() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+    <ScrollView
+      contentContainerStyle={styles.content}
+      keyboardShouldPersistTaps="handled"
+      // Number pads have no return key on iPhone: scrolling puts the keyboard away.
+      keyboardDismissMode="on-drag"
+    >
       <View style={styles.column}>
         <ThemedText themeColor="textSecondary">
           No catalog has figures like Hot Toys, so describe yours. Name the character and Fandex

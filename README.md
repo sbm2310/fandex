@@ -225,6 +225,8 @@ npm run format:check
 
 Tests never call the network.
 
+**On the iPhone:** three [Maestro](https://maestro.mobile.dev) flows drive the real app in Expo Go on the iOS Simulator — a guest adding and removing a book, asking about the collection, and an account pre-ordering an upcoming book through to "It arrived" and deleting itself ([apps/mobile/e2e](apps/mobile/e2e/README.md)). They run locally (not in CI) and found what the other tests can't see: a "0" badge on the native tab bar and number pads with no way to put them away.
+
 AI quality is measured separately, because a model's answers aren't pass/fail: `npm run eval:shelf -w @fandex/api` sends the owner's shelf photos to the model and scores what it read against a hand-written list of what's really there. It calls the real API, so it doesn't run in CI. On 9 one-shelf photos (52 items, the way the app sends them):
 
 | Model                                 | Items found | Readings that were real |

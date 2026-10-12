@@ -1,0 +1,33 @@
+appId: host.exp.Exponent
+name: A guest asks about their collection (keyword matching on the device)
+tags:
+  - guest
+---
+- runFlow:
+    file: common/open.yaml
+    env:
+      ROUTE: add
+- tapOn: 'Search books'
+- inputText: 'the hobbit'
+- extendedWaitUntil:
+    visible: 'Add The Hobbit'
+    timeout: 30000
+- tapOn: 'Add The Hobbit'
+- assertVisible: 'The Hobbit is in your collection'
+
+- openLink: ${APP_URL}/--/ask
+- tapOn: 'Your question'
+- inputText: 'What Middle-earth stuff do I own?'
+- tapOn: 'Ask'
+- extendedWaitUntil:
+    visible: 'You own 1 Middle-earth item.'
+    timeout: 15000
+- assertVisible: 'Answered with keyword matching. Sign in to ask with AI.'
+- assertVisible: 'Open The Hobbit'
+
+# Pre-orders live in an account, and a guest is told so.
+- tapOn: 'Your question'
+- eraseText: 60
+- inputText: "What's arriving this month?"
+- tapOn: 'Ask'
+- assertVisible: 'Pre-orders are kept in your account. Sign in to track them and ask about them.'
