@@ -15,6 +15,12 @@
         "BROWSER": "none"
       },
       "port": 8081
+    },
+    {
+      "name": "mobile-ios",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start", "-w", "@fandex/mobile", "--", "--port", "8082"],
+      "port": 8082
     }
   ]
 }

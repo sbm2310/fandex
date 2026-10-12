@@ -34,9 +34,12 @@ export default function AppTabs() {
       <NativeTabs.Trigger name="upcoming">
         <NativeTabs.Trigger.Label>Upcoming</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf="calendar" md="event" />
-        <NativeTabs.Trigger.Badge hidden={attentionCount === 0}>
-          {String(attentionCount)}
-        </NativeTabs.Trigger.Badge>
+        {/* Expo Router ignores `hidden` on a badge with text (it showed "0"), so no text at 0. */}
+        {attentionCount > 0 ? (
+          <NativeTabs.Trigger.Badge>{String(attentionCount)}</NativeTabs.Trigger.Badge>
+        ) : (
+          <NativeTabs.Trigger.Badge hidden />
+        )}
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="account">
