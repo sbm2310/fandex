@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 import { formatTitle } from '../catalog-book';
 import type { Currency } from '../preorders/money';
+import type { SeriesStatus } from '../series/series-status';
 import { CATEGORIES, type Category } from '../category';
 import { itemLinks, type CollectionItem } from '../collection-item';
 import { compareTitles } from '../sort-collection';
@@ -17,14 +18,15 @@ import { containsPhrase, normalizeText } from '../universes/normalize-name';
 
 const isoDate = z.iso.date(); // YYYY-MM-DD
 
-export const QUERY_SCOPES = ['collection', 'preorders'] as const;
+export const QUERY_SCOPES = ['collection', 'preorders', 'series'] as const;
 export type QueryScope = (typeof QUERY_SCOPES)[number];
 
 export const collectionQuerySchema = z.object({
   /**
-   * What the question is about: owned items, or open pre-orders (what's on order). The
-   * universe, character, category, title and creator filters work on both; "added" means
-   * pre-ordered for pre-orders.
+   * What the question is about: owned items, open pre-orders (what's on order), or the series
+   * the collection has gaps in ("Which manga series am I missing volumes of?"). The universe,
+   * character, category, title and creator filters work on items and pre-orders ("added" means
+   * pre-ordered); series use the category and title words (in the series' name).
    */
   scope: z.enum(QUERY_SCOPES).default('collection'),
   /** Universe slugs ("star-wars"); an item matches if it's in any of them. */
@@ -56,8 +58,8 @@ export const collectionQuerySchema = z.object({
   /** A list of the items, or just how many there are. */
   answer: z.enum(['list', 'count']).default('list'),
   /**
-   * Set when the question can't be answered with these filters ("Which volumes am I missing?"
-   * needs series data; "What's it worth?" needs prices), saying why.
+   * Set when the question can't be answered with these filters ("What's it worth?" needs
+   * prices), saying why.
    */
   unsupported: z.string().exactOptional(),
 });
@@ -107,6 +109,8 @@ export type QueryResult<T = CollectionItem> = {
   categoryCounts: Partial<Record<Category, number>>;
   /** Pre-orders only: what's still owed on the matches, per currency (minor units). */
   owed?: Partial<Record<Currency, number>>;
+  /** Series only: the matching series with something missing. */
+  series?: readonly SeriesStatus[];
 };
 
 /** Whether an item (or a pre-order's item) passes the filters both scopes share. */

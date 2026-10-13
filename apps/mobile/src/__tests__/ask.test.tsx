@@ -5,6 +5,7 @@ import CollectionScreen from '@/app/(tabs)/index';
 import AskScreen from '@/app/ask';
 import BookScreen from '@/app/book/[id]';
 import PreorderScreen from '@/app/preorder/[id]/index';
+import SeriesScreen from '@/app/series';
 import { ApiQuestionAsker, AskUnavailableError } from '@/services/question-asker';
 import {
   FakeAccountService,
@@ -43,6 +44,7 @@ async function open(options: Parameters<typeof createWrapper>[0], url = '/ask') 
       ask: AskScreen,
       'book/[id]': BookScreen,
       'preorder/[id]/index': PreorderScreen,
+      series: SeriesScreen,
     },
     { initialUrl: url, wrapper: createWrapper(options) },
   );
@@ -247,11 +249,67 @@ describe('Ask about pre-orders', () => {
   });
 });
 
+describe('Ask about series', () => {
+  const manga = (title: string) => ({
+    source: 'openlibrary' as const,
+    externalId: title,
+    category: 'manga' as const,
+    title,
+    authors: [],
+  });
+  async function withVolumes(...titles: string[]) {
+    const repository = createMemoryCollection();
+    for (const title of titles) await repository.add(manga(title));
+    return repository;
+  }
+
+  it('answers a guest on the device, and links to the Series view', async () => {
+    const { app } = await open({
+      deviceCollection: await withVolumes('One Piece, Vol. 1', 'One Piece, Vol. 3'),
+    });
+
+    await fireEvent.press(
+      screen.getByRole('button', { name: 'Ask: Which manga series am I missing volumes of?' }),
+    );
+
+    expect(
+      await screen.findByRole('header', { name: "You're missing volume 2 of One Piece." }),
+    ).toBeOnTheScreen();
+    await fireEvent.press(screen.getByLabelText(/^Your series/));
+    expect(app.getPathname()).toBe('/series');
+  });
+
+  it("shows the server's answer, with no item rows", async () => {
+    const questionAsker = createFakeQuestionAsker({
+      ask: jest.fn(async () =>
+        response({
+          query: collectionQuery({ scope: 'series', categories: ['book'] }),
+          answer: "You're missing books 3–5 of The Stormlight Archive.",
+        }),
+      ),
+    });
+    await open({ accountCollection: await collection(), questionAsker, account: await signedIn() });
+
+    await fireEvent.changeText(
+      screen.getByLabelText('Your question'),
+      'What am I missing from Stormlight?',
+    );
+    await fireEvent.press(screen.getByRole('button', { name: 'Ask' }));
+
+    expect(
+      await screen.findByRole('header', {
+        name: "You're missing books 3–5 of The Stormlight Archive.",
+      }),
+    ).toBeOnTheScreen();
+    expect(screen.getByLabelText(/^Your series/)).toBeOnTheScreen();
+  });
+});
+
 describe('answers', () => {
   it("on the device: no items for a question it can't answer", async () => {
     const items = await (await collection()).list();
 
-    const result = answerOnDevice('Which volumes am I missing?', items, 'note');
+    const result = answerOnDevice("What's my collection worth?", items, 'note');
 
     expect(result.answer).toMatch(/^I can't answer that yet/);
     expect(result.items).toEqual([]);
@@ -289,5 +347,32 @@ describe('ApiQuestionAsker', () => {
     await expect(new ApiQuestionAsker(apiFetch).ask('Batman?')).rejects.toBeInstanceOf(
       AskUnavailableError,
     );
+  });
+});
+
+describe('answerOnDevice about series', () => {
+  it('uses the series of owned books when it has them', async () => {
+    const repository = createMemoryCollection();
+    await repository.add({ ...dune, workKey: 'OL1W' });
+    const items = await repository.list();
+    const bookSeries = new Map([
+      [
+        'OL1W',
+        {
+          wikidataId: 'Q1',
+          name: 'Dune',
+          entries: [
+            { wikidataId: 'Q2', title: 'Dune', workKey: 'OL1W', ordinal: 1 },
+            { wikidataId: 'Q3', title: 'Dune Messiah', workKey: 'OL2W', ordinal: 2 },
+          ],
+          extras: [],
+        },
+      ],
+    ]);
+
+    expect(
+      answerOnDevice('Which book series am I missing books from?', items, 'note', { bookSeries })
+        .answer,
+    ).toBe("You're missing book 2 of Dune.");
   });
 });

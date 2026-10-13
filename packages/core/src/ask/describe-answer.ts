@@ -1,5 +1,7 @@
 import { CATEGORIES, type Category } from '../category';
 import { CURRENCIES, formatMoney, type Currency } from '../preorders/money';
+import type { SeriesStatus } from '../series/series-status';
+import { formatVolumeRanges } from '../series/volumes';
 import type { UniverseDirectory } from '../universes/summarize-collection';
 
 import type { CollectionQuery, QueryResult } from './collection-query';
@@ -179,6 +181,37 @@ function describePreorders(
   return sentence;
 }
 
+/** "books", "volume": what a series' places are called. */
+function seriesUnit(series: SeriesStatus, count: number): string {
+  if (series.category === 'book') return count === 1 ? 'book' : 'books';
+  return count === 1 ? 'volume' : 'volumes';
+}
+
+/** Lists at most this many series in one answer. */
+const SERIES_LISTED = 5;
+
+/**
+ * "You're missing books 3–5 of The Stormlight Archive.", "You're missing something from 2 manga
+ * series: One Piece (volumes 2 and 4) and Naruto (volume 5).", "You aren't missing anything…".
+ */
+function describeSeries(query: CollectionQuery, series: readonly SeriesStatus[]): string {
+  const kind =
+    query.categories.length > 0 ? `${and(query.categories.map((c) => PREORDER_KINDS[c]))} ` : '';
+  const named =
+    query.titleWords.length > 0 ? ` with “${query.titleWords.join(' ')}” in the name` : '';
+  const n = series.length;
+  if (n === 0) return `You aren't missing anything from your ${kind}series${named}.`;
+  if (query.answer === 'count') {
+    return `${n} of your ${kind}series${named} ${n === 1 ? 'is' : 'are'} missing something.`;
+  }
+  const what = (s: SeriesStatus) =>
+    `${seriesUnit(s, s.missing.length)} ${formatVolumeRanges(s.missing)}`;
+  if (n === 1) return `You're missing ${what(series[0]!)} of ${series[0]!.name}.`;
+  const listed = series.slice(0, SERIES_LISTED).map((s) => `${s.name} (${what(s)})`);
+  if (n > SERIES_LISTED) listed.push(`${n - SERIES_LISTED} more`);
+  return `You're missing something from ${n} ${kind}series: ${and(listed)}.`;
+}
+
 /**
  * The answer as one or two sentences: "You own 12 Batman items: 8 comics and 4 LEGO sets.", or
  * for pre-orders "You have 2 pre-orders arriving in October 2026. Still owed: $280.00."
@@ -187,7 +220,7 @@ function describePreorders(
  */
 export function describeAnswer(
   query: CollectionQuery,
-  result: Pick<QueryResult<unknown>, 'items' | 'categoryCounts' | 'owed'>,
+  result: Pick<QueryResult<unknown>, 'items' | 'categoryCounts' | 'owed' | 'series'>,
   directory: UniverseDirectory,
   unknown: readonly string[] = [],
 ): string {
@@ -195,7 +228,9 @@ export function describeAnswer(
 
   const n = result.items.length;
   let sentence: string;
-  if (query.scope === 'preorders') {
+  if (query.scope === 'series') {
+    sentence = describeSeries(query, result.series ?? []);
+  } else if (query.scope === 'preorders') {
     sentence = describePreorders(query, result, directory);
   } else if (n === 0) {
     sentence = `You don't own any ${description(query, directory, 2)} yet.`;

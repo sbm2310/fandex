@@ -9,6 +9,7 @@ import {
   type LinkEdits,
   type QueryableItem,
   type UpdateCollectionItemRequest,
+  type SeriesSourceItem,
 } from '@fandex/core';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 
@@ -56,6 +57,21 @@ export class CollectionService {
         : row.catalogItem.title,
       creators: row.catalogItem.creators,
       ...effectiveLinks(row),
+    }));
+  }
+
+  /** The user's items as series summaries need them (title and subtitle apart, work id). */
+  async seriesItems(userId: string): Promise<SeriesSourceItem[]> {
+    const rows = await this.prisma.collectionItem.findMany({
+      where: { userId },
+      include: { catalogItem: true },
+      orderBy: { addedAt: 'desc' },
+    });
+    return rows.map((row) => ({
+      category: row.categoryOverride ?? row.catalogItem.category,
+      title: row.catalogItem.title,
+      ...(row.catalogItem.subtitle !== null && { subtitle: row.catalogItem.subtitle }),
+      ...(row.catalogItem.workKey !== null && { workKey: row.catalogItem.workKey }),
     }));
   }
 

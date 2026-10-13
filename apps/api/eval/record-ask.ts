@@ -40,6 +40,9 @@ const QUESTIONS = [
   'Which Harry Potter books do I have, alphabetically?',
   'Do I own The Way of Kings?',
   'Which Hot Toys figures do I have?',
+  // Series.
+  'What am I missing from The Stormlight Archive?',
+  'How many of my series are incomplete?',
   // Pre-orders.
   'Which of my pre-orders were delayed?',
   'What Star Wars stuff is coming out next month?',

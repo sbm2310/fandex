@@ -1,11 +1,12 @@
+import { parseQuestionLocally } from '@fandex/core';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { useCurrentUser } from './use-account';
 import { useCollection } from './use-collection';
 import { usePreorders } from './use-preorders';
 
-import { useQuestionAsker } from '@/services/app-services';
-import { answerFromServer, answerOnDevice, type AskResult } from '@/utils/ask';
+import { useQuestionAsker, useSeriesCatalog } from '@/services/app-services';
+import { answerFromServer, answerOnDevice, seriesItems, type AskResult } from '@/utils/ask';
 
 /**
  * Asks a question about the collection. Signed in, the server answers with AI (it falls back
@@ -17,17 +18,29 @@ export function useAsk() {
   const collection = useCollection();
   const preorders = usePreorders();
   const asker = useQuestionAsker();
+  const seriesCatalog = useSeriesCatalog();
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: async (question: string): Promise<AskResult> => {
       const items = collection.data ?? [];
+      /** Series of the owned books, for keyword answers about series (none if unreachable). */
+      const bookSeries = async () => {
+        if (parseQuestionLocally(question).scope !== 'series') return new Map();
+        const keys = [
+          ...new Set(
+            seriesItems(items).flatMap((item) => (item.category === 'book' && item.workKey) || []),
+          ),
+        ];
+        return seriesCatalog.seriesForWorks(keys.slice(0, 50)).catch(() => new Map());
+      };
       const ownPreorders = preorders.data ?? [];
       if (!user) {
         return answerOnDevice(
           question,
           items,
           'Answered with keyword matching. Sign in to ask with AI.',
+          { bookSeries: await bookSeries() },
         );
       }
       try {
@@ -46,7 +59,7 @@ export function useAsk() {
           question,
           items,
           "Couldn't reach Fandex, so this was answered on your device with keyword matching.",
-          { preorders: ownPreorders },
+          { preorders: ownPreorders, bookSeries: await bookSeries() },
         );
       }
     },

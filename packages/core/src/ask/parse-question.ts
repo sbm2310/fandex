@@ -28,12 +28,18 @@ const CATEGORY_WORDS: [Category, string[]][] = [
 ];
 
 /** Questions that need data Fandex doesn't have yet, and why. */
-const UNSUPPORTED: [string[], string][] = [
-  [
-    ['missing', 'gaps', 'complete the series', 'next volume'],
-    "Fandex doesn't know which volumes a series has yet, so it can't tell what's missing.",
-  ],
-];
+const UNSUPPORTED: [string[], string][] = [];
+
+/** Words that make a question about what's missing from series. */
+const SERIES_WORDS = ['missing', 'gaps', 'incomplete', 'complete the series', 'next volume'];
+/** Words in a series question that aren't part of a series' name. */
+const SERIES_FILLER = new Set(
+  (
+    'what whats which am i im do does have has my of from in the a an any series volume volumes ' +
+    'book books manga mangas comic comics graphic novels novel missing gaps incomplete complete ' +
+    'next how many number for to me show tell are is still'
+  ).split(' '),
+);
 
 /** Questions about the collection's money (pre-orders' balances are another matter). */
 const VALUE_WORDS = ['worth', 'value', 'price', 'prices', 'cost', 'paid', 'spent'];
@@ -145,6 +151,24 @@ function without(text: string, phrase: string): string {
   return ` ${text} `.replace(` ${phrase} `, ' ').trim();
 }
 
+/**
+ * "Which manga series am I missing volumes of?", "What am I missing from Stormlight?": the
+ * kinds of series asked about, and any other words as part of a series' name.
+ */
+function seriesQuestion(text: string): CollectionQuery {
+  const categories = (['book', 'manga', 'comic'] as const).filter((category) =>
+    CATEGORY_WORDS.find(([c]) => c === category)![1].some((word) => containsPhrase(text, word)),
+  );
+  const titleWords = text.split(' ').filter((word) => word && !SERIES_FILLER.has(word));
+  return collectionQuery({
+    scope: 'series',
+    categories,
+    titleWords,
+    answer:
+      containsPhrase(text, 'how many') || containsPhrase(text, 'number of') ? 'count' : 'list',
+  });
+}
+
 export function parseQuestionLocally(
   question: string,
   {
@@ -160,6 +184,7 @@ export function parseQuestionLocally(
     if (says(phrases)) return collectionQuery({ unsupported: reason });
   }
   const preorders = says(PREORDER_WORDS);
+  if (!preorders && says(SERIES_WORDS)) return seriesQuestion(text);
   if (!preorders && says(VALUE_WORDS)) return collectionQuery({ unsupported: VALUE_REASON });
 
   // Universes first, longest phrases first, so "Harry Potter books" is the Wizarding World

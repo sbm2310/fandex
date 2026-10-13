@@ -4,15 +4,22 @@ import {
   queryablePreorder,
   runCollectionQuery,
   runPreorderQuery,
+  runSeriesQuery,
+  summarizeSeries,
+  isBookItem,
   UNIVERSE_SEED,
   type AskResponse,
+  type BookSeries,
   type CollectionItem,
   type PreorderResponse,
+  type QueryScope,
 } from '@fandex/core';
 
 /** What the Ask screen shows for a question. */
 export type AskResult = {
   question: string;
+  /** What the question was about; series answers link to the Series view. */
+  scope: QueryScope;
   /** "You own 3 Batman items: 2 comics and 1 LEGO set." */
   answer: string;
   /** The matching items, in the answer's order (empty when the question can't be answered). */
@@ -38,17 +45,34 @@ export function answerOnDevice(
   question: string,
   items: readonly CollectionItem[],
   notice: string,
-  { preorders, today = new Date() }: { preorders?: readonly PreorderResponse[]; today?: Date } = {},
+  {
+    preorders,
+    bookSeries = new Map(),
+    today = new Date(),
+  }: {
+    preorders?: readonly PreorderResponse[];
+    /** Series of owned books by work id (from the API; empty offline). */
+    bookSeries?: ReadonlyMap<string, BookSeries>;
+    today?: Date;
+  } = {},
 ): AskResult {
   const query = parseQuestionLocally(question, { today });
   const base: AskResult = {
     question,
+    scope: query.scope,
     answer: '',
     items: [],
     preorders: [],
     method: 'keywords',
     notice,
   };
+  if (query.scope === 'series') {
+    const statuses = summarizeSeries(seriesItems(items), (key) => bookSeries.get(key));
+    return {
+      ...base,
+      answer: describeAnswer(query, runSeriesQuery(statuses, query), UNIVERSE_SEED),
+    };
+  }
   if (query.scope === 'preorders') {
     if (!preorders) return { ...base, answer: PREORDERS_NEED_ACCOUNT };
     const result = runPreorderQuery(preorders, query, queryablePreorder);
@@ -83,6 +107,7 @@ export function answerFromServer(
   const aboutPreorders = response.query.scope === 'preorders';
   return {
     question,
+    scope: response.query.scope,
     answer: response.answer,
     items: aboutPreorders ? [] : pick(items),
     preorders: aboutPreorders ? pick(preorders) : [],
@@ -92,11 +117,21 @@ export function answerFromServer(
   };
 }
 
+/** Owned books, manga and comics as series summaries need them. */
+export function seriesItems(items: readonly CollectionItem[]) {
+  return items.filter(isBookItem).map((item) => ({
+    category: item.category,
+    title: item.catalog.title,
+    subtitle: item.catalog.subtitle,
+    workKey: item.catalog.workKey,
+  }));
+}
+
 /** Questions to start from, shown before the first one is asked. */
 export const EXAMPLE_QUESTIONS = [
   'What Batman stuff do I own?',
   'How many Star Wars LEGO sets do I have?',
   "What's arriving this month?",
   'How much do I still owe?',
-  'Which books do I have by Brandon Sanderson?',
+  'Which manga series am I missing volumes of?',
 ] as const;

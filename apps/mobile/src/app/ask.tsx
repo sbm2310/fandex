@@ -109,6 +109,11 @@ function Answer({ result }: { result: AskResult }) {
           {result.notice}
         </ThemedText>
       ) : null}
+      {result.scope === 'series' ? (
+        <Link href="/series" accessibilityLabel="Your series: what you're missing and what's next">
+          <ThemedText type="linkPrimary">Your series ›</ThemedText>
+        </Link>
+      ) : null}
       {result.method === 'ai' && result.questionsLeft !== undefined ? (
         <ThemedText type="small" themeColor="textSecondary">
           {result.questionsLeft === 1

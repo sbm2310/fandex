@@ -2,6 +2,7 @@ import {
   aiQuotaResponseSchema,
   askResponseSchema,
   type BookCatalog,
+  type BookSeries,
   type CatalogBook,
 } from '@fandex/core';
 import type { INestApplication } from '@nestjs/common';
@@ -11,6 +12,7 @@ import { usageDay } from '../src/ai/ai-quota.service.js';
 import { AiRateLimitError, type ChatModel } from '../src/ai/chat-client.js';
 import { ASK_MODEL } from '../src/ai/question-answerer.service.js';
 import { BOOK_CATALOG } from '../src/catalog/catalog.service.js';
+import { SERIES_SOURCE, type SeriesSource } from '../src/series/series.service.js';
 import type { PrismaService } from '../src/prisma/prisma.service.js';
 import { createTestApp } from './create-test-app.js';
 import { resetDatabase } from './reset-database.js';
@@ -28,7 +30,31 @@ const book = (externalId: string, title: string, authors: string[] = []) =>
 // Universe links come from the real matcher: "Batman" in a title links DC and Batman.
 const yearOne = book('OL1M', 'Batman: Year One', ['Frank Miller']);
 const killingJoke = book('OL2M', 'Batman: The Killing Joke', ['Alan Moore']);
-const wayOfKings = book('OL3M', 'The Way of Kings', ['Brandon Sanderson']);
+const wayOfKings = {
+  ...book('OL3M', 'The Way of Kings', ['Brandon Sanderson']),
+  workKey: 'OL15358691W',
+} as CatalogBook;
+const manga = (externalId: string, title: string) =>
+  ({ ...book(externalId, title), category: 'manga' }) as CatalogBook;
+const onePiece1 = manga('OL4M', 'One Piece, Vol. 1');
+const onePiece2 = manga('OL6M', 'One Piece, Vol. 2');
+const onePiece3 = manga('OL5M', 'ONE PIECE 3');
+const stormlight: BookSeries = {
+  wikidataId: 'Q7766706',
+  name: 'The Stormlight Archive',
+  entries: ['OL15358691W', 'OL16813053W', 'OL17834026W'].map((workKey, i) => ({
+    wikidataId: `Q${i + 1}`,
+    title: `Book ${i + 1}`,
+    workKey,
+    ordinal: i + 1,
+  })),
+  extras: [],
+};
+const fakeWikidata = {
+  seriesForWork: vi.fn<SeriesSource['seriesForWork']>(async (key) =>
+    key === 'OL15358691W' ? stormlight : null,
+  ),
+};
 
 /** What the model replies for "What Batman stuff do I own?" (as Groq did, recorded in core). */
 const batmanReply = JSON.stringify({
@@ -76,7 +102,9 @@ describe('Ask (e2e)', () => {
         .overrideProvider(BOOK_CATALOG)
         .useValue(fakeBooks)
         .overrideProvider(ASK_MODEL)
-        .useValue(model),
+        .useValue(model)
+        .overrideProvider(SERIES_SOURCE)
+        .useValue(fakeWikidata),
     ));
     await resetDatabase(prisma);
     const { body } = await request(app.getHttpServer())
@@ -114,7 +142,9 @@ describe('Ask (e2e)', () => {
     askResponseSchema.parse((await agent.post('/api/ai/ask').send({ question }).expect(200)).body);
 
   beforeEach(() => {
-    fakeBooks.search.mockReset().mockResolvedValue([yearOne, killingJoke, wayOfKings]);
+    fakeBooks.search
+      .mockReset()
+      .mockResolvedValue([yearOne, killingJoke, wayOfKings, onePiece1, onePiece2, onePiece3]);
     fakeModel.chat.mockReset().mockResolvedValue({
       text: batmanReply,
       finishReason: 'stop',
@@ -335,6 +365,59 @@ describe('Ask (e2e)', () => {
         method: 'keywords',
         query: { scope: 'preorders', balanceDue: true },
         answer: 'You still owe $280.00 on 1 pre-order.',
+      });
+    });
+  });
+
+  describe('about series', () => {
+    const seriesReply = (overrides: object) =>
+      JSON.stringify({
+        ...JSON.parse(batmanReply),
+        universes: [],
+        characters: [],
+        scope: 'series',
+        ...overrides,
+      });
+
+    it("answers from the user's own books and volumes, with series from Wikidata", async () => {
+      await start();
+      fakeModel.chat.mockResolvedValue({
+        text: seriesReply({}),
+        finishReason: 'stop',
+        usage: { promptTokens: 700, completionTokens: 80 },
+      });
+      const fan = await signUp('fan@example.com');
+      const friend = await signUp('friend@example.com');
+      await own(fan, 'The Way of Kings', 'One Piece, Vol. 1', 'ONE PIECE 3');
+      // Someone else's volume 2 doesn't fill the fan's gap.
+      await own(friend, 'One Piece, Vol. 2');
+
+      const response = await ask(fan, 'Which series am I missing something from?');
+
+      expect(response).toMatchObject({
+        query: { scope: 'series' },
+        answer:
+          "You're missing something from 2 series: One Piece (volume 2) and The Stormlight Archive (books 2–3).",
+        itemIds: [],
+        method: 'ai',
+      });
+      const sent = fakeModel.chat.mock.calls[0]![0].prompt;
+      // (The prompt's own examples mention Stormlight; the collection's titles aren't sent.)
+      expect(sent).not.toContain('One Piece');
+      expect(sent).not.toContain('ONE PIECE');
+    });
+
+    it('answers with keywords too', async () => {
+      await start(null);
+      const agent = await signUp();
+      await own(agent, 'One Piece, Vol. 1', 'ONE PIECE 3');
+
+      const response = await ask(agent, 'Which manga series am I missing volumes of?');
+
+      expect(response).toMatchObject({
+        method: 'keywords',
+        query: { scope: 'series', categories: ['manga'] },
+        answer: "You're missing volume 2 of One Piece.",
       });
     });
   });

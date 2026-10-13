@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { CatalogModule } from '../catalog/catalog.module.js';
 import { CollectionModule } from '../collection/collection.module.js';
 import { PreordersModule } from '../preorders/preorders.module.js';
+import { SeriesModule } from '../series/series.module.js';
 import type { Env } from '../config/env.js';
 
 import { AI_PROVIDERS, type AiProviderName } from './ai-providers.js';
@@ -32,7 +33,7 @@ const keys = (config: ConfigService<Env, true>): ProviderKeys => ({
 });
 
 @Module({
-  imports: [CatalogModule, CollectionModule, PreordersModule],
+  imports: [CatalogModule, CollectionModule, PreordersModule, SeriesModule],
   controllers: [AiController],
   providers: [
     AiQuotaService,

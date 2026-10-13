@@ -50,7 +50,7 @@ App (device)                                   API                              
 
 **6. Series view.** ✅ Your incomplete series (books and volumes), what's missing and what's next; from the Collection tab. _Demo:_ the list.
 
-**7. Ask about series.** "Which manga series am I missing volumes of?" / "What am I missing from Stormlight?" answered from the collection and cached series (scope `series`); prompt, schema, keyword fallback, replies re-recorded. _Demo:_ ask it.
+**7. Ask about series.** ✅ "Which manga series am I missing volumes of?" / "What am I missing from Stormlight?" answered from the collection and cached series (scope `series`); prompt, schema, keyword fallback, replies re-recorded. _Demo:_ ask it.
 
 **8. Polish.** Empty and error states, accessibility, a Maestro flow, README, CLAUDE.md. _Demo:_ the demo above. (Deploying waits until the owner wants it.)
 
