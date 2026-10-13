@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import type { CatalogFigure } from '../catalog-figure';
+import type { MatchSignals } from '../universes/match-signals';
 import { CURRENCIES, parseMoney, type Currency, type Money } from '../preorders/money';
 import { releaseDate, type ReleaseDate } from '../preorders/release-date';
 import { findUniverse, UNIVERSE_SEED, type UniverseSeed } from '../universes/universe-seed';
@@ -127,6 +128,15 @@ export function figureFromSeed(
     ...(universes.length > 0 && { universes }),
     ...(characters.length > 0 && { characters }),
   };
+}
+
+/** A curated entry's universe signals: its own links, which no matcher second-guesses. */
+export function figureSeedSignals(entry: FigureSeedEntry): MatchSignals {
+  const universes = entry.universe ? [entry.universe] : [];
+  const characters = universes.flatMap((universe) =>
+    (entry.characters ?? []).map((character) => ({ universe, character })),
+  );
+  return { title: entry.name, curated: { universes, characters } };
 }
 
 /**

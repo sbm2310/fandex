@@ -66,8 +66,31 @@ describe('Custom items (e2e)', () => {
     expect(plain).not.toHaveProperty('scale');
   });
 
+  it('keeps its box number (written our way), edition, release and price', async () => {
+    const agent = await signUp();
+
+    const figure = await create(agent, {
+      title: 'Iron Man Mark LXXXV',
+      brand: 'Hot Toys',
+      number: 'mms528d30',
+      edition: 'Deluxe',
+      release: { date: '2019-11-20', precision: 'month' },
+      price: { amount: 42800, currency: 'USD' },
+    });
+
+    expect(figure).toMatchObject({
+      source: 'custom',
+      figureNumber: 'MMS 528 D30',
+      edition: 'Deluxe',
+      releaseDate: { date: '2019-11-01', precision: 'month' },
+      price: { amount: 42800, currency: 'USD' },
+    });
+    expect(figure).not.toHaveProperty('sources');
+  });
+
   it.each([
     ['no name', { title: '   ' }],
+    ['a price in an unknown currency', { title: 'x', price: { amount: 100, currency: 'XYZ' } }],
     ['an image that is not https', { ...gandalf, coverUrl: 'http://example.com/a.jpg' }],
     ['a name that is too long', { title: 'x'.repeat(201) }],
   ])('rejects %s', async (_case, body) => {

@@ -83,6 +83,7 @@ export function matchUniverses(
   signals: MatchSignals,
   seed: readonly UniverseSeed[] = UNIVERSE_SEED,
 ): UniverseMatch {
+  if (signals.curated) return curatedMatch(signals.curated, seed);
   const { namesByUniverse } = indexSeed(seed);
 
   const titles = [signals.title, ...(signals.series ?? [])].map(normalizeText);
@@ -138,5 +139,25 @@ export function matchUniverses(
     }
   }
 
+  return { universes, characters };
+}
+
+/** A curator's links, kept to what the seed knows and put in seed order. */
+function curatedMatch(
+  curated: NonNullable<MatchSignals['curated']>,
+  seed: readonly UniverseSeed[],
+): UniverseMatch {
+  const universes: string[] = [];
+  const characters: CharacterRef[] = [];
+  for (const universe of seed) {
+    if (!curated.universes.includes(universe.slug)) continue;
+    universes.push(universe.slug);
+    for (const character of universe.characters) {
+      const chosen = curated.characters.some(
+        (ref) => ref.universe === universe.slug && ref.character === character.slug,
+      );
+      if (chosen) characters.push({ universe: universe.slug, character: character.slug });
+    }
+  }
   return { universes, characters };
 }

@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import type { CharacterRef } from './match-universes';
+
 /**
  * What a catalog entry tells us about the fiction it belongs to: the input to universe
  * matching. Catalog adapters attach it to entries; the API stores it with each catalog item
@@ -23,6 +25,11 @@ export type MatchSignals = {
    * (search results skip them); an empty list means the set has none.
    */
   minifigs?: readonly string[];
+  /**
+   * Links a curator chose (Fandex's figure list), used as they are instead of matching: a
+   * figure named "Supergirl (Supergirl, 2026)" says nothing a matcher could use.
+   */
+  curated?: { universes: readonly string[]; characters: readonly CharacterRef[] };
 };
 
 const strings = z.array(z.string()).readonly();
@@ -37,4 +44,10 @@ export const matchSignalsSchema = z.object({
   subjects: strings.exactOptional(),
   legoThemeIds: z.array(z.number().int()).readonly().exactOptional(),
   minifigs: strings.exactOptional(),
+  curated: z
+    .object({
+      universes: strings,
+      characters: z.array(z.object({ universe: z.string(), character: z.string() })).readonly(),
+    })
+    .exactOptional(),
 }) satisfies z.ZodType<MatchSignals>;

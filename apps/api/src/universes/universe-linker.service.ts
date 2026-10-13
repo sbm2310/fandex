@@ -56,13 +56,17 @@ export class UniverseLinker {
     }
   }
 
-  /** Recomputes every catalog item's links (after the seed or the matching rules changed). */
-  async relinkAll(): Promise<number> {
+  /**
+   * Recomputes every catalog item's links (after the seed or the matching rules changed), or
+   * only those `where` selects.
+   */
+  async relinkAll(where: Prisma.CatalogItemWhereInput = {}): Promise<number> {
     const ids = await this.loadIds();
     let cursor: string | undefined;
     let count = 0;
     for (;;) {
       const page = await this.prisma.catalogItem.findMany({
+        where,
         select: { id: true, matchSignals: true },
         orderBy: { id: 'asc' },
         take: RELINK_PAGE_SIZE,

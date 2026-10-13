@@ -213,3 +213,31 @@ describe('matchUniverses rules', () => {
     });
   });
 });
+
+describe('matchUniverses with curated links', () => {
+  it('uses them as they are, in seed order, dropping what the seed does not know', () => {
+    const signals: MatchSignals = {
+      title: 'Supergirl (Supergirl, 2026)',
+      curated: {
+        universes: ['marvel', 'dc', 'narnia'],
+        characters: [
+          { universe: 'dc', character: 'superman' },
+          { universe: 'dc', character: 'nobody' },
+          { universe: 'middle-earth', character: 'gandalf' },
+        ],
+      },
+    };
+    expect(matchUniverses(signals)).toEqual({
+      universes: ['dc', 'marvel'],
+      characters: [{ universe: 'dc', character: 'superman' }],
+    });
+  });
+
+  it('ignores what the title would have matched', () => {
+    const signals: MatchSignals = {
+      title: 'Gandalf the Grey',
+      curated: { universes: [], characters: [] },
+    };
+    expect(matchUniverses(signals)).toEqual({ universes: [], characters: [] });
+  });
+});

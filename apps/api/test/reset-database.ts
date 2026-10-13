@@ -1,3 +1,4 @@
+import { FIGURE_SEED_SYNC } from '../src/catalog/figure-seed.service.js';
 import type { PrismaService } from '../src/prisma/prisma.service.js';
 
 /**
@@ -15,4 +16,7 @@ export async function resetDatabase(prisma: PrismaService): Promise<void> {
   if (tables.length === 0) return;
   const list = tables.map(({ tablename }) => `"public"."${tablename}"`).join(', ');
   await prisma.$executeRawUnsafe(`TRUNCATE TABLE ${list} RESTART IDENTITY CASCADE`);
+  // The shared figures were truncated with the catalog: forget they were synced, so a test's
+  // FigureSeedService.sync() inserts them again.
+  await prisma.syncState.deleteMany({ where: { name: FIGURE_SEED_SYNC } });
 }

@@ -1,6 +1,12 @@
 import {
+  CURRENCIES,
+  figureFromSeed,
   figureMatchSignals,
+  figureSeedSignals,
   matchSignalsSchema,
+  trimmed,
+  type CatalogFigure,
+  type FigureSeedEntry,
   type CatalogBook,
   type CatalogItemResponse,
   type CatalogSet,
@@ -63,17 +69,48 @@ export function figureData(
   figure: NewFigure,
   { ownerId, externalId }: { ownerId: string; externalId: string },
 ): Prisma.CatalogItemUncheckedCreateInput {
+  const clean = trimmed(figure);
   return {
     category: 'figure',
     source: 'custom',
     externalId,
     ownerId,
+    ...figureColumns(clean),
+    coverUrl: clean.coverUrl ?? null,
+    matchSignals: toJson(figureMatchSignals(clean)),
+  };
+}
+
+/**
+ * A figure from Fandex's curated list, as stored: shared (no owner), with the links the
+ * curator chose and the pages its facts came from. The entry id is its external id.
+ */
+export function seedFigureData(entry: FigureSeedEntry) {
+  const figure = figureFromSeed(entry);
+  return {
+    category: 'figure',
+    source: 'fandex',
+    externalId: entry.id,
+    ...figureColumns(figure),
+    sources: entry.sources,
+    matchSignals: toJson(figureSeedSignals(entry)),
+    fetchedAt: new Date(),
+  } satisfies Prisma.CatalogItemUncheckedCreateInput;
+}
+
+/** The columns every figure has, from whichever kind of figure it is. */
+function figureColumns(figure: NewFigure | CatalogFigure) {
+  return {
     title: figure.title,
     subtitle: figure.line ?? null,
     creators: figure.brand ? [figure.brand] : [],
     scale: figure.scale ?? null,
-    coverUrl: figure.coverUrl ?? null,
-    matchSignals: toJson(figureMatchSignals(figure)),
+    figureNumber: figure.number ?? null,
+    edition: figure.edition ?? null,
+    releaseDate: figure.release ? toDay(figure.release.date) : null,
+    releasePrecision: figure.release?.precision ?? null,
+    priceAmount: figure.price?.amount ?? null,
+    priceCurrency: figure.price?.currency ?? null,
   };
 }
 
@@ -108,6 +145,8 @@ export function needsSignals(row: Pick<CatalogItem, 'category' | 'matchSignals'>
 /** A stored row as the API returns it, with its links (null columns become absent fields). */
 export function toCatalogItemResponse(row: CatalogItem, links: ItemLinks): CatalogItemResponse {
   const publishDate = releaseOf(row.publishDate, row.publishPrecision);
+  const releaseDate = releaseOf(row.releaseDate, row.releasePrecision);
+  const price = priceOf(row);
   return {
     id: row.id,
     category: row.category,
@@ -127,7 +166,17 @@ export function toCatalogItemResponse(row: CatalogItem, links: ItemLinks): Catal
     ...(row.theme !== null && { theme: row.theme }),
     ...(row.subtheme !== null && { subtheme: row.subtheme }),
     ...(row.scale !== null && { scale: row.scale }),
+    ...(row.figureNumber !== null && { figureNumber: row.figureNumber }),
+    ...(row.edition !== null && { edition: row.edition }),
+    ...(releaseDate && { releaseDate }),
+    ...(price && { price }),
+    ...(row.sources.length > 0 && { sources: row.sources }),
     universes: links.universes,
     characters: links.characters,
   };
+}
+
+function priceOf(row: Pick<CatalogItem, 'priceAmount' | 'priceCurrency'>) {
+  const currency = CURRENCIES.find((code) => code === row.priceCurrency);
+  return row.priceAmount !== null && currency ? { amount: row.priceAmount, currency } : null;
 }

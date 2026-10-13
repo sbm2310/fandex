@@ -1,3 +1,4 @@
+import { parseFigureNumber } from './figures/figure-number';
 import type { Money } from './preorders/money';
 import type { ReleaseDate } from './preorders/release-date';
 import type { MatchSignals } from './universes/match-signals';
@@ -43,7 +44,10 @@ export type CatalogFigure = {
 };
 
 /** What a new figure needs: the rest (ids, links) is filled in where it's saved. */
-export type NewFigure = Pick<CatalogFigure, 'title' | 'brand' | 'line' | 'scale' | 'coverUrl'>;
+export type NewFigure = Pick<
+  CatalogFigure,
+  'title' | 'brand' | 'line' | 'scale' | 'coverUrl' | 'number' | 'edition' | 'release' | 'price'
+>;
 
 /** The clues universe matching gets from a figure: its name, and its line as a series. */
 export function figureMatchSignals(figure: NewFigure): MatchSignals {
@@ -69,19 +73,29 @@ export function createFigure(
   };
 }
 
-/** The figure's fields with blanks dropped, so an empty "brand" isn't stored as "". */
+/**
+ * The figure's fields with blanks dropped, so an empty "brand" isn't stored as "". A box
+ * number we can read is written our way ("mms649" → "MMS 649"); other codes are kept as typed.
+ */
 export function trimmed(figure: NewFigure): NewFigure {
   const optional = (value: string | undefined) => value?.trim() || undefined;
   const brand = optional(figure.brand);
   const line = optional(figure.line);
   const scale = optional(figure.scale);
   const coverUrl = optional(figure.coverUrl);
+  const edition = optional(figure.edition);
+  const typedNumber = optional(figure.number);
+  const number = typedNumber && (parseFigureNumber(typedNumber)?.text ?? typedNumber);
   return {
     title: figure.title.trim(),
     ...(brand && { brand }),
     ...(line && { line }),
     ...(scale && { scale }),
     ...(coverUrl && { coverUrl }),
+    ...(number && { number }),
+    ...(edition && { edition }),
+    ...(figure.release && { release: figure.release }),
+    ...(figure.price && { price: figure.price }),
   };
 }
 

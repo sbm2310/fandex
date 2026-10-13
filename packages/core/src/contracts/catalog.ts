@@ -46,6 +46,8 @@ export const catalogItemSchema = z.object({
   releaseDate: releaseDateSchema.optional(),
   /** Figures only: the original retail price. */
   price: moneySchema.optional(),
+  /** Curated figures: the pages its facts were checked against. */
+  sources: z.array(z.string()).optional(),
   /** The universes this item belongs to (slugs; see GET /universes), in seed order. */
   universes: z.array(slugSchema).default([]),
   /** The characters in it, each with its universe. */
@@ -59,8 +61,11 @@ export const catalogSearchResponseSchema = z.object({ items: z.array(catalogItem
 
 export type CatalogSearchResponse = z.infer<typeof catalogSearchResponseSchema>;
 
-/** What to search: books (incl. manga and comics, via Open Library) or LEGO sets (Rebrickable). */
-export const catalogSearchKindSchema = z.enum(['books', 'lego']).default('books');
+/**
+ * What to search: books (incl. manga and comics, via Open Library), LEGO sets (Rebrickable) or
+ * figures (Fandex's own shared catalog).
+ */
+export const catalogSearchKindSchema = z.enum(['books', 'lego', 'figures']).default('books');
 
 export type CatalogSearchKind = z.infer<typeof catalogSearchKindSchema>;
 
@@ -116,5 +121,13 @@ export const createFigureRequestSchema = z.object({
     .url({ protocol: /^https$/, error: 'The image must be an https:// link' })
     .max(2000)
     .optional(),
+  /** As printed on the box ("MMS 649"); written our way when it's a number we know. */
+  number: optionalText(30),
+  /** "Deluxe", "Premium"… */
+  edition: optionalText(50),
+  /** When it came out, or is expected to. */
+  release: releaseDateSchema.optional(),
+  /** Its original retail price. */
+  price: moneySchema.optional(),
 });
 export type CreateFigureRequest = z.infer<typeof createFigureRequestSchema>;

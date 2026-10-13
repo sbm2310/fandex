@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import {
   CatalogError,
+  searchFigures,
   type BookCatalog,
   type CatalogBook,
   type CatalogItemResponse,
@@ -64,6 +65,7 @@ export class CatalogService {
   }
 
   async search(query: string, kind: CatalogSearchKind = 'books'): Promise<CatalogItemResponse[]> {
+    if (kind === 'figures') return this.searchFigures(query);
     const key = `${kind}:${query.toLowerCase()}`;
     const cached = this.searchCache.get(key);
     if (cached) return cached;
@@ -78,6 +80,33 @@ export class CatalogService {
     for (const entry of entries) items.push(await this.save(entry));
     this.searchCache.set(key, items);
     return items;
+  }
+
+  /**
+   * Shared figures (Fandex's own catalog) matching a name, character or box number. Served
+   * from our database, so nothing is cached: an approved suggestion shows up at once. Private
+   * figures (`custom`) are never searched; their owners see them in their collection.
+   */
+  private async searchFigures(query: string): Promise<CatalogItemResponse[]> {
+    const rows = await this.prisma.catalogItem.findMany({
+      where: { source: 'fandex', category: 'figure' },
+      include: linksInclude,
+    });
+    const figures = rows.map((row) => {
+      const item = toCatalogItemResponse(row, linksFromRow(row));
+      const [brand] = item.creators;
+      return {
+        item,
+        title: item.title,
+        ...(brand && { brand }),
+        ...(item.subtitle && { line: item.subtitle }),
+        ...(item.figureNumber && { number: item.figureNumber }),
+        ...(item.edition && { edition: item.edition }),
+        universes: item.universes,
+        characters: item.characters,
+      };
+    });
+    return searchFigures(figures, query).map((figure) => figure.item);
   }
 
   /**

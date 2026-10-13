@@ -27,6 +27,8 @@ enum CatalogSource {
   rebrickable
   /// Added by hand by its owner (figures); private to them.
   custom
+  /// Fandex's own curated figure catalog (`@fandex/core/figure-seed`); shared by everyone.
+  fandex
 }
 
 /// A catalog entry fetched from an external source and cached here, shared by all users.
@@ -53,6 +55,18 @@ model CatalogItem {
   subtheme         String?
   /// Figures: "1/6".
   scale            String?
+  /// Figures: the number on the box, written our way ("MMS 649").
+  figureNumber     String?           @map("figure_number")
+  /// Figures: "Deluxe", "Premium"…
+  edition          String?
+  /// Figures: when it came out or is expected (first day of the period) and how precise that is.
+  releaseDate      DateTime?         @map("release_date") @db.Date
+  releasePrecision ReleasePrecision? @map("release_precision")
+  /// Figures: the original retail price, in minor units (cents) of `priceCurrency`.
+  priceAmount      Int?              @map("price_amount")
+  priceCurrency    String?           @map("price_currency") @db.Char(3)
+  /// Curated figures: the pages their facts were checked against.
+  sources          String[]          @default([])
   /// Custom items only: the user who added it (only they can see or own it).
   ownerId          String?           @map("owner_id") @db.Uuid
   owner            User?             @relation(fields: [ownerId], references: [id], onDelete: Cascade)
@@ -74,6 +88,7 @@ model CatalogItem {
   @@index([isbn13])
   @@index([workKey])
   @@index([ownerId])
+  @@index([figureNumber])
   @@map("catalog_item")
 }
 

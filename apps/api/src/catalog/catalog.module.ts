@@ -1,4 +1,5 @@
 import { OpenLibraryCatalog, RebrickableCatalog } from '@fandex/core';
+import { FIGURE_SEED } from '@fandex/core/figure-seed';
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
@@ -8,6 +9,7 @@ import { UniversesModule } from '../universes/universes.module.js';
 import { CatalogSignalsService } from './catalog-signals.service.js';
 import { CatalogController } from './catalog.controller.js';
 import { CustomItemsController } from './custom-items.controller.js';
+import { FIGURE_SEED_ENTRIES, FigureSeedService } from './figure-seed.service.js';
 import { BOOK_CATALOG, CatalogService, LEGO_CATALOG } from './catalog.service.js';
 import { RateLimitedCatalog } from './rate-limited-catalog.js';
 import { RequestSpacer } from './request-spacer.js';
@@ -21,6 +23,8 @@ const OPEN_LIBRARY_USER_AGENT = 'Fandex/0.2 (https://github.com/sbm2310/fandex)'
   providers: [
     CatalogService,
     CatalogSignalsService,
+    FigureSeedService,
+    { provide: FIGURE_SEED_ENTRIES, useValue: FIGURE_SEED },
     {
       provide: BOOK_CATALOG,
       // ~2.9 requests/second, just under the limit.
@@ -43,6 +47,6 @@ const OPEN_LIBRARY_USER_AGENT = 'Fandex/0.2 (https://github.com/sbm2310/fandex)'
       },
     },
   ],
-  exports: [CatalogService, CatalogSignalsService],
+  exports: [CatalogService, CatalogSignalsService, FigureSeedService],
 })
 export class CatalogModule {}

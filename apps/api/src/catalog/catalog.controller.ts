@@ -31,7 +31,8 @@ export class CatalogController {
 
   @Get('search')
   @ApiOkResponse({
-    description: 'Matching books/manga/comics (kind=books) or LEGO sets (kind=lego).',
+    description:
+      'Matching books/manga/comics (kind=books), LEGO sets (kind=lego) or shared figures by name, character or box number (kind=figures).',
   })
   @ApiBadRequestResponse({ description: 'q is missing or the wrong length, or kind is unknown.' })
   @ApiBadGatewayResponse({ description: 'The external catalog failed.' })
