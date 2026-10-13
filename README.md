@@ -73,7 +73,7 @@ Fandex runs on iPhone and the web from one codebase, backed by its own API:
 - **Your collection:** a cover grid sorted by recently added or by title (ignoring "The"/"A"), a detail screen per item, and removal with confirmation.
 - **Account deletion** in the app (required by the App Store), light and dark mode, screen-reader labels, and browser tab titles on web.
 
-Stage 6 is built and tested locally (including on the iOS Simulator) but not deployed yet; the live demo runs Stage 5. Next up is Stage 7: launch — TestFlight, the App Store and shareable collection pages (see [Roadmap](#roadmap)). What the AI sees and keeps is described under [Privacy and AI](#privacy-and-ai).
+Stage 6 is built and tested locally (including on the iOS Simulator) but not deployed yet; the live demo runs Stage 5. Next up is Stage 7: a figure catalog — curated Hot Toys and InArt figures, approved user suggestions and AI that reads a figure's box — then Stage 8: launch (see [Roadmap](#roadmap)). What the AI sees and keeps is described under [Privacy and AI](#privacy-and-ai).
 
 ## Architecture
 
@@ -289,7 +289,8 @@ Book data and cover images come from [Open Library](https://openlibrary.org), a 
 | **4. AI** ✅              | Shelf photo → identified items, rapid barcode scan, questions about the collection |
 | **5. Pre-orders** ✅      | Pre-orders (custom figures too), payments due, release dates and slips, Upcoming   |
 | **6. You're missing…** ✅ | Book series and manga/comic volumes: what's missing and what's next (not deployed) |
-| 7. Launch                 | TestFlight → App Store, shareable public collection pages                          |
+| 7. Figure catalog         | Curated Hot Toys and InArt figures, approved user suggestions, AI that reads a box |
+| 8. Launch                 | TestFlight → App Store, shareable public collection pages                          |
 
 ## License
 

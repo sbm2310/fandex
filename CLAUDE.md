@@ -55,7 +55,8 @@ Verify current terms, rate limits and attribution requirements for each API befo
 | 4. AI ✅ (v0.4.0)             | Month 3   | Shelf photo → identified items; natural-language questions about the collection                                      |
 | 5. Pre-orders ✅ (v0.5.0)     | Month 4   | Pre-orders (custom figures too), payments due, release dates and slips, an Upcoming tab                              |
 | 6. "You're missing…" ✅       | Month 5   | Book series (Wikidata) and manga/comic volumes: what's missing and what's next, on item pages, a Series view and Ask |
-| 7. Launch                     | After     | TestFlight → App Store, shareable public collection pages, beta users from collector communities                     |
+| 7. Figure catalog             | Month 6   | Curated Hot Toys and InArt figures, approved user suggestions, AI that reads a figure's box                          |
+| 8. Launch                     | After     | TestFlight → App Store, shareable public collection pages, beta users from collector communities                     |
 
 ## Stage 1 decisions (settled 2026-10-04)
 
@@ -208,11 +209,20 @@ Full plan and task list: [`docs/plans/stage-6.md`](docs/plans/stage-6.md).
 - **Works for guests:** series data public and cached on the server (30 days), what's missing computed on the device.
 - **Not deployed** until the owner says so (the owner isn't deploying for now).
 
+## Stage 7 decisions (settled 2026-10-13)
+
+Full plan and task list: [`docs/plans/stage-7.md`](docs/plans/stage-7.md).
+
+- **No API exists for Hot Toys or InArt** (researched 2026-10-13: no official database, nothing in Wikidata, retailer and InArt terms allow personal non-commercial use only, InArt's site is under UK/French law). **No scraping, no copied text or images**: Fandex stores facts it writes itself, each with its sources.
+- **Shared figures** come from a curated list in the repository (all InArt; Hot Toys for Star Wars, Marvel, DC, Middle-earth, Wizarding World — drafted by Claude from several sources, spot-checked by the owner) and from figures users suggest that the owner approves on an admin screen (admins by email in a server setting). Private figures stay private unless suggested.
+- **No catalog pictures yet** (placeholder); private figures keep their image link. Render's free plan has no disk; photos belong to the brands.
+- **Box-reading AI is in this stage** (same providers, fallback and quotas as shelf scans; an evaluation set of the owner's box photos).
+- A Sideshow affiliate feed (Hot Toys) is a later option: it needs a public site and approval.
+
 ## Open questions (deferred to later stages)
 
 - Email provider for verification and password reset (free tiers only) — needs a domain we own
 - "You're missing…" for LEGO themes (sets in a theme you collect) — Stage 6 covers book series and manga/comic volumes
-- Premium figures catalog (AI-read box details + community contributions) — after Stage 4
 - Apple Developer account — not needed so far (email + password works in Expo Go; Stage 5 chose in-app reminders over push); buy when adding Apple sign-in, push notifications or TestFlight (Stage 6)
 
 ## Working agreements
