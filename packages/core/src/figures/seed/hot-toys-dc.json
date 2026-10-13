@@ -1,0 +1,403 @@
+[
+  {
+    "id": "hot-toys-mms-638",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 638",
+    "name": "Batman (The Batman)",
+    "universe": "dc",
+    "characters": ["batman"],
+    "price": "USD 305.00",
+    "sources": [
+      "https://actionfigure411.com/dc/hot-toys-dc-comics/hot-toys-action-figures/batman-robert-pattinson-10311.php",
+      "https://www.sideshow.com/collectibles/dc-comics-batman-hot-toys-910594"
+    ]
+  },
+  {
+    "id": "hot-toys-mms-639",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 639",
+    "name": "Batman (The Batman)",
+    "universe": "dc",
+    "characters": ["batman"],
+    "edition": "Deluxe",
+    "price": "USD 380.00",
+    "sources": [
+      "https://www.actionfigure411.com/dc/hot-toys-checklist.php",
+      "https://www.ebay.com/itm/397249021522"
+    ]
+  },
+  {
+    "id": "hot-toys-mms-595",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 595",
+    "name": "Batman (Batman Begins)",
+    "universe": "dc",
+    "characters": ["batman"],
+    "announced": "2021-03",
+    "price": "USD 260.00",
+    "sources": [
+      "https://www.actionfigure411.com/dc/hot-toys-dc-comics/hot-toys-action-figures/batman-batman-begins-10320.php",
+      "https://news.toyark.com/2021/03/29/batman-begins-1-6-scale-batman-and-batmobile-by-hot-toys-421956"
+    ],
+    "note": "Sideshow opened pre-orders at USD 255."
+  },
+  {
+    "id": "hot-toys-dx-19",
+    "brand": "hot-toys",
+    "line": "dx",
+    "number": "DX 19",
+    "name": "Batman (The Dark Knight Rises)",
+    "universe": "dc",
+    "characters": ["batman"],
+    "price": "USD 295.00",
+    "sources": [
+      "https://actionfigure411.com/dc/hot-toys-dc-comics/hot-toys-action-figures/batman-the-dark-knight-rises-10324.php",
+      "https://bleedingcool.com/collectibles/hot-toys-rerelease-batman-the-dark-knight-rises/",
+      "https://www.toy-people.com/en/?p=70786"
+    ],
+    "note": "First released in 2012, re-released with upgrades."
+  },
+  {
+    "id": "hot-toys-mms-692",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 692",
+    "name": "Batman (Batman, 1989)",
+    "universe": "dc",
+    "characters": ["batman"],
+    "announced": "2023-02",
+    "price": "USD 284.00",
+    "sources": [
+      "https://www.actionfigure411.com/dc/hot-toys-checklist.php",
+      "https://www.toyark.com/?p=493565",
+      "https://www.toy-people.com/en/?p=78122"
+    ]
+  },
+  {
+    "id": "hot-toys-mms-712",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 712",
+    "name": "Batman (The Flash, modern suit)",
+    "universe": "dc",
+    "characters": ["batman"],
+    "price": "USD 310.00",
+    "sources": [
+      "https://www.actionfigure411.com/dc/hot-toys-dc-comics/hot-toys-action-figures/batman-modern-suit-10303.php",
+      "https://www.bigbadtoystore.com/Product/VariationDetails/242807",
+      "https://www.sideshow.com/collectibles/dc-comics-batman-modern-suit-hot-toys-912377"
+    ],
+    "note": "Michael Keaton's Batman."
+  },
+  {
+    "id": "hot-toys-dx-32",
+    "brand": "hot-toys",
+    "line": "dx",
+    "number": "DX 32",
+    "name": "The Joker (The Dark Knight)",
+    "universe": "dc",
+    "characters": ["joker"],
+    "price": "USD 370.00",
+    "sources": [
+      "https://actionfigure411.com/dc/hot-toys-dc-comics/hot-toys-action-figures/the-joker-heath-ledger-10293.php",
+      "https://www.mythfactoryshop.com/en/The-Joker-Hot-Toys-Movie-Masterpiece-DX32-Batman-The-Dark-Knight-Trilogy.html",
+      "https://www.toyark.com/?p=510531"
+    ]
+  },
+  {
+    "id": "hot-toys-dx-42",
+    "brand": "hot-toys",
+    "line": "dx",
+    "number": "DX 42",
+    "name": "Joker (Joker, 2019)",
+    "universe": "dc",
+    "characters": ["joker"],
+    "price": "USD 340.00",
+    "sources": [
+      "https://www.actionfigure411.com/dc/hot-toys-dc-comics/hot-toys-action-figures/the-joker-joaquin-phoenix-10287.php",
+      "https://www.toyark.com/?p=537751",
+      "https://timewalkertoys.com/Joker-The-Joker-Hot-Toys-DX42-1-6-Scale-Figur-p/hty-913613.htm"
+    ]
+  },
+  {
+    "id": "hot-toys-cms-24",
+    "brand": "hot-toys",
+    "line": "cms",
+    "number": "CMS 24",
+    "name": "Batman (The Dark Knight Returns)",
+    "universe": "dc",
+    "characters": ["batman"],
+    "price": "USD 255.00",
+    "sources": [
+      "https://www.actionfigure411.com/dc/hot-toys-dc-comics/hot-toys-action-figures/batman-dark-knight-returns-10276.php",
+      "https://www.sideshow.com/collectibles/dc-comics-batman-hot-toys-913944"
+    ],
+    "note": "Printed CMS024."
+  },
+  {
+    "id": "hot-toys-cms-28",
+    "brand": "hot-toys",
+    "line": "cms",
+    "number": "CMS 28",
+    "name": "The Joker (Batman: The Killing Joke)",
+    "universe": "dc",
+    "characters": ["joker"],
+    "announced": "2025-08",
+    "release": "2026-Q3",
+    "price": "USD 270.00",
+    "sources": [
+      "https://www.actionfigure411.com/dc/hot-toys-dc-comics/hot-toys-action-figures/the-joker-batman-the-killing-joke-11646.php",
+      "https://dccollectors.com/2025/08/07/hot-toys-unveils-batman-the-killing-joke-the-joker-figure/",
+      "https://www.bigbadtoystore.com/Product/VariationDetails/330781"
+    ],
+    "note": "Printed CMS028. Announced at HKD 1,630."
+  },
+  {
+    "id": "hot-toys-mms-584",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 584",
+    "name": "Wonder Woman (Wonder Woman 1984)",
+    "universe": "dc",
+    "characters": ["wonder-woman"],
+    "announced": "2020-07",
+    "price": "USD 260.00",
+    "sources": [
+      "https://actionfigure411.com/dc/hot-toys-dc-comics/hot-toys-action-figures/wonder-woman-wonder-woman-1984-10326.php",
+      "https://news.toyark.com/2020/07/23/wonder-woman-1984-wonder-woman-1-6-scale-figure-by-hot-toys-395969"
+    ],
+    "note": "Sideshow took pre-orders at USD 255."
+  },
+  {
+    "id": "hot-toys-mms-448",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 448",
+    "name": "The Flash (Justice League)",
+    "universe": "dc",
+    "characters": ["flash"],
+    "announced": "2017-11",
+    "price": "USD 228.00",
+    "sources": [
+      "https://actionfigure411.com/dc/hot-toys-dc-comics/hot-toys-action-figures/the-flash-justice-league-10325.php",
+      "https://www.bigbadtoystore.com/product/justice-league-mms448-flash-1_6th-scale-collectible-figure-31925",
+      "https://news.toyark.com/2017/11/01/justice-league-flash-16-scale-figure-hot-toys-276932"
+    ]
+  },
+  {
+    "id": "hot-toys-mms-713",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 713",
+    "name": "The Flash (The Flash, 2023)",
+    "universe": "dc",
+    "characters": ["flash"],
+    "announced": "2023-06",
+    "price": "USD 295.00",
+    "sources": [
+      "https://www.actionfigure411.com/dc/hot-toys-dc-comics/hot-toys-action-figures/the-flash-ezra-miller-10298.php",
+      "https://www.toyark.com/2023/06/08/the-flash-movie-figure-by-hot-toys-503062"
+    ],
+    "note": "One retailer lists USD 327.99."
+  },
+  {
+    "id": "hot-toys-mms-715",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 715",
+    "name": "Supergirl (The Flash, 2023)",
+    "universe": "dc",
+    "price": "USD 270.00",
+    "sources": [
+      "https://www.actionfigure411.com/dc/hot-toys-dc-comics/hot-toys-action-figures/supergirl-10295.php",
+      "https://www.sideshow.com/collectibles/dc-comics-supergirl-hot-toys-912483"
+    ]
+  },
+  {
+    "id": "hot-toys-mms-812",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 812",
+    "name": "Superman (Superman, 2025), with Krypto",
+    "universe": "dc",
+    "characters": ["superman"],
+    "announced": "2025-07",
+    "price": "USD 285.00",
+    "sources": [
+      "https://www.actionfigure411.com/dc/hot-toys-checklist.php",
+      "https://www.bigbadtoystore.com/Product/VariationDetails/326199",
+      "https://legendsverse.com/checklist/hot-toys/figures/superman-2025-mms812-superman-krypto-16th-scale-collectible-figure-set-250725024021"
+    ],
+    "note": "Another source gives USD 304.99."
+  },
+  {
+    "id": "hot-toys-tms-57",
+    "brand": "hot-toys",
+    "line": "tms",
+    "number": "TMS 57",
+    "name": "Cyborg (Zack Snyder's Justice League)",
+    "universe": "dc",
+    "announced": "2021-07",
+    "price": "USD 320.00",
+    "sources": [
+      "https://www.actionfigure411.com/dc/hot-toys-checklist.php",
+      "https://www.bigbadtoystore.com/Product/VariationDetails/172596",
+      "https://news.toyark.com/2021/07/29/zack-snyders-justice-league-cyborg-figure-by-hot-toys-438704"
+    ],
+    "note": "Printed TMS057."
+  },
+  {
+    "id": "hot-toys-mms-565",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 565",
+    "name": "Harley Quinn (Birds of Prey)",
+    "universe": "dc",
+    "characters": ["harley-quinn"],
+    "price": "USD 264.00",
+    "sources": [
+      "https://www.actionfigure411.com/dc/hot-toys-dc-comics/hot-toys-action-figures/harley-quinn-birds-of-prey-10334.php",
+      "https://www.bigbadtoystore.com/product/birds-prey-mms565-harley-quinn-1_6th-scale-collectible-figure-58478"
+    ]
+  },
+  {
+    "id": "hot-toys-mms-627",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 627",
+    "name": "Catwoman (The Dark Knight Rises)",
+    "universe": "dc",
+    "characters": ["catwoman"],
+    "announced": "2021-12",
+    "price": "USD 290.00",
+    "sources": [
+      "https://www.actionfigure411.com/dc/hot-toys-checklist.php",
+      "https://www.toy-people.com/en/?p=67740",
+      "https://www.toyark.com/2021/12/08/the-dark-knight-rises-catwoman-1-6-scale-figure-re-release-by-hot-toys-452646"
+    ],
+    "note": "Announced at HKD 1,730."
+  },
+  {
+    "id": "hot-toys-mms-689",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 689",
+    "name": "Bane (The Dark Knight Rises)",
+    "universe": "dc",
+    "characters": ["bane"],
+    "price": "USD 314.00",
+    "sources": [
+      "https://actionfigure411.com/dc/hot-toys-dc-comics/hot-toys-action-figures/bane-10306.php",
+      "https://www.sideshow.com/collectibles/dc-comics-bane-hot-toys-912091",
+      "https://www.toy-people.com/en/?p=77533"
+    ],
+    "note": "Announced at HKD 1,930."
+  },
+  {
+    "id": "hot-toys-mms-546",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 546",
+    "name": "Two-Face (The Dark Knight)",
+    "universe": "dc",
+    "characters": ["two-face"],
+    "price": "USD 251.00",
+    "sources": [
+      "https://actionfigure411.com/dc/hot-toys-dc-comics/hot-toys-action-figures/two-face-10337.php",
+      "https://www.sideshow.com/collectibles/dc-comics-two-face-hot-toys-904855"
+    ]
+  },
+  {
+    "id": "hot-toys-mms-594",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 594",
+    "name": "Robin (Batman Forever)",
+    "universe": "dc",
+    "characters": ["robin"],
+    "price": "USD 250.00",
+    "sources": [
+      "https://www.actionfigure411.com/dc/hot-toys-dc-comics/hot-toys-action-figures/robin-batman-forever-10322.php",
+      "https://news.toyark.com/2021/02/02/batman-forever-batman-and-robin-by-hot-toys-416919"
+    ],
+    "note": "Toyark reported USD 245."
+  },
+  {
+    "id": "hot-toys-mms-799",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 799",
+    "name": "Mr. Freeze (Batman & Robin)",
+    "universe": "dc",
+    "price": "USD 355.00",
+    "sources": [
+      "https://www.actionfigure411.com/dc/hot-toys-dc-comics/hot-toys-action-figures/mr-freeze-10270.php",
+      "https://www.sideshow.com/collectibles/dc-comics-mr-freeze-hot-toys-914279",
+      "https://www.toyark.com/?p=558457"
+    ]
+  },
+  {
+    "id": "hot-toys-vgm-40",
+    "brand": "hot-toys",
+    "line": "vgm",
+    "number": "VGM 40",
+    "name": "Batgirl (Batman: Arkham Knight)",
+    "universe": "dc",
+    "characters": ["batgirl"],
+    "price": "USD 243.00",
+    "sources": [
+      "https://actionfigure411.com/dc/hot-toys-dc-comics/hot-toys-action-figures/batgirl-arkham-knight-video-game-10331.php",
+      "https://www.toyark.com/?p=384620"
+    ],
+    "note": "Printed VGM40."
+  },
+  {
+    "id": "hot-toys-vgm-52",
+    "brand": "hot-toys",
+    "line": "vgm",
+    "number": "VGM 52",
+    "name": "Batman (Batman: Arkham Origins, XE suit)",
+    "universe": "dc",
+    "characters": ["batman"],
+    "announced": "2021-07",
+    "price": "USD 380.00",
+    "sources": [
+      "https://www.actionfigure411.com/dc/hot-toys-dc-comics/hot-toys-action-figures/batman-xe-suit-10316.php",
+      "https://www.bigbadtoystore.com/Product/VariationDetails/172593",
+      "https://news.toyark.com/2021/07/29/batman-arkham-origins-batman-xe-suit-figure-by-hot-toys-438681"
+    ],
+    "note": "Printed VGM52. Announced at USD 375."
+  },
+  {
+    "id": "hot-toys-tms-71",
+    "brand": "hot-toys",
+    "line": "tms",
+    "number": "TMS 71",
+    "name": "Peacemaker",
+    "universe": "dc",
+    "price": "USD 280.00",
+    "sources": [
+      "https://www.actionfigure411.com/dc/hot-toys-checklist.php",
+      "https://www.sideshow.com/collectibles/dc-comics-peacemaker-hot-toys-910487"
+    ],
+    "note": "Printed TMS071."
+  },
+  {
+    "id": "hot-toys-dx-29",
+    "brand": "hot-toys",
+    "line": "dx",
+    "number": "DX 29",
+    "name": "Black Adam",
+    "universe": "dc",
+    "announced": "2022-09",
+    "price": "USD 305.00",
+    "sources": [
+      "https://www.actionfigure411.com/dc/hot-toys-dc-comics/hot-toys-action-figures/black-adam-10307.php",
+      "https://www.sideshow.com/collectibles/dc-comics-black-adam-hot-toys-911841",
+      "https://news.toyark.com/2022/09/30/black-adam-figures-by-hot-toys-484669"
+    ]
+  }
+]

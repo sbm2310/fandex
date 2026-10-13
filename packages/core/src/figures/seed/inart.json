@@ -1,0 +1,1069 @@
+[
+  {
+    "id": "inart-joker-the-dark-knight",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "The Joker (The Dark Knight)",
+    "universe": "dc",
+    "characters": ["joker"],
+    "announced": "2022",
+    "release": "2025-Q1",
+    "sources": [
+      "https://global.inart.studio/products/the-dark-knight-joker",
+      "https://global.inart.studio/pages/about-inart"
+    ],
+    "note": "INART's first figure (2022). The shop now lists USD 999.00 with delivery in Q1 2025; the first pre-order price isn't shown."
+  },
+  {
+    "id": "inart-batman-the-batman",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Batman (The Batman)",
+    "universe": "dc",
+    "characters": ["batman"],
+    "announced": "2022",
+    "sources": [
+      "https://global.inart.studio/products/the-batman-2022",
+      "https://global.inart.studio/pages/about-inart"
+    ],
+    "note": "Comes with a Bruce Wayne figure. The shop mentions five editions without naming them and lists USD 788.00."
+  },
+  {
+    "id": "inart-batman-batman-v-superman",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Batman (Batman v Superman: Dawn of Justice)",
+    "universe": "dc",
+    "characters": ["batman"],
+    "announced": "2026-04",
+    "release": "2027-Q1",
+    "price": "USD 389.00",
+    "sources": [
+      "https://global.inart.studio/products/ben-affleck-1-6-figure",
+      "https://dccollectors.com/2026/04/07/inart-ben-affleck-batman-1-6-figure-pre-orders-open-soon/"
+    ]
+  },
+  {
+    "id": "inart-superman-batman-v-superman",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Superman (Batman v Superman: Dawn of Justice)",
+    "universe": "dc",
+    "characters": ["superman"],
+    "sources": ["https://global.inart.studio/products/bvs-superman-figure"],
+    "note": "The shop lists USD 360.00 (full payment, in stock); no pre-order dates shown."
+  },
+  {
+    "id": "inart-wonder-woman-batman-v-superman",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Wonder Woman (Batman v Superman: Dawn of Justice)",
+    "universe": "dc",
+    "characters": ["wonder-woman"],
+    "announced": "2025-08",
+    "release": "2026-Q3",
+    "price": "USD 365.00",
+    "sources": ["https://global.inart.studio/products/wonder-woman-sixth-scale-figure"]
+  },
+  {
+    "id": "inart-superman-man-of-steel",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Superman (Man of Steel)",
+    "universe": "dc",
+    "characters": ["superman"],
+    "announced": "2026-08",
+    "release": "2027-Q2",
+    "price": "USD 365.00",
+    "sources": [
+      "https://global.inart.studio/products/man-of-steel-superman-1-6-collectible-figure",
+      "https://www.toy-people.com/en/?p=113216"
+    ]
+  },
+  {
+    "id": "inart-superman-1978",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Superman (Superman, 1978)",
+    "universe": "dc",
+    "characters": ["superman"],
+    "edition": "Standard",
+    "announced": "2026-04",
+    "release": "2027-Q2",
+    "price": "USD 285.00",
+    "sources": ["https://global.inart.studio/products/superman-1978-1-6"]
+  },
+  {
+    "id": "inart-superman-1978-premium",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Superman (Superman, 1978)",
+    "universe": "dc",
+    "characters": ["superman"],
+    "edition": "Premium",
+    "announced": "2026-04",
+    "release": "2027-Q2",
+    "price": "USD 539.00",
+    "sources": ["https://global.inart.studio/products/superman-1978-1-6"]
+  },
+  {
+    "id": "inart-superman-2025",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Superman (Superman, 2025)",
+    "universe": "dc",
+    "characters": ["superman"],
+    "announced": "2025-07",
+    "release": "2026-Q2",
+    "price": "USD 308.00",
+    "sources": ["https://global.inart.studio/products/superman-2025-sixth-collectible-figure"]
+  },
+  {
+    "id": "inart-supergirl-2026",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Supergirl (Supergirl, 2026)",
+    "universe": "dc",
+    "announced": "2026-07",
+    "release": "2027-Q3",
+    "price": "USD 441.00",
+    "sources": [
+      "https://global.inart.studio/products/supergirl-2026-1-6",
+      "https://dccollectors.com/2026/06/30/inart-supergirl-1-6-collectible-figure-officially-revealed-preorder-date-and-details-announced/"
+    ]
+  },
+  {
+    "id": "inart-catwoman-the-dark-knight-rises",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Catwoman (The Dark Knight Rises)",
+    "universe": "dc",
+    "characters": ["catwoman"],
+    "announced": "2025-11",
+    "release": "2027-Q1",
+    "price": "USD 397.00",
+    "sources": ["https://global.inart.studio/products/catwoman-sixth-scale-figure"],
+    "note": "The pre-order dates (28 Nov – 31 Dec) are listed without a year; 2025 fits the Q1 2027 shipping estimate."
+  },
+  {
+    "id": "inart-joker-2019",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Joker (Joker, 2019)",
+    "universe": "dc",
+    "characters": ["joker"],
+    "edition": "Deluxe",
+    "announced": "2024-01",
+    "release": "2025",
+    "sources": [
+      "https://global.inart.studio/products/joker-2019-1-6-figure",
+      "https://www.toy-people.com/en/?p=86910"
+    ],
+    "note": "Announced at RMB 6,980. The shop lists USD 1,179 and USD 1,070 for this version without saying which is which."
+  },
+  {
+    "id": "inart-joker-2019-premium",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Joker (Joker, 2019)",
+    "universe": "dc",
+    "characters": ["joker"],
+    "edition": "Premium",
+    "announced": "2024-01",
+    "release": "2025",
+    "sources": [
+      "https://global.inart.studio/products/joker-2019-1-6-figure",
+      "https://www.toy-people.com/en/?p=86910"
+    ],
+    "note": "Announced at RMB 9,980. The shop lists USD 1,598 and USD 1,540 for this version without saying which is which."
+  },
+  {
+    "id": "inart-gandalf-the-grey",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Gandalf the Grey",
+    "universe": "middle-earth",
+    "characters": ["gandalf"],
+    "announced": "2022-05",
+    "release": "2023-Q2",
+    "sources": [
+      "https://global.inart.studio/products/gandalf-the-grey-1-6-collectible-figure",
+      "https://www.toy-people.com/en/?p=71514"
+    ],
+    "note": "The shop lists USD 445.00; no price was given when it was announced."
+  },
+  {
+    "id": "inart-aragorn",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Aragorn (The Fellowship of the Ring)",
+    "universe": "middle-earth",
+    "characters": ["aragorn"],
+    "edition": "Standard",
+    "announced": "2023-01",
+    "release": "2023-Q4",
+    "sources": [
+      "https://global.inart.studio/products/aragorn-1-6-collectible-figure",
+      "https://www.toy-people.com/en/?p=77305"
+    ],
+    "note": "Sculpted hair. Announced at RMB 1,880; the shop lists USD 335 (full payment)."
+  },
+  {
+    "id": "inart-aragorn-deluxe",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Aragorn (The Fellowship of the Ring)",
+    "universe": "middle-earth",
+    "characters": ["aragorn"],
+    "edition": "Deluxe",
+    "announced": "2023-01",
+    "release": "2023-Q4",
+    "sources": [
+      "https://global.inart.studio/products/aragorn-1-6-collectible-figure",
+      "https://www.toy-people.com/en/?p=77305"
+    ],
+    "note": "Rooted hair. Announced as the \"Premium\" version at RMB 2,780; the shop calls it Deluxe and lists USD 470 (full payment)."
+  },
+  {
+    "id": "inart-legolas",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Legolas (The Fellowship of the Ring)",
+    "universe": "middle-earth",
+    "characters": ["legolas"],
+    "sources": ["https://global.inart.studio/products/legolas-sixth-scale-figure"],
+    "note": "The shop lists several payment amounts (USD 489, 569) without a clear first pre-order price."
+  },
+  {
+    "id": "inart-gimli",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Gimli (The Lord of the Rings)",
+    "universe": "middle-earth",
+    "characters": ["gimli"],
+    "announced": "2026-04",
+    "release": "2027-Q3",
+    "price": "USD 482.00",
+    "sources": ["https://global.inart.studio/products/gimli-1-6"]
+  },
+  {
+    "id": "inart-saruman",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Saruman (The Fellowship of the Ring)",
+    "universe": "middle-earth",
+    "characters": ["saruman"],
+    "announced": "2026-09",
+    "release": "2027-Q4",
+    "price": "USD 599.00",
+    "sources": [
+      "https://global.inart.studio/products/the-lord-of-the-rings-the-fellowship-of-the-ring-saruman-1-6"
+    ]
+  },
+  {
+    "id": "inart-thorin-oakenshield",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Thorin Oakenshield (The Hobbit)",
+    "universe": "middle-earth",
+    "characters": ["thorin-oakenshield"],
+    "announced": "2025-05",
+    "release": "2026-Q1",
+    "price": "USD 458.00",
+    "sources": [
+      "https://global.inart.studio/products/the-hobbit-thorin-oakenshield-sixth-scale-figure"
+    ]
+  },
+  {
+    "id": "inart-nazgul",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Nazgûl (Ringwraith)",
+    "universe": "middle-earth",
+    "edition": "Standard",
+    "sources": ["https://global.inart.studio/products/nazgul-ringwraith-sixth-scale-figure"],
+    "note": "The shop lists USD 405 for the Standard version in stock, and pre-order amounts (USD 325 full payment) without saying which version they are for."
+  },
+  {
+    "id": "inart-nazgul-deluxe",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Nazgûl (Ringwraith)",
+    "universe": "middle-earth",
+    "edition": "Deluxe",
+    "announced": "2024-10",
+    "release": "2025-Q4",
+    "price": "USD 535.00",
+    "sources": ["https://global.inart.studio/products/nazgul-ringwraith-sixth-scale-deluxe-figure"]
+  },
+  {
+    "id": "inart-harry-potter",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Harry Potter (Philosopher's Stone)",
+    "universe": "wizarding-world",
+    "characters": ["harry-potter"],
+    "edition": "Standard",
+    "announced": "2023",
+    "sources": [
+      "https://global.inart.studio/products/harry-potter-1-6-scale-collectible-figure",
+      "https://global.inart.studio/pages/about-inart"
+    ],
+    "note": "The shop lists USD 300.00; the first pre-order price and dates aren't shown."
+  },
+  {
+    "id": "inart-harry-potter-deluxe",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Harry Potter (Philosopher's Stone)",
+    "universe": "wizarding-world",
+    "characters": ["harry-potter"],
+    "edition": "Deluxe",
+    "announced": "2023",
+    "sources": [
+      "https://global.inart.studio/products/harry-potter-1-6-scale-collectible-figure-deluxe-version",
+      "https://global.inart.studio/pages/about-inart"
+    ],
+    "note": "The shop lists USD 490.00; the first pre-order price and dates aren't shown."
+  },
+  {
+    "id": "inart-harry-potter-goblet-of-fire",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Harry Potter (Goblet of Fire)",
+    "universe": "wizarding-world",
+    "characters": ["harry-potter"],
+    "announced": "2026-10",
+    "release": "2027-Q4",
+    "price": "USD 579.00",
+    "sources": [
+      "https://global.inart.studio/products/harry-potter-goblet-of-fire-1-6",
+      "https://ixbt.games/en/news/2026/09/29/inart-otkroet-predzakaz-na-figurku-garri-pottera-iz-filma-garri-potter-i-kubok-ognia-3-oktiabria.html"
+    ]
+  },
+  {
+    "id": "inart-hermione-granger",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Hermione Granger",
+    "universe": "wizarding-world",
+    "characters": ["hermione-granger"],
+    "announced": "2024",
+    "sources": [
+      "https://global.inart.studio/products/hermione-granger-1-6-collectible-figure",
+      "https://global.inart.studio/blogs/news/hermione-granger-sixth-scale-figure-updates"
+    ],
+    "note": "The shop lists USD 525 and USD 555 (full payment) without saying which applies."
+  },
+  {
+    "id": "inart-ron-weasley",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Ron Weasley",
+    "universe": "wizarding-world",
+    "characters": ["ron-weasley"],
+    "edition": "Standard",
+    "sources": ["https://global.inart.studio/products/ron-weasley-1-6-figure"],
+    "note": "The shop lists USD 420 and USD 438 (full payment) for this version without saying which applies."
+  },
+  {
+    "id": "inart-ron-weasley-deluxe",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Ron Weasley",
+    "universe": "wizarding-world",
+    "characters": ["ron-weasley"],
+    "edition": "Deluxe",
+    "sources": ["https://global.inart.studio/products/ron-weasley-1-6-figure"],
+    "note": "The shop lists USD 545 and USD 559 (full payment) for this version without saying which applies."
+  },
+  {
+    "id": "inart-draco-malfoy",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Draco Malfoy",
+    "universe": "wizarding-world",
+    "characters": ["draco-malfoy"],
+    "edition": "Standard",
+    "announced": "2025-06",
+    "release": "2026-Q2",
+    "price": "USD 320.00",
+    "sources": ["https://global.inart.studio/products/draco-malfoy-sixth-scale-figure"]
+  },
+  {
+    "id": "inart-draco-malfoy-deluxe",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Draco Malfoy",
+    "universe": "wizarding-world",
+    "characters": ["draco-malfoy"],
+    "edition": "Deluxe",
+    "announced": "2025-06",
+    "release": "2026-Q2",
+    "price": "USD 449.00",
+    "sources": ["https://global.inart.studio/products/draco-malfoy-sixth-scale-figure"]
+  },
+  {
+    "id": "inart-severus-snape",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Severus Snape (Half-Blood Prince)",
+    "universe": "wizarding-world",
+    "characters": ["severus-snape"],
+    "announced": "2025-05",
+    "price": "USD 360.00",
+    "sources": ["https://global.inart.studio/products/severus-snape-1-6-collectible-figure"]
+  },
+  {
+    "id": "inart-albus-dumbledore",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Albus Dumbledore (Chamber of Secrets)",
+    "universe": "wizarding-world",
+    "characters": ["albus-dumbledore"],
+    "edition": "Deluxe",
+    "announced": "2026-02",
+    "release": "2027-Q1",
+    "price": "USD 403.00",
+    "sources": [
+      "https://global.inart.studio/products/albus-dumbledore-1-6-figure",
+      "https://ixbt.games/en/news/2026/02/05/anonsirovana-figurka-albusa-dambldora-iz-filma-garri-potter-i-tainaia-komnata-ot-inart.amp.html"
+    ]
+  },
+  {
+    "id": "inart-albus-dumbledore-premium",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Albus Dumbledore (Chamber of Secrets)",
+    "universe": "wizarding-world",
+    "characters": ["albus-dumbledore"],
+    "edition": "Premium",
+    "announced": "2026-02",
+    "release": "2027-Q1",
+    "price": "USD 459.00",
+    "sources": [
+      "https://global.inart.studio/products/albus-dumbledore-1-6-figure",
+      "https://ixbt.games/en/news/2026/02/05/anonsirovana-figurka-albusa-dambldora-iz-filma-garri-potter-i-tainaia-komnata-ot-inart.amp.html"
+    ]
+  },
+  {
+    "id": "inart-voldemort",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Voldemort (Deathly Hallows)",
+    "universe": "wizarding-world",
+    "characters": ["lord-voldemort"],
+    "edition": "Standard",
+    "announced": "2026-10",
+    "release": "2027-Q4",
+    "price": "USD 429.00",
+    "sources": [
+      "https://global.inart.studio/products/harry-potter-and-the-deathly-hallows-voldemort-1-6",
+      "https://ixbt.games/en/news/2026/10/03/inart-otkryla-predzakaz-na-figurku-volan-de-morta-temnogo-lorda-iz-vselennoi-garri-pottera.html"
+    ],
+    "note": "Comes with Nagini. Price from the news report; the shop page only shows the deposit."
+  },
+  {
+    "id": "inart-voldemort-deluxe",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Voldemort (Deathly Hallows)",
+    "universe": "wizarding-world",
+    "characters": ["lord-voldemort"],
+    "edition": "Deluxe",
+    "announced": "2026-10",
+    "release": "2027-Q4",
+    "price": "USD 599.00",
+    "sources": [
+      "https://global.inart.studio/products/harry-potter-and-the-deathly-hallows-voldemort-1-6",
+      "https://ixbt.games/en/news/2026/10/03/inart-otkryla-predzakaz-na-figurku-volan-de-morta-temnogo-lorda-iz-vselennoi-garri-pottera.html"
+    ],
+    "note": "Comes with Nagini. Price from the news report; the shop page only shows the deposit."
+  },
+  {
+    "id": "inart-paul-atreides",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Paul Atreides (Dune)",
+    "edition": "Standard",
+    "announced": "2024",
+    "sources": [
+      "https://global.inart.studio/products/paul-atreides-sixth-scale-figure-deluxe-version",
+      "https://global.inart.studio/pages/about-inart"
+    ],
+    "note": "The shop lists USD 410 and USD 420 for this version without saying which applies."
+  },
+  {
+    "id": "inart-paul-atreides-deluxe",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Paul Atreides (Dune)",
+    "edition": "Deluxe",
+    "announced": "2024",
+    "sources": [
+      "https://global.inart.studio/products/paul-atreides-sixth-scale-figure-deluxe-version",
+      "https://global.inart.studio/pages/about-inart"
+    ],
+    "note": "The shop lists USD 525 and USD 537 for this version without saying which applies."
+  },
+  {
+    "id": "inart-t-800",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "T-800 (The Terminator)",
+    "announced": "2025-12",
+    "release": "2027-Q1",
+    "price": "USD 426.00",
+    "sources": ["https://global.inart.studio/products/t800-1-6"]
+  },
+  {
+    "id": "inart-endoskeleton",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Endoskeleton (The Terminator)",
+    "announced": "2026-06",
+    "release": "2026-Q4",
+    "price": "USD 435.00",
+    "sources": ["https://global.inart.studio/products/terminator-endoskeleton-1-6-figure"]
+  },
+  {
+    "id": "inart-rick-grimes",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Rick Grimes (The Walking Dead)",
+    "announced": "2025-09",
+    "release": "2026-Q3",
+    "price": "USD 385.00",
+    "sources": ["https://global.inart.studio/products/rick-1-6-figure"],
+    "note": "The pre-order dates (19 Sept – 31 Oct) are listed without a year; 2025 fits the Q3 2026 shipping estimate."
+  },
+  {
+    "id": "inart-negan",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Negan Smith (The Walking Dead)",
+    "announced": "2025-09",
+    "release": "2026-Q3",
+    "price": "USD 269.00",
+    "sources": ["https://global.inart.studio/products/negan-1-6-figure"],
+    "note": "The pre-order dates (19 Sept – 31 Oct) are listed without a year; 2025 fits the Q3 2026 shipping estimate."
+  },
+  {
+    "id": "inart-daryl-dixon",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Daryl Dixon (The Walking Dead)",
+    "announced": "2025-11",
+    "release": "2027-Q1",
+    "price": "USD 412.00",
+    "sources": ["https://global.inart.studio/products/daryl-1-6-figure"],
+    "note": "The pre-order dates (28 Nov – 31 Dec) are listed without a year; 2025 fits the Q1 2027 shipping estimate."
+  },
+  {
+    "id": "inart-wukong-great-sage-armor-set",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Wukong, Great Sage Armor Set (Black Myth: Wukong)",
+    "announced": "2025-01",
+    "release": "2025-Q4",
+    "price": "USD 360.00",
+    "sources": ["https://global.inart.studio/products/wukong-1-6"]
+  },
+  {
+    "id": "inart-wukong-great-sages-broken-shell",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "The Great Sage's Broken Shell (Black Myth: Wukong)",
+    "announced": "2025-10",
+    "release": "2026-Q2",
+    "price": "USD 355.00",
+    "sources": ["https://global.inart.studio/products/the-great-sages-broken-shell-1-6-figure"],
+    "note": "Pre-order dates listed without a year; it was offered in a bundle with The Fourth Sister (pre-order from 2 Oct 2025)."
+  },
+  {
+    "id": "inart-wukong-fourth-sister",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "The Fourth Sister (Black Myth: Wukong)",
+    "announced": "2025-10",
+    "release": "2026-Q4",
+    "price": "USD 240.00",
+    "sources": ["https://global.inart.studio/products/the-fourth-sister-1-6-figure"]
+  },
+  {
+    "id": "inart-wukong-zhu-bajie",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Zhu Bajie (Black Myth: Wukong)",
+    "announced": "2025-06",
+    "release": "2026-Q1",
+    "price": "USD 225.00",
+    "sources": ["https://global.inart.studio/products/black-myth-zhu-bajie-sixth-scale-figure"],
+    "note": "The pre-order dates (20 Jun – 20 Jul) are listed without a year; 2025 fits the Q1 2026 shipping estimate."
+  },
+  {
+    "id": "inart-michael-jackson-jam",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Michael Jackson (Jam)",
+    "release": "2025-12",
+    "price": "USD 480.00",
+    "sources": ["https://global.inart.studio/products/michael-jackson-jam-sixth-scale-figure"],
+    "note": "In stock from 16 Dec 2025."
+  },
+  {
+    "id": "inart-michael-jackson-smooth-criminal",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Michael Jackson (Smooth Criminal)",
+    "announced": "2025-07",
+    "release": "2026-Q2",
+    "price": "USD 422.00",
+    "sources": ["https://global.inart.studio/products/michael-jackson-sixth-collectible-figure"]
+  },
+  {
+    "id": "inart-bruce-lee-yellow-jumpsuit",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Bruce Lee (Game of Death, yellow jumpsuit)",
+    "announced": "2026-08",
+    "release": "2027-Q1",
+    "price": "USD 539.00",
+    "sources": [
+      "https://global.inart.studio/products/bruce-lee-yellow-jumpsuit-1-6",
+      "https://www.toy-people.com/en/?p=113493"
+    ]
+  },
+  {
+    "id": "inart-pennywise-it-chapter-one",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Pennywise (It, 2017)",
+    "sources": [
+      "https://global.inart.studio/products/it-chapter-1-pennywise-1-6-collectible-figure"
+    ],
+    "note": "The shop lists USD 445.00; no dates shown."
+  },
+  {
+    "id": "inart-pennywise-welcome-to-derry",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Pennywise (It: Welcome to Derry)",
+    "announced": "2026-06",
+    "release": "2027-Q2",
+    "price": "USD 349.00",
+    "sources": ["https://global.inart.studio/products/it-s1-pennywise-1-6"]
+  },
+  {
+    "id": "inart-pennywise-welcome-to-derry-bloody",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Pennywise (It: Welcome to Derry, bloody)",
+    "announced": "2026-09",
+    "release": "2027-Q3",
+    "price": "USD 589.00",
+    "sources": ["https://global.inart.studio/products/it-season-1-pennywise-blood-1-6"]
+  },
+  {
+    "id": "inart-chainsaw-man",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Chainsaw Man",
+    "sources": ["https://global.inart.studio/products/chainsaw-man-1-6-figure"],
+    "note": "No price or dates on the shop page."
+  },
+  {
+    "id": "inart-denji",
+    "brand": "inart",
+    "line": "sixth-scale",
+    "name": "Denji (Chainsaw Man)",
+    "sources": [
+      "https://global.inart.studio/products/the-black-myth-wukong-great-sage-armor-set-sixth-scale-collectible-figure-copy"
+    ],
+    "note": "No price or dates on the shop page (whose address and title mention Wukong by mistake)."
+  },
+  {
+    "id": "inart-batman-the-dark-knight-rises-1-12",
+    "brand": "inart",
+    "line": "twelfth-scale",
+    "name": "Batman (The Dark Knight Rises)",
+    "universe": "dc",
+    "characters": ["batman"],
+    "edition": "Standard",
+    "release": "2025-Q2",
+    "price": "USD 55.00",
+    "sources": [
+      "https://global.inart.studio/products/tdkr-batman-1-12-figure",
+      "https://global.inart.studio/products/the-dark-knight-rises-batman-1-12-scale-figure-deluxe"
+    ]
+  },
+  {
+    "id": "inart-batman-the-dark-knight-rises-1-12-deluxe",
+    "brand": "inart",
+    "line": "twelfth-scale",
+    "name": "Batman (The Dark Knight Rises)",
+    "universe": "dc",
+    "characters": ["batman"],
+    "edition": "Deluxe",
+    "sources": [
+      "https://global.inart.studio/products/the-dark-knight-rises-batman-1-12-scale-figure-deluxe"
+    ],
+    "note": "The shop lists USD 99 (full payment) and USD 78 without saying which was the pre-order price."
+  },
+  {
+    "id": "inart-catwoman-the-dark-knight-rises-1-12",
+    "brand": "inart",
+    "line": "twelfth-scale",
+    "name": "Catwoman (The Dark Knight Rises)",
+    "universe": "dc",
+    "characters": ["catwoman"],
+    "announced": "2025-11",
+    "release": "2026-Q3",
+    "sources": ["https://global.inart.studio/products/catwoman-1-12-figure"],
+    "note": "In stock from 16 Jun 2026; the pre-order price isn't shown (balance USD 47)."
+  },
+  {
+    "id": "inart-batman-the-batman-1-12",
+    "brand": "inart",
+    "line": "twelfth-scale",
+    "name": "Batman (The Batman)",
+    "universe": "dc",
+    "characters": ["batman"],
+    "announced": "2026-09",
+    "release": "2026-Q4",
+    "price": "USD 119.00",
+    "sources": [
+      "https://global.inart.studio/products/the-batman-batman-action-figure",
+      "https://www.toy-people.com/en/?p=114073",
+      "https://dccollectors.com/2026/09/03/inart-teases-1-12-scale-the-batman-action-figure-ahead-of-pre-orders/"
+    ],
+    "note": "USD 131 once in stock."
+  },
+  {
+    "id": "inart-joker-1-12",
+    "brand": "inart",
+    "line": "twelfth-scale",
+    "name": "The Joker (comics)",
+    "universe": "dc",
+    "characters": ["joker"],
+    "announced": "2026-09",
+    "release": "2027-Q1",
+    "sources": [
+      "https://global.inart.studio/products/the-joker-action-figure",
+      "https://www.toy-people.com/en/?p=114587"
+    ],
+    "note": "Toy-People reported USD 109; the shop page shows only the deposit."
+  },
+  {
+    "id": "inart-batman-batman-v-superman-1-12",
+    "brand": "inart",
+    "line": "twelfth-scale",
+    "name": "Batman (Batman v Superman: Dawn of Justice)",
+    "universe": "dc",
+    "characters": ["batman"],
+    "sources": ["https://global.inart.studio/products/bvs-dawn-of-justice-batman-action-figure"],
+    "note": "Announced; no price or dates yet."
+  },
+  {
+    "id": "inart-superman-batman-v-superman-1-12",
+    "brand": "inart",
+    "line": "twelfth-scale",
+    "name": "Superman (Batman v Superman: Dawn of Justice)",
+    "universe": "dc",
+    "characters": ["superman"],
+    "announced": "2026-08",
+    "release": "2026-Q4",
+    "sources": [
+      "https://global.inart.studio/products/bvs-superman-action-figure",
+      "https://www.toy-people.com/en/?p=113799"
+    ]
+  },
+  {
+    "id": "inart-batman-arkham-origins-1-12",
+    "brand": "inart",
+    "line": "twelfth-scale",
+    "name": "Batman (Batman: Arkham Origins)",
+    "universe": "dc",
+    "characters": ["batman"],
+    "announced": "2025-12",
+    "release": "2026-Q3",
+    "price": "USD 72.00",
+    "sources": ["https://global.inart.studio/products/batman-arkham-origins-1-12-action-figure"]
+  },
+  {
+    "id": "inart-batman-arkham-origins-battle-damaged-1-12",
+    "brand": "inart",
+    "line": "twelfth-scale",
+    "name": "Batman (Batman: Arkham Origins, battle damaged)",
+    "universe": "dc",
+    "characters": ["batman"],
+    "announced": "2026-04",
+    "release": "2026-Q4",
+    "price": "USD 83.00",
+    "sources": [
+      "https://global.inart.studio/products/batman-arkham-origins-batman-damaged-action-figure"
+    ],
+    "note": "USD 118 once in stock."
+  },
+  {
+    "id": "inart-batman-arkham-origins-xe-suit-1-12",
+    "brand": "inart",
+    "line": "twelfth-scale",
+    "name": "Batman (Batman: Arkham Origins, XE suit)",
+    "universe": "dc",
+    "characters": ["batman"],
+    "announced": "2026-09",
+    "release": "2026-Q4",
+    "price": "USD 139.00",
+    "sources": [
+      "https://global.inart.studio/products/batman-arkham-origins-batman-xe-suit-action-figure",
+      "https://www.toy-people.com/en/?p=113954"
+    ],
+    "note": "USD 153 once in stock."
+  },
+  {
+    "id": "inart-deathstroke-arkham-origins-1-12",
+    "brand": "inart",
+    "line": "twelfth-scale",
+    "name": "Deathstroke (Batman: Arkham Origins)",
+    "universe": "dc",
+    "announced": "2026-09",
+    "release": "2026-Q4",
+    "price": "USD 119.00",
+    "sources": [
+      "https://global.inart.studio/products/batman-arkham-origins-deathstroke-action-figure",
+      "https://www.toy-people.com/en/?p=114028"
+    ],
+    "note": "USD 131 once in stock."
+  },
+  {
+    "id": "inart-batman-the-dark-knight-returns-1-12",
+    "brand": "inart",
+    "line": "twelfth-scale",
+    "name": "Batman (The Dark Knight Returns, blue suit)",
+    "universe": "dc",
+    "characters": ["batman"],
+    "announced": "2026-10",
+    "release": "2027-Q1",
+    "price": "USD 139.00",
+    "sources": [
+      "https://global.inart.studio/products/the-dark-knight-returns-batman-blue-suit-action-figure",
+      "https://www.toy-people.com/en/?p=115042"
+    ],
+    "note": "USD 153 once in stock."
+  },
+  {
+    "id": "inart-batman-who-laughs-1-12",
+    "brand": "inart",
+    "line": "twelfth-scale",
+    "name": "The Batman Who Laughs (Dark Nights: Metal)",
+    "universe": "dc",
+    "announced": "2026-04",
+    "release": "2026-Q4",
+    "sources": [
+      "https://global.inart.studio/products/dark-nights-metal-the-batman-who-laughs-action-figure"
+    ],
+    "note": "The shop lists USD 133 (full payment, in stock); the pre-order price isn't shown."
+  },
+  {
+    "id": "inart-batman-the-dawnbreaker-1-12",
+    "brand": "inart",
+    "line": "twelfth-scale",
+    "name": "Batman: The Dawnbreaker (Dark Nights: Metal)",
+    "universe": "dc",
+    "announced": "2026-07",
+    "release": "2026-Q4",
+    "price": "USD 86.00",
+    "sources": [
+      "https://global.inart.studio/products/dark-nights-metal-batman-the-dawnbreaker-action-figure"
+    ],
+    "note": "USD 125 once in stock."
+  },
+  {
+    "id": "inart-batman-the-devastator-1-12",
+    "brand": "inart",
+    "line": "twelfth-scale",
+    "name": "Batman: The Devastator (Dark Nights: Metal)",
+    "universe": "dc",
+    "announced": "2026-07",
+    "release": "2026-Q3",
+    "price": "USD 92.00",
+    "sources": [
+      "https://global.inart.studio/products/dark-nights-metal-batman-the-devastator-action-figure"
+    ],
+    "note": "USD 141 once in stock. The shop estimates Q3 2026 although pre-orders opened 31 July 2026."
+  },
+  {
+    "id": "inart-batman-the-red-death-1-12",
+    "brand": "inart",
+    "line": "twelfth-scale",
+    "name": "The Red Death (Dark Nights: Metal)",
+    "universe": "dc",
+    "announced": "2026-02",
+    "release": "2026-Q3",
+    "price": "USD 72.00",
+    "sources": ["https://global.inart.studio/products/the-red-death-action-figure"],
+    "note": "Deposit USD 15 + balance USD 57. Pre-order start listed as 6 Feb without a year."
+  },
+  {
+    "id": "inart-wukong-destined-one-1-12",
+    "brand": "inart",
+    "line": "twelfth-scale",
+    "name": "The Destined One (Black Myth: Wukong)",
+    "edition": "Standard",
+    "announced": "2025-06",
+    "release": "2026-03",
+    "price": "USD 70.00",
+    "sources": ["https://global.inart.studio/products/black-myth-wukong-the-destined-one-1-12"]
+  },
+  {
+    "id": "inart-wukong-destined-one-1-12-premium",
+    "brand": "inart",
+    "line": "twelfth-scale",
+    "name": "The Destined One (Black Myth: Wukong)",
+    "edition": "Premium",
+    "announced": "2025-06",
+    "release": "2026-03",
+    "price": "USD 86.00",
+    "sources": ["https://global.inart.studio/products/black-myth-wukong-the-destined-one-1-12"]
+  },
+  {
+    "id": "inart-wukong-great-sage-armor-set-1-12",
+    "brand": "inart",
+    "line": "twelfth-scale",
+    "name": "Wukong, Great Sage Armor Set (Black Myth: Wukong)",
+    "announced": "2026-08",
+    "release": "2026-Q4",
+    "price": "USD 199.00",
+    "sources": [
+      "https://global.inart.studio/products/great-sage-armor-set-action-figure",
+      "https://www.toy-people.com/en/?p=114754"
+    ],
+    "note": "USD 219 once in stock."
+  },
+  {
+    "id": "inart-wukong-zhu-bajie-1-12",
+    "brand": "inart",
+    "line": "twelfth-scale",
+    "name": "Zhu Bajie (Black Myth: Wukong)",
+    "announced": "2025-05",
+    "release": "2025-11",
+    "sources": ["https://global.inart.studio/products/bajie-twelfth-scale-figure"],
+    "note": "In stock from 28 Nov 2025; the pre-order price isn't shown."
+  },
+  {
+    "id": "inart-wukong-stone-monkey-1-12",
+    "brand": "inart",
+    "line": "twelfth-scale",
+    "name": "Stone Monkey (Black Myth: Wukong)",
+    "announced": "2025-11",
+    "release": "2026-Q3",
+    "price": "USD 76.00",
+    "sources": ["https://global.inart.studio/products/stone-monkey-1-12-figure"]
+  },
+  {
+    "id": "inart-wukong-fourth-sister-1-12",
+    "brand": "inart",
+    "line": "twelfth-scale",
+    "name": "The Fourth Sister (Black Myth: Wukong)",
+    "announced": "2026-07",
+    "release": "2026-Q3",
+    "price": "USD 76.00",
+    "sources": [
+      "https://global.inart.studio/products/black-myth-wukong-action-figure-the-fourth-sister"
+    ],
+    "note": "USD 113 once in stock."
+  },
+  {
+    "id": "inart-wukong-guangzhi-1-12",
+    "brand": "inart",
+    "line": "twelfth-scale",
+    "name": "Guangzhi (Black Myth: Wukong)",
+    "announced": "2026-05",
+    "release": "2026-Q3",
+    "price": "USD 86.00",
+    "sources": ["https://global.inart.studio/products/black-myth-wukong-action-figure-guangzhi"],
+    "note": "USD 125 once in stock."
+  },
+  {
+    "id": "inart-wukong-yaksha-king-1-12",
+    "brand": "inart",
+    "line": "twelfth-scale",
+    "name": "Yaksha King (Black Myth: Wukong)",
+    "announced": "2026-03",
+    "release": "2026-Q3",
+    "price": "USD 82.00",
+    "sources": ["https://global.inart.studio/products/yaksha-king-1-12-action-figure"],
+    "note": "USD 117 once in stock. Pre-order start listed as 20 March without a year."
+  },
+  {
+    "id": "inart-wukong-tiger-vanguard-1-12",
+    "brand": "inart",
+    "line": "twelfth-scale",
+    "name": "Tiger Vanguard (Black Myth: Wukong)",
+    "announced": "2026-08",
+    "release": "2026-Q4",
+    "price": "USD 179.00",
+    "sources": [
+      "https://global.inart.studio/products/bmw-tiger-vanguard-action-figure",
+      "https://www.toy-people.com/en/?p=114753"
+    ],
+    "note": "USD 197 once in stock."
+  },
+  {
+    "id": "inart-bruce-lee-kung-fu-outfit-1-12",
+    "brand": "inart",
+    "line": "twelfth-scale",
+    "name": "Bruce Lee (The Way of the Dragon, kung fu outfit)",
+    "announced": "2026-08",
+    "release": "2026-Q4",
+    "price": "USD 119.00",
+    "sources": [
+      "https://global.inart.studio/products/bruce-lee-kungfu-outfit-1-12-action-figure",
+      "https://www.toy-people.com/en/?p=113486"
+    ],
+    "note": "USD 131 once in stock."
+  },
+  {
+    "id": "inart-bruce-lee-yellow-jumpsuit-1-12",
+    "brand": "inart",
+    "line": "twelfth-scale",
+    "name": "Bruce Lee (Game of Death, yellow jumpsuit)",
+    "announced": "2026-08",
+    "release": "2026-Q4",
+    "price": "USD 119.00",
+    "sources": [
+      "https://global.inart.studio/products/bruce-lee-yellow-jumpsuit-action-figure",
+      "https://www.toy-people.com/en/?p=113487"
+    ],
+    "note": "USD 131 once in stock."
+  },
+  {
+    "id": "inart-valorant-sage-1-12",
+    "brand": "inart",
+    "line": "twelfth-scale",
+    "name": "Sage (Valorant)",
+    "announced": "2026-10",
+    "release": "2027-Q2",
+    "price": "USD 89.00",
+    "sources": [
+      "https://global.inart.studio/products/valorant-sage-action-figure",
+      "https://www.toy-people.com/en/?p=115358"
+    ],
+    "note": "USD 98 once in stock."
+  },
+  {
+    "id": "inart-valorant-viper-1-12",
+    "brand": "inart",
+    "line": "twelfth-scale",
+    "name": "Viper (Valorant)",
+    "announced": "2026-10",
+    "release": "2027-Q2",
+    "price": "USD 99.00",
+    "sources": [
+      "https://global.inart.studio/products/valorant-viper-action-figure",
+      "https://www.toy-people.com/en/?p=115357"
+    ],
+    "note": "USD 109 once in stock."
+  }
+]

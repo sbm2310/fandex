@@ -49,9 +49,12 @@ export const FIGURE_BRANDS: readonly FigureBrand[] = [
     id: 'inart',
     name: 'InArt',
     aliases: ['In Art'],
-    // InArt names its figures without a printed series number (as far as we know; the
-    // curated list in Task 2 will say), so its figures are told apart by name and edition.
-    lines: [{ id: 'sixth-scale', name: 'Sixth Scale Collectible Figure', scale: '1/6' }],
+    // InArt's boxes may carry codes ("A012" turns up in resale listings), but no source lists
+    // them reliably, so its figures are told apart by name, scale and edition.
+    lines: [
+      { id: 'sixth-scale', name: 'Sixth Scale Collectible Figure', scale: '1/6' },
+      { id: 'twelfth-scale', name: '1/12 Action Figure', scale: '1/12' },
+    ],
   },
 ];
 

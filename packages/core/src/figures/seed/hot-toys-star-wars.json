@@ -1,0 +1,431 @@
+[
+  {
+    "id": "hot-toys-mms-279",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 279",
+    "name": "Darth Vader (A New Hope)",
+    "universe": "star-wars",
+    "characters": ["darth-vader"],
+    "announced": "2014-12",
+    "price": "USD 299.99",
+    "sources": [
+      "https://www.actionfigure411.com/star-wars/hot-toys-star-wars/action-figures/darth-vader-9469.php",
+      "https://www.rebelscum.com/story/front/Hot_Toys_MMS279_A_New_Hope_16th_Scale_Darth_Vader_Collectible_Figure_161725.asp",
+      "https://www.bigbadtoystore.com/product/star-wars-new-hope-mms279-darth-vader-1_6th-scale-collectible-figure-8030"
+    ]
+  },
+  {
+    "id": "hot-toys-mms-297",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 297",
+    "name": "Luke Skywalker (A New Hope)",
+    "universe": "star-wars",
+    "characters": ["luke-skywalker"],
+    "announced": "2015-05",
+    "price": "USD 229.99",
+    "sources": [
+      "https://www.actionfigure411.com/star-wars/hot-toys-star-wars/action-figures/luke-skywalker-9473.php",
+      "https://yakfaceforums.com/main/2015/05/29/hot-toys-16-mms-luke-skywalker-a-new-hope-details/"
+    ]
+  },
+  {
+    "id": "hot-toys-mms-261",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 261",
+    "name": "Han Solo (A New Hope)",
+    "universe": "star-wars",
+    "characters": ["han-solo"],
+    "announced": "2014-09",
+    "price": "USD 224.99",
+    "sources": [
+      "https://actionfigure411.com/star-wars/hot-toys-star-wars/action-figures/han-solo-anh-9463.php",
+      "https://www.rebelscum.com/story/front/Hot_Toys_Movie_Masterpiece_Series_A_New_Hope_Han_Solo_159990.asp"
+    ],
+    "note": "Another source gives USD 229.99."
+  },
+  {
+    "id": "hot-toys-mms-298",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 298",
+    "name": "Princess Leia (A New Hope)",
+    "universe": "star-wars",
+    "characters": ["leia-organa"],
+    "announced": "2015-07",
+    "price": "USD 204.99",
+    "sources": [
+      "https://actionfigure411.com/star-wars/hot-toys-star-wars/action-figures/princess-leia-organa-9474.php",
+      "https://www.rebelscum.com/story/front/Hot_Toys_MMS298_Star_Wars_Episode_IV_A_New_Hope_16th_Scale_Princess_Leia_Collectible_Figure_165035.asp"
+    ]
+  },
+  {
+    "id": "hot-toys-mms-283",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 283",
+    "name": "Obi-Wan Kenobi (A New Hope)",
+    "universe": "star-wars",
+    "characters": ["obi-wan-kenobi"],
+    "announced": "2015-02",
+    "price": "USD 219.99",
+    "sources": [
+      "https://www.actionfigure411.com/star-wars/hot-toys-star-wars/action-figures/obi-wan-kenobi-9470.php",
+      "https://www.rebelscum.com/story/front/Hot_Toys_MMS283_Star_Wars_Episode_IV_A_New_Hope_16th_Scale_ObiWan_Kenobi_Collectible_Figure_162587.asp"
+    ]
+  },
+  {
+    "id": "hot-toys-mms-262",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 262",
+    "name": "Chewbacca (A New Hope)",
+    "universe": "star-wars",
+    "characters": ["chewbacca"],
+    "announced": "2014-09",
+    "price": "USD 254.99",
+    "sources": [
+      "https://www.actionfigure411.com/star-wars/hot-toys-star-wars/action-figures/chewbacca-anh-9464.php",
+      "https://www.rebelscum.com/story/front/Hot_Toys_Movie_Masterpiece_Series_Chewbacca_159989.asp"
+    ]
+  },
+  {
+    "id": "hot-toys-mms-369",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 369",
+    "name": "Yoda (The Empire Strikes Back)",
+    "universe": "star-wars",
+    "characters": ["yoda"],
+    "announced": "2016-05",
+    "price": "USD 199.99",
+    "sources": [
+      "https://www.actionfigure411.com/star-wars/hot-toys-star-wars/action-figures/yoda-the-empire-strikes-back-9498.php",
+      "https://rebelscum.com/story/euro/Hot_Toys_MMS369_16th_scale_Yoda_Collectible_Figure_Revealed_169194.asp"
+    ]
+  },
+  {
+    "id": "hot-toys-mms-463",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 463",
+    "name": "Boba Fett (The Empire Strikes Back)",
+    "universe": "star-wars",
+    "characters": ["boba-fett"],
+    "announced": "2018-01",
+    "price": "USD 234.99",
+    "sources": [
+      "https://actionfigure411.com/star-wars/hot-toys-star-wars/action-figures/boba-fett-esb-9545.php",
+      "https://www.bigbadtoystore.com/product/star-wars-empire-strikes-back-mms463-boba-fett-1_6th-scale-collectible-figure-33447",
+      "https://www.rebelscum.com/story/front/Hot_Toys_MMS463_The_Empire_Strikes_Back_Boba_Fett_Collectible_Figure_178272.asp"
+    ]
+  },
+  {
+    "id": "hot-toys-mms-267",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 267",
+    "name": "Stormtrooper (A New Hope)",
+    "universe": "star-wars",
+    "announced": "2014-10",
+    "price": "USD 199.99",
+    "sources": [
+      "https://actionfigure411.com/star-wars/hot-toys-star-wars/action-figures/stormtrooper-anh-9467.php",
+      "https://www.rebelscum.com/story/front/Hot_Toys_Officially_Announces_MMS267_16_Scale_Movie_Masterpiece_Series_Stormtrooper_160608.asp"
+    ]
+  },
+  {
+    "id": "hot-toys-mms-320",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 320",
+    "name": "Kylo Ren (The Force Awakens)",
+    "universe": "star-wars",
+    "characters": ["kylo-ren"],
+    "announced": "2015-09",
+    "price": "USD 224.99",
+    "sources": [
+      "https://actionfigure411.com/star-wars/hot-toys-star-wars/action-figures/kylo-ren-9482.php",
+      "https://www.rebelscum.com/story/front/Hot_Toys_MMS320_Kylo_Ren_Collectible_Figure_165740.asp",
+      "https://www.sideshow.com/collectibles/star-wars-kylo-ren-hot-toys-902538"
+    ]
+  },
+  {
+    "id": "hot-toys-mms-336",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 336",
+    "name": "Rey (The Force Awakens)",
+    "universe": "star-wars",
+    "characters": ["rey"],
+    "announced": "2015-12",
+    "price": "USD 224.99",
+    "sources": [
+      "https://actionfigure411.com/star-wars/hot-toys-star-wars/action-figures/rey-9491.php",
+      "https://www.rebelscum.com/story/12inch/Hot_Toys_MMS336_The_Force_Awakens_16th_Scale_Rey_Collectible_Figure_167020.asp"
+    ]
+  },
+  {
+    "id": "hot-toys-dx-16",
+    "brand": "hot-toys",
+    "line": "dx",
+    "number": "DX 16",
+    "name": "Darth Maul (The Phantom Menace)",
+    "universe": "star-wars",
+    "characters": ["darth-maul"],
+    "announced": "2018-07",
+    "price": "USD 281.99",
+    "sources": [
+      "https://actionfigure411.com/star-wars/hot-toys-star-wars/action-figures/darth-maul-tpm-9559.php",
+      "https://www.bigbadtoystore.com/product/star-wars-phantom-menace-dx16-darth-maul-1_6-scale-collectible-figure-38090"
+    ]
+  },
+  {
+    "id": "hot-toys-mms-437",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 437",
+    "name": "Anakin Skywalker (Revenge of the Sith)",
+    "universe": "star-wars",
+    "characters": ["anakin-skywalker"],
+    "announced": "2017",
+    "price": "USD 234.99",
+    "sources": [
+      "https://actionfigure411.com/star-wars/hot-toys-star-wars/action-figures/anakin-skywalker-rots-9532.php",
+      "https://www.bigbadtoystore.com/product/star-wars-revenge-sith-mms437-anakin-skywalker-1_6th-scale-collectible-figure-29923",
+      "https://www.sideshow.com/collectibles/star-wars-anakin-skywalker-hot-toys-903139"
+    ]
+  },
+  {
+    "id": "hot-toys-mms-467",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 467",
+    "name": "Emperor Palpatine (Return of the Jedi)",
+    "universe": "star-wars",
+    "characters": ["palpatine"],
+    "announced": "2018-02",
+    "price": "USD 219.99",
+    "sources": [
+      "https://actionfigure411.com/star-wars/hot-toys-star-wars/action-figures/emperor-palpatine-9547.php",
+      "https://www.bigbadtoystore.com/Product/VariationDetails/68680",
+      "https://www.rebelscum.com/story/front/Hot_Toys_MMS467_Return_of_the_Jedi_Emperor_Palpatine_Collectible_Figure_178482.asp"
+    ]
+  },
+  {
+    "id": "hot-toys-mms-701",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 701",
+    "name": "C-3PO (Return of the Jedi)",
+    "universe": "star-wars",
+    "characters": ["c-3po"],
+    "price": "USD 329.99",
+    "sources": [
+      "https://actionfigure411.com/star-wars/hot-toys-star-wars/action-figures/c-3po-rotj-9696.php",
+      "https://www.bigbadtoystore.com/Product/VariationDetails/238209"
+    ],
+    "note": "Die-cast; the box reads MMS701D56. Part of the Return of the Jedi 40th anniversary collection."
+  },
+  {
+    "id": "hot-toys-mms-408",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 408",
+    "name": "R2-D2 (The Force Awakens)",
+    "universe": "star-wars",
+    "characters": ["r2-d2"],
+    "announced": "2017-01",
+    "price": "USD 219.99",
+    "sources": [
+      "https://www.actionfigure411.com/star-wars/hot-toys-checklist.php",
+      "https://www.rebelscum.com/story/12inch/Hot_Toys_MMS408_The_Force_Awakens_16th_Scale_R2D2_Collectible_Figure_172282.asp"
+    ]
+  },
+  {
+    "id": "hot-toys-mms-588",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 588",
+    "name": "Lando Calrissian (The Empire Strikes Back)",
+    "universe": "star-wars",
+    "characters": ["lando-calrissian"],
+    "price": "USD 239.99",
+    "sources": [
+      "https://actionfigure411.com/star-wars/hot-toys-star-wars/action-figures/lando-calrissian-9603.php",
+      "https://www.bigbadtoystore.com/Product/VariationDetails/136349",
+      "https://www.sideshow.com/collectibles/star-wars-lando-calrissian-hot-toys-907059"
+    ]
+  },
+  {
+    "id": "hot-toys-mms-589",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 589",
+    "name": "Jango Fett (Attack of the Clones)",
+    "universe": "star-wars",
+    "announced": "2020-10",
+    "price": "USD 289.99",
+    "sources": [
+      "https://actionfigure411.com/star-wars/hot-toys-star-wars/action-figures/jango-fett-9607.php",
+      "https://www.bigbadtoystore.com/Product/VariationDetails/139384",
+      "https://rebelscum.com/story/front/Hot_Toys_MMS589_16th_Scale_Jango_Fett_187834.asp"
+    ]
+  },
+  {
+    "id": "hot-toys-mms-699",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 699",
+    "name": "Darth Vader (Return of the Jedi)",
+    "universe": "star-wars",
+    "characters": ["darth-vader"],
+    "announced": "2023-04",
+    "price": "USD 304.99",
+    "sources": [
+      "https://www.actionfigure411.com/star-wars/hot-toys-checklist.php",
+      "https://www.toyark.com/2023/04/06/star-wars-return-of-the-jedi-darth-vader-figure-by-hot-toys-498283"
+    ]
+  },
+  {
+    "id": "hot-toys-mms-700",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 700",
+    "name": "Darth Vader (Return of the Jedi)",
+    "universe": "star-wars",
+    "characters": ["darth-vader"],
+    "edition": "Deluxe",
+    "announced": "2023-04",
+    "price": "USD 349.99",
+    "sources": [
+      "https://www.actionfigure411.com/star-wars/hot-toys-star-wars/action-figures/darth-vader-deluxe-rotj-9695.php",
+      "https://www.bigbadtoystore.com/Product/VariationDetails/238206"
+    ]
+  },
+  {
+    "id": "hot-toys-dx-7",
+    "brand": "hot-toys",
+    "line": "dx",
+    "number": "DX 7",
+    "name": "Luke Skywalker (The Empire Strikes Back, Bespin)",
+    "universe": "star-wars",
+    "characters": ["luke-skywalker"],
+    "announced": "2011-11",
+    "price": "USD 299.99",
+    "sources": [
+      "https://actionfigure411.com/star-wars/hot-toys-star-wars/action-figures/luke-skywalker-bespin-outfit-9462.php",
+      "https://www.sideshow.com/collectibles/star-wars-star-wars-luke-skywalker-bespin-outfit-dx-series-hot-toys-901399",
+      "https://www.rebelscum.com/story/front/Hot_Toys_A_Closer_Look_At_Bespin_Luke_Skywalker_141899.asp"
+    ],
+    "note": "Two figures in one set (a clean and a battle-worn Luke)."
+  },
+  {
+    "id": "hot-toys-dx-27",
+    "brand": "hot-toys",
+    "line": "dx",
+    "number": "DX 27",
+    "name": "Darth Vader (Obi-Wan Kenobi)",
+    "universe": "star-wars",
+    "characters": ["darth-vader"],
+    "price": "USD 299.99",
+    "sources": [
+      "https://www.actionfigure411.com/star-wars/hot-toys-star-wars/action-figures/darth-vader-9665.php",
+      "https://www.bigbadtoystore.com/Product/VariationDetails/213726",
+      "https://www.toy-people.com/en/?p=73403"
+    ]
+  },
+  {
+    "id": "hot-toys-tms-7",
+    "brand": "hot-toys",
+    "line": "tms",
+    "number": "TMS 7",
+    "name": "The Mandalorian",
+    "universe": "star-wars",
+    "price": "USD 242.99",
+    "sources": [
+      "https://www.actionfigure411.com/star-wars/hot-toys-checklist.php",
+      "https://www.sideshow.com/whats-new/the-mandalorian-sixth-scale-figure-by-hot-toys/",
+      "https://toywiz.com/star-wars-the-mandalorian-collectible-figure-tms007/"
+    ],
+    "note": "Printed TMS007."
+  },
+  {
+    "id": "hot-toys-tms-43",
+    "brand": "hot-toys",
+    "line": "tms",
+    "number": "TMS 43",
+    "name": "Grogu (The Mandalorian)",
+    "universe": "star-wars",
+    "characters": ["grogu"],
+    "announced": "2021-05",
+    "release": "2022-07",
+    "price": "USD 144.99",
+    "sources": [
+      "https://jeditemplearchives.com/hot-toys/evg/grogu-set-hot-toys-sixth-scale-tms043.html",
+      "https://www.sideshow.com/collectibles/star-wars-grogu-hot-toys-908288"
+    ],
+    "note": "A set of three Grogu figures with a pram. Printed TMS043."
+  },
+  {
+    "id": "hot-toys-dx-20",
+    "brand": "hot-toys",
+    "line": "dx",
+    "number": "DX 20",
+    "name": "Ahsoka Tano (The Mandalorian)",
+    "universe": "star-wars",
+    "characters": ["ahsoka-tano"],
+    "price": "USD 289.99",
+    "sources": [
+      "https://actionfigure411.com/star-wars/hot-toys-star-wars/action-figures/ahsoka-tano-9617.php",
+      "https://www.sideshow.com/collectibles/star-wars-ahsoka-tano-hot-toys-908180"
+    ]
+  },
+  {
+    "id": "hot-toys-tms-116",
+    "brand": "hot-toys",
+    "line": "tms",
+    "number": "TMS 116",
+    "name": "Grand Admiral Thrawn (Ahsoka)",
+    "universe": "star-wars",
+    "characters": ["thrawn"],
+    "announced": "2023-10",
+    "price": "USD 259.99",
+    "sources": [
+      "https://www.actionfigure411.com/star-wars/hot-toys-star-wars/action-figures/grand-admiral-thrawn-ahsoka-9712.php",
+      "https://www.bigbadtoystore.com/Product/VariationDetails/258572"
+    ]
+  },
+  {
+    "id": "hot-toys-tms-78",
+    "brand": "hot-toys",
+    "line": "tms",
+    "number": "TMS 78",
+    "name": "Boba Fett (The Book of Boba Fett)",
+    "universe": "star-wars",
+    "characters": ["boba-fett"],
+    "price": "USD 279.99",
+    "sources": [
+      "https://www.actionfigure411.com/star-wars/hot-toys-star-wars/action-figures/boba-fett-book-of-boba-fett-9659.php",
+      "https://www.bigbadtoystore.com/Product/VariationDetails/209740"
+    ],
+    "note": "Printed TMS078."
+  },
+  {
+    "id": "hot-toys-cms-19",
+    "brand": "hot-toys",
+    "line": "cms",
+    "number": "CMS 19",
+    "name": "Luke Skywalker (Dark Empire)",
+    "universe": "star-wars",
+    "characters": ["luke-skywalker"],
+    "price": "USD 279.99",
+    "sources": [
+      "https://www.actionfigure411.com/star-wars/hot-toys-checklist.php",
+      "https://www.bigbadtoystore.com/Product/VariationDetails/276158"
+    ],
+    "note": "Printed CMS019. A Special Edition (CMS019B) was sold in some markets."
+  }
+]

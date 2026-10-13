@@ -1,0 +1,393 @@
+[
+  {
+    "id": "hot-toys-mms-528",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 528",
+    "name": "Iron Man Mark LXXXV (Avengers: Endgame)",
+    "universe": "marvel",
+    "characters": ["iron-man"],
+    "announced": "2019-04",
+    "price": "USD 428.00",
+    "sources": [
+      "https://www.actionfigure411.com/marvel/hot-toys-marvel/hot-toys-action-figures/iron-man-mark-lxxxv-10029.php",
+      "https://www.bigbadtoystore.com/Product/VariationDetails/91733",
+      "https://www.sideshow.com/collectibles/marvel-iron-man-mark-lxxxv-hot-toys-904599"
+    ],
+    "note": "Die-cast; the box reads MMS528D30."
+  },
+  {
+    "id": "hot-toys-mms-664",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 664",
+    "name": "Iron Man Mark III (2.0)",
+    "universe": "marvel",
+    "characters": ["iron-man"],
+    "price": "USD 460.00",
+    "sources": [
+      "https://www.actionfigure411.com/marvel/hot-toys-marvel/hot-toys-action-figures/iron-man-mark-iii-2-0-10077.php",
+      "https://www.bigbadtoystore.com/Product/VariationDetails/213860"
+    ],
+    "note": "Die-cast; the box reads MMS664D48."
+  },
+  {
+    "id": "hot-toys-mms-536",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 536",
+    "name": "Captain America (Avengers: Endgame)",
+    "universe": "marvel",
+    "characters": ["captain-america"],
+    "announced": "2019-04",
+    "price": "USD 279.00",
+    "sources": [
+      "https://www.actionfigure411.com/marvel/hot-toys-marvel/hot-toys-action-figures/captain-america-avengers-endgame-10209.php",
+      "https://plasticandplush.com/2019/04/avengers-captain-america.html"
+    ],
+    "note": "An April 2019 report gave USD 274.00."
+  },
+  {
+    "id": "hot-toys-mms-557",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 557",
+    "name": "Thor (Avengers: Endgame)",
+    "universe": "marvel",
+    "characters": ["thor"],
+    "announced": "2019-10",
+    "price": "USD 279.00",
+    "sources": [
+      "https://actionfigure411.com/marvel/hot-toys-marvel/hot-toys-action-figures/thor-avengers-endgame-10191.php",
+      "https://plasticandplush.com/2019/10/avengers-endgame-scale.html"
+    ]
+  },
+  {
+    "id": "hot-toys-mms-558",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 558",
+    "name": "Hulk (Avengers: Endgame)",
+    "universe": "marvel",
+    "characters": ["hulk"],
+    "price": "USD 380.00",
+    "sources": [
+      "https://actionfigure411.com/marvel/hot-toys-marvel/hot-toys-action-figures/hulk-avengers-endgame-10192.php",
+      "https://www.bigbadtoystore.com/product/avengers-endgame-mms558-hulk-1_6th-scale-collectible-figure-49834"
+    ]
+  },
+  {
+    "id": "hot-toys-mms-533",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 533",
+    "name": "Black Widow (Avengers: Endgame)",
+    "universe": "marvel",
+    "characters": ["black-widow"],
+    "announced": "2019-04",
+    "price": "USD 235.00",
+    "sources": [
+      "https://actionfigure411.com/marvel/hot-toys-marvel/hot-toys-action-figures/black-widow-black-widow-movie-10210.php",
+      "https://plasticandplush.com/2019/04/avengers-endgame-black.html",
+      "https://toywiz.com/marvel-avengers-endgame-black-widow-collectible-figure/"
+    ],
+    "note": "Action Figure 411 labels it \"Black Widow Movie\"; retailers and the announcement say Avengers: Endgame."
+  },
+  {
+    "id": "hot-toys-mms-531",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 531",
+    "name": "Hawkeye (Avengers: Endgame)",
+    "universe": "marvel",
+    "characters": ["hawkeye"],
+    "price": "USD 245.00",
+    "sources": [
+      "https://www.actionfigure411.com/marvel/hot-toys-checklist.php",
+      "https://www.toyark.com/?p=342011",
+      "https://toywiz.com/marvel-avengers-endgame-hawkeye-collectible-figure-regular-version/"
+    ]
+  },
+  {
+    "id": "hot-toys-mms-679",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 679",
+    "name": "Spider-Man (No Way Home, new red and blue suit)",
+    "universe": "marvel",
+    "characters": ["spider-man"],
+    "price": "USD 285.00",
+    "sources": [
+      "https://www.actionfigure411.com/marvel/hot-toys-checklist.php",
+      "https://www.bigbadtoystore.com/Product/VariationDetails/228333",
+      "https://www.sideshow.com/collectibles/marvel-spider-man-new-red-and-blue-suit-hot-toys-912036"
+    ]
+  },
+  {
+    "id": "hot-toys-mms-671",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 671",
+    "name": "Black Panther (original suit)",
+    "universe": "marvel",
+    "characters": ["black-panther"],
+    "price": "USD 290.00",
+    "sources": [
+      "https://actionfigure411.com/marvel/hot-toys-marvel/hot-toys-action-figures/black-panther-original-suit-10076.php",
+      "https://www.bigbadtoystore.com/Product/VariationDetails/215533",
+      "https://www.sideshow.com/collectibles/marvel-black-panther-original-suit-hot-toys-911691"
+    ]
+  },
+  {
+    "id": "hot-toys-mms-645",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 645",
+    "name": "Doctor Strange (Multiverse of Madness)",
+    "universe": "marvel",
+    "characters": ["doctor-strange"],
+    "announced": "2022-05",
+    "price": "USD 340.00",
+    "sources": [
+      "https://actionfigure411.com/marvel/hot-toys-marvel/hot-toys-action-figures/doctor-strange-multiverse-of-madness-10099.php",
+      "https://www.bigbadtoystore.com/Product/VariationDetails/205882",
+      "https://news.toyark.com/2022/05/13/multiverse-of-madness-dr-strange-figure-by-hot-toys-467930"
+    ]
+  },
+  {
+    "id": "hot-toys-mms-529",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 529",
+    "name": "Thanos (Avengers: Endgame)",
+    "universe": "marvel",
+    "characters": ["thanos"],
+    "announced": "2019-04",
+    "price": "USD 415.00",
+    "sources": [
+      "https://www.actionfigure411.com/marvel/hot-toys-marvel/hot-toys-action-figures/thanos-avengers-endgame-10215.php",
+      "https://toyhypeusa.com/2019/04/01/hot-toys-avengers-endgame-iron-man-mark-lxxxv-thanos-sixth-scale-figures/"
+    ]
+  },
+  {
+    "id": "hot-toys-mms-579",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 579",
+    "name": "Loki (Avengers: Endgame)",
+    "universe": "marvel",
+    "characters": ["loki"],
+    "announced": "2020-06",
+    "price": "USD 265.00",
+    "sources": [
+      "https://www.actionfigure411.com/marvel/hot-toys-marvel/hot-toys-action-figures/loki-avengers-endgame-10180.php",
+      "https://toyhypeusa.com/2020/06/18/hot-toys-avengers-endgame-loki-sixth-scale-figure/"
+    ],
+    "note": "Loki as he appears in the 2012 time-travel scenes. Sideshow took pre-orders at USD 260."
+  },
+  {
+    "id": "hot-toys-tms-61",
+    "brand": "hot-toys",
+    "line": "tms",
+    "number": "TMS 61",
+    "name": "Loki (Loki, TVA)",
+    "universe": "marvel",
+    "characters": ["loki"],
+    "price": "USD 280.00",
+    "sources": [
+      "https://www.sideshow.com/collectibles/marvel-loki-hot-toys-909398",
+      "https://www.toy-people.com/en/?p=66361"
+    ],
+    "note": "Printed TMS061. Announced at HKD 1,690."
+  },
+  {
+    "id": "hot-toys-mms-521",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 521",
+    "name": "Captain Marvel",
+    "universe": "marvel",
+    "characters": ["captain-marvel"],
+    "price": "USD 243.00",
+    "sources": [
+      "https://actionfigure411.com/marvel/hot-toys-marvel/hot-toys-action-figures/captain-marvel-10216.php",
+      "https://www.toyark.com/?p=331657"
+    ]
+  },
+  {
+    "id": "hot-toys-mms-652",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 652",
+    "name": "Scarlet Witch (Multiverse of Madness)",
+    "universe": "marvel",
+    "characters": ["scarlet-witch"],
+    "price": "USD 290.00",
+    "sources": [
+      "https://actionfigure411.com/marvel/hot-toys-marvel/hot-toys-action-figures/scarlet-witch-multiverse-of-madness-10097.php",
+      "https://www.bigbadtoystore.com/Product/VariationDetails/207133"
+    ]
+  },
+  {
+    "id": "hot-toys-tms-37",
+    "brand": "hot-toys",
+    "line": "tms",
+    "number": "TMS 37",
+    "name": "Vision (WandaVision)",
+    "universe": "marvel",
+    "price": "USD 255.00",
+    "sources": [
+      "https://www.actionfigure411.com/marvel/hot-toys-checklist.php",
+      "https://timewalkertoys.com/Vision-Wandavision-Hot-Toys-TMS037-1-6-Scale-F-p/hty-907936.htm"
+    ],
+    "note": "Printed TMS037."
+  },
+  {
+    "id": "hot-toys-mms-690",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 690",
+    "name": "Ant-Man (Quantumania)",
+    "universe": "marvel",
+    "price": "USD 284.00",
+    "sources": [
+      "https://actionfigure411.com/marvel/hot-toys-marvel/hot-toys-action-figures/ant-man-quantumania-9997.php",
+      "https://www.bigbadtoystore.com/Product/VariationDetails/232458"
+    ]
+  },
+  {
+    "id": "hot-toys-mms-539",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 539",
+    "name": "Star-Lord (Avengers: Infinity War)",
+    "universe": "marvel",
+    "announced": "2019-06",
+    "price": "USD 251.00",
+    "sources": [
+      "https://actionfigure411.com/marvel/hot-toys-marvel/hot-toys-action-figures/star-lord-avengers-infinity-war-10204.php",
+      "https://news.toyark.com/2019/06/14/avengers-infinity-war-star-lord-figure-by-hot-toys-348874"
+    ]
+  },
+  {
+    "id": "hot-toys-mms-706",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 706",
+    "name": "Groot (Guardians of the Galaxy Vol. 3)",
+    "universe": "marvel",
+    "announced": "2023-05",
+    "price": "USD 290.00",
+    "sources": [
+      "https://actionfigure411.com/marvel/hot-toys-marvel/hot-toys-action-figures/groot-10057.php",
+      "https://www.bigbadtoystore.com/Product/VariationDetails/240748",
+      "https://www.toyark.com/2023/05/03/guardians-of-the-galaxy-vol-3-groot-figure-by-hot-toys-500499"
+    ]
+  },
+  {
+    "id": "hot-toys-mms-548",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 548",
+    "name": "Rocket (Avengers: Endgame)",
+    "universe": "marvel",
+    "price": "USD 212.00",
+    "sources": [
+      "https://actionfigure411.com/marvel/hot-toys-marvel/hot-toys-action-figures/rocket-avengers-endgame-10198.php",
+      "https://www.toy-people.com/?p=48543"
+    ]
+  },
+  {
+    "id": "hot-toys-mms-746",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 746",
+    "name": "Deadpool (Deadpool & Wolverine)",
+    "universe": "marvel",
+    "characters": ["deadpool"],
+    "price": "USD 315.00",
+    "sources": [
+      "https://www.actionfigure411.com/marvel/hot-toys-checklist.php",
+      "https://timewalkertoys.com/Deadpool-Deadpool-Wolverine-Hot-Toys-MMS746-p/hty-913476.htm",
+      "https://www.mythfactoryshop.com/en/deadpool-hot-toys-mms746-deadpool-and-wolverine-figure.html"
+    ]
+  },
+  {
+    "id": "hot-toys-mms-753",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 753",
+    "name": "Wolverine (Deadpool & Wolverine)",
+    "universe": "marvel",
+    "characters": ["wolverine"],
+    "announced": "2024-06",
+    "price": "USD 280.00",
+    "sources": [
+      "https://www.actionfigure411.com/marvel/hot-toys-marvel/hot-toys-action-figures/wolverine-deadpool-wolverine-9977.php",
+      "https://www.toyark.com/2024/06/12/deadpool-and-wolverine-hot-toys-wolverine-figure-534446",
+      "https://www.sideshow.com/collectibles/marvel-wolverine-hot-toys-913487"
+    ]
+  },
+  {
+    "id": "hot-toys-tms-75",
+    "brand": "hot-toys",
+    "line": "tms",
+    "number": "TMS 75",
+    "name": "Moon Knight",
+    "universe": "marvel",
+    "announced": "2022-04",
+    "price": "USD 290.00",
+    "sources": [
+      "https://www.actionfigure411.com/marvel/hot-toys-checklist.php",
+      "https://news.toyark.com/2022/04/06/moon-knight-figure-by-hot-toys-463972"
+    ],
+    "note": "Printed TMS075."
+  },
+  {
+    "id": "hot-toys-mms-590",
+    "brand": "hot-toys",
+    "line": "mms",
+    "number": "MMS 590",
+    "name": "Venom (Venom)",
+    "universe": "marvel",
+    "characters": ["venom"],
+    "announced": "2020-11",
+    "price": "USD 405.00",
+    "sources": [
+      "https://www.actionfigure411.com/marvel/hot-toys-marvel/hot-toys-action-figures/venom-venom-movie-10163.php",
+      "https://news.toyark.com/2020/11/05/venom-movie-1-6-scale-figure-by-hot-toys-408673"
+    ]
+  },
+  {
+    "id": "hot-toys-tms-39",
+    "brand": "hot-toys",
+    "line": "tms",
+    "number": "TMS 39",
+    "name": "Winter Soldier (The Falcon and the Winter Soldier)",
+    "universe": "marvel",
+    "announced": "2021-03",
+    "price": "USD 255.00",
+    "sources": [
+      "https://www.actionfigure411.com/marvel/hot-toys-checklist.php",
+      "https://www.bigbadtoystore.com/Product/VariationDetails/156307",
+      "https://news.toyark.com/2021/03/23/the-falcon-and-the-winter-soldier-hot-toys-winter-soldier-figure-421408"
+    ],
+    "note": "Printed TMS039."
+  },
+  {
+    "id": "hot-toys-tms-40",
+    "brand": "hot-toys",
+    "line": "tms",
+    "number": "TMS 40",
+    "name": "Captain America, Sam Wilson (The Falcon and the Winter Soldier)",
+    "universe": "marvel",
+    "announced": "2021-04",
+    "price": "USD 380.00",
+    "sources": [
+      "https://www.actionfigure411.com/marvel/hot-toys-checklist.php",
+      "https://www.bigbadtoystore.com/Product/VariationDetails/162557",
+      "https://toyhypeusa.com/2021/04/29/hot-toys-the-falcon-and-the-winter-soldier-sam-wilson-captain-america-sixth-scale-figure/"
+    ],
+    "note": "Printed TMS040. Announced at USD 375."
+  }
+]

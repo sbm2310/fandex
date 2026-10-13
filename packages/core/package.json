@@ -16,6 +16,13 @@
       "browser": "./src/index.ts",
       "types": "./dist/index.d.mts",
       "default": "./dist/index.mjs"
+    },
+    "./figure-seed": {
+      "source": "./src/figures/figure-seed.ts",
+      "react-native": "./src/figures/figure-seed.ts",
+      "browser": "./src/figures/figure-seed.ts",
+      "types": "./dist/figure-seed.d.mts",
+      "default": "./dist/figure-seed.mjs"
     }
   },
   "files": [
