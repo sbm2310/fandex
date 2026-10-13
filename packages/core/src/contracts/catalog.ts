@@ -2,7 +2,9 @@ import { z } from 'zod';
 
 import { CATEGORIES } from '../category';
 import { parseSetNumber } from '../catalog-set';
+import { parseFigureNumber } from '../figures/figure-number';
 import { parseIsbn } from '../isbn';
+import { moneySchema } from './money';
 import { releaseDateSchema } from './release-date';
 import { characterRefSchema, slugSchema } from './universe';
 
@@ -10,8 +12,11 @@ import { characterRefSchema, slugSchema } from './universe';
 export const catalogItemSchema = z.object({
   id: z.uuid(),
   category: z.enum(CATEGORIES),
-  /** "custom": a figure its owner added by hand (private to them). */
-  source: z.enum(['openlibrary', 'rebrickable', 'custom']),
+  /**
+   * "fandex": a figure from Fandex's curated list (shared); "custom": a figure its owner added
+   * by hand (private to them).
+   */
+  source: z.enum(['openlibrary', 'rebrickable', 'fandex', 'custom']),
   externalId: z.string(),
   title: z.string(),
   subtitle: z.string().optional(),
@@ -33,6 +38,14 @@ export const catalogItemSchema = z.object({
   subtheme: z.string().optional(),
   /** Figures only: "1/6". (A figure's brand is its creator, its line the subtitle.) */
   scale: z.string().optional(),
+  /** Figures only: the number on the box ("MMS 649"). */
+  figureNumber: z.string().optional(),
+  /** Figures only: "Deluxe", "Premium"… */
+  edition: z.string().optional(),
+  /** Figures only: when it came out or is expected. */
+  releaseDate: releaseDateSchema.optional(),
+  /** Figures only: the original retail price. */
+  price: moneySchema.optional(),
   /** The universes this item belongs to (slugs; see GET /universes), in seed order. */
   universes: z.array(slugSchema).default([]),
   /** The characters in it, each with its universe. */
@@ -59,6 +72,16 @@ export const setNumberParamSchema = z.string().transform((value, ctx) => {
     return z.NEVER;
   }
   return setNum;
+});
+
+/** A figure number in any common spelling ("mms649"), written our way ("MMS 649"). */
+export const figureNumberSchema = z.string().transform((value, ctx) => {
+  const number = parseFigureNumber(value);
+  if (!number) {
+    ctx.addIssue({ code: 'custom', message: 'Not a figure number we know (e.g. "MMS 649")' });
+    return z.NEVER;
+  }
+  return number.text;
 });
 
 /** Query for GET /catalog/search: trimmed, 2–200 characters. */

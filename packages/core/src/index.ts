@@ -13,6 +13,7 @@ export * from './catalog-set';
 export * from './lego-catalog';
 export * from './catalog-entry';
 export * from './catalog-figure';
+export * from './figures';
 export * from './universes';
 export * from './ai';
 export * from './ask';

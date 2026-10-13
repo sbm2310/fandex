@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { CURRENCIES } from '../preorders/money';
 import { DATE_CHANGE_SOURCES, PREORDER_STATUSES } from '../preorders/preorder';
 import { catalogItemSchema } from './catalog';
+import { amountSchema as amount } from './money';
 import { releaseDateSchema } from './release-date';
 
 const day = z.iso.date(); // YYYY-MM-DD
@@ -13,8 +14,6 @@ export const dateChangeSchema = z.object({
   changedAt: z.iso.datetime(),
   source: z.enum(DATE_CHANGE_SOURCES),
 });
-
-const amount = z.number().int().min(0).max(100_000_000_00); // minor units, up to 100 million
 
 /** Text the user typed: trimmed; blank means "none". */
 const text = (max: number) =>

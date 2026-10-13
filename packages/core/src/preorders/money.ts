@@ -8,6 +8,9 @@
 export const CURRENCIES = ['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', 'ILS'] as const;
 export type Currency = (typeof CURRENCIES)[number];
 
+/** An amount with its currency: a figure's original price. */
+export type Money = { amount: number; currency: Currency };
+
 /** How many decimals a currency's amounts have: 2 for USD, 0 for JPY. */
 export function currencyDigits(currency: Currency): number {
   return (

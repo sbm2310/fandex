@@ -1,14 +1,20 @@
+import type { Money } from './preorders/money';
+import type { ReleaseDate } from './preorders/release-date';
 import type { MatchSignals } from './universes/match-signals';
 import { matchUniverses, type CharacterRef } from './universes/match-universes';
 import { UNIVERSE_SEED, type UniverseSeed } from './universes/universe-seed';
 
 /**
- * A figure (Hot Toys and similar) added by hand. No public catalog covers premium figures, so
- * the owner describes it; it's private to them. The first step toward a figures catalog.
+ * A premium figure (Hot Toys, InArt…). No public catalog covers them, so they come from
+ * Fandex's own curated list (`fandex`, shared by everyone) or are added by hand (`custom`,
+ * private to their owner).
  */
 export type CatalogFigure = {
-  source: 'custom';
-  /** A UUID made where the figure was created (the device for guests, the API otherwise). */
+  source: 'fandex' | 'custom';
+  /**
+   * The curated entry's stable id (`fandex`), or a UUID made where a hand-added figure was
+   * created (the device for guests, the API otherwise).
+   */
   externalId: string;
   category: 'figure';
   /** Our own catalog id, once the figure is saved through the Fandex API. */
@@ -21,6 +27,14 @@ export type CatalogFigure = {
   line?: string;
   /** "1/6", "1/4", "Life-size". */
   scale?: string;
+  /** As printed on the box: "MMS 649" (see `parseFigureNumber`). */
+  number?: string;
+  /** Which version, when there are several: "Deluxe", "Premium", "Special Edition". */
+  edition?: string;
+  /** When it came out, or is expected to. */
+  release?: ReleaseDate;
+  /** Its original retail price. */
+  price?: Money;
   coverUrl?: string;
   /** Universes this figure belongs to (slugs), matched from its name and line. */
   universes?: string[];

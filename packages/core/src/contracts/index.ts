@@ -6,3 +6,4 @@ export * from './ai';
 export * from './preorders';
 export * from './release-date';
 export * from './series';
+export * from './money';

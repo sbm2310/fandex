@@ -10,8 +10,11 @@ import type { CharacterRef } from './universes/match-universes';
  */
 export type BookSource = 'openlibrary';
 
-/** Where catalog entries come from: Open Library, Rebrickable, or the owner (figures by hand). */
-export type CatalogSource = BookSource | 'rebrickable' | 'custom';
+/**
+ * Where catalog entries come from: Open Library, Rebrickable, Fandex's curated figure list, or
+ * the owner (figures by hand).
+ */
+export type CatalogSource = BookSource | 'rebrickable' | 'fandex' | 'custom';
 
 /**
  * A book as a catalog describes it: something that exists, whether or not the user owns it.
