@@ -69,8 +69,10 @@ function BookSeriesSection({ item }: { item: CollectionItem }) {
 type Edition = ReturnType<ReturnType<typeof useBookSeries>['editionFor']>;
 
 function MissingBook({ entry, edition }: { entry: SeriesEntry; edition: Edition }) {
+  // Pre-ordering only makes sense for a book that isn't out yet.
+  const upcoming = isUpcoming(entry, localToday());
   const when = entry.published
-    ? isUpcoming(entry, localToday())
+    ? upcoming
       ? `Out ${formatRelease({ date: entry.published, precision: 'day' })}`
       : entry.published.slice(0, 4)
     : undefined;
@@ -87,7 +89,7 @@ function MissingBook({ entry, edition }: { entry: SeriesEntry; edition: Edition 
             <ThemedText type="small" themeColor="textSecondary">
               {label}
             </ThemedText>
-            <PreorderLink entry={edition.data} />
+            {upcoming ? <PreorderLink entry={edition.data} /> : null}
           </View>
         }
       />
@@ -115,6 +117,10 @@ function VolumeSeriesSection({ item }: { item: CollectionItem }) {
   const { series, volume, next } = useVolumeSeries(item);
   if (!series || volume === undefined) return null;
   const today = localToday();
+  const nextUpcoming =
+    !!next?.entry.publishDate &&
+    next.entry.publishDate.date > today &&
+    next.entry.publishDate.precision !== 'year';
 
   return (
     <View style={styles.section}>
@@ -143,13 +149,11 @@ function VolumeSeriesSection({ item }: { item: CollectionItem }) {
           note={
             <View style={styles.note}>
               <ThemedText type="small" themeColor="textSecondary">
-                {next.entry.publishDate &&
-                next.entry.publishDate.date > today &&
-                next.entry.publishDate.precision !== 'year'
+                {nextUpcoming && next.entry.publishDate
                   ? `Next: volume ${next.volume}, out ${formatRelease(next.entry.publishDate)}`
                   : `Next: volume ${next.volume}`}
               </ThemedText>
-              <PreorderLink entry={next.entry} />
+              {nextUpcoming ? <PreorderLink entry={next.entry} /> : null}
             </View>
           }
         />

@@ -32,7 +32,10 @@ export function useAsk() {
             seriesItems(items).flatMap((item) => (item.category === 'book' && item.workKey) || []),
           ),
         ];
-        return seriesCatalog.seriesForWorks(keys.slice(0, 50)).catch(() => new Map());
+        return seriesCatalog
+          .seriesForWorks(keys.slice(0, 50))
+          .then(({ series }) => series)
+          .catch(() => new Map());
       };
       const ownPreorders = preorders.data ?? [];
       if (!user) {

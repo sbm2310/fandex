@@ -16,6 +16,8 @@ import { useCatalog, useSeriesCatalog } from '@/services/app-services';
 
 /** Series data changes slowly (the API caches it for a month). */
 const STALE_MS = 60 * 60 * 1000;
+/** While Wikidata hasn't been asked about a work yet (it was slow), ask again this often. */
+const PENDING_RETRY_MS = 20_000;
 /** Missing books whose editions are looked up for Add / Pre-order (each is a search). */
 export const MISSING_LOOKUPS = 10;
 
@@ -33,12 +35,17 @@ export function useBookSeries(item: CollectionItem) {
   const seriesCatalog = useSeriesCatalog();
   const collection = useCollection();
 
-  const series = useQuery({
+  const lookup = useQuery({
     queryKey: ['series', 'work', workKey],
-    queryFn: async () => (await seriesCatalog.seriesForWorks([workKey!])).get(workKey!) ?? null,
+    queryFn: async () => {
+      const { series, pending } = await seriesCatalog.seriesForWorks([workKey!]);
+      return { series: series.get(workKey!) ?? null, pending: pending.has(workKey!) };
+    },
     enabled: !!workKey,
     staleTime: STALE_MS,
+    refetchInterval: (query) => (query.state.data?.pending ? PENDING_RETRY_MS : false),
   });
+  const series = { ...lookup, data: lookup.data?.series };
   const progress =
     series.data && collection.data
       ? seriesProgress(series.data, ownedWorkKeys(collection.data))
@@ -133,14 +140,17 @@ export function useSeriesOverview() {
     queryKey: ['series', 'works', workKeys],
     queryFn: async () => {
       const found = new Map<string, BookSeries>();
+      let pending = false;
       for (let i = 0; i < workKeys.length; i += WORKS_PER_REQUEST) {
         const chunk = await seriesCatalog.seriesForWorks(workKeys.slice(i, i + WORKS_PER_REQUEST));
-        for (const [key, series] of chunk) found.set(key, series);
+        for (const [key, series] of chunk.series) found.set(key, series);
+        pending ||= chunk.pending.size > 0;
       }
-      return found;
+      return { found, pending };
     },
     enabled: collection.data !== undefined && workKeys.length > 0,
     staleTime: STALE_MS,
+    refetchInterval: (query) => (query.state.data?.pending ? PENDING_RETRY_MS : false),
   });
 
   const volumeSeries = volumeGaps(
@@ -163,7 +173,9 @@ export function useSeriesOverview() {
   const owned = ownedWorkKeys(items);
   const seen = new Set<string>();
   for (const book of books) {
-    const series = book.catalog.workKey ? bookSeries.data?.get(book.catalog.workKey) : undefined;
+    const series = book.catalog.workKey
+      ? bookSeries.data?.found.get(book.catalog.workKey)
+      : undefined;
     if (!series || seen.has(series.wikidataId)) continue;
     seen.add(series.wikidataId);
     const progress = seriesProgress(series, owned);

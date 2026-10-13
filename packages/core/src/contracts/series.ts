@@ -18,11 +18,17 @@ export const bookSeriesSchema = z.object({
 }) satisfies z.ZodType<BookSeries>;
 
 /**
- * GET /series/works?keys=OL1W,OL2W: the series of each work (null: Wikidata knows none, or it
- * hasn't been asked yet and couldn't be now), each series once.
+ * GET /series/works?keys=OL1W,OL2W: the series of each work (null: none), each series once.
+ * `pending`: Wikidata couldn't be asked about it yet (slow or busy); ask again shortly.
  */
 export const workSeriesResponseSchema = z.object({
-  works: z.array(z.object({ workKey: z.string(), seriesId: z.string().nullable() })),
+  works: z.array(
+    z.object({
+      workKey: z.string(),
+      seriesId: z.string().nullable(),
+      pending: z.boolean().default(false),
+    }),
+  ),
   series: z.array(bookSeriesSchema),
 });
 export type WorkSeriesResponse = z.infer<typeof workSeriesResponseSchema>;

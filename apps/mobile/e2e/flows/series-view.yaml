@@ -11,14 +11,14 @@ tags:
 - inputText: 'the way of kings sanderson'
 - extendedWaitUntil:
     visible: 'Add The Way of Kings'
-    timeout: 30000
+    timeout: 60000
 - tapOn: 'Add The Way of Kings'
 - assertVisible: 'The Way of Kings is in your collection'
 - tapOn: 'Clear text'
 - inputText: 'jujutsu kaisen 26'
 - extendedWaitUntil:
     visible: 'Add Jujutsu Kaisen, Vol. 26'
-    timeout: 30000
+    timeout: 60000
 - tapOn: 'Add Jujutsu Kaisen, Vol. 26'
 - assertVisible: 'Jujutsu Kaisen, Vol. 26 is in your collection'
 

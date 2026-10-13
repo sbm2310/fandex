@@ -52,7 +52,7 @@ App (device)                                   API                              
 
 **7. Ask about series.** ✅ "Which manga series am I missing volumes of?" / "What am I missing from Stormlight?" answered from the collection and cached series (scope `series`); prompt, schema, keyword fallback, replies re-recorded. _Demo:_ ask it.
 
-**8. Polish.** Empty and error states, accessibility, a Maestro flow, README, CLAUDE.md. _Demo:_ the demo above. (Deploying waits until the owner wants it.)
+**8. Polish.** ✅ Found in the audit: when Wikidata is too slow for the API's 8 s budget, the work came back as "no series" and the app cached that for an hour; the API now marks such works `pending` and the app asks again every 20 s until it knows (mutation-checked). README (feature, screenshots from the Simulator, architecture, privacy: Wikidata only sees a work id), the e2e README, five Maestro flows run together. Not deployed (the owner isn't deploying yet). _Demo:_ the demo above, in the Simulator.
 
 ## Risks
 

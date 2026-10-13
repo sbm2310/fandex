@@ -86,7 +86,12 @@ export class SeriesService {
     return {
       works: keys.map((workKey) => {
         const id = answered.get(workKey) ?? null;
-        return { workKey, seriesId: id && valid.has(id) ? id : null };
+        return {
+          workKey,
+          seriesId: id && valid.has(id) ? id : null,
+          // Never answered: neither cached nor asked successfully in this request.
+          pending: !answered.has(workKey),
+        };
       }),
       series,
     };

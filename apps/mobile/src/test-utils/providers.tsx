@@ -267,13 +267,14 @@ export function createFakeSeriesCatalog({
   return {
     seriesForWorks: jest.fn(async (workKeys: readonly string[]) => {
       const found = new Map<string, BookSeries>();
+      const pending = new Set<string>();
       for (const key of workKeys) {
         const match = series.find((s) =>
           [...s.entries, ...s.extras].some((entry) => entry.workKey === key),
         );
         if (match) found.set(key, match);
       }
-      return found;
+      return { series: found, pending };
     }),
     lookupWork: jest.fn(async (workKey: string) => works[workKey] ?? null),
   } satisfies SeriesCatalog;

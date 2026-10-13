@@ -11,7 +11,7 @@ tags:
 - inputText: 'the way of kings sanderson'
 - extendedWaitUntil:
     visible: 'Add The Way of Kings'
-    timeout: 30000
+    timeout: 60000
 - tapOn: 'Add The Way of Kings'
 - assertVisible: 'The Way of Kings is in your collection'
 
@@ -29,5 +29,7 @@ tags:
     timeout: 30000
 - extendedWaitUntil:
     visible: 'Add Words of Radiance'
-    timeout: 30000
+    timeout: 60000
+# Bring the series section up for the picture.
+- scroll
 - takeScreenshot: output/book-series

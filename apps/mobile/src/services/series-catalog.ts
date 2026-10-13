@@ -9,10 +9,16 @@ import type { ApiFetch } from './api-fetch';
 import { toCatalogBook } from './catalog-mapping';
 import { requestCatalog } from './catalog-request';
 
+/** The series of some works: a work missing from `series` has none, or isn't known yet. */
+export type WorksSeries = {
+  series: Map<string, BookSeries>;
+  /** Works Wikidata couldn't be asked about yet (slow or busy): ask again shortly. */
+  pending: Set<string>;
+};
+
 /** Book series (from Wikidata, cached by the Fandex API) and the books missing from them. */
 export interface SeriesCatalog {
-  /** Each work's series; a work missing from the map has none (or none known yet). */
-  seriesForWorks(workKeys: readonly string[]): Promise<Map<string, BookSeries>>;
+  seriesForWorks(workKeys: readonly string[]): Promise<WorksSeries>;
   /** An edition of a work, to add or pre-order; null if Open Library has none. */
   lookupWork(workKey: string): Promise<CatalogBook | null>;
 }
@@ -20,9 +26,10 @@ export interface SeriesCatalog {
 export class ApiSeriesCatalog implements SeriesCatalog {
   constructor(private readonly apiFetch: ApiFetch) {}
 
-  async seriesForWorks(workKeys: readonly string[]): Promise<Map<string, BookSeries>> {
+  async seriesForWorks(workKeys: readonly string[]): Promise<WorksSeries> {
     const found = new Map<string, BookSeries>();
-    if (workKeys.length === 0) return found;
+    const pending = new Set<string>();
+    if (workKeys.length === 0) return { series: found, pending };
     const response = await requestCatalog(
       this.apiFetch,
       `/series/works?keys=${encodeURIComponent(workKeys.join(','))}`,
@@ -30,11 +37,12 @@ export class ApiSeriesCatalog implements SeriesCatalog {
     );
     const { works, series } = workSeriesResponseSchema.parse(await response.json());
     const byId = new Map(series.map((s) => [s.wikidataId, s]));
-    for (const { workKey, seriesId } of works) {
-      const match = seriesId ? byId.get(seriesId) : undefined;
-      if (match) found.set(workKey, match);
+    for (const work of works) {
+      const match = work.seriesId ? byId.get(work.seriesId) : undefined;
+      if (match) found.set(work.workKey, match);
+      if (work.pending) pending.add(work.workKey);
     }
-    return found;
+    return { series: found, pending };
   }
 
   async lookupWork(workKey: string): Promise<CatalogBook | null> {

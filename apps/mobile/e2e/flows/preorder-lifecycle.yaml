@@ -37,17 +37,17 @@ tags:
     timeout: 20000
 
 # Clara & the Devil, Volume 2: Open Library lists it for March 2, 2027 (see CLAUDE.md, Task 6).
-- openLink: ${APP_URL}/--/add
-- tapOn: 'Search books'
-- inputText: 'clara & the devil'
-- hideKeyboard
+# The search goes in the link: typing on the slow Simulator once produced "devily". (No "&"
+# in it: Expo Go decodes the link twice and cuts the query there.) Specific enough that
+# Volume 2 is the first result: links near the bottom of the list are hard to tap.
+- openLink: ${APP_URL}/--/add?q=clara%20devil%20volume%202&scan=1
 - extendedWaitUntil:
     visible: 'Pre-order Clara & the Devil, Volume 2'
-    timeout: 30000
+    timeout: 60000
 - tapOn: 'Pre-order Clara & the Devil, Volume 2'
 - extendedWaitUntil:
     visible: 'Expected release: March 2, 2027'
-    timeout: 15000
+    timeout: 30000
 - tapOn: 'Price (optional)'
 - inputText: '20'
 - tapOn: 'Paid so far'

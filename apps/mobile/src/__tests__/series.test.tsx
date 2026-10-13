@@ -1,5 +1,5 @@
 import type { BookSeries, CatalogBook } from '@fandex/core';
-import { fireEvent, renderRouter, screen } from 'expo-router/testing-library';
+import { act, fireEvent, renderRouter, screen } from 'expo-router/testing-library';
 
 import AddScreen from '@/app/(tabs)/add';
 import CollectionScreen from '@/app/(tabs)/index';
@@ -81,6 +81,8 @@ describe('a book series on the item page', () => {
     // An upcoming one: when it's out, and Pre-order.
     expect(await screen.findByText('Book 5 · Out March 1, 2031')).toBeOnTheScreen();
     expect(screen.getByRole('link', { name: 'Pre-order Book Six' })).toBeOnTheScreen();
+    // Out already: add it, nothing to pre-order.
+    expect(screen.queryByRole('link', { name: 'Pre-order Oathbringer' })).not.toBeOnTheScreen();
     // No Open Library work: its title, and a search instead.
     expect(screen.getByText('Rhythm of War')).toBeOnTheScreen();
     expect(screen.getByRole('link', { name: 'Search for Rhythm of War' })).toBeOnTheScreen();
@@ -108,6 +110,29 @@ describe('a book series on the item page', () => {
       await screen.findByRole('header', { name: 'Book 1 of 2 in The Stormlight Archive' }),
     ).toBeOnTheScreen();
     expect(screen.getByText('You have all 2 books.')).toBeOnTheScreen();
+  });
+
+  it('asks again shortly when Wikidata was too slow to answer', async () => {
+    jest.useFakeTimers();
+    try {
+      const seriesCatalog = createFakeSeriesCatalog({ series: [stormlight] });
+      seriesCatalog.seriesForWorks.mockResolvedValueOnce({
+        series: new Map(),
+        pending: new Set(['OL15358691W']),
+      });
+      await openItem([wayOfKings], { seriesCatalog });
+      expect(await screen.findByRole('header', { name: 'The Way of Kings' })).toBeOnTheScreen();
+      expect(screen.queryByText(/ in The Stormlight Archive/)).not.toBeOnTheScreen();
+
+      await act(() => jest.advanceTimersByTimeAsync(20_000));
+
+      expect(
+        await screen.findByRole('header', { name: 'Book 1 of 5 in The Stormlight Archive' }),
+      ).toBeOnTheScreen();
+      expect(seriesCatalog.seriesForWorks).toHaveBeenCalledTimes(2);
+    } finally {
+      jest.useRealTimers();
+    }
   });
 
   it('shows nothing for a book in no series', async () => {

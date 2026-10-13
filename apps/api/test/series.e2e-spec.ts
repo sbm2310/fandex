@@ -74,8 +74,8 @@ describe('Series (e2e)', () => {
     const first = await forWorks(WAY_OF_KINGS, HOBBIT);
 
     expect(first.works).toEqual([
-      { workKey: WAY_OF_KINGS, seriesId: 'Q7616797' },
-      { workKey: HOBBIT, seriesId: null },
+      { workKey: WAY_OF_KINGS, seriesId: 'Q7616797', pending: false },
+      { workKey: HOBBIT, seriesId: null, pending: false },
     ]);
     expect(first.series).toEqual([stormlight]);
     expect(fakeWikidata.seriesForWork).toHaveBeenCalledTimes(2);
@@ -104,7 +104,9 @@ describe('Series (e2e)', () => {
     const response = await forWorks(WAY_OF_KINGS);
 
     expect(fakeWikidata.seriesForWork).toHaveBeenCalledTimes(2);
-    expect(response.works).toEqual([{ workKey: WAY_OF_KINGS, seriesId: 'Q7616797' }]);
+    expect(response.works).toEqual([
+      { workKey: WAY_OF_KINGS, seriesId: 'Q7616797', pending: false },
+    ]);
     expect(response.series).toEqual([stormlight]);
   });
 
@@ -113,8 +115,15 @@ describe('Series (e2e)', () => {
       new CatalogError('wikidata', 'network', 'Could not reach Wikidata'),
     );
 
-    expect((await forWorks(WAY_OF_KINGS)).works[0]!.seriesId).toBeNull();
-    expect((await forWorks(WAY_OF_KINGS)).works[0]!.seriesId).toBe('Q7616797');
+    // Not "no series": not known yet, so the app asks again shortly.
+    expect((await forWorks(WAY_OF_KINGS)).works[0]).toMatchObject({
+      seriesId: null,
+      pending: true,
+    });
+    expect((await forWorks(WAY_OF_KINGS)).works[0]).toMatchObject({
+      seriesId: 'Q7616797',
+      pending: false,
+    });
   });
 
   it('stops asking in a request once Wikidata says to slow down', async () => {
@@ -125,7 +134,10 @@ describe('Series (e2e)', () => {
     const response = await forWorks(HOBBIT, WAY_OF_KINGS);
 
     expect(fakeWikidata.seriesForWork).toHaveBeenCalledOnce();
-    expect(response.works.map((work) => work.seriesId)).toEqual([null, null]);
+    expect(response.works.map((work) => [work.seriesId, work.pending])).toEqual([
+      [null, true],
+      [null, true],
+    ]);
   });
 
   it('rejects anything but up to 50 Open Library work ids', async () => {

@@ -11,7 +11,7 @@ tags:
 - inputText: 'the hobbit'
 - extendedWaitUntil:
     visible: 'Add The Hobbit'
-    timeout: 30000
+    timeout: 60000
 - tapOn: 'Add The Hobbit'
 - assertVisible: 'The Hobbit is in your collection'
 
