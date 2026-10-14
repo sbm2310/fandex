@@ -1,0 +1,4 @@
+{
+  "$comment": "What is really on each of the owner's figure box photos (eval/box-photos is gitignored, so only these facts are committed). file: the main photo; sides: other photos of the same box, sent along. number: as printed on the box, when it shows one. aliases: other ways the name counts as read. figureId: the curated entry (packages/core/src/figures/seed) when the catalog has the figure.",
+  "boxes": []
+}

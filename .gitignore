@@ -35,6 +35,7 @@ apps/api/src/generated/
 
 # Shelf photos for the AI evaluation (Stage 4) — personal, never commit
 apps/api/eval/photos/
+apps/api/eval/box-photos/
 apps/api/eval/runs/
 
 # Maestro results (screenshots and logs of failed flows)

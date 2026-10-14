@@ -21,7 +21,9 @@
     "db:deploy": "prisma migrate deploy",
     "db:studio": "prisma studio",
     "eval:shelf": "tsx eval/eval-shelf.ts",
-    "preeval:shelf": "npm run build -w @fandex/core"
+    "preeval:shelf": "npm run build -w @fandex/core",
+    "eval:boxes": "tsx eval/eval-boxes.ts",
+    "preeval:boxes": "npm run build -w @fandex/core"
   },
   "dependencies": {
     "@better-auth/expo": "^1.7.7",
