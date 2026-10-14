@@ -67,6 +67,10 @@ export default function RootLayout() {
             />
             <Stack.Screen name="series" options={{ title: '', headerBackTitle: 'Back' }} />
             <Stack.Screen
+              name="admin/suggestions"
+              options={{ title: 'Suggestions', headerBackTitle: 'Back' }}
+            />
+            <Stack.Screen
               name="ask"
               options={{ title: 'Ask your collection', headerBackTitle: 'Back' }}
             />

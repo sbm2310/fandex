@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
 
@@ -9,6 +10,7 @@ import { Screen } from '@/components/screen';
 import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
 import { useCurrentUser, useDeleteAccount, useSignOut } from '@/hooks/use-account';
+import { useIsAdmin } from '@/hooks/use-admin';
 import { useTheme } from '@/hooks/use-theme';
 import type { AccountUser } from '@/services/account-service';
 import { confirm } from '@/utils/confirm';
@@ -62,6 +64,7 @@ export default function AccountScreen() {
 
 function SignedIn({ user, onDeleted }: { user: AccountUser; onDeleted: () => void }) {
   const signOut = useSignOut();
+  const { isAdmin } = useIsAdmin();
 
   return (
     <View style={styles.section}>
@@ -73,6 +76,14 @@ function SignedIn({ user, onDeleted }: { user: AccountUser; onDeleted: () => voi
       <ThemedText type="small" themeColor="textSecondary">
         Your collection is saved to your account and stays in sync across your devices.
       </ThemedText>
+      {/* Admins only (the server's ADMIN_EMAILS); everyone else never sees it. */}
+      {isAdmin ? (
+        <Button
+          label="Review figure suggestions"
+          variant="secondary"
+          onPress={() => router.push('/admin/suggestions')}
+        />
+      ) : null}
       <Button
         label="Sign out"
         variant="secondary"

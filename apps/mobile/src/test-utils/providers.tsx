@@ -14,6 +14,7 @@ import {
   type CatalogBook,
   type CatalogFigure,
   type FigureSuggestionResponse,
+  type AdminFigureSuggestion,
   type CatalogSet,
   type CollectionRepository,
   type KeyValueStore,
@@ -23,6 +24,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 
 import { AccountError, type AccountService, type AccountUser } from '@/services/account-service';
+import type { AdminReviews } from '@/services/admin-reviews';
 import { AppServicesProvider } from '@/services/app-services';
 import type { CustomItems } from '@/services/custom-items';
 import type { FigureCatalog } from '@/services/figure-catalog';
@@ -94,6 +96,36 @@ export function createFakeFigureSuggestions(initial: FigureSuggestionResponse[] 
     }),
     mine: jest.fn(async () => [...suggestions]),
   } satisfies FigureSuggestions & { suggestions: FigureSuggestionResponse[] };
+}
+
+/**
+ * An admin review queue in memory: `isAdmin` answers `admin`, decisions take the suggestion
+ * off the queue (and answer with its new status), unknown ids reject.
+ */
+export function createFakeAdminReviews({
+  admin = false,
+  suggestions = [],
+}: { admin?: boolean; suggestions?: AdminFigureSuggestion[] } = {}) {
+  const queue = [...suggestions];
+  const decide = (id: string, changes: Partial<FigureSuggestionResponse>) => {
+    const index = queue.findIndex((suggestion) => suggestion.id === id);
+    if (index < 0) return Promise.reject(new Error('No such suggestion'));
+    const [suggestion] = queue.splice(index, 1);
+    const { figure: _figure, suggestedBy: _by, candidates: _candidates, ...rest } = suggestion!;
+    return Promise.resolve({ ...rest, ...changes, reviewedAt: '2026-10-14T12:00:00.000Z' });
+  };
+  return {
+    queue,
+    isAdmin: jest.fn(async () => admin),
+    pending: jest.fn(async () => [...queue]),
+    approve: jest.fn((id: string) => decide(id, { status: 'approved' })),
+    merge: jest.fn((id: string, targetId: string) => {
+      return decide(id, { status: 'merged', mergedIntoId: targetId, catalogItemId: undefined });
+    }),
+    reject: jest.fn((id: string, note: string) =>
+      decide(id, { status: 'rejected', reviewNote: note }),
+    ),
+  } satisfies AdminReviews & { queue: AdminFigureSuggestion[] };
 }
 
 /** A shelf scanner whose methods are Jest mocks; by default AI is available and finds nothing. */
@@ -334,6 +366,7 @@ export function createWrapper({
   questionAsker = createFakeQuestionAsker(),
   customItems = createFakeCustomItems(),
   figureSuggestions = createFakeFigureSuggestions(),
+  adminReviews = createFakeAdminReviews(),
   preorders = createFakePreorders(),
   seriesCatalog = createFakeSeriesCatalog(),
 }: {
@@ -347,6 +380,7 @@ export function createWrapper({
   questionAsker?: QuestionAsker;
   customItems?: CustomItems;
   figureSuggestions?: FigureSuggestions;
+  adminReviews?: AdminReviews;
   preorders?: Preorders;
   seriesCatalog?: SeriesCatalog;
 } = {}) {
@@ -369,6 +403,7 @@ export function createWrapper({
             questionAsker,
             customItems,
             figureSuggestions,
+            adminReviews,
             preorders,
             seriesCatalog,
           }}

@@ -2,6 +2,7 @@ import type { BookCatalog, CollectionRepository, LegoCatalog } from '@fandex/cor
 import { createContext, use, type ReactNode } from 'react';
 
 import type { AccountService } from './account-service';
+import type { AdminReviews } from './admin-reviews';
 import type { CustomItems } from './custom-items';
 import type { FigureCatalog } from './figure-catalog';
 import type { FigureSuggestions } from './figure-suggestions';
@@ -29,6 +30,8 @@ export type AppServices = {
   customItems: CustomItems;
   /** Suggesting the user's own figures for the shared catalog (signed in). */
   figureSuggestions: FigureSuggestions;
+  /** Reviewing figure suggestions (admins only). */
+  adminReviews: AdminReviews;
   /** The signed-in user's pre-orders on the Fandex API. */
   preorders: Preorders;
   /** Book series and the books missing from them (public, also for guests). */
@@ -92,6 +95,10 @@ export function useCustomItems(): CustomItems {
 
 export function useFigureSuggestionService(): FigureSuggestions {
   return useAppServices().figureSuggestions;
+}
+
+export function useAdminReviews(): AdminReviews {
+  return useAppServices().adminReviews;
 }
 
 export function usePreorderService(): Preorders {
