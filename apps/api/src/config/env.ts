@@ -54,6 +54,16 @@ export const envSchema = z.object({
    */
   AI_QUESTIONS_PER_USER: z.coerce.number().int().min(0).default(30),
   AI_QUESTIONS_PER_DAY: z.coerce.number().int().min(0).default(100),
+  /** Comma-separated emails of admins (they review figure suggestions); none by default. */
+  ADMIN_EMAILS: z
+    .string()
+    .default('')
+    .transform((value) =>
+      value
+        .split(',')
+        .map((email) => email.trim().toLowerCase())
+        .filter(Boolean),
+    ),
   /** Comma-separated origins allowed to call the API with a session: web app + app scheme. */
   TRUSTED_ORIGINS: z
     .string()

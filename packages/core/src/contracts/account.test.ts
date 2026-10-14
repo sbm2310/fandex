@@ -9,8 +9,9 @@ describe('meResponseSchema', () => {
     createdAt: '2026-10-05T09:00:00.000Z',
   };
 
-  it('accepts a valid response', () => {
-    expect(meResponseSchema.parse(valid)).toEqual(valid);
+  it('accepts a valid response, not an admin unless it says so', () => {
+    expect(meResponseSchema.parse(valid)).toEqual({ ...valid, isAdmin: false });
+    expect(meResponseSchema.parse({ ...valid, isAdmin: true }).isAdmin).toBe(true);
   });
 
   it.each([

@@ -17,6 +17,7 @@ import { Button } from '@/components/button';
 import { AlsoOwnedEditions } from '@/components/other-editions';
 import { CATEGORY_LABELS } from '@/components/category-badge';
 import { EmptyState } from '@/components/empty-state';
+import { FigureSuggestionSection } from '@/components/figure-suggestion';
 import { PageTitle } from '@/components/page-title';
 import { SeriesSection } from '@/components/series-section';
 import { ThemedText } from '@/components/themed-text';
@@ -122,6 +123,7 @@ function BookDetail({ item }: { item: CollectionItem }) {
           <Links item={item} />
 
           {item.category === 'figure' && <FigureSources figure={item.catalog} />}
+          {item.category === 'figure' && <FigureSuggestionSection figure={item.catalog} />}
 
           <SeriesSection item={item} />
 

@@ -33,7 +33,7 @@ describe('BetterAuthAccountService', () => {
     });
     const service = new BetterAuthAccountService(client);
 
-    await expect(service.getCurrentUser()).resolves.toEqual(user);
+    await expect(service.getCurrentUser()).resolves.toEqual({ ...user, isAdmin: false });
   });
 
   it('returns null when signed out', async () => {

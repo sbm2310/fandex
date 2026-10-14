@@ -13,6 +13,7 @@ import {
   type BookCatalog,
   type CatalogBook,
   type CatalogFigure,
+  type FigureSuggestionResponse,
   type CatalogSet,
   type CollectionRepository,
   type KeyValueStore,
@@ -25,6 +26,7 @@ import { AccountError, type AccountService, type AccountUser } from '@/services/
 import { AppServicesProvider } from '@/services/app-services';
 import type { CustomItems } from '@/services/custom-items';
 import type { FigureCatalog } from '@/services/figure-catalog';
+import type { FigureSuggestions } from '@/services/figure-suggestions';
 import type { Preorders } from '@/services/preorders';
 import type { SeriesCatalog } from '@/services/series-catalog';
 import { AskUnavailableError, type QuestionAsker } from '@/services/question-asker';
@@ -64,6 +66,34 @@ export function createFakeFigureCatalog(overrides: Partial<FigureCatalog> = {}) 
     ),
     ...overrides,
   };
+}
+
+/**
+ * Figure suggestions kept in memory: `suggest` records a pending one (or returns the existing
+ * one), `mine` lists them; tests can seed decided ones.
+ */
+export function createFakeFigureSuggestions(initial: FigureSuggestionResponse[] = []) {
+  const suggestions = [...initial];
+  return {
+    suggestions,
+    suggest: jest.fn(async (catalogItemId: string, note?: string) => {
+      const existing = suggestions.find((s) => s.catalogItemId === catalogItemId);
+      if (existing?.status === 'pending') return existing;
+      const suggestion: FigureSuggestionResponse = {
+        id:
+          existing?.id ??
+          `0199b5a0-0000-7000-8000-${String(suggestions.length + 1).padStart(12, '0')}`,
+        status: 'pending',
+        catalogItemId,
+        ...(note && { note }),
+        createdAt: '2026-10-14T10:00:00.000Z',
+      };
+      if (existing) suggestions.splice(suggestions.indexOf(existing), 1, suggestion);
+      else suggestions.unshift(suggestion);
+      return suggestion;
+    }),
+    mine: jest.fn(async () => [...suggestions]),
+  } satisfies FigureSuggestions & { suggestions: FigureSuggestionResponse[] };
 }
 
 /** A shelf scanner whose methods are Jest mocks; by default AI is available and finds nothing. */
@@ -117,6 +147,7 @@ export class FakeAccountService implements AccountService {
       email,
       emailVerified: false,
       createdAt: '2026-10-05T09:00:00.000Z',
+      isAdmin: false,
     };
     this.accounts.set(email, { user, password });
     return user;
@@ -302,6 +333,7 @@ export function createWrapper({
   shelfScanner = createFakeShelfScanner(),
   questionAsker = createFakeQuestionAsker(),
   customItems = createFakeCustomItems(),
+  figureSuggestions = createFakeFigureSuggestions(),
   preorders = createFakePreorders(),
   seriesCatalog = createFakeSeriesCatalog(),
 }: {
@@ -314,6 +346,7 @@ export function createWrapper({
   shelfScanner?: ShelfScanner;
   questionAsker?: QuestionAsker;
   customItems?: CustomItems;
+  figureSuggestions?: FigureSuggestions;
   preorders?: Preorders;
   seriesCatalog?: SeriesCatalog;
 } = {}) {
@@ -335,6 +368,7 @@ export function createWrapper({
             shelfScanner,
             questionAsker,
             customItems,
+            figureSuggestions,
             preorders,
             seriesCatalog,
           }}

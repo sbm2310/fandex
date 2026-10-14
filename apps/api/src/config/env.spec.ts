@@ -19,7 +19,13 @@ describe('envSchema', () => {
       AI_QUESTIONS_PER_USER: 30,
       AI_QUESTIONS_PER_DAY: 100,
       TRUSTED_ORIGINS: ['http://localhost:8081', 'fandex://'],
+      ADMIN_EMAILS: [],
     });
+  });
+
+  it('reads admin emails as a lowercase list', () => {
+    const env = envSchema.parse({ ...required, ADMIN_EMAILS: ' Owner@Example.com, ,b@x.io ' });
+    expect(env.ADMIN_EMAILS).toEqual(['owner@example.com', 'b@x.io']);
   });
 
   it('treats an empty AI key as missing and coerces the AI limits', () => {

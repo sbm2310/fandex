@@ -9,6 +9,7 @@ import { ThemedText } from './themed-text';
 import { Spacing } from '@/constants/theme';
 import { useCurrentUser } from '@/hooks/use-account';
 import { useAddFigure } from '@/hooks/use-add-figure';
+import { useSuggestFigure } from '@/hooks/use-figure-suggestions';
 import { useTheme } from '@/hooks/use-theme';
 
 const SCALES = ['1/6', '1/4', '1/12', 'Life-size'] as const;
@@ -36,6 +37,8 @@ export function AddFigureForm({
   const [line, setLine] = useState('');
   const [scale, setScale] = useState('');
   const [coverUrl, setCoverUrl] = useState('');
+  const [suggest, setSuggest] = useState(false);
+  const suggestFigure = useSuggestFigure();
 
   const imageInvalid = coverUrl.trim() !== '' && !/^https:\/\/\S+$/.test(coverUrl.trim());
   const canSave = title.trim() !== '' && !imageInvalid && !addFigure.isPending;
@@ -63,6 +66,9 @@ export function AddFigureForm({
       { title, brand, number, line, scale, coverUrl },
       {
         onSuccess: (item) => {
+          // Signed in only (the checkbox is); the figure's page shows how it went.
+          const catalogItemId = item.catalog.catalogId;
+          if (suggest && catalogItemId) suggestFigure.mutate({ catalogItemId });
           // Ready for the next one; Back from the figure's page returns here.
           for (const clear of [setTitle, setBrand, setNumber, setLine, setScale, setCoverUrl]) {
             clear('');
@@ -163,6 +169,37 @@ export function AddFigureForm({
           </ThemedText>
         ) : null}
 
+        {/* Suggestions are reviewed in an account. */}
+        {user ? (
+          <Pressable
+            accessibilityRole="checkbox"
+            accessibilityState={{ checked: suggest }}
+            accessibilityLabel="Suggest it for Fandex's catalog"
+            onPress={() => setSuggest((value) => !value)}
+            style={styles.checkRow}
+          >
+            <View
+              style={StyleSheet.flatten([
+                styles.checkbox,
+                { borderColor: suggest ? colors.accent : colors.border },
+                suggest && { backgroundColor: colors.accent },
+              ])}
+            >
+              {suggest ? (
+                <ThemedText type="smallBold" style={{ color: colors.onAccent }}>
+                  ✓
+                </ThemedText>
+              ) : null}
+            </View>
+            <View style={styles.checkText}>
+              <ThemedText type="small">Suggest it for Fandex&apos;s catalog</ThemedText>
+              <ThemedText type="small" themeColor="textSecondary">
+                Once it&apos;s checked, every collector can find it (without its picture).
+              </ThemedText>
+            </View>
+          </Pressable>
+        ) : null}
+
         {addFigure.isError ? (
           <ThemedText type="smallBold" accessibilityRole="alert">
             Couldn&apos;t save the figure. Check your connection and try again.
@@ -195,6 +232,23 @@ const styles = StyleSheet.create({
   },
   column: {
     gap: Spacing.three,
+  },
+  checkRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: Spacing.three,
+  },
+  checkbox: {
+    width: 22,
+    height: 22,
+    borderWidth: 2,
+    borderRadius: Spacing.one,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkText: {
+    flex: 1,
+    gap: Spacing.half,
   },
   back: {
     alignSelf: 'flex-start',

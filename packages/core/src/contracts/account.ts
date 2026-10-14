@@ -12,6 +12,8 @@ export const meResponseSchema = z.object({
   name: z.string(),
   emailVerified: z.boolean(),
   createdAt: z.iso.datetime(),
+  /** Reviews figure suggestions (listed in the server's ADMIN_EMAILS). */
+  isAdmin: z.boolean().default(false),
 });
 
 export type MeResponse = z.infer<typeof meResponseSchema>;

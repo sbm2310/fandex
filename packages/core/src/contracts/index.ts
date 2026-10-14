@@ -7,3 +7,4 @@ export * from './preorders';
 export * from './release-date';
 export * from './series';
 export * from './money';
+export * from './figure-suggestions';

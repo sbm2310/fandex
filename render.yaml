@@ -36,3 +36,6 @@ services:
       # dashboard while testing alone).
       - key: GEMINI_API_KEY
         sync: false
+      # Who reviews figure suggestions (the owner's email).
+      - key: ADMIN_EMAILS
+        sync: false

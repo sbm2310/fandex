@@ -4,6 +4,7 @@ import { createContext, use, type ReactNode } from 'react';
 import type { AccountService } from './account-service';
 import type { CustomItems } from './custom-items';
 import type { FigureCatalog } from './figure-catalog';
+import type { FigureSuggestions } from './figure-suggestions';
 import type { Preorders } from './preorders';
 import type { QuestionAsker } from './question-asker';
 import type { SeriesCatalog } from './series-catalog';
@@ -26,6 +27,8 @@ export type AppServices = {
   questionAsker: QuestionAsker;
   /** Figures added by hand, saved on the Fandex API (signed in). */
   customItems: CustomItems;
+  /** Suggesting the user's own figures for the shared catalog (signed in). */
+  figureSuggestions: FigureSuggestions;
   /** The signed-in user's pre-orders on the Fandex API. */
   preorders: Preorders;
   /** Book series and the books missing from them (public, also for guests). */
@@ -85,6 +88,10 @@ export function useQuestionAsker(): QuestionAsker {
 
 export function useCustomItems(): CustomItems {
   return useAppServices().customItems;
+}
+
+export function useFigureSuggestionService(): FigureSuggestions {
+  return useAppServices().figureSuggestions;
 }
 
 export function usePreorderService(): Preorders {

@@ -18,7 +18,8 @@ export const FIGURE_SEED_SYNC = 'figure-seed';
  * Keeps the shared figures (`catalog_item` rows with source `fandex`) in line with the curated
  * list, the way the universe seed is kept: on startup, only when the list changed. Entries are
  * upserted by id, so catalog ids (and everything users own) stay stable. An entry the list
- * drops is deleted unless someone owns or pre-ordered it; then it stays, and is logged.
+ * drops is deleted unless someone owns or pre-ordered it; then it stays, and is logged. Shared
+ * figures that came from approved suggestions are left alone.
  */
 @Injectable()
 export class FigureSeedService implements OnModuleInit {
@@ -61,7 +62,12 @@ export class FigureSeedService implements OnModuleInit {
     );
 
     const ids = this.entries.map((entry) => entry.id);
-    const dropped = { source: 'fandex' as const, externalId: { notIn: ids } };
+    // Approved suggestions are shared figures too, but they aren't the list's to remove.
+    const dropped = {
+      source: 'fandex' as const,
+      externalId: { notIn: ids },
+      suggestion: { is: null },
+    };
     const { count: deleted } = await this.prisma.catalogItem.deleteMany({
       where: { ...dropped, ownedBy: { none: {} }, preorders: { none: {} } },
     });

@@ -14,7 +14,9 @@ import {
   type CatalogRequestOptions,
   type CatalogSearchKind,
   type CatalogSet,
+  type ComparableFigure,
   type Isbn13,
+  type SearchableFigure,
   type LegoCatalog,
   type NewFigure,
 } from '@fandex/core';
@@ -31,6 +33,24 @@ import {
   toCatalogItemData,
   toCatalogItemResponse,
 } from './catalog-item.mapper.js';
+
+/** A figure as the API returns it, plus the fields figure search and `sameFigure` compare. */
+export type SharedFigure = SearchableFigure & ComparableFigure & { item: CatalogItemResponse };
+
+export function figureView(item: CatalogItemResponse): SharedFigure {
+  const [brand] = item.creators;
+  return {
+    item,
+    title: item.title,
+    ...(brand && { brand }),
+    ...(item.subtitle && { line: item.subtitle }),
+    ...(item.figureNumber && { number: item.figureNumber }),
+    ...(item.edition && { edition: item.edition }),
+    ...(item.scale && { scale: item.scale }),
+    universes: item.universes,
+    characters: item.characters,
+  };
+}
 
 /** Injection token for the external catalog (Open Library in production, a fake in tests). */
 export const BOOK_CATALOG = Symbol('BOOK_CATALOG');
@@ -88,25 +108,16 @@ export class CatalogService {
    * figures (`custom`) are never searched; their owners see them in their collection.
    */
   private async searchFigures(query: string): Promise<CatalogItemResponse[]> {
+    return searchFigures(await this.sharedFigures(), query).map((figure) => figure.item);
+  }
+
+  /** Every shared figure, as returned and as figure search and `sameFigure` see it. */
+  async sharedFigures(): Promise<SharedFigure[]> {
     const rows = await this.prisma.catalogItem.findMany({
       where: { source: 'fandex', category: 'figure' },
       include: linksInclude,
     });
-    const figures = rows.map((row) => {
-      const item = toCatalogItemResponse(row, linksFromRow(row));
-      const [brand] = item.creators;
-      return {
-        item,
-        title: item.title,
-        ...(brand && { brand }),
-        ...(item.subtitle && { line: item.subtitle }),
-        ...(item.figureNumber && { number: item.figureNumber }),
-        ...(item.edition && { edition: item.edition }),
-        universes: item.universes,
-        characters: item.characters,
-      };
-    });
-    return searchFigures(figures, query).map((figure) => figure.item);
+    return rows.map((row) => figureView(toCatalogItemResponse(row, linksFromRow(row))));
   }
 
   /**
