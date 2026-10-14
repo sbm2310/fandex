@@ -21,7 +21,10 @@ type Params = {
   /** A book's release date from Open Library (YYYY-MM-DD and its precision), offered as is. */
   release?: string;
   releasePrecision?: string;
+  /** Where `release` came from: Open Library (a book, the default) or Fandex's figure catalog. */
+  releaseFrom?: string;
   brand?: string;
+  number?: string;
   line?: string;
   scale?: string;
   coverUrl?: string;
@@ -72,6 +75,7 @@ export default function NewPreorderScreen() {
     ? {
         title,
         ...(params.brand && { brand: params.brand }),
+        ...(params.number && { number: params.number }),
         ...(params.line && { line: params.line }),
         ...(params.scale && { scale: params.scale }),
         ...(params.coverUrl && { coverUrl: params.coverUrl }),
@@ -97,6 +101,7 @@ export default function NewPreorderScreen() {
           <PreorderForm
             submitLabel="Save pre-order"
             {...(suggestedRelease && { suggestedRelease })}
+            suggestedReleaseFrom={params.releaseFrom === 'fandex' ? 'fandex' : 'openlibrary'}
             busy={create.isPending}
             error={create.isError ? preorderErrorMessage(create.error) : undefined}
             onSubmit={(fields) =>

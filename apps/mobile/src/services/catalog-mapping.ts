@@ -48,12 +48,17 @@ export function toCatalogSet(item: CatalogItemResponse): CatalogSet | null {
   };
 }
 
-/** API catalog item → the app's CatalogFigure (figures added by hand). */
+/**
+ * API catalog item → the app's CatalogFigure: a shared one from Fandex's catalog (`fandex`) or
+ * one its owner added by hand (`custom`).
+ */
 export function toCatalogFigure(item: CatalogItemResponse): CatalogFigure | null {
-  if (item.category !== 'figure' || item.source !== 'custom') return null;
+  if (item.category !== 'figure' || (item.source !== 'custom' && item.source !== 'fandex')) {
+    return null;
+  }
   const [brand] = item.creators;
   return {
-    source: 'custom',
+    source: item.source,
     externalId: item.externalId,
     category: 'figure',
     catalogId: item.id,
@@ -61,6 +66,11 @@ export function toCatalogFigure(item: CatalogItemResponse): CatalogFigure | null
     ...(brand && { brand }),
     ...(item.subtitle && { line: item.subtitle }),
     ...(item.scale && { scale: item.scale }),
+    ...(item.figureNumber && { number: item.figureNumber }),
+    ...(item.edition && { edition: item.edition }),
+    ...(item.releaseDate && { release: item.releaseDate }),
+    ...(item.price && { price: item.price }),
+    ...(item.sources?.length && { sources: item.sources }),
     ...(item.coverUrl && { coverUrl: item.coverUrl }),
     ...links(item),
   };

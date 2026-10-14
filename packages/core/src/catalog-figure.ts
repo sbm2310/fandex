@@ -36,6 +36,8 @@ export type CatalogFigure = {
   release?: ReleaseDate;
   /** Its original retail price. */
   price?: Money;
+  /** Curated figures: the pages their facts were checked against. */
+  sources?: string[];
   coverUrl?: string;
   /** Universes this figure belongs to (slugs), matched from its name and line. */
   universes?: string[];
@@ -99,7 +101,12 @@ export function trimmed(figure: NewFigure): NewFigure {
   };
 }
 
-/** "Hot Toys · 1/6" — the figure's maker and scale, for lists. */
-export function figureDetails(figure: Pick<CatalogFigure, 'brand' | 'scale'>): string | undefined {
-  return [figure.brand, figure.scale].filter(Boolean).join(' · ') || undefined;
+/** "Hot Toys · MMS 279 · 1/6", "InArt · Deluxe · 1/6": maker, number, edition and scale, for lists. */
+export function figureDetails(
+  figure: Pick<CatalogFigure, 'brand' | 'number' | 'edition' | 'scale'>,
+): string | undefined {
+  return (
+    [figure.brand, figure.number, figure.edition, figure.scale].filter(Boolean).join(' · ') ||
+    undefined
+  );
 }

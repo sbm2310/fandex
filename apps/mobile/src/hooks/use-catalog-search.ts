@@ -3,13 +3,13 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 import { useDebouncedValue } from './use-debounced-value';
 
-import { useCatalog, useLegoCatalog } from '@/services/app-services';
+import { useCatalog, useFigureCatalog, useLegoCatalog } from '@/services/app-services';
 
 const MIN_QUERY_LENGTH = 2;
 const DEBOUNCE_MS = 400;
 
-/** What the user is searching: books (incl. manga and comics) or LEGO sets. */
-export type SearchKind = 'books' | 'lego';
+/** What the user is searching: books (incl. manga and comics), LEGO sets or figures. */
+export type SearchKind = 'books' | 'lego' | 'figures';
 
 /** What the user's input means: nothing yet, a text search, an ISBN, or a mistyped ISBN. */
 export type SearchMode =
@@ -17,13 +17,16 @@ export type SearchMode =
   | { kind: 'text'; query: string }
   | { kind: 'isbn'; isbn: Isbn13 }
   | { kind: 'invalid-isbn'; input: string }
-  | { kind: 'lego'; query: string };
+  | { kind: 'lego'; query: string }
+  | { kind: 'figures'; query: string };
 
 export function classifySearch(input: string, searchKind: SearchKind = 'books'): SearchMode {
   const trimmed = input.trim();
-  if (searchKind === 'lego') {
-    // Set numbers ("75192") and names both go to the LEGO search.
-    return trimmed.length >= MIN_QUERY_LENGTH ? { kind: 'lego', query: trimmed } : { kind: 'idle' };
+  if (searchKind === 'lego' || searchKind === 'figures') {
+    // Set numbers ("75192"), box numbers ("MMS 279") and names all go to the same search.
+    return trimmed.length >= MIN_QUERY_LENGTH
+      ? { kind: searchKind, query: trimmed }
+      : { kind: 'idle' };
   }
   if (looksLikeIsbn(trimmed)) {
     const isbn = parseIsbn(trimmed);
@@ -34,12 +37,14 @@ export function classifySearch(input: string, searchKind: SearchKind = 'books'):
 
 /**
  * Searches as the user types. Books: ISBNs (typed, pasted or scanned) get an exact lookup,
- * anything else a text search. LEGO: name or set number. Waits for a pause in typing, keeps
+ * anything else a text search. LEGO: name or set number. Figures: name, character or box
+ * number. Waits for a pause in typing, keeps
  * the previous results while the next load, and cancels superseded requests.
  */
 export function useCatalogSearch(input: string, searchKind: SearchKind = 'books') {
   const catalog = useCatalog();
   const legoCatalog = useLegoCatalog();
+  const figureCatalog = useFigureCatalog();
   const mode = classifySearch(useDebouncedValue(input, DEBOUNCE_MS), searchKind);
 
   const result = useQuery({
@@ -54,11 +59,13 @@ export function useCatalogSearch(input: string, searchKind: SearchKind = 'books'
           return catalog.search(mode.query, { signal });
         case 'lego':
           return legoCatalog.searchSets(mode.query, { signal });
+        case 'figures':
+          return figureCatalog.searchFigures(mode.query, { signal });
         default:
           return [];
       }
     },
-    enabled: mode.kind === 'text' || mode.kind === 'isbn' || mode.kind === 'lego',
+    enabled: mode.kind !== 'idle' && mode.kind !== 'invalid-isbn',
     placeholderData: keepPreviousData,
   });
 
@@ -73,6 +80,8 @@ function queryKeyFor(mode: SearchMode) {
       return ['catalog', 'search', mode.query];
     case 'lego':
       return ['catalog', 'lego', mode.query];
+    case 'figures':
+      return ['catalog', 'figures', mode.query];
     default:
       return ['catalog', 'idle'];
   }

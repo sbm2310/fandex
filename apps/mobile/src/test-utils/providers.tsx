@@ -12,6 +12,7 @@ import {
   type ShelfScanResponse,
   type BookCatalog,
   type CatalogBook,
+  type CatalogFigure,
   type CatalogSet,
   type CollectionRepository,
   type KeyValueStore,
@@ -23,6 +24,7 @@ import type { ReactNode } from 'react';
 import { AccountError, type AccountService, type AccountUser } from '@/services/account-service';
 import { AppServicesProvider } from '@/services/app-services';
 import type { CustomItems } from '@/services/custom-items';
+import type { FigureCatalog } from '@/services/figure-catalog';
 import type { Preorders } from '@/services/preorders';
 import type { SeriesCatalog } from '@/services/series-catalog';
 import { AskUnavailableError, type QuestionAsker } from '@/services/question-asker';
@@ -49,6 +51,16 @@ export function createFakeLegoCatalog(overrides: Partial<LegoCatalog> = {}) {
     ),
     lookupSet: jest.fn<Promise<CatalogSet | null>, Parameters<LegoCatalog['lookupSet']>>(() =>
       Promise.resolve(null),
+    ),
+    ...overrides,
+  };
+}
+
+/** A figure catalog whose search is a Jest mock; by default it finds nothing. */
+export function createFakeFigureCatalog(overrides: Partial<FigureCatalog> = {}) {
+  return {
+    searchFigures: jest.fn<Promise<CatalogFigure[]>, Parameters<FigureCatalog['searchFigures']>>(
+      () => Promise.resolve([]),
     ),
     ...overrides,
   };
@@ -283,6 +295,7 @@ export function createFakeSeriesCatalog({
 export function createWrapper({
   catalog = createFakeCatalog(),
   legoCatalog = createFakeLegoCatalog(),
+  figureCatalog = createFakeFigureCatalog(),
   deviceCollection = createMemoryCollection(),
   accountCollection = createMemoryCollection(),
   account = new FakeAccountService(),
@@ -294,6 +307,7 @@ export function createWrapper({
 }: {
   catalog?: BookCatalog;
   legoCatalog?: LegoCatalog;
+  figureCatalog?: FigureCatalog;
   deviceCollection?: CollectionRepository;
   accountCollection?: CollectionRepository;
   account?: AccountService;
@@ -314,6 +328,7 @@ export function createWrapper({
           services={{
             catalog,
             legoCatalog,
+            figureCatalog,
             deviceCollection,
             accountCollection,
             account,

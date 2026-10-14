@@ -10,11 +10,15 @@ import { localToday } from '@/utils/today';
 export function PreorderLink({ entry }: { entry: CatalogEntry }) {
   const owned = useIsInCollection(entry);
   if (owned !== false || !entry.catalogId) return null;
-  // An upcoming book's release date, from Open Library, to start the form with.
-  const upcoming =
-    isBookEntry(entry) && entry.publishDate && releasePeriodEnd(entry.publishDate) >= localToday()
-      ? entry.publishDate
+  // An upcoming release date to start the form with: Open Library's for a book, the figure
+  // catalog's for a figure.
+  const catalogDate = isBookEntry(entry)
+    ? entry.publishDate
+    : entry.category === 'figure'
+      ? entry.release
       : undefined;
+  const upcoming =
+    catalogDate && releasePeriodEnd(catalogDate) >= localToday() ? catalogDate : undefined;
   return (
     <Link
       href={{
@@ -23,6 +27,7 @@ export function PreorderLink({ entry }: { entry: CatalogEntry }) {
           catalogId: entry.catalogId,
           title: entry.title,
           ...(upcoming && { release: upcoming.date, releasePrecision: upcoming.precision }),
+          ...(upcoming && entry.category === 'figure' && { releaseFrom: 'fandex' }),
         },
       }}
       accessibilityLabel={`Pre-order ${entry.title}`}

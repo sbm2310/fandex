@@ -11,6 +11,7 @@ import type { AppServices } from './app-services';
 import { createAuthClientFor } from './auth-client';
 import { BetterAuthAccountService } from './better-auth-account-service';
 import { ApiCustomItems } from './custom-items';
+import { ApiFigureCatalog } from './figure-catalog';
 import { ApiPreorders } from './preorders';
 import { ApiSeriesCatalog } from './series-catalog';
 import { ApiQuestionAsker } from './question-asker';
@@ -25,6 +26,8 @@ export function createDefaultServices(): AppServices {
     catalog: new ApiCatalog(apiFetch),
     // LEGO sets via the API (Rebrickable behind it).
     legoCatalog: new ApiLegoCatalog(apiFetch),
+    // Shared figures from Fandex's own catalog (curated, no outside source).
+    figureCatalog: new ApiFigureCatalog(apiFetch),
     // AsyncStorage persists on the device (localStorage on web): the guest collection.
     deviceCollection: new KeyValueCollectionRepository({
       store: AsyncStorage,

@@ -3,6 +3,7 @@ import { createContext, use, type ReactNode } from 'react';
 
 import type { AccountService } from './account-service';
 import type { CustomItems } from './custom-items';
+import type { FigureCatalog } from './figure-catalog';
 import type { Preorders } from './preorders';
 import type { QuestionAsker } from './question-asker';
 import type { SeriesCatalog } from './series-catalog';
@@ -12,6 +13,8 @@ import type { ShelfScanner } from './shelf-scanner';
 export type AppServices = {
   catalog: BookCatalog;
   legoCatalog: LegoCatalog;
+  /** Fandex's shared figure catalog (public). */
+  figureCatalog: FigureCatalog;
   /** Books saved on this device: the collection while signed out ("guest mode"). */
   deviceCollection: CollectionRepository;
   /** The signed-in user's collection on the Fandex API, synced across devices. */
@@ -54,6 +57,10 @@ export function useCatalog(): BookCatalog {
 
 export function useLegoCatalog(): LegoCatalog {
   return useAppServices().legoCatalog;
+}
+
+export function useFigureCatalog(): FigureCatalog {
+  return useAppServices().figureCatalog;
 }
 
 export function useCollectionRepositories(): {

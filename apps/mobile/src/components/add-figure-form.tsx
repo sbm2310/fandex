@@ -14,16 +14,25 @@ import { useTheme } from '@/hooks/use-theme';
 const SCALES = ['1/6', '1/4', '1/12', 'Life-size'] as const;
 
 /**
- * Adds a figure by hand (Hot Toys and similar: no public catalog covers them), on the Add
- * tab's "Figures" option. Fandex links it to the universes and characters its name and line
- * mention; the user can fix that later.
+ * Adds a figure by hand, when Fandex's figure catalog doesn't have it (the Add tab's "Not
+ * here? Add it by hand"). Fandex links it to the universes and characters its name and line
+ * mention; the user can fix that later. It's private to its owner.
  */
-export function AddFigureForm() {
+export function AddFigureForm({
+  initialTitle = '',
+  onBack,
+}: {
+  /** What was searched for, as a starting name. */
+  initialTitle?: string;
+  /** Back to the catalog search. */
+  onBack?: () => void;
+}) {
   const colors = useTheme();
   const addFigure = useAddFigure();
   const { data: user } = useCurrentUser();
-  const [title, setTitle] = useState('');
+  const [title, setTitle] = useState(initialTitle);
   const [brand, setBrand] = useState('');
+  const [number, setNumber] = useState('');
   const [line, setLine] = useState('');
   const [scale, setScale] = useState('');
   const [coverUrl, setCoverUrl] = useState('');
@@ -36,18 +45,28 @@ export function AddFigureForm() {
     if (!canSave) return;
     router.push({
       pathname: '/preorder/new',
-      params: { figure: '1', title: title.trim(), brand, line, scale, coverUrl: coverUrl.trim() },
+      params: {
+        figure: '1',
+        title: title.trim(),
+        brand,
+        number,
+        line,
+        scale,
+        coverUrl: coverUrl.trim(),
+      },
     });
   };
 
   const save = () => {
     if (!canSave) return;
     addFigure.mutate(
-      { title, brand, line, scale, coverUrl },
+      { title, brand, number, line, scale, coverUrl },
       {
         onSuccess: (item) => {
           // Ready for the next one; Back from the figure's page returns here.
-          for (const clear of [setTitle, setBrand, setLine, setScale, setCoverUrl]) clear('');
+          for (const clear of [setTitle, setBrand, setNumber, setLine, setScale, setCoverUrl]) {
+            clear('');
+          }
           router.push({ pathname: '/book/[id]', params: { id: item.id } });
         },
       },
@@ -62,9 +81,16 @@ export function AddFigureForm() {
       keyboardDismissMode="on-drag"
     >
       <View style={styles.column}>
+        {onBack ? (
+          <Pressable accessibilityRole="button" onPress={onBack} style={styles.back}>
+            <ThemedText type="small" themeColor="accent">
+              ‹ Back to search
+            </ThemedText>
+          </Pressable>
+        ) : null}
         <ThemedText themeColor="textSecondary">
-          No catalog has figures like Hot Toys, so describe yours. Name the character and Fandex
-          links it to its universe.
+          Not in Fandex&apos;s catalog yet? Describe it: name the character and Fandex links it to
+          its universe. Only you will see it.
         </ThemedText>
 
         <FormField
@@ -81,6 +107,14 @@ export function AddFigureForm() {
           onChangeText={setBrand}
           placeholder="Hot Toys"
           autoCapitalize="words"
+        />
+        <FormField
+          label="Number on the box (optional)"
+          value={number}
+          onChangeText={setNumber}
+          placeholder="MMS 279"
+          autoCapitalize="characters"
+          autoCorrect={false}
         />
         <FormField
           label="Line or series (optional)"
@@ -161,6 +195,10 @@ const styles = StyleSheet.create({
   },
   column: {
     gap: Spacing.three,
+  },
+  back: {
+    alignSelf: 'flex-start',
+    paddingVertical: Spacing.one,
   },
   scale: {
     gap: Spacing.two,

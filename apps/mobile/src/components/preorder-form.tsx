@@ -26,8 +26,12 @@ export type PreorderFields = Omit<CreatePreorderRequest, 'catalogItemId'>;
 type Props = {
   /** The pre-order being edited; empty for a new one. */
   initial?: PreorderResponse;
-  /** For a new pre-order of an upcoming book: Open Library's release date, filled in. */
+  /**
+   * For a new pre-order of something upcoming: its catalog's release date, filled in — Open
+   * Library's for a book (checked daily), Fandex's figure catalog's for a figure.
+   */
   suggestedRelease?: ReleaseDate;
+  suggestedReleaseFrom?: 'openlibrary' | 'fandex';
   submitLabel: string;
   busy: boolean;
   /** Shown above the button when saving failed. */
@@ -42,6 +46,7 @@ type Props = {
 export function PreorderForm({
   initial,
   suggestedRelease,
+  suggestedReleaseFrom = 'openlibrary',
   submitLabel,
   busy,
   error,
@@ -61,7 +66,7 @@ export function PreorderForm({
   const [release, setRelease] = useState<ReleaseDate | null>(
     initial?.expectedRelease ?? suggestedRelease ?? null,
   );
-  const fromOpenLibrary =
+  const fromCatalog =
     suggestedRelease !== undefined &&
     release?.date === suggestedRelease.date &&
     release.precision === suggestedRelease.precision;
@@ -158,9 +163,11 @@ export function PreorderForm({
         precisions={['day', 'month', 'quarter', 'year']}
         startFrom={localToday()}
       />
-      {fromOpenLibrary ? (
+      {fromCatalog ? (
         <ThemedText type="small" themeColor="textSecondary">
-          From Open Library. Fandex checks it daily and moves the date if it changes.
+          {suggestedReleaseFrom === 'fandex'
+            ? "From Fandex's figure catalog. Makers often move dates: change it if yours does."
+            : 'From Open Library. Fandex checks it daily and moves the date if it changes.'}
         </ThemedText>
       ) : null}
       <FormField

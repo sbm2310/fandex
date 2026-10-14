@@ -1,5 +1,15 @@
-import { formatTitle, isBookItem, isEdited, itemLinks, type CollectionItem } from '@fandex/core';
-import { router, useLocalSearchParams } from 'expo-router';
+import {
+  formatMoney,
+  formatRelease,
+  formatTitle,
+  isBookItem,
+  isEdited,
+  itemLinks,
+  releasePeriodEnd,
+  type CatalogFigure,
+  type CollectionItem,
+} from '@fandex/core';
+import { Link, router, useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import { BookCover } from '@/components/book-cover';
@@ -16,6 +26,7 @@ import { MaxContentWidth, Spacing } from '@/constants/theme';
 import { useCollectionItem, useRemoveFromCollection } from '@/hooks/use-collection';
 import { useTheme } from '@/hooks/use-theme';
 import { confirm } from '@/utils/confirm';
+import { localToday } from '@/utils/today';
 
 export default function BookDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -97,11 +108,7 @@ function BookDetail({ item }: { item: CollectionItem }) {
                 <Fact label="Released" value={item.catalog.year?.toString()} />
               </>
             ) : item.category === 'figure' ? (
-              <>
-                <Fact label="Brand" value={item.catalog.brand} />
-                <Fact label="Line" value={item.catalog.line} />
-                <Fact label="Scale" value={item.catalog.scale} />
-              </>
+              <FigureFacts figure={item.catalog} />
             ) : (
               <>
                 <Fact label="Publisher" value={item.catalog.publisher} />
@@ -113,6 +120,8 @@ function BookDetail({ item }: { item: CollectionItem }) {
           </View>
 
           <Links item={item} />
+
+          {item.category === 'figure' && <FigureSources figure={item.catalog} />}
 
           <SeriesSection item={item} />
 
@@ -160,6 +169,54 @@ function Links({ item }: { item: CollectionItem }) {
       )}
     </View>
   );
+}
+
+function FigureFacts({ figure }: { figure: CatalogFigure }) {
+  const { release } = figure;
+  const released = release && releasePeriodEnd(release) < localToday();
+  return (
+    <>
+      <Fact label="Brand" value={figure.brand} />
+      <Fact label="Number" value={figure.number} />
+      <Fact label="Line" value={figure.line} />
+      <Fact label="Edition" value={figure.edition} />
+      <Fact label="Scale" value={figure.scale} />
+      <Fact label={released ? 'Released' : 'Expected'} value={release && formatRelease(release)} />
+      <Fact
+        label="Original price"
+        value={figure.price && formatMoney(figure.price.amount, figure.price.currency)}
+      />
+    </>
+  );
+}
+
+/** Where a curated figure's facts came from: each page by its site name, as a link. */
+function FigureSources({ figure }: { figure: CatalogFigure }) {
+  if (figure.source !== 'fandex' || !figure.sources?.length) return null;
+  return (
+    <View style={styles.linkGroup}>
+      <ThemedText type="small" themeColor="textSecondary" accessibilityRole="header">
+        From Fandex&apos;s figure catalog, checked against
+      </ThemedText>
+      <View style={styles.sources}>
+        {figure.sources.map((url) => (
+          <Link key={url} href={url as `https:${string}`} target="_blank">
+            <ThemedText type="small" themeColor="accent">
+              {siteName(url)}
+            </ThemedText>
+          </Link>
+        ))}
+      </View>
+    </View>
+  );
+}
+
+/**
+ * "https://www.bigbadtoystore.com/Product/…" → "bigbadtoystore.com". (A regex: React Native's
+ * URL doesn't implement `hostname`.)
+ */
+function siteName(url: string): string {
+  return /^https?:\/\/(?:www\.)?([^/?#]+)/i.exec(url)?.[1] ?? url;
 }
 
 function Fact({ label, value }: { label: string; value: string | undefined }) {
@@ -264,6 +321,11 @@ const styles = StyleSheet.create({
   },
   linkGroup: {
     gap: Spacing.two,
+  },
+  sources: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Spacing.three,
   },
   coverWrap: {
     alignItems: 'center',

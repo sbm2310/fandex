@@ -19,14 +19,23 @@ import { useCatalogSearch, type SearchKind } from '@/hooks/use-catalog-search';
 import { useTheme } from '@/hooks/use-theme';
 import { catalogErrorMessage } from '@/services/catalog-error-message';
 
-/** What's being added: books and LEGO are searched in their catalogs; figures are described. */
-type AddKind = SearchKind | 'figure';
-
-const KIND_OPTIONS: SegmentedOption<AddKind>[] = [
+const KIND_OPTIONS: SegmentedOption<SearchKind>[] = [
   { value: 'books', label: 'Books' },
   { value: 'lego', label: 'LEGO' },
-  { value: 'figure', label: 'Figures' },
+  { value: 'figures', label: 'Figures' },
 ];
+
+const PLACEHOLDERS: Record<SearchKind, string> = {
+  books: 'Title, author or ISBN',
+  lego: 'Set name or number',
+  figures: 'Name, character or box number',
+};
+
+const SEARCH_LABELS: Record<SearchKind, string> = {
+  books: 'Search books',
+  lego: 'Search LEGO sets',
+  figures: 'Search figures',
+};
 
 export default function AddScreen() {
   // The barcode scanner returns here with ?isbn=…&scan=<timestamp>, and a shelf scan's
@@ -38,9 +47,12 @@ export default function AddScreen() {
     scan?: string;
   }>();
   const incoming = params.isbn ?? params.q;
-  const incomingKind: SearchKind = params.kind === 'lego' && !params.isbn ? 'lego' : 'books';
+  const incomingKind: SearchKind =
+    (params.kind === 'lego' || params.kind === 'figures') && !params.isbn ? params.kind : 'books';
   const [input, setInput] = useState(incoming ?? '');
-  const [kind, setKind] = useState<AddKind>(incomingKind);
+  const [kind, setKind] = useState<SearchKind>(incomingKind);
+  // Figures not in Fandex's catalog are described by hand instead.
+  const [byHand, setByHand] = useState(false);
   const [appliedScan, setAppliedScan] = useState(params.scan);
   // Put a new scan into the search field (adjusting state during render, as React recommends
   // over an effect: https://react.dev/learn/you-might-not-need-an-effect).
@@ -49,13 +61,14 @@ export default function AddScreen() {
     if (incoming) {
       setInput(incoming);
       setKind(incomingKind);
+      setByHand(false);
     }
   }
-  // Figures have no catalog: nothing to search while that option is picked.
-  const search = useCatalogSearch(
-    kind === 'figure' ? '' : input,
-    kind === 'figure' ? 'books' : kind,
-  );
+  const search = useCatalogSearch(byHand ? '' : input, kind);
+  const changeKind = (next: SearchKind) => {
+    setKind(next);
+    setByHand(false);
+  };
 
   return (
     <Screen>
@@ -64,11 +77,11 @@ export default function AddScreen() {
       <SegmentedControl
         options={KIND_OPTIONS}
         value={kind}
-        onChange={setKind}
+        onChange={changeKind}
         accessibilityLabel="What to add"
       />
-      {kind === 'figure' ? (
-        <AddFigureForm />
+      {kind === 'figures' && byHand ? (
+        <AddFigureForm initialTitle={input.trim()} onBack={() => setByHand(false)} />
       ) : (
         <>
           <View style={styles.searchRow}>
@@ -76,8 +89,8 @@ export default function AddScreen() {
               <SearchField
                 value={input}
                 onChangeText={setInput}
-                placeholder={kind === 'lego' ? 'Set name or number' : 'Title, author or ISBN'}
-                accessibilityLabel={kind === 'lego' ? 'Search LEGO sets' : 'Search books'}
+                placeholder={PLACEHOLDERS[kind]}
+                accessibilityLabel={SEARCH_LABELS[kind]}
                 busy={search.isFetching && !search.isPending}
               />
             </View>
@@ -86,33 +99,37 @@ export default function AddScreen() {
             {Platform.OS !== 'web' && kind === 'books' && <ScanButton />}
           </View>
           {Platform.OS !== 'web' && kind === 'books' && <RapidScanLink />}
-          <ShelfScanLink />
-          <SearchResults search={search} kind={kind} />
+          {/* Shelf photos find books and LEGO sets. */}
+          {kind !== 'figures' && <ShelfScanLink />}
+          <SearchResults search={search} kind={kind} onAddByHand={() => setByHand(true)} />
         </>
       )}
     </Screen>
   );
 }
 
+const IDLE_MESSAGES: Record<SearchKind, string> = {
+  books: 'Search Open Library by title, author or ISBN.',
+  lego: 'Search LEGO sets by name or set number, e.g. "Millennium Falcon" or 75192.',
+  figures:
+    'Search Hot Toys and InArt figures by name, character or box number, e.g. "Gandalf" or MMS 279.',
+};
+
 function SearchResults({
   search,
   kind,
+  onAddByHand,
 }: {
   search: ReturnType<typeof useCatalogSearch>;
   kind: SearchKind;
+  /** Figures only: describe one the catalog doesn't have. */
+  onAddByHand: () => void;
 }) {
   const { mode } = search;
+  const byHand = kind === 'figures' ? <AddByHandButton onPress={onAddByHand} /> : null;
 
   if (mode.kind === 'idle') {
-    return (
-      <Message
-        text={
-          kind === 'lego'
-            ? 'Search LEGO sets by name or set number, e.g. "Millennium Falcon" or 75192.'
-            : 'Search Open Library by title, author or ISBN.'
-        }
-      />
-    );
+    return <Message text={IDLE_MESSAGES[kind]}>{byHand}</Message>;
   }
   if (mode.kind === 'invalid-isbn') {
     return (
@@ -143,9 +160,13 @@ function SearchResults({
             ? `No book found for ISBN ${mode.isbn}. Open Library doesn't have this edition yet. Try searching by title instead.`
             : mode.kind === 'lego'
               ? `No LEGO sets found for “${mode.query}”.`
-              : `No books found for “${mode.query}”.`
+              : mode.kind === 'figures'
+                ? `No figures found for “${mode.query}” in Fandex's catalog.`
+                : `No books found for “${mode.query}”.`
         }
-      />
+      >
+        {byHand}
+      </Message>
     );
   }
 
@@ -175,9 +196,16 @@ function SearchResults({
         ) : null
       }
       ListFooterComponent={
-        <ThemedText type="small" themeColor="textSecondary" style={styles.attribution}>
-          {mode.kind === 'lego' ? 'Set data from Rebrickable' : 'Book data from Open Library'}
-        </ThemedText>
+        <View style={styles.footer}>
+          {byHand}
+          <ThemedText type="small" themeColor="textSecondary" style={styles.attribution}>
+            {mode.kind === 'lego'
+              ? 'Set data from Rebrickable'
+              : mode.kind === 'figures'
+                ? "Figures from Fandex's own catalog"
+                : 'Book data from Open Library'}
+          </ThemedText>
+        </View>
       }
     />
   );
@@ -265,6 +293,17 @@ function ShelfScanLink() {
   );
 }
 
+/** A figure Fandex's catalog doesn't have: describe it instead. */
+function AddByHandButton({ onPress }: { onPress: () => void }) {
+  return (
+    <Pressable accessibilityRole="button" onPress={onPress} style={styles.byHand}>
+      <ThemedText type="small" themeColor="accent">
+        Not here? Add it by hand
+      </ThemedText>
+    </Pressable>
+  );
+}
+
 function RetryButton({ onPress }: { onPress: () => void }) {
   const colors = useTheme();
   return (
@@ -328,6 +367,13 @@ const styles = StyleSheet.create({
   },
   pressed: {
     opacity: 0.7,
+  },
+  footer: {
+    alignItems: 'center',
+    paddingTop: Spacing.three,
+  },
+  byHand: {
+    paddingVertical: Spacing.two,
   },
   attribution: {
     textAlign: 'center',

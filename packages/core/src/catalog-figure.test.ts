@@ -48,10 +48,16 @@ describe('createFigure', () => {
     expect(trimmed({ title: 'x', scale: ' 1/4 ' })).toEqual({ title: 'x', scale: '1/4' });
   });
 
-  it('describes a figure by brand and scale', () => {
+  it('describes a figure by brand, number, edition and scale', () => {
     expect(figureDetails({ brand: 'Hot Toys', scale: '1/6' })).toBe('Hot Toys · 1/6');
     expect(figureDetails({ scale: '1/6' })).toBe('1/6');
     expect(figureDetails({})).toBeUndefined();
+    expect(figureDetails({ brand: 'Hot Toys', number: 'MMS 279', scale: '1/6' })).toBe(
+      'Hot Toys · MMS 279 · 1/6',
+    );
+    expect(figureDetails({ brand: 'InArt', edition: 'Deluxe', scale: '1/6' })).toBe(
+      'InArt · Deluxe · 1/6',
+    );
   });
 });
 
