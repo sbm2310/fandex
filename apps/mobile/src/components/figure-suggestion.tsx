@@ -1,7 +1,8 @@
 import type { CatalogFigure } from '@fandex/core';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import { Button } from './button';
+import { Card } from './card';
 import { ThemedText } from './themed-text';
 
 import { Spacing } from '@/constants/theme';
@@ -43,7 +44,7 @@ export function FigureSuggestionSection({ figure }: { figure: CatalogFigure }) {
 
   const offer = () => suggest.mutate({ catalogItemId });
   return (
-    <View style={styles.section}>
+    <Card style={styles.section}>
       {suggestion?.status === 'rejected' ? (
         <ThemedText type="small" themeColor="textSecondary">
           Not added to Fandex&apos;s catalog
@@ -68,15 +69,17 @@ export function FigureSuggestionSection({ figure }: { figure: CatalogFigure }) {
           Couldn&apos;t send the suggestion. Try again.
         </ThemedText>
       ) : null}
-    </View>
+    </Card>
   );
 }
 
 function Status({ text }: { text: string }) {
   return (
-    <ThemedText type="small" themeColor="textSecondary">
-      {text}
-    </ThemedText>
+    <Card>
+      <ThemedText type="small" themeColor="textSecondary">
+        {text}
+      </ThemedText>
+    </Card>
   );
 }
 

@@ -10,10 +10,12 @@ import {
   type CollectionItem,
 } from '@fandex/core';
 import { Link, router, useLocalSearchParams } from 'expo-router';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { SymbolView } from 'expo-symbols';
+import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
 
 import { ItemArtwork } from '@/components/item-artwork';
 import { Button } from '@/components/button';
+import { Card } from '@/components/card';
 import { AlsoOwnedEditions } from '@/components/other-editions';
 import { CATEGORY_LABELS } from '@/components/category-badge';
 import { EmptyState } from '@/components/empty-state';
@@ -23,7 +25,7 @@ import { SeriesSection } from '@/components/series-section';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { CharacterChips, UniverseChips } from '@/components/universe-links';
-import { MaxContentWidth, Spacing } from '@/constants/theme';
+import { Fonts, MaxContentWidth, Spacing } from '@/constants/theme';
 import { useCollectionItem, useRemoveFromCollection } from '@/hooks/use-collection';
 import { useTheme } from '@/hooks/use-theme';
 import { confirm } from '@/utils/confirm';
@@ -61,7 +63,12 @@ export default function BookDetailScreen() {
 
 function BookDetail({ item }: { item: CollectionItem }) {
   const { catalog } = item;
-  const byline = isBookItem(item) ? item.catalog.authors.join(', ') : undefined;
+  const remove = useRemoveFromCollection();
+  const colors = useTheme();
+  // Books are covers (2:3); sets and figures are product photos or a box, a little squarer.
+  const hero = isBookItem(item)
+    ? { width: 180, aspectRatio: 1.5 }
+    : { width: 230, aspectRatio: 1.26 };
 
   return (
     <ThemedView style={styles.fill}>
@@ -69,18 +76,15 @@ function BookDetail({ item }: { item: CollectionItem }) {
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.column}>
           <View style={styles.coverWrap}>
-            <ItemArtwork entry={catalog} width={180} />
+            <ItemArtwork entry={catalog} {...hero} />
           </View>
 
           <View style={styles.heading}>
             <ThemedText type="subtitle" style={styles.centeredText} accessibilityRole="header">
               {formatTitle(catalog)}
             </ThemedText>
-            {byline ? (
-              <ThemedText themeColor="textSecondary" style={styles.centeredText}>
-                {byline}
-              </ThemedText>
-            ) : null}
+            <Byline item={item} />
+            <Links item={item} />
             <View style={styles.centeredRow}>
               <AlsoOwnedEditions entry={catalog} />
             </View>
@@ -113,30 +117,48 @@ function BookDetail({ item }: { item: CollectionItem }) {
             <Fact label="Added" value={formatDate(item.addedAt)} />
           </View>
 
-          <Links item={item} />
-
           {item.category === 'figure' && <FigureSources figure={item.catalog} />}
           {item.category === 'figure' && <FigureSuggestionSection figure={item.catalog} />}
 
           <SeriesSection item={item} />
 
-          <View style={styles.fix}>
+          <View style={styles.actionsArea}>
             {isEdited(item) && (
               <ThemedText type="small" themeColor="textSecondary" style={styles.centeredText}>
                 You&apos;ve edited this item&apos;s details.
               </ThemedText>
             )}
-            <Button
-              label="Fix details"
-              variant="secondary"
-              onPress={() => router.push({ pathname: '/edit/[id]', params: { id: item.id } })}
-            />
+            <View style={styles.actions}>
+              <View style={styles.action}>
+                <Button
+                  label="Fix details"
+                  variant="secondary"
+                  onPress={() => router.push({ pathname: '/edit/[id]', params: { id: item.id } })}
+                />
+              </View>
+              <View style={styles.action}>
+                <RemoveButton item={item} remove={remove} />
+              </View>
+            </View>
+            {remove.isError && (
+              <ThemedText type="small" style={[styles.centeredText, { color: colors.danger }]}>
+                Couldn&apos;t remove this item. Try again.
+              </ThemedText>
+            )}
           </View>
-
-          <RemoveButton item={item} />
         </View>
       </ScrollView>
     </ThemedView>
+  );
+}
+
+/** Under a book's title: its authors (sets and figures show their maker among the facts). */
+function Byline({ item }: { item: CollectionItem }) {
+  if (!isBookItem(item) || item.catalog.authors.length === 0) return null;
+  return (
+    <ThemedText themeColor="textSecondary" style={styles.centeredText}>
+      {item.catalog.authors.join(', ')}
+    </ThemedText>
   );
 }
 
@@ -146,22 +168,8 @@ function Links({ item }: { item: CollectionItem }) {
   if (universes.length === 0 && characters.length === 0) return null;
   return (
     <View style={styles.links}>
-      {universes.length > 0 && (
-        <View style={styles.linkGroup}>
-          <ThemedText type="small" themeColor="textSecondary" accessibilityRole="header">
-            {universes.length === 1 ? 'Universe' : 'Universes'}
-          </ThemedText>
-          <UniverseChips universes={universes} />
-        </View>
-      )}
-      {characters.length > 0 && (
-        <View style={styles.linkGroup}>
-          <ThemedText type="small" themeColor="textSecondary" accessibilityRole="header">
-            Characters
-          </ThemedText>
-          <CharacterChips characters={characters} />
-        </View>
-      )}
+      <UniverseChips universes={universes} centered />
+      <CharacterChips characters={characters} centered />
     </View>
   );
 }
@@ -187,12 +195,21 @@ function FigureFacts({ figure }: { figure: CatalogFigure }) {
 
 /** Where a curated figure's facts came from: each page by its site name, as a link. */
 function FigureSources({ figure }: { figure: CatalogFigure }) {
+  const colors = useTheme();
   if (figure.source !== 'fandex' || !figure.sources?.length) return null;
+  const count = figure.sources.length;
   return (
-    <View style={styles.linkGroup}>
-      <ThemedText type="small" themeColor="textSecondary" accessibilityRole="header">
-        From Fandex&apos;s figure catalog, checked against
-      </ThemedText>
+    <Card style={styles.sourcesCard}>
+      <View style={styles.sourcesHeading}>
+        <SymbolView
+          name={{ ios: 'checkmark.seal', android: 'verified', web: 'verified' }}
+          tintColor={colors.accent}
+          size={18}
+        />
+        <ThemedText type="smallBold" accessibilityRole="header">
+          Checked against {count} {count === 1 ? 'source' : 'sources'}
+        </ThemedText>
+      </View>
       <View style={styles.sources}>
         {figure.sources.map((url) => (
           <Link key={url} href={url as `https:${string}`} target="_blank">
@@ -202,7 +219,10 @@ function FigureSources({ figure }: { figure: CatalogFigure }) {
           </Link>
         ))}
       </View>
-    </View>
+      <ThemedText type="small" themeColor="textSecondary">
+        From Fandex&apos;s figure catalog
+      </ThemedText>
+    </Card>
   );
 }
 
@@ -214,24 +234,28 @@ function siteName(url: string): string {
   return /^https?:\/\/(?:www\.)?([^/?#]+)/i.exec(url)?.[1] ?? url;
 }
 
+/** One fact as a small card: its label above, the value below. Two to a row. */
 function Fact({ label, value }: { label: string; value: string | undefined }) {
-  const colors = useTheme();
   if (!value) return null;
   return (
-    <View style={[styles.fact, { borderBottomColor: colors.border }]}>
+    <Card style={styles.fact}>
       <ThemedText type="small" themeColor="textSecondary">
         {label}
       </ThemedText>
-      <ThemedText type="small" selectable>
+      <ThemedText style={styles.factValue} selectable>
         {value}
       </ThemedText>
-    </View>
+    </Card>
   );
 }
 
-function RemoveButton({ item }: { item: CollectionItem }) {
-  const colors = useTheme();
-  const remove = useRemoveFromCollection();
+function RemoveButton({
+  item,
+  remove,
+}: {
+  item: CollectionItem;
+  remove: ReturnType<typeof useRemoveFromCollection>;
+}) {
   const title = formatTitle(item.catalog);
 
   async function onPress() {
@@ -249,32 +273,13 @@ function RemoveButton({ item }: { item: CollectionItem }) {
   }
 
   return (
-    <View style={styles.removeArea}>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={`Remove ${title} from collection`}
-        disabled={remove.isPending}
-        onPress={() => void onPress()}
-        style={({ pressed }) => [
-          styles.removeButton,
-          { borderColor: colors.danger },
-          (pressed || remove.isPending) && styles.pressed,
-        ]}
-      >
-        {remove.isPending ? (
-          <ActivityIndicator color={colors.danger} />
-        ) : (
-          <ThemedText type="smallBold" style={{ color: colors.danger }}>
-            Remove from collection
-          </ThemedText>
-        )}
-      </Pressable>
-      {remove.isError && (
-        <ThemedText type="small" style={[styles.centeredText, { color: colors.danger }]}>
-          Couldn&apos;t remove this book. Try again.
-        </ThemedText>
-      )}
-    </View>
+    <Button
+      label="Remove"
+      accessibilityLabel={`Remove ${title} from collection`}
+      variant="danger"
+      busy={remove.isPending}
+      onPress={() => void onPress()}
+    />
   );
 }
 
@@ -305,53 +310,65 @@ const styles = StyleSheet.create({
     maxWidth: MaxContentWidth / 1.5,
     gap: Spacing.four,
   },
-  links: {
-    gap: Spacing.three,
+  coverWrap: {
+    alignItems: 'center',
+  },
+  heading: {
+    gap: Spacing.two,
+  },
+  centeredText: {
+    textAlign: 'center',
   },
   centeredRow: {
     alignItems: 'center',
   },
-  fix: {
+  // Universe and character chips share one centred, wrapping row.
+  links: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: Spacing.two,
+    paddingTop: Spacing.one,
+  },
+  facts: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  fact: {
+    // Two to a row; an odd last one takes the whole row.
+    flexGrow: 1,
+    flexBasis: '40%',
+    gap: Spacing.half,
+    paddingVertical: Spacing.two + Spacing.one,
+  },
+  factValue: {
+    fontFamily: Fonts.display,
+    fontSize: 17,
+    lineHeight: 22,
+  },
+  sourcesCard: {
     gap: Spacing.two,
   },
-  linkGroup: {
+  sourcesHeading: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: Spacing.two,
   },
   sources: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: Spacing.three,
+    columnGap: Spacing.three,
+    rowGap: Spacing.one,
   },
-  coverWrap: {
-    alignItems: 'center',
-  },
-  heading: {
-    gap: Spacing.one,
-  },
-  centeredText: {
-    textAlign: 'center',
-  },
-  facts: {
+  actionsArea: {
     gap: Spacing.two,
   },
-  fact: {
+  actions: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: Spacing.three,
-    paddingBottom: Spacing.two,
-    borderBottomWidth: StyleSheet.hairlineWidth,
+    gap: 10,
   },
-  removeArea: {
-    gap: Spacing.two,
-  },
-  removeButton: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: 48,
-    borderWidth: 1,
-    borderRadius: Spacing.three,
-  },
-  pressed: {
-    opacity: 0.6,
+  action: {
+    flex: 1,
   },
 });

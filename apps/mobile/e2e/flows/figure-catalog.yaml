@@ -31,7 +31,7 @@ tags:
 - assertVisible: 'MMS 279'
 - assertVisible: 'Movie Masterpiece Series'
 - scrollUntilVisible:
-    element: "From Fandex's figure catalog, checked against"
+    element: 'Checked against \d+ sources'
 - assertVisible: 'actionfigure411.com'
 - scrollUntilVisible:
     element: 'Remove Darth Vader \(A New Hope\) from collection'

@@ -52,7 +52,14 @@ function Chip({
 }
 
 /** Links to universe pages ("Middle-earth"), for slugs the seed knows. */
-export function UniverseChips({ universes }: { universes: readonly string[] }) {
+export function UniverseChips({
+  universes,
+  centered = false,
+}: {
+  universes: readonly string[];
+  /** Centre the chips (under a centred title). */
+  centered?: boolean;
+}) {
   const scheme = useThemeScheme();
   const known = universes.flatMap((slug) => {
     const universe = findUniverse(slug);
@@ -60,7 +67,7 @@ export function UniverseChips({ universes }: { universes: readonly string[] }) {
   });
   if (known.length === 0) return null;
   return (
-    <View style={styles.chips}>
+    <View style={[styles.chips, centered && styles.centered]}>
       {known.map((universe) => (
         <Chip
           key={universe.slug}
@@ -81,9 +88,12 @@ export function UniverseChips({ universes }: { universes: readonly string[] }) {
 export function CharacterChips({
   characters,
   limit,
+  centered = false,
 }: {
   characters: readonly (CharacterRef & { itemCount?: number })[];
   limit?: number;
+  /** Centre the chips (under a centred title). */
+  centered?: boolean;
 }) {
   const colors = useTheme();
   const [expanded, setExpanded] = useState(false);
@@ -95,7 +105,7 @@ export function CharacterChips({
   const collapsible = limit !== undefined && known.length > limit;
   const shown = collapsible && !expanded ? known.slice(0, limit) : known;
   return (
-    <View style={styles.chips}>
+    <View style={[styles.chips, centered && styles.centered]}>
       {shown.map((character) => (
         <Chip
           key={`${character.universe}/${character.character}`}
@@ -143,6 +153,9 @@ const styles = StyleSheet.create({
     borderRadius: Spacing.four,
     paddingVertical: Spacing.one + Spacing.half,
     paddingHorizontal: Spacing.three,
+  },
+  centered: {
+    justifyContent: 'center',
   },
   chipLabel: {
     fontFamily: Fonts.semiBold,

@@ -281,7 +281,8 @@ describe("Fandex's figure catalog on the Add tab", () => {
     expect(screen.getByText('Released')).toBeOnTheScreen();
     expect(screen.getByText('$445.00')).toBeOnTheScreen();
     expect(screen.getByText('Sixth Scale Collectible Figure')).toBeOnTheScreen();
-    expect(screen.getByText("From Fandex's figure catalog, checked against")).toBeOnTheScreen();
+    expect(screen.getByRole('header', { name: /^Checked against \d+ sources$/ })).toBeOnTheScreen();
+    expect(screen.getByText("From Fandex's figure catalog")).toBeOnTheScreen();
     expect(screen.getByText('global.inart.studio')).toBeOnTheScreen();
     expect(screen.getByText('toy-people.com')).toBeOnTheScreen();
   });

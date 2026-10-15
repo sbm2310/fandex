@@ -7,6 +7,8 @@ import { useTheme } from '@/hooks/use-theme';
 
 type Props = {
   label: string;
+  /** Spoken by screen readers when the visible label needs context; defaults to the label. */
+  accessibilityLabel?: string;
   onPress: () => void;
   /** primary: the main action (violet); money: paying (amber); danger: removing (outlined). */
   variant?: 'primary' | 'secondary' | 'danger' | 'money';
@@ -16,6 +18,7 @@ type Props = {
 
 export function Button({
   label,
+  accessibilityLabel,
   onPress,
   variant = 'primary',
   busy = false,
@@ -37,7 +40,7 @@ export function Button({
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={label}
+      accessibilityLabel={accessibilityLabel ?? label}
       accessibilityState={{ disabled: inactive, busy }}
       disabled={inactive}
       onPress={onPress}

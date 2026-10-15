@@ -11,6 +11,7 @@ import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { AddToCollectionButton } from './add-to-collection-button';
 import { EntryRow } from './entry-row';
 import { PreorderLink } from './preorder-link';
+import { Card } from './card';
 import { ThemedText } from './themed-text';
 
 import { Spacing } from '@/constants/theme';
@@ -39,7 +40,7 @@ function BookSeriesSection({ item }: { item: CollectionItem }) {
   const total = series.entries.length;
 
   return (
-    <View style={styles.section}>
+    <Card style={styles.section}>
       <ThemedText type="smallBold" accessibilityRole="header">
         {place ? `Book ${place} of ${total} in ${series.name}` : `Part of ${series.name}`}
       </ThemedText>
@@ -62,7 +63,7 @@ function BookSeriesSection({ item }: { item: CollectionItem }) {
           ) : null}
         </>
       )}
-    </View>
+    </Card>
   );
 }
 
@@ -123,7 +124,7 @@ function VolumeSeriesSection({ item }: { item: CollectionItem }) {
     next.entry.publishDate.precision !== 'year';
 
   return (
-    <View style={styles.section}>
+    <Card style={styles.section}>
       <ThemedText type="smallBold" accessibilityRole="header">
         Volume {volume} of {series.name}
       </ThemedText>
@@ -158,7 +159,7 @@ function VolumeSeriesSection({ item }: { item: CollectionItem }) {
           }
         />
       ) : null}
-    </View>
+    </Card>
   );
 }
 
