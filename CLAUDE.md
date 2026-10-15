@@ -227,6 +227,15 @@ Full plan and task list: [`docs/plans/stage-7.md`](docs/plans/stage-7.md).
 - **Box-reading AI is in this stage** (same providers, fallback and quotas as shelf scans; an evaluation set of the owner's box photos).
 - A Sideshow affiliate feed (Hot Toys) is a later option: it needs a public site and approval.
 
+## UI redesign decisions (settled 2026-10-15)
+
+Full plan and task list: [`docs/plans/redesign.md`](docs/plans/redesign.md); mockups: the owner's "Fandex UI redesign" canvas (https://claude.ai/artifact/Jg7XsCESkUGT7ZkLzv2EjZ). Comes before Stage 8 (launch), which waits on the owner's cost decisions.
+
+- **Look:** "the collector's vitrine" — warm near-black ground, violet for actions, amber only for money and due dates, a colour per universe (app-side, by slug), Bricolage Grotesque for display and Figtree for text (`@expo-google-fonts/*`, free), box-art tiles for figures without photos.
+- **Both modes, dark first;** the app keeps following the phone's setting. Token names in `constants/theme.ts` stay the same.
+- **Home:** the Collection tab opens on "Your shelf" (universes, coming up, recently added, Ask); "Everything" opens today's grid. The iOS tab bar stays native.
+- **Look and layout only,** plus "I've paid it" on a pre-order needing attention and "N of M characters" on universe cards. Accessibility labels stay unchanged (tests and Maestro flows select by them).
+
 ## Open questions (deferred to later stages)
 
 - Email provider for verification and password reset (free tiers only) — needs a domain we own
