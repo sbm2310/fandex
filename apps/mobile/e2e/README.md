@@ -45,6 +45,9 @@ patterns, but if a source changes a date or a title, a flow's expectation change
   AutoFill bar up, which `hideKeyboard` can't swipe away; it failed every time once the
   Simulator's hardware keyboard was connected (typing into the Simulator by hand connects it, and
   then no on-screen keyboard appears at all). Tapping a static text ends editing either way.
+- **Centre what you tap near the bottom:** an item half under the tab bar counts as visible,
+  so `scrollUntilVisible` doesn't move and the tap lands on the list's edge; add
+  `centerElement: true` (the home screen's "Recently added" sits that low).
 - **Below the fold means scroll, not wait:** `extendedWaitUntil` only sees what's on screen, so
   when a page grows (the redesigned item page pushed the series section down), wait with
   `scrollUntilVisible` and a long timeout instead.

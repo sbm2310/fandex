@@ -42,8 +42,17 @@ export function charactersLabel(
   return more > 0 ? `${names.join(', ')} and ${more} more` : names.join(' and ');
 }
 
-/** A universe on the Universes tab, in its colours: newest artwork, counts and characters. */
-export function UniverseCard({ universe }: { universe: UniverseOverview }) {
+/**
+ * A universe in its colours: newest artwork, counts and characters. Full width on the Universes
+ * tab; `compact` is the narrower, taller card for the home screen's sideways row.
+ */
+export function UniverseCard({
+  universe,
+  compact = false,
+}: {
+  universe: UniverseOverview;
+  compact?: boolean;
+}) {
   const tint = useUniverseColors(universe.slug);
   const counts = categoryCountsLabel(universe.categoryCounts);
   const characters = charactersLabel(universe.characters);
@@ -55,14 +64,36 @@ export function UniverseCard({ universe }: { universe: UniverseOverview }) {
     <Link href={{ pathname: '/universe/[slug]', params: { slug: universe.slug } }} asChild>
       <Pressable
         accessibilityLabel={[universe.name, counts, characters].filter(Boolean).join(', ')}
-        style={StyleSheet.flatten([styles.card, { backgroundColor: tint.ground }])}
+        style={StyleSheet.flatten([
+          styles.card,
+          compact && styles.compactCard,
+          { backgroundColor: tint.ground },
+        ])}
       >
-        <View style={styles.text}>
-          <ThemedText type="section" style={{ color: tint.onGround }}>
+        {compact && (
+          <View style={styles.artwork}>
+            {universe.artwork.map((entry) => (
+              <ItemArtwork key={`${entry.source}:${entry.externalId}`} entry={entry} width={40} />
+            ))}
+          </View>
+        )}
+        <View style={[styles.text, compact && styles.compactText]}>
+          <ThemedText
+            type="section"
+            style={[{ color: tint.onGround }, compact && styles.compactName]}
+            // On the narrow home card a long name shrinks rather than breaking at its hyphen
+            // (iOS; the smaller size is what keeps "Middle-earth" whole on the web).
+            numberOfLines={compact ? 1 : undefined}
+            adjustsFontSizeToFit={compact}
+          >
             {universe.name}
           </ThemedText>
-          <ThemedText type="small" style={[styles.soft, { color: tint.onGround }]}>
-            {counts}
+          <ThemedText
+            type="small"
+            style={[styles.soft, { color: tint.onGround }]}
+            numberOfLines={compact ? 1 : undefined}
+          >
+            {compact ? itemsLabel(universe.itemCount) : counts}
           </ThemedText>
           {total > 0 ? (
             <View style={styles.progress}>
@@ -73,11 +104,13 @@ export function UniverseCard({ universe }: { universe: UniverseOverview }) {
             </View>
           ) : null}
         </View>
-        <View style={styles.artwork}>
-          {universe.artwork.map((entry) => (
-            <ItemArtwork key={`${entry.source}:${entry.externalId}`} entry={entry} width={46} />
-          ))}
-        </View>
+        {!compact && (
+          <View style={styles.artwork}>
+            {universe.artwork.map((entry) => (
+              <ItemArtwork key={`${entry.source}:${entry.externalId}`} entry={entry} width={46} />
+            ))}
+          </View>
+        )}
       </Pressable>
     </Link>
   );
@@ -100,6 +133,8 @@ export function ProgressBar({ value, tint }: { value: number; tint: UniverseColo
   );
 }
 
+const itemsLabel = (count: number) => (count === 1 ? '1 item' : `${count} items`);
+
 const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
@@ -108,9 +143,27 @@ const styles = StyleSheet.create({
     padding: Spacing.three,
     borderRadius: 18,
   },
+  compactCard: {
+    width: 168,
+    minHeight: 196,
+    flexDirection: 'column',
+    alignItems: 'stretch',
+    justifyContent: 'space-between',
+    borderRadius: 18,
+  },
   text: {
     flex: 1,
     gap: Spacing.half,
+  },
+  compactName: {
+    fontSize: 18,
+    lineHeight: 23,
+  },
+  // Not `flex: 0`: on the web that's a zero height, hiding the text.
+  compactText: {
+    flexGrow: 0,
+    flexShrink: 0,
+    flexBasis: 'auto',
   },
   soft: {
     opacity: 0.85,

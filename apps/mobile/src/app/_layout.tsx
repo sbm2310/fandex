@@ -107,6 +107,7 @@ export default function RootLayout() {
               options={{ presentation: 'modal', title: 'Edit pre-order' }}
             />
             <Stack.Screen name="series" options={{ title: '', headerBackTitle: 'Back' }} />
+            <Stack.Screen name="collection" options={{ title: '', headerBackTitle: 'Back' }} />
             <Stack.Screen
               name="figure-scan"
               options={{ title: 'Scan a box', headerBackTitle: 'Back' }}

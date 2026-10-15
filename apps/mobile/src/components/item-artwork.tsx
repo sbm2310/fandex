@@ -81,7 +81,8 @@ function scaled(width: number) {
     Math.round(Math.min(max, Math.max(min, value)));
   return {
     padding: clamp(width * 0.08, 5, 20),
-    big: clamp(width * 0.22, 11, 54),
+    // Tiny tiles go a little smaller, so a box code ("MMS") stays on one line.
+    big: clamp(width * 0.24, 9, 54),
     initial: clamp(width * 0.42, 14, 54),
     title: clamp(width * 0.13, 11, 24),
     meta: clamp(width * 0.06, 8, 13),

@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react-native';
 import { renderRouter } from 'expo-router/testing-library';
 
 import AddScreen from '@/app/(tabs)/add';
-import CollectionScreen from '@/app/(tabs)/index';
+import EverythingScreen from '@/app/collection';
 import BookDetailScreen from '@/app/book/[id]';
 import { countLabel } from '@/components/category-filter';
 import { classifySearch } from '@/hooks/use-catalog-search';
@@ -82,7 +82,7 @@ describe('Collection filters', () => {
     await collection.add(dune);
     await collection.add(onePiece);
     await collection.add(falcon);
-    await render(<CollectionScreen />, {
+    await render(<EverythingScreen />, {
       wrapper: createWrapper({ deviceCollection: collection }),
     });
   }
@@ -117,7 +117,7 @@ describe('Collection filters', () => {
     const collection = createMemoryCollection();
     await collection.add(hobbit);
     await collection.add(dune);
-    await render(<CollectionScreen />, {
+    await render(<EverythingScreen />, {
       wrapper: createWrapper({ deviceCollection: collection }),
     });
 

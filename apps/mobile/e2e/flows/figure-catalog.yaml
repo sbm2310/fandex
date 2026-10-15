@@ -24,6 +24,11 @@ tags:
 - extendedWaitUntil:
     visible: 'Ask your collection, .*'
     timeout: 15000
+# "Recently added" starts low on the home screen, where Maestro counts a half-hidden item as
+# visible and taps the edge of the list: scroll it to the middle first.
+- scrollUntilVisible:
+    centerElement: true
+    element: 'Darth Vader \(A New Hope\), figure, by Hot Toys.*'
 - tapOn: 'Darth Vader \(A New Hope\), figure, by Hot Toys.*'
 - extendedWaitUntil:
     visible: 'Star Wars universe'

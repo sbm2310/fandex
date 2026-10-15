@@ -1,7 +1,7 @@
 import { CollectionStorageError } from '@fandex/core';
 import { fireEvent, render, screen } from '@testing-library/react-native';
 
-import CollectionScreen from '@/app/(tabs)/index';
+import EverythingScreen from '@/app/collection';
 import {
   createMemoryCollection,
   createWrapper,
@@ -11,7 +11,7 @@ import {
 } from '@/test-utils/providers';
 
 async function renderCollection(collection = createMemoryCollection()) {
-  await render(<CollectionScreen />, { wrapper: createWrapper({ deviceCollection: collection }) });
+  await render(<EverythingScreen />, { wrapper: createWrapper({ deviceCollection: collection }) });
 }
 
 /** The items in the grid, by label (the "Ask your collection" and "Your series" links aside). */
@@ -23,7 +23,7 @@ const itemLabels = () =>
       (label) => !label.startsWith('Ask your collection') && !label.startsWith('Your series'),
     );
 
-describe('Collection screen', () => {
+describe('Everything screen', () => {
   it('invites you to add books when the collection is empty', async () => {
     await renderCollection();
 
