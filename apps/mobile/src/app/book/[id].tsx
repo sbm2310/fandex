@@ -12,7 +12,7 @@ import {
 import { Link, router, useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
-import { BookCover } from '@/components/book-cover';
+import { ItemArtwork } from '@/components/item-artwork';
 import { Button } from '@/components/button';
 import { AlsoOwnedEditions } from '@/components/other-editions';
 import { CATEGORY_LABELS } from '@/components/category-badge';
@@ -61,8 +61,6 @@ export default function BookDetailScreen() {
 
 function BookDetail({ item }: { item: CollectionItem }) {
   const { catalog } = item;
-  // Sets and figures are product photos: shown whole rather than cropped like book covers.
-  const contain = item.category === 'lego' || item.category === 'figure';
   const byline = isBookItem(item) ? item.catalog.authors.join(', ') : undefined;
 
   return (
@@ -71,12 +69,7 @@ function BookDetail({ item }: { item: CollectionItem }) {
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.column}>
           <View style={styles.coverWrap}>
-            <BookCover
-              coverUrl={catalog.coverUrl}
-              title={catalog.title}
-              width={180}
-              fit={contain ? 'contain' : 'cover'}
-            />
+            <ItemArtwork entry={catalog} width={180} />
           </View>
 
           <View style={styles.heading}>

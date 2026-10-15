@@ -2,7 +2,7 @@ import { CATEGORIES, type Category, type CollectionUniverse } from '@fandex/core
 import { Link } from 'expo-router';
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { BookCover } from './book-cover';
+import { CoverImage } from './item-artwork';
 import { ThemedText } from './themed-text';
 
 import { Spacing } from '@/constants/theme';
@@ -40,7 +40,7 @@ export function charactersLabel(
   return more > 0 ? `${names.join(', ')} and ${more} more` : names.join(' and ');
 }
 
-const COVER_WIDTH = 44;
+const COVER_SIZE = { width: 44, height: 66 };
 
 /** A universe on the Universes tab: covers, name, counts and main characters. */
 export function UniverseCard({ universe }: { universe: CollectionUniverse }) {
@@ -57,13 +57,7 @@ export function UniverseCard({ universe }: { universe: CollectionUniverse }) {
       >
         <View style={styles.covers}>
           {universe.coverUrls.slice(0, 3).map((coverUrl) => (
-            <BookCover
-              key={coverUrl}
-              coverUrl={coverUrl}
-              title={universe.name}
-              width={COVER_WIDTH}
-              fit="contain"
-            />
+            <CoverImage key={coverUrl} uri={coverUrl} size={COVER_SIZE} fit="contain" />
           ))}
         </View>
         <View style={styles.text}>
@@ -93,7 +87,7 @@ const styles = StyleSheet.create({
   covers: {
     flexDirection: 'row',
     gap: Spacing.one,
-    width: COVER_WIDTH * 3 + Spacing.one * 2,
+    width: COVER_SIZE.width * 3 + Spacing.one * 2,
   },
   text: {
     flex: 1,

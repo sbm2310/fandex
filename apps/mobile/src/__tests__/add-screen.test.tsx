@@ -87,7 +87,10 @@ describe('Add screen search', () => {
 
     await typeQuery('hobbit');
 
-    expect(await screen.findByTestId('book-cover-placeholder')).toBeOnTheScreen();
+    // The tile is decoration (the title is next to it), so it's hidden from screen readers.
+    expect(
+      await screen.findByTestId('book-cover-placeholder', { includeHiddenElements: true }),
+    ).toBeOnTheScreen();
     await screen.findByRole('button', { name: 'Add The Hobbit' });
   });
 

@@ -2,7 +2,7 @@ import { formatTitle, type CollectionItem } from '@fandex/core';
 import { Link } from 'expo-router';
 import { FlatList, Pressable, StyleSheet, useWindowDimensions } from 'react-native';
 
-import { BookCover } from './book-cover';
+import { ItemArtwork } from './item-artwork';
 import { CategoryBadge, categoryForLabel } from './category-badge';
 import { entryDetails } from './entry-row';
 import { ThemedText } from './themed-text';
@@ -72,12 +72,7 @@ export function GridItem({ item, width }: { item: CollectionItem; width: number 
   return (
     <Link href={{ pathname: '/book/[id]', params: { id: item.id } }} asChild>
       <Pressable style={StyleSheet.flatten([styles.item, { width }])} accessibilityLabel={label}>
-        <BookCover
-          coverUrl={item.catalog.coverUrl}
-          title={title}
-          width={width}
-          fit={item.category === 'lego' || item.category === 'figure' ? 'contain' : 'cover'}
-        />
+        <ItemArtwork entry={item.catalog} width={width} />
         <CategoryBadge category={item.category} />
         <ThemedText type="smallBold" numberOfLines={2}>
           {title}

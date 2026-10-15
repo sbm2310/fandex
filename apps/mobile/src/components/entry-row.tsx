@@ -2,7 +2,7 @@ import { figureDetails, formatTitle, type CatalogEntry } from '@fandex/core';
 import type { ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { BookCover } from './book-cover';
+import { ItemArtwork } from './item-artwork';
 import { CategoryBadge, categoryForLabel } from './category-badge';
 import { ThemedText } from './themed-text';
 import { UniverseChips } from './universe-links';
@@ -43,7 +43,7 @@ export function EntryRow({ entry, accessory, note, showUniverses = true }: Props
   const title = formatTitle(entry);
   const [first, second] = entryDetails(entry);
   const isSet = entry.category === 'lego';
-  // Sets and figures are product photos: shown whole, in a square, rather than cropped.
+  // Sets and figures are product photos: shown in a square.
   const photo = isSet || entry.category === 'figure';
   const label = [
     title,
@@ -58,13 +58,7 @@ export function EntryRow({ entry, accessory, note, showUniverses = true }: Props
     <View style={styles.entry}>
       <View style={styles.row}>
         <View style={styles.info} accessible accessibilityLabel={label}>
-          <BookCover
-            coverUrl={entry.coverUrl}
-            title={entry.title}
-            width={COVER_WIDTH}
-            fit={photo ? 'contain' : 'cover'}
-            aspectRatio={photo ? 1 : 1.5}
-          />
+          <ItemArtwork entry={entry} width={COVER_WIDTH} aspectRatio={photo ? 1 : 1.5} />
           <View style={styles.text}>
             <CategoryBadge category={entry.category} />
             <ThemedText type="smallBold" numberOfLines={2}>
