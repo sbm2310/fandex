@@ -111,10 +111,11 @@ function BookDetail({ item }: { item: CollectionItem }) {
               <>
                 <Fact label="Publisher" value={item.catalog.publisher} />
                 <Fact label="Published" value={item.catalog.publishedYear?.toString()} />
-                <Fact label="ISBN" value={item.catalog.isbn13} />
               </>
             )}
             <Fact label="Added" value={formatDate(item.addedAt)} />
+            {/* Last and full width: 13 digits don't fit half a phone. */}
+            {isBookItem(item) && <Fact label="ISBN" value={item.catalog.isbn13} wide />}
           </View>
 
           {item.category === 'figure' && <FigureSources figure={item.catalog} />}
@@ -234,11 +235,22 @@ function siteName(url: string): string {
   return /^https?:\/\/(?:www\.)?([^/?#]+)/i.exec(url)?.[1] ?? url;
 }
 
-/** One fact as a small card: its label above, the value below. Two to a row. */
-function Fact({ label, value }: { label: string; value: string | undefined }) {
+/**
+ * One fact as a small card: its label above, the value below. Two to a row; `wide` takes the whole
+ * row (a 13-digit ISBN doesn't fit half of a phone).
+ */
+function Fact({
+  label,
+  value,
+  wide = false,
+}: {
+  label: string;
+  value: string | undefined;
+  wide?: boolean;
+}) {
   if (!value) return null;
   return (
-    <Card style={styles.fact}>
+    <Card style={[styles.fact, wide && styles.wideFact]}>
       <ThemedText type="small" themeColor="textSecondary">
         {label}
       </ThemedText>
@@ -341,6 +353,9 @@ const styles = StyleSheet.create({
     flexBasis: '40%',
     gap: Spacing.half,
     paddingVertical: Spacing.two + Spacing.one,
+  },
+  wideFact: {
+    flexBasis: '100%',
   },
   factValue: {
     fontFamily: Fonts.display,

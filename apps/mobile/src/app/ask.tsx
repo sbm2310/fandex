@@ -101,7 +101,7 @@ function Examples({ onPick }: { onPick: (question: string) => void }) {
 function Answer({ result }: { result: AskResult }) {
   const header = (
     <View style={styles.answer}>
-      <ThemedText type="subtitle" accessibilityRole="header" accessibilityLiveRegion="polite">
+      <ThemedText type="section" accessibilityRole="header" accessibilityLiveRegion="polite">
         {result.answer}
       </ThemedText>
       {result.notice ? (

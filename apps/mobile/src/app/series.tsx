@@ -5,6 +5,7 @@ import { ActivityIndicator, FlatList, Pressable, StyleSheet, View } from 'react-
 import { Button } from '@/components/button';
 import { EmptyState } from '@/components/empty-state';
 import { PageTitle } from '@/components/page-title';
+import { cardStyle } from '@/components/card';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { MaxContentWidth, Spacing } from '@/constants/theme';
@@ -105,7 +106,7 @@ function SeriesRow({ summary }: { summary: SeriesSummary }) {
       <Pressable
         accessibilityRole="link"
         accessibilityLabel={[`${summary.name}, ${KIND_LABELS[summary.kind]}`, ...lines].join('. ')}
-        style={StyleSheet.flatten([styles.row, { borderColor: colors.border }])}
+        style={StyleSheet.flatten([cardStyle(colors), styles.row])}
       >
         <View style={styles.rowTitle}>
           <ThemedText type="smallBold" style={styles.name}>
@@ -114,6 +115,17 @@ function SeriesRow({ summary }: { summary: SeriesSummary }) {
           <ThemedText type="small" themeColor="textSecondary">
             {KIND_LABELS[summary.kind]}
           </ThemedText>
+        </View>
+        <View style={[styles.track, { backgroundColor: colors.backgroundSelected }]}>
+          <View
+            style={[
+              styles.progress,
+              {
+                width: `${Math.round(Math.min(1, summary.owned / Math.max(1, summary.total)) * 100)}%`,
+                backgroundColor: colors.accent,
+              },
+            ]}
+          />
         </View>
         {lines.map((line) => (
           <ThemedText
@@ -138,12 +150,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   list: {
+    // Cards, so a little more room between them than the old divided rows had.
     width: '100%',
     maxWidth: MaxContentWidth,
     alignSelf: 'center',
     paddingHorizontal: Spacing.four,
     paddingVertical: Spacing.four,
-    gap: Spacing.two,
+    gap: Spacing.three,
   },
   header: {
     gap: Spacing.one,
@@ -154,9 +167,17 @@ const styles = StyleSheet.create({
     marginVertical: Spacing.two,
   },
   row: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    paddingVertical: Spacing.three,
     gap: Spacing.one,
+  },
+  track: {
+    height: 4,
+    borderRadius: 2,
+    overflow: 'hidden',
+    marginVertical: Spacing.one,
+  },
+  progress: {
+    height: 4,
+    borderRadius: 2,
   },
   rowTitle: {
     flexDirection: 'row',

@@ -11,6 +11,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, Linking, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import { Button } from '@/components/button';
+import { Card } from '@/components/card';
 import { PreorderUnavailable } from '@/components/preorder-unavailable';
 import { EntryRow } from '@/components/entry-row';
 import { PageTitle } from '@/components/page-title';
@@ -88,21 +89,26 @@ function PreorderDetail({ preorder }: { preorder: PreorderResponse }) {
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.column}>
           {entry ? <EntryRow entry={entry} showUniverses={false} /> : null}
-          <ThemedText type="smallBold" accessibilityRole="header">
+          <ThemedText type="overline" themeColor="textSecondary" accessibilityRole="header">
             {status}
           </ThemedText>
 
           {reasons.map((reason) => (
             <View
               key={reason.kind}
-              style={[styles.attention, { borderColor: colors.accent }]}
+              style={[
+                styles.attention,
+                { backgroundColor: colors.moneyGround, borderColor: `${colors.money}40` },
+              ]}
               accessibilityRole="alert"
             >
-              <ThemedText type="smallBold">{attentionText(reason, preorder)}</ThemedText>
+              <ThemedText type="smallBold" style={{ color: colors.money }}>
+                {attentionText(reason, preorder)}
+              </ThemedText>
             </View>
           ))}
 
-          <View style={styles.facts}>
+          <Card style={styles.facts}>
             <Fact
               label="Price"
               value={
@@ -113,10 +119,18 @@ function PreorderDetail({ preorder }: { preorder: PreorderResponse }) {
             />
             <Fact label="Paid" value={formatMoney(preorder.paid, currency)} />
             {left !== undefined ? (
-              <Fact label="Balance left" value={formatMoney(left, currency)} />
+              <Fact
+                label="Balance left"
+                value={formatMoney(left, currency)}
+                money={left > 0 && preorder.status === 'ordered'}
+              />
             ) : null}
             {preorder.balanceDueDate ? (
-              <Fact label="Balance due" value={day(preorder.balanceDueDate)} />
+              <Fact
+                label="Balance due"
+                value={day(preorder.balanceDueDate)}
+                money={!!left && preorder.status === 'ordered'}
+              />
             ) : null}
             <Fact
               label="Expected"
@@ -135,7 +149,7 @@ function PreorderDetail({ preorder }: { preorder: PreorderResponse }) {
             {preorder.orderNumber ? (
               <Fact label="Order number" value={preorder.orderNumber} />
             ) : null}
-          </View>
+          </Card>
           {preorder.orderUrl ? (
             <Pressable
               accessibilityRole="link"
@@ -148,7 +162,7 @@ function PreorderDetail({ preorder }: { preorder: PreorderResponse }) {
           {preorder.notes ? <ThemedText>{preorder.notes}</ThemedText> : null}
 
           {preorder.history.length > 1 ? (
-            <View style={styles.history}>
+            <Card style={styles.history}>
               <ThemedText type="smallBold" accessibilityRole="header">
                 Date history
               </ThemedText>
@@ -160,7 +174,7 @@ function PreorderDetail({ preorder }: { preorder: PreorderResponse }) {
                   {change.source === 'openlibrary' ? ' (Open Library)' : ''}
                 </ThemedText>
               ))}
-            </View>
+            </Card>
           ) : null}
 
           <View style={styles.actions}>
@@ -208,7 +222,11 @@ function PreorderDetail({ preorder }: { preorder: PreorderResponse }) {
               onPress={() => void onDelete()}
             />
             {failure ? (
-              <ThemedText type="smallBold" accessibilityRole="alert">
+              <ThemedText
+                type="smallBold"
+                style={{ color: colors.danger }}
+                accessibilityRole="alert"
+              >
                 {preorderErrorMessage(failure, "Couldn't update the pre-order. Try again.")}
               </ThemedText>
             ) : null}
@@ -219,13 +237,15 @@ function PreorderDetail({ preorder }: { preorder: PreorderResponse }) {
   );
 }
 
-function Fact({ label, value }: { label: string; value: string }) {
+/** One line of the facts card; `money` sets the value in amber (a balance still to pay). */
+function Fact({ label, value, money = false }: { label: string; value: string; money?: boolean }) {
+  const colors = useTheme();
   return (
     <View style={styles.fact} accessible accessibilityLabel={`${label}: ${value}`}>
       <ThemedText type="small" themeColor="textSecondary">
         {label}
       </ThemedText>
-      <ThemedText type="small" style={styles.factValue}>
+      <ThemedText type="small" style={[styles.factValue, money && { color: colors.money }]}>
         {value}
       </ThemedText>
     </View>
@@ -252,8 +272,8 @@ const styles = StyleSheet.create({
   },
   attention: {
     borderWidth: 1,
-    borderRadius: Spacing.two,
-    padding: Spacing.three,
+    borderRadius: 16,
+    padding: 14,
   },
   facts: {
     gap: Spacing.two,

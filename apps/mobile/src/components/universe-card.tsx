@@ -107,7 +107,7 @@ export function UniverseCard({
         {!compact && (
           <View style={styles.artwork}>
             {universe.artwork.map((entry) => (
-              <ItemArtwork key={`${entry.source}:${entry.externalId}`} entry={entry} width={46} />
+              <ItemArtwork key={`${entry.source}:${entry.externalId}`} entry={entry} width={40} />
             ))}
           </View>
         )}

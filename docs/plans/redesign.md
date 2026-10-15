@@ -91,7 +91,7 @@ React Native needs one font family per weight (e.g. `Figtree_700Bold`), so `Them
 
 **7. Home: "Your shelf".** ✅ The Collection tab opens on: an overline and a headline ("N items across M universes", or a welcome for an empty collection), category count chips, the Ask field, a horizontal row of universe cards (task 5's card, smaller), "Coming up" (the next two pre-order events — signed in only), "Recently added" (six artworks), "Your series ›", and the move-to-account banner where it is today. "Everything" opens the full grid with today's sort and filters (a new route, e.g. `/collection`). Guests and empty collections get their own copy. Update the tests that list every link on the Collection tab (`collection-screen`, `lego`; see CLAUDE.md). _Demo:_ mockup 1.
 
-**8. Polish.** Light-mode pass on every screen; contrast check; loading skeletons where screens flash (no `act` warnings); README screenshots retaken (750 × 1624, the browser pane's mobile preset at scale 1, plus a few from the Simulator); all Maestro flows run (selectors are accessibility labels — keep them; the Collection tab's first screen changes, so the flows that start there need "Everything" or a new wait); CLAUDE.md updated. _Demo:_ the demo above.
+**8. Polish.** ✅ Light-mode pass on every screen; contrast check; loading skeletons where screens flash (no `act` warnings); README screenshots retaken (750 × 1624, the browser pane's mobile preset at scale 1, plus a few from the Simulator); all Maestro flows run (selectors are accessibility labels — keep them; the Collection tab's first screen changes, so the flows that start there need "Everything" or a new wait); CLAUDE.md updated. _Demo:_ the demo above.
 
 ## How to work
 

@@ -145,6 +145,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: Spacing.two,
+    // Inside another wrapping row (the item page), web would otherwise size the group to all
+    // its chips on one line and let them run off the screen.
+    maxWidth: '100%',
   },
   chip: {
     flexDirection: 'row',

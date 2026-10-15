@@ -1,9 +1,9 @@
-import { fireEvent, render, screen } from '@testing-library/react-native';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 
 import AccountScreen from '@/app/(tabs)/account';
 import { validateAuthInput } from '@/components/auth-form';
 import { AccountError } from '@/services/account-service';
-import { createWrapper, FakeAccountService } from '@/test-utils/providers';
+import { createFakeAdminReviews, createWrapper, FakeAccountService } from '@/test-utils/providers';
 import { confirm } from '@/utils/confirm';
 
 jest.mock('@/utils/confirm', () => ({ confirm: jest.fn() }));
@@ -12,7 +12,7 @@ const mockConfirm = jest.mocked(confirm);
 const PASSWORD = 'correct horse battery';
 
 async function renderAccount(account = new FakeAccountService()) {
-  await render(<AccountScreen />, { wrapper: createWrapper({ account }) });
+  await render(<AccountScreen />, { wrapper: createWrapper({ account, adminReviews }) });
   return account;
 }
 
@@ -21,6 +21,19 @@ async function fill(label: string, text: string) {
 }
 
 const press = async (name: string) => fireEvent.press(screen.getByRole('button', { name }));
+
+// Not an admin: the server says so once signed in (GET /me).
+let adminReviews = createFakeAdminReviews();
+beforeEach(() => {
+  adminReviews = createFakeAdminReviews();
+});
+
+/** Signed in as a regular user: the admin check comes back no, and no review button appears. */
+async function expectNoAdminTools() {
+  await waitFor(() => expect(adminReviews.isAdmin).toHaveBeenCalled());
+  await act(async () => {});
+  expect(screen.queryByRole('button', { name: 'Review figure suggestions' })).toBeNull();
+}
 
 describe('Account screen', () => {
   beforeEach(() => mockConfirm.mockReset());
@@ -43,6 +56,7 @@ describe('Account screen', () => {
 
     expect(await screen.findByText('reader@example.com')).toBeOnTheScreen();
     expect(screen.getByText('Reader')).toBeOnTheScreen();
+    await expectNoAdminTools();
   });
 
   it('shows a clear message for a wrong password', async () => {
@@ -67,6 +81,7 @@ describe('Account screen', () => {
     await press('Create account');
 
     expect(await screen.findByText('new@example.com')).toBeOnTheScreen();
+    await expectNoAdminTools();
   });
 
   it('checks input before contacting the server', async () => {

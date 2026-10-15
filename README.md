@@ -8,56 +8,50 @@ Fandex is a collection app for fans who collect comics, manga, fantasy books, pr
 
 <table>
   <tr>
-    <td><img src="docs/screenshots/figure-search.jpg" width="200" alt="Figures search for 'darth vader': Hot Toys Darth Vader (A New Hope), MMS 279, 1/6, Movie Masterpiece Series, with Add and Pre-order; then the Obi-Wan Kenobi version (DX 27); a Scan a box link above"></td>
-    <td><img src="docs/screenshots/figure.jpg" width="200" alt="Darth Vader (A New Hope)'s page: Hot Toys, MMS 279, Movie Masterpiece Series, 1/6, original price $299.99, Star Wars and Darth Vader links, and 'From Fandex's figure catalog, checked against' actionfigure411.com, rebelscum.com and bigbadtoystore.com"></td>
+    <td><img src="docs/screenshots/home.jpg" width="200" alt="Your shelf, dark mode: 9 items across 4 universes, category chips, Ask your collection, Middle-earth and Star Wars cards in their colours with characters owned, and a $280.00 balance due on October 18 under Coming up"></td>
+    <td><img src="docs/screenshots/universe.jpg" width="200" alt="Middle-earth's page on its green ground: newest artwork, description, tiles for 1 book, 1 LEGO set, 1 figure and 1 on order, then characters as ringed initials with item counts"></td>
+    <td><img src="docs/screenshots/upcoming.jpg" width="200" alt="Upcoming: $584.00 still owed and 3 items on order; an Aragorn figure needing attention on an amber card with a $170 of $450 payment bar and an I've paid it button; then a timeline starting with Wind and Truth on November 10"></td>
+    <td><img src="docs/screenshots/figure.jpg" width="200" alt="Darth Vader (A New Hope)'s page: a box-art tile reading Hot Toys, 1/6, MMS 279 in Star Wars yellow, Star Wars and Darth Vader chips, and facts as cards: Figure, Hot Toys, MMS 279, Movie Masterpiece Series, 1/6, $299.99"></td>
   </tr>
   <tr>
-    <td align="center">The figure catalog</td>
-    <td align="center">A figure and its sources</td>
+    <td align="center">Your shelf</td>
+    <td align="center">A universe</td>
+    <td align="center">Upcoming</td>
+    <td align="center">A figure, without a photo</td>
   </tr>
   <tr>
-    <td><img src="docs/screenshots/series-view.jpg" width="200" alt="Your series: Jujutsu Kaisen (manga) — you have 1 of 26 volumes, missing volumes 1–25, next: volume 27 is out; The Stormlight Archive (books) — you have 1 of 5, missing books 2–5"></td>
-    <td><img src="docs/screenshots/book-series.jpg" width="200" alt="The Way of Kings' page: Book 1 of 5 in The Stormlight Archive, you have 1 of 5, Words of Radiance missing with its cover and an Add button"></td>
+    <td><img src="docs/screenshots/figure-search.jpg" width="200" alt="Add tab with Books, LEGO and Figures buttons; a figures search for darth vader with a box-scan button beside it; MMS 279 (owned), DX 27 and MMS 699 as box-art tiles with Add and Pre-order"></td>
+    <td><img src="docs/screenshots/preorder.jpg" width="200" alt="A Hot Toys Darth Vader pre-order: $380.00 price, $76.00 paid, $304.00 left in amber, expected June 2027, delayed once from March 2027, Sideshow order number, date history and actions"></td>
+    <td><img src="docs/screenshots/series-view.jpg" width="200" alt="Your series: Harry Potter (1 of 7 books, missing 2–7), The Stormlight Archive (1 of 5, missing 2–5) and One Piece (complete, next volume out), each with a progress bar"></td>
+    <td><img src="docs/screenshots/book-series.jpg" width="200" alt="The Way of Kings' page: Book 1 of 5 in The Stormlight Archive, with Words of Radiance, Oathbringer, Rhythm of War and Wind and Truth missing, each with its cover and an Add button"></td>
   </tr>
   <tr>
+    <td align="center">Adding figures</td>
+    <td align="center">A pre-order</td>
     <td align="center">Your series</td>
     <td align="center">What's missing from a series</td>
   </tr>
   <tr>
-    <td><img src="docs/screenshots/upcoming.jpg" width="200" alt="Upcoming tab: 4 pre-orders on order, $1,015.99 still owed; a Gandalf figure's balance due October 15 needs attention, then One Piece 113 (expected November 10, 2026, from Open Library) and a Darth Vader figure later"></td>
-    <td><img src="docs/screenshots/preorder.jpg" width="200" alt="A Hot Toys Darth Vader pre-order: $380 price, $76 paid, $304 left due December 15, expected June 2027, delayed once from March 2027, Sideshow order number, date history and actions"></td>
-    <td><img src="docs/screenshots/ask.jpg" width="200" alt="Ask your collection: 'What Middle-earth stuff do I own?' answered with The Hobbit and the Rivendell LEGO set"></td>
-    <td><img src="docs/screenshots/shelf-scan.jpg" width="200" alt="Shelf scan review: 18 items read from a photo of Marvel trades, each matched to a catalog entry with a tick box"></td>
-  </tr>
-  <tr>
-    <td align="center">Upcoming</td>
-    <td align="center">A pre-order</td>
-    <td align="center">Ask your collection</td>
-    <td align="center">Shelf scan review</td>
-  </tr>
-  <tr>
-    <td><img src="docs/screenshots/universes.jpg" width="200" alt="Universes tab: Middle-earth, Star Wars and Wizarding World with covers, counts and characters"></td>
-    <td><img src="docs/screenshots/universe.jpg" width="200" alt="Middle-earth page: description, characters with item counts, books and LEGO"></td>
-    <td><img src="docs/screenshots/character.jpg" width="200" alt="Gandalf's page: the books he appears in"></td>
-    <td><img src="docs/screenshots/item-links.jpg" width="200" alt="The Hobbit's detail screen with its universe, characters and a Fix details button"></td>
+    <td><img src="docs/screenshots/universes.jpg" width="200" alt="Universes tab: Middle-earth, Star Wars, Wizarding World and DC cards in their colours, with counts, characters owned out of the universe's and newest covers"></td>
+    <td><img src="docs/screenshots/character.jpg" width="200" alt="Gandalf's page on the Middle-earth ground: 1 book, 1 LEGO set and 1 figure, with The Hobbit and Rivendell"></td>
+    <td><img src="docs/screenshots/item-links.jpg" width="200" alt="The Hobbit's page: cover, the Middle-earth chip and character chips (Gandalf, Bilbo Baggins, Gollum, Smaug, Elrond, Thorin Oakenshield, Thranduil), then facts as cards"></td>
+    <td><img src="docs/screenshots/ask.jpg" width="200" alt="Ask your collection: 'What Middle-earth stuff do I own?' answered 'You own 3 Middle-earth items: 1 book, 1 LEGO set and 1 figure.' with Gandalf the Grey, The Hobbit and Rivendell"></td>
   </tr>
   <tr>
     <td align="center">Universes</td>
-    <td align="center">A universe</td>
     <td align="center">A character</td>
     <td align="center">An item's links</td>
+    <td align="center">Ask your collection</td>
   </tr>
   <tr>
-    <td><img src="docs/screenshots/collection.jpg" width="200" alt="Collection grid with book covers, dark mode"></td>
-    <td><img src="docs/screenshots/search.jpg" width="200" alt="Search results with Add buttons"></td>
-    <td><img src="docs/screenshots/detail.jpg" width="200" alt="Book detail screen"></td>
-    <td><img src="docs/screenshots/collection-light.jpg" width="200" alt="Collection sorted by title, light mode"></td>
+    <td><img src="docs/screenshots/search.jpg" width="200" alt="Books search for 'the hobbit': the owned edition marked Owned, a comic adaptation and an omnibus with Add and Pre-order, each with a Middle-earth chip"></td>
+    <td><img src="docs/screenshots/detail.jpg" width="200" alt="The Way of Kings' page: cover, title, author and facts as cards: Book, Tor, 2010, the date added and the ISBN"></td>
+    <td><img src="docs/screenshots/collection-light.jpg" width="200" alt="Everything in light mode, sorted by title: Batman Year One, Darth Vader and Gandalf box-art tiles, Harry Potter, The Hobbit and Rivendell, with category filters"></td>
   </tr>
   <tr>
-    <td align="center">Collection</td>
     <td align="center">Search</td>
     <td align="center">Book detail</td>
-    <td align="center">Sorted by title, light mode</td>
+    <td align="center">Everything, light mode</td>
   </tr>
 </table>
 

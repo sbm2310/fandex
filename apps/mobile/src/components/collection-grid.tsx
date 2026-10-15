@@ -36,6 +36,8 @@ export function CollectionGrid({ items }: { items: CollectionItem[] }) {
       numColumns={columns}
       keyExtractor={(item) => item.id}
       columnWrapperStyle={styles.row}
+      // On the web the indicator sat over the right-hand column.
+      showsVerticalScrollIndicator={false}
       contentContainerStyle={styles.content}
       renderItem={({ item }) => <GridItem item={item} width={itemWidth} />}
       ListFooterComponent={

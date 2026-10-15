@@ -1,4 +1,4 @@
-import type { AiProviderInfo, ShelfScanResponse } from '@fandex/core';
+import type { ShelfScanResponse } from '@fandex/core';
 import { router } from 'expo-router';
 import { useState, type ReactNode } from 'react';
 import { ActivityIndicator, FlatList, Platform, StyleSheet, View } from 'react-native';
@@ -248,7 +248,7 @@ function Review({
           <>
             {index === firstUnsure && (
               <View style={styles.sectionHeader}>
-                <ThemedText type="smallBold" accessibilityRole="header">
+                <ThemedText type="section" accessibilityRole="header">
                   Less sure
                 </ThemedText>
                 <ThemedText type="small" themeColor="textSecondary">

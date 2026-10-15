@@ -231,7 +231,7 @@ function ReadingSummary({ reading }: { reading: BoxReading }) {
   ];
   return (
     <View style={[styles.summary, { borderColor: colors.border }]}>
-      <ThemedText type="smallBold" accessibilityRole="header">
+      <ThemedText type="section" accessibilityRole="header">
         Read on the box
       </ThemedText>
       {facts.map(([label, value]) =>

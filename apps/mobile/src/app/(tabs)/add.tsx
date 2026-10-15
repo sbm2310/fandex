@@ -225,6 +225,8 @@ function SearchResults({
       )}
       keyboardShouldPersistTaps="handled"
       keyboardDismissMode="on-drag"
+      // The indicator sat over the buttons' right edge ("✓ Owned") on the web.
+      showsVerticalScrollIndicator={false}
       ListHeaderComponent={
         mode.kind === 'isbn' ? (
           <ThemedText type="small" themeColor="textSecondary">

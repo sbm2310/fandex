@@ -122,7 +122,7 @@ function EditItem({ item }: { item: CollectionItem }) {
           {/* Books, manga and comics can be refiled; LEGO sets and figures can't. */}
           {isBookItem(item) && (
             <View style={styles.section}>
-              <ThemedText type="smallBold" accessibilityRole="header">
+              <ThemedText type="section" accessibilityRole="header">
                 Category
               </ThemedText>
               <SegmentedControl
@@ -135,7 +135,7 @@ function EditItem({ item }: { item: CollectionItem }) {
           )}
 
           <View style={styles.section}>
-            <ThemedText type="smallBold" accessibilityRole="header">
+            <ThemedText type="section" accessibilityRole="header">
               Universes and characters
             </ThemedText>
             {UNIVERSE_SEED.map((universe) => {
