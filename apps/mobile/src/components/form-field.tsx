@@ -2,7 +2,7 @@ import { StyleSheet, TextInput, View, type TextInputProps } from 'react-native';
 
 import { ThemedText } from './themed-text';
 
-import { Spacing } from '@/constants/theme';
+import { Fonts, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 type Props = Omit<TextInputProps, 'style'> & { label: string };
@@ -43,6 +43,7 @@ const styles = StyleSheet.create({
     gap: Spacing.one,
   },
   input: {
+    fontFamily: Fonts.regular,
     fontSize: 16,
     borderWidth: 1,
     borderRadius: Spacing.two,

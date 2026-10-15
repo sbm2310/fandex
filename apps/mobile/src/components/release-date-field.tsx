@@ -10,7 +10,7 @@ import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { SegmentedControl } from './segmented-control';
 import { ThemedText } from './themed-text';
 
-import { Spacing } from '@/constants/theme';
+import { Fonts, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -222,6 +222,7 @@ const styles = StyleSheet.create({
   },
   day: {
     width: 56,
+    fontFamily: Fonts.regular,
     fontSize: 16,
     borderWidth: 1,
     borderRadius: Spacing.two,

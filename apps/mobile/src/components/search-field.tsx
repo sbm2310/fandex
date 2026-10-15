@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ActivityIndicator, StyleSheet, TextInput, View, type TextInputProps } from 'react-native';
 
-import { Spacing } from '@/constants/theme';
+import { Fonts, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 type Props = Pick<
@@ -54,6 +54,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
+    fontFamily: Fonts.regular,
     fontSize: 16,
     paddingVertical: Spacing.three,
   },

@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { ThemedText } from './themed-text';
 
-import { Spacing } from '@/constants/theme';
+import { Fonts, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 export const CATEGORY_LABELS: Record<Category, string> = {
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 11,
     lineHeight: 14,
-    fontWeight: 700,
+    fontFamily: Fonts.bold,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
