@@ -1,6 +1,7 @@
 import { formatRelease, type PreorderResponse } from '@fandex/core';
 import { Link } from 'expo-router';
-import { Pressable, StyleSheet } from 'react-native';
+import type { ReactNode } from 'react';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import { EntryRow } from './entry-row';
 import { ThemedText } from './themed-text';
@@ -19,10 +20,12 @@ type Props = {
   preorder: PreorderResponse;
   /** What needs doing ("Balance of $280.00 due October 18, 2026"), shown under the item. */
   notes?: readonly string[];
+  /** Extra things under the row, inside the link (status pills on the timeline). */
+  footer?: ReactNode;
 };
 
 /** A pre-order in a list: the item, its status and expected date; opens its page. */
-export function PreorderRow({ preorder, notes = [] }: Props) {
+export function PreorderRow({ preorder, notes = [], footer }: Props) {
   const colors = useTheme();
   const entry = toCatalogEntry(preorder.catalog);
   const when = preorder.expectedRelease
@@ -43,10 +46,12 @@ export function PreorderRow({ preorder, notes = [] }: Props) {
           {summary}
         </ThemedText>
         {notes.map((note) => (
-          <ThemedText key={note} type="smallBold" style={[styles.meta, { color: colors.accent }]}>
+          // Amber: payments and dates that need doing.
+          <ThemedText key={note} type="smallBold" style={[styles.meta, { color: colors.money }]}>
             {note}
           </ThemedText>
         ))}
+        {footer ? <View style={styles.meta}>{footer}</View> : null}
       </Pressable>
     </Link>
   );

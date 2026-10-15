@@ -4,12 +4,13 @@ import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
 
 import { EmptyState } from '@/components/empty-state';
 import { PageTitle } from '@/components/page-title';
-import { PreorderRow } from '@/components/preorder-row';
+
 import { Screen } from '@/components/screen';
 import { ThemedText } from '@/components/themed-text';
+import { AttentionCard, SummaryTiles, TimelineRow } from '@/components/upcoming-cards';
 import { Spacing } from '@/constants/theme';
 import { useUpcoming } from '@/hooks/use-preorders';
-import { attentionText } from '@/utils/preorder-text';
+import { localToday } from '@/utils/today';
 
 /**
  * What's on order: what needs doing first (payments due, dates passed, arriving this week), then
@@ -71,8 +72,11 @@ export default function UpcomingScreen() {
   const owed = (Object.entries(groups.owed) as [Currency, number][]).map(([currency, amount]) =>
     formatMoney(amount, currency),
   );
-  const rows = (preorders: readonly PreorderResponse[]) =>
-    preorders.map((preorder) => <PreorderRow key={preorder.id} preorder={preorder} />);
+  const today = localToday();
+  const timeline = (preorders: readonly PreorderResponse[]) =>
+    preorders.map((preorder) => (
+      <TimelineRow key={preorder.id} preorder={preorder} today={today} />
+    ));
 
   return (
     <Screen>
@@ -80,56 +84,47 @@ export default function UpcomingScreen() {
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.header}>
           <ThemedText type="subtitle">Upcoming</ThemedText>
-          <ThemedText themeColor="textSecondary">
-            {total === 1 ? '1 pre-order on order' : `${total} pre-orders on order`}
-          </ThemedText>
-          {owed.length > 0 && (
-            <ThemedText type="smallBold" accessibilityLabel={`Still owed: ${owed.join(' and ')}`}>
-              Still owed: {owed.join(' · ')}
-            </ThemedText>
-          )}
+          <SummaryTiles owed={owed} onOrder={total} />
         </View>
 
-        <Section title="Needs attention" count={groups.attention.length}>
+        <Section title="Needs attention" count={groups.attention.length} tone="money">
           {groups.attention.map(({ preorder, reasons }) => (
-            <PreorderRow
-              key={preorder.id}
-              preorder={preorder}
-              notes={reasons.map((reason) => attentionText(reason, preorder))}
-            />
+            <AttentionCard key={preorder.id} preorder={preorder} reasons={reasons} />
           ))}
         </Section>
         <Section title="Arriving this month" count={groups.thisMonth.length}>
-          {rows(groups.thisMonth)}
+          {timeline(groups.thisMonth)}
         </Section>
         <Section title="Later" count={groups.later.length}>
-          {rows(groups.later)}
+          {timeline(groups.later)}
         </Section>
         <Section title="Date not known yet" count={groups.noDate.length}>
-          {rows(groups.noDate)}
+          {timeline(groups.noDate)}
         </Section>
         <Section title="Arrived or cancelled" count={closed.length}>
-          {rows(closed)}
+          {timeline(closed)}
         </Section>
       </ScrollView>
     </Screen>
   );
 }
 
-/** A titled group; nothing when it's empty. */
+/** A titled group (small capitals; amber for what needs doing); nothing when it's empty. */
 function Section({
   title,
   count,
+  tone,
   children,
 }: {
   title: string;
   count: number;
+  tone?: 'money';
   children: ReactNode;
 }) {
   if (count === 0) return null;
   return (
     <View style={styles.section}>
-      <ThemedText type="smallBold" themeColor="textSecondary" accessibilityRole="header">
+      <ThemedText type="overline" themeColor={tone ?? 'textSecondary'} accessibilityRole="header">
         {title} · {count}
       </ThemedText>
       {children}
@@ -140,6 +135,6 @@ function Section({
 const styles = StyleSheet.create({
   centered: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   content: { gap: Spacing.four, paddingBottom: Spacing.four },
-  header: { gap: Spacing.one },
-  section: { gap: Spacing.one },
+  header: { gap: Spacing.three },
+  section: { gap: Spacing.three },
 });

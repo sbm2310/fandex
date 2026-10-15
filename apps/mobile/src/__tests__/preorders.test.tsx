@@ -361,7 +361,7 @@ describe('the Upcoming tab', () => {
     const { preorders } = await withSeveral();
     await open('/upcoming', { preorders, account: await signedIn() });
 
-    expect(await screen.findByText('3 pre-orders on order')).toBeOnTheScreen();
+    expect(await screen.findByLabelText('3 pre-orders on order')).toBeOnTheScreen();
     // $280.00 left on the figure + $100.00 on the set.
     expect(screen.getByLabelText('Still owed: $380.00')).toBeOnTheScreen();
     expect(screen.getByRole('header', { name: 'Needs attention · 1' })).toBeOnTheScreen();
@@ -395,7 +395,7 @@ describe('the Upcoming tab', () => {
 
     const section = await screen.findByRole('header', { name: 'Arrived or cancelled · 1' });
     expect(section).toBeOnTheScreen();
-    expect(screen.getByText('0 pre-orders on order')).toBeOnTheScreen();
+    expect(screen.getByLabelText('0 pre-orders on order')).toBeOnTheScreen();
     expect(screen.queryByText(/Still owed/)).toBeNull();
     expect(screen.getByRole('link', { name: 'Wind and Truth: Cancelled' })).toBeOnTheScreen();
   });
