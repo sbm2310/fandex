@@ -99,7 +99,7 @@ describe('Add screen search', () => {
     await renderAddScreen(createFakeCatalog({ search }));
 
     await typeQuery('hobbit');
-    expect(await screen.findByText(/Can't reach the book catalog/)).toBeOnTheScreen();
+    expect(await screen.findByText(/Can't reach the catalog/)).toBeOnTheScreen();
 
     await fireEvent.press(screen.getByRole('button', { name: 'Try again' }));
 

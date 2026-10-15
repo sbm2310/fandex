@@ -10,6 +10,7 @@ screens without iOS (they can't see native pieces such as the tab bar or system 
 | `ask.yaml`                   | Guest: a question answered on the device, the matching item, a pre-order question needing an account                           |
 | `book-series.yaml`           | Guest: a book's page shows its series and the books missing from it (live Wikidata and Open Library)                           |
 | `series-view.yaml`           | Guest: the Series view lists a book series and a manga series with what's missing and the next volume (live data)              |
+| `figure-catalog.yaml`        | Guest: a figure found by its box number ("mms279"), added, its facts and sources, removed; "Add it by hand" for one not found  |
 | `preorder-lifecycle.yaml`    | Account: sign in, pre-order an upcoming book with Open Library's date, amounts, Upcoming's total, "It arrived", delete account |
 
 Every flow starts from a clean slate (`common/open.yaml`: keychain and app data cleared, so

@@ -1,0 +1,49 @@
+appId: host.exp.Exponent
+name: A guest finds a Hot Toys figure by its box number, adds it, sees its facts and sources, and removes it
+tags:
+  - guest
+---
+# The box number written without its space, as people type it (Maestro texts are patterns,
+# so parentheses are escaped below).
+- runFlow:
+    file: common/open.yaml
+    env:
+      ROUTE: add?q=mms279&kind=figures&scan=1
+- extendedWaitUntil:
+    visible: 'Add Darth Vader \(A New Hope\)'
+    timeout: 60000
+- assertVisible: 'Darth Vader \(A New Hope\), figure, by Hot Toys · MMS 279 · 1/6.*'
+- assertVisible: "Figures from Fandex's own catalog"
+- tapOn: 'Add Darth Vader \(A New Hope\)'
+- assertVisible: 'Darth Vader \(A New Hope\) is in your collection'
+
+- hideKeyboard
+- tapOn:
+    text: 'Collection'
+    retryTapIfNoChange: true
+- extendedWaitUntil:
+    visible: 'Ask your collection, .*'
+    timeout: 15000
+- tapOn: 'Darth Vader \(A New Hope\), figure, by Hot Toys.*'
+- extendedWaitUntil:
+    visible: 'Star Wars universe'
+    timeout: 15000
+- assertVisible: 'MMS 279'
+- assertVisible: 'Movie Masterpiece Series'
+- scrollUntilVisible:
+    element: "From Fandex's figure catalog, checked against"
+- assertVisible: 'actionfigure411.com'
+- scrollUntilVisible:
+    element: 'Remove Darth Vader \(A New Hope\) from collection'
+- tapOn: 'Remove Darth Vader \(A New Hope\) from collection'
+- tapOn: 'Remove'
+- assertVisible: 'Your collection is empty'
+
+# A figure the catalog doesn't have: the add-by-hand form starts with what was searched.
+- openLink: ${APP_URL}/--/add?q=spartan warrior&kind=figures&scan=2
+- extendedWaitUntil:
+    visible: "No figures found for “spartan warrior” in Fandex's catalog."
+    timeout: 60000
+- tapOn: 'Not here\? Add it by hand'
+- assertVisible: 'Name'
+- assertVisible: 'spartan warrior'
