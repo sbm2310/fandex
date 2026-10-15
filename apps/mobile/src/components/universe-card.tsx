@@ -2,13 +2,15 @@ import { CATEGORIES, type Category, type CollectionUniverse } from '@fandex/core
 import { Link } from 'expo-router';
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { CoverImage } from './item-artwork';
+import { ItemArtwork } from './item-artwork';
 import { ThemedText } from './themed-text';
 
 import { Spacing } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
+import type { UniverseColors } from '@/constants/universe-colors';
+import type { UniverseOverview } from '@/hooks/use-universes';
+import { useUniverseColors } from '@/hooks/use-universe-colors';
 
-const NOUNS: Record<Category, [string, string]> = {
+export const NOUNS: Record<Category, [string, string]> = {
   book: ['book', 'books'],
   manga: ['manga', 'manga'],
   comic: ['comic', 'comics'],
@@ -40,39 +42,61 @@ export function charactersLabel(
   return more > 0 ? `${names.join(', ')} and ${more} more` : names.join(' and ');
 }
 
-const COVER_SIZE = { width: 44, height: 66 };
-
-/** A universe on the Universes tab: covers, name, counts and main characters. */
-export function UniverseCard({ universe }: { universe: CollectionUniverse }) {
-  const colors = useTheme();
+/** A universe on the Universes tab, in its colours: newest artwork, counts and characters. */
+export function UniverseCard({ universe }: { universe: UniverseOverview }) {
+  const tint = useUniverseColors(universe.slug);
   const counts = categoryCountsLabel(universe.categoryCounts);
   const characters = charactersLabel(universe.characters);
+  const owned = universe.characters.length;
+  const total = universe.characterTotal;
 
   return (
     // Link asChild needs a single style object on its child (no arrays or style functions).
     <Link href={{ pathname: '/universe/[slug]', params: { slug: universe.slug } }} asChild>
       <Pressable
         accessibilityLabel={[universe.name, counts, characters].filter(Boolean).join(', ')}
-        style={StyleSheet.flatten([styles.card, { backgroundColor: colors.backgroundElement }])}
+        style={StyleSheet.flatten([styles.card, { backgroundColor: tint.ground }])}
       >
-        <View style={styles.covers}>
-          {universe.coverUrls.slice(0, 3).map((coverUrl) => (
-            <CoverImage key={coverUrl} uri={coverUrl} size={COVER_SIZE} fit="contain" />
-          ))}
-        </View>
         <View style={styles.text}>
-          <ThemedText type="smallBold">{universe.name}</ThemedText>
-          <ThemedText type="small" themeColor="textSecondary">
+          <ThemedText type="section" style={{ color: tint.onGround }}>
+            {universe.name}
+          </ThemedText>
+          <ThemedText type="small" style={[styles.soft, { color: tint.onGround }]}>
             {counts}
           </ThemedText>
-          {characters ? (
-            <ThemedText type="small" themeColor="textSecondary" numberOfLines={2}>
-              {characters}
-            </ThemedText>
+          {total > 0 ? (
+            <View style={styles.progress}>
+              <ThemedText type="small" style={[styles.soft, { color: tint.onGround }]}>
+                {owned} of {total} characters
+              </ThemedText>
+              <ProgressBar value={owned / total} tint={tint} />
+            </View>
           ) : null}
+        </View>
+        <View style={styles.artwork}>
+          {universe.artwork.map((entry) => (
+            <ItemArtwork key={`${entry.source}:${entry.externalId}`} entry={entry} width={46} />
+          ))}
         </View>
       </Pressable>
     </Link>
+  );
+}
+
+/** A thin bar in the universe's accent, filled to `value` (0–1). */
+export function ProgressBar({ value, tint }: { value: number; tint: UniverseColors }) {
+  return (
+    <View style={[styles.track, { backgroundColor: tint.raised }]}>
+      <View
+        style={[
+          styles.fill,
+          {
+            width: `${Math.round(Math.min(1, Math.max(0, value)) * 100)}%`,
+            backgroundColor: tint.accent,
+          },
+        ]}
+      />
+    </View>
   );
 }
 
@@ -82,15 +106,31 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.three,
     padding: Spacing.three,
-    borderRadius: Spacing.three,
-  },
-  covers: {
-    flexDirection: 'row',
-    gap: Spacing.one,
-    width: COVER_SIZE.width * 3 + Spacing.one * 2,
+    borderRadius: 18,
   },
   text: {
     flex: 1,
     gap: Spacing.half,
+  },
+  soft: {
+    opacity: 0.85,
+  },
+  progress: {
+    gap: Spacing.one,
+    paddingTop: Spacing.one,
+  },
+  track: {
+    height: 4,
+    borderRadius: 2,
+    overflow: 'hidden',
+  },
+  fill: {
+    height: 4,
+    borderRadius: 2,
+  },
+  artwork: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    gap: Spacing.one,
   },
 });

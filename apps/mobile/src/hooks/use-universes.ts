@@ -4,7 +4,9 @@ import {
   findUniverse,
   itemLinks,
   summarizeCollectionUniverses,
+  type CatalogEntry,
   type CollectionItem,
+  type CollectionUniverse,
   type UniverseLinkedItem,
 } from '@fandex/core';
 
@@ -28,10 +30,40 @@ function toLinkedItem(item: CollectionItem): UniverseLinkedItem {
  */
 export function useCollectionUniverses() {
   const collection = useCollection();
-  const universes = collection.data
-    ? summarizeCollectionUniverses(collection.data.map(toLinkedItem), UNIVERSE_SEED)
+  const items = collection.data;
+  const universes = items
+    ? summarizeCollectionUniverses(items.map(toLinkedItem), UNIVERSE_SEED).map(
+        (universe): UniverseOverview => ({
+          ...universe,
+          artwork: newestFrom(items, universe.slug, ARTWORK_COUNT),
+          characterTotal: findUniverse(universe.slug)?.characters.length ?? 0,
+        }),
+      )
     : undefined;
   return { ...collection, universes };
+}
+
+/** A universe's summary, plus what its card draws: artwork and characters out of the seed's. */
+export type UniverseOverview = CollectionUniverse & {
+  /** The newest items' catalog entries (covers, or tiles for items without one). */
+  artwork: CatalogEntry[];
+  /** How many characters the seed lists for this universe ("16 of 23 characters"). */
+  characterTotal: number;
+};
+
+const ARTWORK_COUNT = 3;
+
+/** The catalog entries of the newest items from a universe. */
+export function newestFrom(
+  items: readonly CollectionItem[],
+  slug: string,
+  count: number,
+): CatalogEntry[] {
+  return items
+    .filter((item) => itemLinks(item).universes.includes(slug))
+    .sort((a, b) => b.addedAt.localeCompare(a.addedAt))
+    .slice(0, count)
+    .map((item) => item.catalog);
 }
 
 /** One universe from the seed with the items you own from it (newest first). */

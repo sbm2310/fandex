@@ -95,7 +95,7 @@ describe('Fixing an item', () => {
     await act(() => router.push('/universe/middle-earth'));
     expect(app.getPathname()).toBe('/universe/middle-earth');
     // Only Rivendell is left in Middle-earth.
-    expect(await screen.findByText('1 LEGO set')).toBeOnTheScreen();
+    expect(await screen.findByLabelText('1 LEGO set')).toBeOnTheScreen();
   });
 
   it('resets to the automatic details', async () => {

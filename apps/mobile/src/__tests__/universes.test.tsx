@@ -1,4 +1,4 @@
-import type { CatalogBook, CatalogSet } from '@fandex/core';
+import { UNIVERSE_SEED, type CatalogBook, type CatalogSet } from '@fandex/core';
 import { fireEvent, renderRouter, screen } from 'expo-router/testing-library';
 
 import UniversesScreen from '@/app/(tabs)/universes';
@@ -7,6 +7,7 @@ import UniverseScreen from '@/app/universe/[slug]/index';
 import { categoryCountsLabel, charactersLabel } from '@/components/universe-card';
 import {
   FakeAccountService,
+  createFakePreorders,
   createMemoryCollection,
   createWrapper,
   dune,
@@ -56,6 +57,11 @@ describe('Universes tab', () => {
       'Middle-earth, 1 book · 1 LEGO set, Gandalf, Bilbo Baggins and 1 more',
       'Star Wars, 1 LEGO set, Han Solo',
     ]);
+    // Characters owned out of the seed's, on each card.
+    const seedCount = (slug: string) =>
+      UNIVERSE_SEED.find((u) => u.slug === slug)!.characters.length;
+    expect(screen.getByText(`3 of ${seedCount('middle-earth')} characters`)).toBeOnTheScreen();
+    expect(screen.getByText(`1 of ${seedCount('star-wars')} characters`)).toBeOnTheScreen();
   });
 
   it('shows the signed-in account’s universes', async () => {
@@ -99,7 +105,8 @@ describe('Universe screen', () => {
 
     expect(await screen.findByRole('header', { name: 'Middle-earth' })).toBeOnTheScreen();
     expect(screen.getByText(/Tolkien's world/)).toBeOnTheScreen();
-    expect(screen.getByText('1 book · 1 LEGO set')).toBeOnTheScreen();
+    // Count tiles, read out as one line.
+    expect(screen.getByLabelText('1 book · 1 LEGO set')).toBeOnTheScreen();
     expect(screen.getByRole('header', { name: 'Books · 1' })).toBeOnTheScreen();
     expect(screen.getByRole('header', { name: 'LEGO · 1' })).toBeOnTheScreen();
     expect(screen.getByRole('link', { name: 'Gandalf, 2 items' })).toBeOnTheScreen();
@@ -110,6 +117,32 @@ describe('Universe screen', () => {
       screen.getByRole('link', { name: 'Lord of the Rings: Rivendell, lego, set 10316' }),
     ).toBeOnTheScreen();
     expect(screen.queryByRole('link', { name: /^Millennium Falcon/ })).not.toBeOnTheScreen();
+  });
+
+  it('counts open pre-orders from the universe in its header', async () => {
+    const account = new FakeAccountService();
+    account.register('Fan', 'fan@example.com', 'correct horse battery');
+    await account.signIn({ email: 'fan@example.com', password: 'correct horse battery' });
+    const accountCollection = await collectionWith(linkedHobbit);
+    const gandalf = {
+      id: '0199b5a0-0000-7000-8000-0000000000f1',
+      category: 'figure' as const,
+      source: 'fandex' as const,
+      externalId: 'inart-gandalf-the-grey',
+      title: 'Gandalf the Grey',
+      creators: ['InArt'],
+      universes: ['middle-earth'],
+      characters: [],
+    };
+    const preorders = createFakePreorders({ [gandalf.id]: gandalf });
+    await preorders.create({ catalogItemId: gandalf.id, currency: 'USD' });
+    const { ready } = renderAt(
+      '/universe/middle-earth',
+      createWrapper({ account, accountCollection, preorders }),
+    );
+    await ready;
+
+    expect(await screen.findByLabelText('1 book · 1 on order')).toBeOnTheScreen();
   });
 
   it('invites you to add something from a universe you have nothing from', async () => {

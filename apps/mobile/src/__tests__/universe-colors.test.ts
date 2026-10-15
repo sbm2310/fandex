@@ -19,6 +19,7 @@ describe('universe colours', () => {
       ground: Colors.dark.backgroundElement,
       accent: Colors.dark.accent,
       onGround: Colors.dark.text,
+      raised: 'rgba(0, 0, 0, 0.22)',
     });
     expect(universeColors(undefined, 'light').accent).toBe(Colors.light.accent);
   });

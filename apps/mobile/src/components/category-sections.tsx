@@ -25,7 +25,7 @@ export function CategorySections({ items }: { items: readonly CollectionItem[] }
     if (inCategory.length === 0) return null;
     return (
       <View key={category} style={styles.section}>
-        <ThemedText type="smallBold" accessibilityRole="header">
+        <ThemedText type="section" accessibilityRole="header">
           {SECTION_TITLES[category]} · {inCategory.length}
         </ThemedText>
         <View style={styles.grid}>

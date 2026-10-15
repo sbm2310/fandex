@@ -8,6 +8,7 @@ import { ThemedText } from './themed-text';
 import { Fonts } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { useUniverseColors } from '@/hooks/use-universe-colors';
+import { initials } from '@/utils/initials';
 
 type Props = {
   entry: CatalogEntry;
@@ -92,16 +93,6 @@ function scaled(width: number) {
 function numberLines(number: string): string {
   const space = number.lastIndexOf(' ');
   return space > 0 ? `${number.slice(0, space)}\n${number.slice(space + 1)}` : number;
-}
-
-/** First letters of the first two words: "Darth Vader" → "DV". */
-function initials(title: string): string {
-  return title
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((word) => word.charAt(0).toUpperCase())
-    .join('');
 }
 
 const hidden = {

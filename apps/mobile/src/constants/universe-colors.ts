@@ -12,11 +12,13 @@ export type UniverseColors = {
   accent: string;
   /** Text on `ground`. */
   onGround: string;
+  /** Tiles and buttons sitting on `ground`: a little darker (dark mode) or lighter (light). */
+  raised: string;
 };
 
 type Scheme = keyof typeof Colors;
 
-export const UniverseColorTable: Record<string, Record<Scheme, UniverseColors>> = {
+export const UniverseColorTable: Record<string, Record<Scheme, Omit<UniverseColors, 'raised'>>> = {
   'middle-earth': {
     dark: { ground: '#2B3A23', accent: '#9CC47F', onGround: '#F4F0EA' },
     light: { ground: '#E3ECD9', accent: '#4F7A35', onGround: '#1A1720' },
@@ -41,8 +43,9 @@ export const UniverseColorTable: Record<string, Record<Scheme, UniverseColors>> 
 
 /** The colours for a universe in a colour scheme; a neutral surface and violet when unknown. */
 export function universeColors(slug: string | undefined, scheme: Scheme): UniverseColors {
+  const raised = scheme === 'dark' ? 'rgba(0, 0, 0, 0.22)' : 'rgba(255, 255, 255, 0.6)';
   const known = slug === undefined ? undefined : UniverseColorTable[slug];
-  if (known) return known[scheme];
+  if (known) return { ...known[scheme], raised };
   const colors = Colors[scheme];
-  return { ground: colors.backgroundElement, accent: colors.accent, onGround: colors.text };
+  return { ground: colors.backgroundElement, accent: colors.accent, onGround: colors.text, raised };
 }

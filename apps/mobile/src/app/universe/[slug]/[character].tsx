@@ -5,9 +5,9 @@ import { countByCategory } from '@/components/category-filter';
 import { CategorySections } from '@/components/category-sections';
 import { EmptyState } from '@/components/empty-state';
 import { PageTitle } from '@/components/page-title';
-import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { categoryCountsLabel } from '@/components/universe-card';
+import { HeaderText, UniverseHeader } from '@/components/universe-header';
 import { MaxContentWidth, Spacing } from '@/constants/theme';
 import { useCharacter } from '@/hooks/use-universes';
 
@@ -62,19 +62,20 @@ export default function CharacterScreen() {
     <ThemedView style={styles.fill}>
       <PageTitle title={character.name} />
       <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.column}>
-          <View style={styles.heading}>
-            <ThemedText type="subtitle" accessibilityRole="header">
-              {character.name}
-            </ThemedText>
-            <Link href={{ pathname: '/universe/[slug]', params: { slug: universe.slug } }}>
-              <ThemedText themeColor="accent">{universe.name}</ThemedText>
-            </Link>
-            <ThemedText type="smallBold">
-              {categoryCountsLabel(Object.fromEntries(countByCategory(items)))}
-            </ThemedText>
+        <UniverseHeader universe={universe.slug} title={character.name}>
+          <Link href={{ pathname: '/universe/[slug]', params: { slug: universe.slug } }}>
+            <HeaderText universe={universe.slug} link>
+              {universe.name}
+            </HeaderText>
+          </Link>
+          <HeaderText universe={universe.slug}>
+            {categoryCountsLabel(Object.fromEntries(countByCategory(items)))}
+          </HeaderText>
+        </UniverseHeader>
+        <View style={styles.body}>
+          <View style={styles.column}>
+            <CategorySections items={items} />
           </View>
-          <CategorySections items={items} />
         </View>
       </ScrollView>
     </ThemedView>
@@ -91,17 +92,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   content: {
+    paddingBottom: Spacing.four,
+  },
+  body: {
     alignItems: 'center',
     paddingHorizontal: Spacing.four,
-    paddingVertical: Spacing.four,
+    paddingTop: Spacing.four,
   },
   column: {
     width: '100%',
     maxWidth: MaxContentWidth,
     gap: Spacing.four,
-  },
-  heading: {
-    gap: Spacing.one,
-    alignItems: 'flex-start',
   },
 });
