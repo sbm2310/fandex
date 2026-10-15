@@ -8,7 +8,8 @@ import { useTheme } from '@/hooks/use-theme';
 type Props = {
   label: string;
   onPress: () => void;
-  variant?: 'primary' | 'secondary' | 'danger';
+  /** primary: the main action (violet); money: paying (amber); danger: removing (outlined). */
+  variant?: 'primary' | 'secondary' | 'danger' | 'money';
   busy?: boolean;
   disabled?: boolean;
 };
@@ -24,8 +25,13 @@ export function Button({
   const inactive = busy || disabled;
   const look = {
     primary: { backgroundColor: colors.accent, borderColor: colors.accent, text: colors.onAccent },
-    secondary: { backgroundColor: 'transparent', borderColor: colors.border, text: colors.text },
+    secondary: {
+      backgroundColor: colors.backgroundElement,
+      borderColor: colors.border,
+      text: colors.text,
+    },
     danger: { backgroundColor: 'transparent', borderColor: colors.danger, text: colors.danger },
+    money: { backgroundColor: colors.money, borderColor: colors.money, text: colors.moneyGround },
   }[variant];
 
   return (
@@ -56,7 +62,7 @@ const styles = StyleSheet.create({
   button: {
     minHeight: 48,
     borderWidth: 1,
-    borderRadius: Spacing.three,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: Spacing.four,

@@ -161,5 +161,9 @@ describe('Scanning a figure box', () => {
     expect(screen.queryByLabelText(/Scan a shelf/)).not.toBeOnTheScreen();
     await fireEvent.press(screen.getByRole('radio', { name: 'Books' }));
     expect(screen.queryByLabelText(/Scan a box/)).not.toBeOnTheScreen();
+    // LEGO box barcodes aren't ISBNs, so LEGO gets no scan button beside the search.
+    await fireEvent.press(screen.getByRole('radio', { name: 'LEGO' }));
+    expect(screen.queryByLabelText(/Scan a box/)).not.toBeOnTheScreen();
+    expect(screen.queryByLabelText('Scan a barcode')).not.toBeOnTheScreen();
   });
 });

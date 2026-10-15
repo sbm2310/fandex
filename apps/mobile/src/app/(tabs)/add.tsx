@@ -6,29 +6,42 @@ import { ActivityIndicator, FlatList, Platform, Pressable, StyleSheet, View } fr
 
 import { AddFigureForm } from '@/components/add-figure-form';
 import { AddToCollectionButton } from '@/components/add-to-collection-button';
+import { cardStyle } from '@/components/card';
+import { CategoryButtons, type CategoryButtonOption } from '@/components/category-buttons';
 import { EntryRow } from '@/components/entry-row';
 import { OtherEditionNote } from '@/components/other-editions';
 import { PageTitle } from '@/components/page-title';
 import { PreorderLink } from '@/components/preorder-link';
 import { Screen } from '@/components/screen';
 import { SearchField } from '@/components/search-field';
-import { SegmentedControl, type SegmentedOption } from '@/components/segmented-control';
 import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
 import { useCatalogSearch, type SearchKind } from '@/hooks/use-catalog-search';
 import { useTheme } from '@/hooks/use-theme';
 import { catalogErrorMessage } from '@/services/catalog-error-message';
 
-const KIND_OPTIONS: SegmentedOption<SearchKind>[] = [
-  { value: 'books', label: 'Books' },
-  { value: 'lego', label: 'LEGO' },
-  { value: 'figures', label: 'Figures' },
+const KIND_OPTIONS: CategoryButtonOption<SearchKind>[] = [
+  {
+    value: 'books',
+    label: 'Books',
+    icon: { ios: 'book.closed', android: 'menu_book', web: 'menu_book' },
+  },
+  {
+    value: 'lego',
+    label: 'LEGO',
+    icon: { ios: 'square.stack.3d.up', android: 'stacks', web: 'stacks' },
+  },
+  {
+    value: 'figures',
+    label: 'Figures',
+    icon: { ios: 'figure.stand', android: 'person', web: 'person' },
+  },
 ];
 
 const PLACEHOLDERS: Record<SearchKind, string> = {
   books: 'Title, author or ISBN',
   lego: 'Set name or number',
-  figures: 'Name, character or box number',
+  figures: 'Name or box number',
 };
 
 const SEARCH_LABELS: Record<SearchKind, string> = {
@@ -89,7 +102,7 @@ export default function AddScreen() {
     <Screen>
       <PageTitle title="Add to collection" />
       <ThemedText type="subtitle">Add to collection</ThemedText>
-      <SegmentedControl
+      <CategoryButtons
         options={KIND_OPTIONS}
         value={kind}
         onChange={changeKind}
@@ -117,13 +130,14 @@ export default function AddScreen() {
                 busy={search.isFetching && !search.isPending}
               />
             </View>
-            {/* Book barcodes only: camera scanning is unreliable in browsers, and LEGO box
-            barcodes aren't ISBNs. */}
+            {/* Book barcodes (not on the web: camera scanning is unreliable in browsers) and
+            figure boxes. LEGO box barcodes aren't ISBNs, so LEGO has none. */}
             {Platform.OS !== 'web' && kind === 'books' && <ScanButton />}
+            {kind === 'figures' && <BoxScanButton />}
           </View>
           {Platform.OS !== 'web' && kind === 'books' && <RapidScanLink />}
           {/* Shelf photos find books and LEGO sets; a figure's box is scanned on its own. */}
-          {kind === 'figures' ? <BoxScanLink /> : <ShelfScanLink />}
+          {kind !== 'figures' && <ShelfScanLink />}
           <SearchResults search={search} kind={kind} onAddByHand={() => setByHand(true)} />
         </>
       )}
@@ -272,7 +286,7 @@ function RapidScanLink() {
       <Pressable
         accessibilityRole="link"
         accessibilityLabel="Scan several books: barcode after barcode, then add them all"
-        style={StyleSheet.flatten([styles.shelfLink, { borderColor: colors.border }])}
+        style={StyleSheet.flatten([cardStyle(colors), styles.shelfLink])}
       >
         <SymbolView
           name={{ ios: 'barcode.viewfinder', android: 'barcode_scanner', web: 'barcode_scanner' }}
@@ -291,26 +305,20 @@ function RapidScanLink() {
 }
 
 /** A figure from its box: photograph it, the AI reads it and Fandex finds it (AI). */
-function BoxScanLink() {
+function BoxScanButton() {
   const colors = useTheme();
   return (
     <Link href="/figure-scan" asChild>
       <Pressable
         accessibilityRole="link"
         accessibilityLabel="Scan a box: find a figure from a photo of its box"
-        style={StyleSheet.flatten([styles.shelfLink, { borderColor: colors.border }])}
+        style={StyleSheet.flatten([styles.scanButton, { backgroundColor: colors.accent }])}
       >
         <SymbolView
           name={{ ios: 'camera.viewfinder', android: 'photo_camera', web: 'photo_camera' }}
-          tintColor={colors.accent}
-          size={22}
+          tintColor={colors.onAccent}
+          size={24}
         />
-        <View style={styles.searchField}>
-          <ThemedText type="smallBold">Scan a box</ThemedText>
-          <ThemedText type="small" themeColor="textSecondary">
-            Find a figure from a photo of its box
-          </ThemedText>
-        </View>
       </Pressable>
     </Link>
   );
@@ -324,7 +332,7 @@ function ShelfScanLink() {
       <Pressable
         accessibilityRole="link"
         accessibilityLabel="Scan a shelf: add several items from one photo"
-        style={StyleSheet.flatten([styles.shelfLink, { borderColor: colors.border }])}
+        style={StyleSheet.flatten([cardStyle(colors), styles.shelfLink])}
       >
         <SymbolView
           name={{ ios: 'camera.viewfinder', android: 'photo_camera', web: 'photo_camera' }}
@@ -385,7 +393,7 @@ const styles = StyleSheet.create({
   scanButton: {
     width: 52,
     height: 52,
-    borderRadius: Spacing.three,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -393,10 +401,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.three,
-    borderWidth: 1,
-    borderRadius: Spacing.three,
-    paddingVertical: Spacing.two,
-    paddingHorizontal: Spacing.three,
+    paddingVertical: Spacing.two + Spacing.one,
   },
   centered: {
     flex: 1,

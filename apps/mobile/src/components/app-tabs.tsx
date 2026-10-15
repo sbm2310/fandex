@@ -1,5 +1,6 @@
 import { NativeTabs } from 'expo-router/unstable-native-tabs';
 
+import { Fonts } from '@/constants/theme';
 import { useUpcoming } from '@/hooks/use-preorders';
 import { useTheme } from '@/hooks/use-theme';
 
@@ -14,7 +15,13 @@ export default function AppTabs() {
       backgroundColor={colors.background}
       indicatorColor={colors.backgroundElement}
       tintColor={colors.accent}
-      labelStyle={{ selected: { color: colors.accent } }}
+      labelStyle={{
+        default: { fontFamily: Fonts.semiBold },
+        selected: { fontFamily: Fonts.semiBold, color: colors.accent },
+      }}
+      // Amber means "needs attention" across the app.
+      badgeBackgroundColor={colors.money}
+      badgeTextColor={colors.moneyGround}
     >
       <NativeTabs.Trigger name="index">
         <NativeTabs.Trigger.Label>Collection</NativeTabs.Trigger.Label>

@@ -1,3 +1,4 @@
+import { SymbolView } from 'expo-symbols';
 import { useState } from 'react';
 import { ActivityIndicator, StyleSheet, TextInput, View, type TextInputProps } from 'react-native';
 
@@ -21,10 +22,15 @@ export function SearchField({ busy = false, ...inputProps }: Props) {
         styles.container,
         {
           backgroundColor: colors.backgroundElement,
-          borderColor: focused ? colors.accent : 'transparent',
+          borderColor: focused ? colors.accent : colors.border,
         },
       ]}
     >
+      <SymbolView
+        name={{ ios: 'magnifyingglass', android: 'search', web: 'search' }}
+        tintColor={colors.textSecondary}
+        size={18}
+      />
       <TextInput
         {...inputProps}
         onFocus={() => setFocused(true)}
@@ -47,8 +53,9 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: Spacing.three,
-    borderWidth: 2,
+    borderRadius: 14,
+    // Always 1 px, so focusing (accent border) doesn't move anything.
+    borderWidth: 1,
     paddingHorizontal: Spacing.three,
     gap: Spacing.two,
   },

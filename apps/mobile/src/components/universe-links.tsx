@@ -5,8 +5,9 @@ import { Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from './themed-text';
 
-import { Spacing } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
+import { Fonts, Spacing } from '@/constants/theme';
+import { universeColors, type UniverseColors } from '@/constants/universe-colors';
+import { useTheme, useThemeScheme } from '@/hooks/use-theme';
 
 /** A rounded link chip, optionally with a count ("Gandalf 2"). */
 function Chip({
@@ -14,21 +15,32 @@ function Chip({
   label,
   accessibilityLabel,
   count,
+  tint,
 }: {
   href: Parameters<typeof Link>[0]['href'];
   label: string;
   accessibilityLabel: string;
   count?: number | undefined;
+  /** A universe chip wears its universe's colours; character chips stay neutral. */
+  tint?: UniverseColors;
 }) {
   const colors = useTheme();
+  const look = tint
+    ? { backgroundColor: tint.ground, borderColor: tint.ground, color: tint.onGround }
+    : { backgroundColor: colors.backgroundElement, borderColor: colors.border, color: colors.text };
   return (
     // Link asChild needs a single style object on its child (no arrays or style functions).
     <Link href={href} asChild>
       <Pressable
         accessibilityLabel={accessibilityLabel}
-        style={StyleSheet.flatten([styles.chip, { borderColor: colors.border }])}
+        style={StyleSheet.flatten([
+          styles.chip,
+          { backgroundColor: look.backgroundColor, borderColor: look.borderColor },
+        ])}
       >
-        <ThemedText type="small">{label}</ThemedText>
+        <ThemedText type="small" style={[styles.chipLabel, { color: look.color }]}>
+          {label}
+        </ThemedText>
         {count !== undefined && (
           <ThemedText type="small" themeColor="textSecondary">
             {count}
@@ -41,6 +53,7 @@ function Chip({
 
 /** Links to universe pages ("Middle-earth"), for slugs the seed knows. */
 export function UniverseChips({ universes }: { universes: readonly string[] }) {
+  const scheme = useThemeScheme();
   const known = universes.flatMap((slug) => {
     const universe = findUniverse(slug);
     return universe ? [universe] : [];
@@ -54,6 +67,7 @@ export function UniverseChips({ universes }: { universes: readonly string[] }) {
           href={{ pathname: '/universe/[slug]', params: { slug: universe.slug } }}
           label={universe.name}
           accessibilityLabel={`${universe.name} universe`}
+          tint={universeColors(universe.slug, scheme)}
         />
       ))}
     </View>
@@ -127,7 +141,10 @@ const styles = StyleSheet.create({
     gap: Spacing.one,
     borderWidth: 1,
     borderRadius: Spacing.four,
-    paddingVertical: Spacing.one,
+    paddingVertical: Spacing.one + Spacing.half,
     paddingHorizontal: Spacing.three,
+  },
+  chipLabel: {
+    fontFamily: Fonts.semiBold,
   },
 });

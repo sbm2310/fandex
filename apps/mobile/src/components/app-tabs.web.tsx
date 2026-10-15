@@ -11,7 +11,7 @@ import { Pressable, View, StyleSheet, useWindowDimensions } from 'react-native';
 import { ThemedText } from './themed-text';
 import { ThemedView } from './themed-view';
 
-import { MaxContentWidth, Spacing } from '@/constants/theme';
+import { Fonts, MaxContentWidth, Spacing } from '@/constants/theme';
 import { useUpcoming } from '@/hooks/use-preorders';
 import { useTheme } from '@/hooks/use-theme';
 
@@ -68,17 +68,18 @@ export function TabButton({ children, isFocused, badge = 0, ...props }: TabButto
       >
         <ThemedText
           type="small"
-          themeColor={isFocused ? 'text' : 'textSecondary'}
-          style={compact && styles.labelCompact}
+          themeColor={isFocused ? 'accent' : 'textSecondary'}
+          style={[styles.label, compact && styles.labelCompact]}
         >
           {children}
         </ThemedText>
         {badge > 0 && (
           <View
             accessibilityLabel={`${badge} need attention`}
-            style={[styles.badge, { backgroundColor: colors.accent }]}
+            // Amber means "needs attention" across the app.
+            style={[styles.badge, { backgroundColor: colors.money }]}
           >
-            <ThemedText type="smallBold" style={[styles.badgeText, { color: colors.onAccent }]}>
+            <ThemedText type="smallBold" style={[styles.badgeText, { color: colors.moneyGround }]}>
               {badge}
             </ThemedText>
           </View>
@@ -90,14 +91,19 @@ export function TabButton({ children, isFocused, badge = 0, ...props }: TabButto
 
 export function CustomTabList(props: TabListProps) {
   const compact = useCompact();
+  const colors = useTheme();
   return (
     <View {...props} style={[styles.tabListContainer, compact && styles.tabListCompact]}>
       <ThemedView
         type="backgroundElement"
-        style={[styles.innerContainer, compact && styles.innerCompact]}
+        style={[
+          styles.innerContainer,
+          { borderColor: colors.border },
+          compact && styles.innerCompact,
+        ]}
       >
         {compact ? null : (
-          <ThemedText type="smallBold" themeColor="accent" style={styles.brandText}>
+          <ThemedText type="section" themeColor="accent" style={styles.brandText}>
             Fandex
           </ThemedText>
         )}
@@ -125,6 +131,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     gap: Spacing.two,
     maxWidth: MaxContentWidth,
+    borderWidth: StyleSheet.hairlineWidth,
   },
   tabListCompact: {
     padding: Spacing.one,
@@ -163,6 +170,9 @@ const styles = StyleSheet.create({
   tabButtonCompact: {
     paddingHorizontal: Spacing.one + Spacing.half,
     gap: Spacing.half,
+  },
+  label: {
+    fontFamily: Fonts.semiBold,
   },
   labelCompact: {
     fontSize: 13,
