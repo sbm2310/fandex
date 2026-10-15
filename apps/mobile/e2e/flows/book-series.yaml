@@ -27,9 +27,9 @@ tags:
 - scrollUntilVisible:
     element: "Book 1 of \\d+ in The Stormlight Archive"
     timeout: 30000
-- extendedWaitUntil:
-    visible: 'Add Words of Radiance'
+# The missing books load after the heading (live Open Library), and the item page is tall
+# enough that they start below the fold: scroll until the first one is on screen.
+- scrollUntilVisible:
+    element: 'Add Words of Radiance'
     timeout: 60000
-# Bring the series section up for the picture.
-- scroll
 - takeScreenshot: output/book-series

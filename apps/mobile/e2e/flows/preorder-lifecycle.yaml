@@ -16,8 +16,10 @@ tags:
 - inputText: ${output.email}
 - tapOn: 'Password'
 - inputText: ${output.password}
-# With the keyboard up, the first tap on a button only ends the editing.
-- hideKeyboard
+# With the keyboard up, the first tap on a button only ends the editing: end it by tapping plain
+# text. (Not hideKeyboard: on a password field iOS keeps its AutoFill bar up, which Maestro can't
+# swipe away, and with the Simulator's hardware keyboard connected there's no keyboard at all.)
+- tapOn: 'Sign in to keep your collection.*'
 # The button, not the heading of the same name.
 - tapOn:
     text: 'Sign in'
@@ -86,7 +88,8 @@ tags:
 - tapOn: 'Delete account'
 - tapOn: 'Password'
 - inputText: ${output.password}
-- hideKeyboard
+# End the editing by tapping plain text, as when signing in.
+- tapOn: "Enter your password to confirm. This can't be undone."
 - tapOn: 'Delete permanently'
 - tapOn: 'Delete'
 - extendedWaitUntil:

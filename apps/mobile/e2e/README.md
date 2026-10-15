@@ -41,6 +41,13 @@ patterns, but if a source changes a date or a title, a flow's expectation change
   (VoiceOver read each field twice anyway).
 - **Put the keyboard away before tapping a button or tab** (`hideKeyboard`, or tap a text on a
   number pad, which has no return key): with the keyboard up, the first tap only ends editing.
+- **After a password field, tap plain text instead of `hideKeyboard`.** iOS keeps its password
+  AutoFill bar up, which `hideKeyboard` can't swipe away; it failed every time once the
+  Simulator's hardware keyboard was connected (typing into the Simulator by hand connects it, and
+  then no on-screen keyboard appears at all). Tapping a static text ends editing either way.
+- **Below the fold means scroll, not wait:** `extendedWaitUntil` only sees what's on screen, so
+  when a page grows (the redesigned item page pushed the series section down), wait with
+  `scrollUntilVisible` and a long timeout instead.
 - **Only what's on screen counts:** `scrollUntilVisible` before asserting or tapping lower down.
 - **The Simulator lags on this Mac:** wait with `extendedWaitUntil` rather than asserting at once.
 - **iOS steps in:** "Automatic Strong Password" replaces a new password typed into a sign-up
