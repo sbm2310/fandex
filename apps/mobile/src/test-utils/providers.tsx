@@ -28,6 +28,7 @@ import type { AdminReviews } from '@/services/admin-reviews';
 import { AppServicesProvider } from '@/services/app-services';
 import type { CustomItems } from '@/services/custom-items';
 import type { FigureCatalog } from '@/services/figure-catalog';
+import type { FigureScanner } from '@/services/figure-scanner';
 import type { FigureSuggestions } from '@/services/figure-suggestions';
 import type { Preorders } from '@/services/preorders';
 import type { SeriesCatalog } from '@/services/series-catalog';
@@ -128,6 +129,16 @@ export function createFakeAdminReviews({
   } satisfies AdminReviews & { queue: AdminFigureSuggestion[] };
 }
 
+/** A box scanner whose scan is a Jest mock; by default it reads nothing. */
+export function createFakeFigureScanner(overrides: Partial<FigureScanner> = {}) {
+  return {
+    scan: jest.fn<ReturnType<FigureScanner['scan']>, Parameters<FigureScanner['scan']>>(
+      async () => ({ reading: null, candidates: [], quota: { used: 1, limit: 5 } }),
+    ),
+    ...overrides,
+  };
+}
+
 /** A shelf scanner whose methods are Jest mocks; by default AI is available and finds nothing. */
 export function createFakeShelfScanner(overrides: Partial<ShelfScanner> = {}) {
   return {
@@ -135,6 +146,7 @@ export function createFakeShelfScanner(overrides: Partial<ShelfScanner> = {}) {
       Promise.resolve({
         available: true,
         shelfScans: { used: 0, limit: 5 },
+        figureScans: { used: 0, limit: 5 },
         provider: { name: 'Groq', usesPhotosForTraining: false },
       }),
     ),
@@ -363,6 +375,7 @@ export function createWrapper({
   accountCollection = createMemoryCollection(),
   account = new FakeAccountService(),
   shelfScanner = createFakeShelfScanner(),
+  figureScanner = createFakeFigureScanner(),
   questionAsker = createFakeQuestionAsker(),
   customItems = createFakeCustomItems(),
   figureSuggestions = createFakeFigureSuggestions(),
@@ -377,6 +390,7 @@ export function createWrapper({
   accountCollection?: CollectionRepository;
   account?: AccountService;
   shelfScanner?: ShelfScanner;
+  figureScanner?: FigureScanner;
   questionAsker?: QuestionAsker;
   customItems?: CustomItems;
   figureSuggestions?: FigureSuggestions;
@@ -400,6 +414,7 @@ export function createWrapper({
             accountCollection,
             account,
             shelfScanner,
+            figureScanner,
             questionAsker,
             customItems,
             figureSuggestions,

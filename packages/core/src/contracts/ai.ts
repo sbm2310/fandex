@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import type { BoxReading } from '../ai/box-reading';
 import { SHELF_ITEM_KINDS, type ShelfReading } from '../ai/shelf-reading';
 import { MAX_QUESTION_LENGTH } from '../ask/ask-model';
 import { collectionQuerySchema } from '../ask/collection-query';
@@ -50,6 +51,38 @@ export const shelfScanResponseSchema = z.object({
 });
 export type ShelfScanResponse = z.infer<typeof shelfScanResponseSchema>;
 
+/** What the model read on a figure's box: a guess, matched to the figure catalog. */
+export const boxReadingSchema = z.object({
+  brand: z.string().exactOptional(),
+  line: z.string().exactOptional(),
+  number: z.string().exactOptional(),
+  name: z.string().exactOptional(),
+  character: z.string().exactOptional(),
+  from: z.string().exactOptional(),
+  scale: z.string().exactOptional(),
+  edition: z.string().exactOptional(),
+}) satisfies z.ZodType<BoxReading>;
+
+/** A shared figure the box may show: found by its number or its name; owned or not. */
+export const figureScanCandidateSchema = z.object({
+  item: catalogItemSchema,
+  owned: z.boolean(),
+  by: z.enum(['number', 'name']),
+});
+export type FigureScanCandidate = z.infer<typeof figureScanCandidateSchema>;
+
+/**
+ * POST /ai/figure-scans: what was read on the box (null when nothing identifies a figure), the
+ * catalog figures it may be (best first), and the allowance left.
+ */
+export const figureScanResponseSchema = z.object({
+  reading: boxReadingSchema.nullable(),
+  candidates: z.array(figureScanCandidateSchema),
+  /** Box scans after this one. */
+  quota: aiQuotaSchema,
+});
+export type FigureScanResponse = z.infer<typeof figureScanResponseSchema>;
+
 /** Who reads the photos, for the privacy note ("Your photo is sent to …"). */
 export const aiProviderInfoSchema = z.object({
   name: z.string(),
@@ -68,6 +101,8 @@ export const aiQuotaResponseSchema = z.object({
   provider: aiProviderInfoSchema.exactOptional(),
   /** Questions asked today (absent from servers before "Ask"). */
   questions: aiQuotaSchema.exactOptional(),
+  /** Figure boxes scanned today (absent from servers before box scanning). */
+  figureScans: aiQuotaSchema.exactOptional(),
 });
 export type AiQuotaResponse = z.infer<typeof aiQuotaResponseSchema>;
 

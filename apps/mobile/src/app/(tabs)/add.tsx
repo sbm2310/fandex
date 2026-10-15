@@ -1,4 +1,4 @@
-import type { CatalogEntry } from '@fandex/core';
+import type { CatalogEntry, NewFigure } from '@fandex/core';
 import { Link, useLocalSearchParams } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 import { useState, type ReactNode } from 'react';
@@ -38,13 +38,21 @@ const SEARCH_LABELS: Record<SearchKind, string> = {
 };
 
 export default function AddScreen() {
-  // The barcode scanner returns here with ?isbn=…&scan=<timestamp>, and a shelf scan's
-  // "Search" with ?q=…&kind=…&scan=<timestamp>; `scan` changes every time.
+  // The barcode scanner returns here with ?isbn=…&scan=<timestamp>, a shelf scan's "Search"
+  // with ?q=…&kind=…&scan=<timestamp>, and a box scan's "Add it by hand" with
+  // ?kind=figures&byHand=1&title=…&scan=<timestamp>; `scan` changes every time.
   const params = useLocalSearchParams<{
     isbn?: string;
     q?: string;
     kind?: SearchKind;
     scan?: string;
+    byHand?: string;
+    title?: string;
+    brand?: string;
+    number?: string;
+    edition?: string;
+    line?: string;
+    scale?: string;
   }>();
   const incoming = params.isbn ?? params.q;
   const incomingKind: SearchKind =
@@ -52,7 +60,9 @@ export default function AddScreen() {
   const [input, setInput] = useState(incoming ?? '');
   const [kind, setKind] = useState<SearchKind>(incomingKind);
   // Figures not in Fandex's catalog are described by hand instead.
-  const [byHand, setByHand] = useState(false);
+  const [byHand, setByHand] = useState(params.byHand === '1');
+  // What the add-by-hand form starts with: the search text, or what a box scan read.
+  const [prefill, setPrefill] = useState<Partial<NewFigure> | null>(() => scannedFigure(params));
   const [appliedScan, setAppliedScan] = useState(params.scan);
   // Put a new scan into the search field (adjusting state during render, as React recommends
   // over an effect: https://react.dev/learn/you-might-not-need-an-effect).
@@ -62,12 +72,17 @@ export default function AddScreen() {
       setInput(incoming);
       setKind(incomingKind);
       setByHand(false);
+    } else if (params.byHand === '1') {
+      setKind('figures');
+      setByHand(true);
+      setPrefill(scannedFigure(params));
     }
   }
   const search = useCatalogSearch(byHand ? '' : input, kind);
   const changeKind = (next: SearchKind) => {
     setKind(next);
     setByHand(false);
+    setPrefill(null);
   };
 
   return (
@@ -81,7 +96,15 @@ export default function AddScreen() {
         accessibilityLabel="What to add"
       />
       {kind === 'figures' && byHand ? (
-        <AddFigureForm initialTitle={input.trim()} onBack={() => setByHand(false)} />
+        <AddFigureForm
+          // A new scan starts a fresh form.
+          key={appliedScan ?? 'search'}
+          initial={prefill ?? { title: input.trim() }}
+          onBack={() => {
+            setByHand(false);
+            setPrefill(null);
+          }}
+        />
       ) : (
         <>
           <View style={styles.searchRow}>
@@ -99,8 +122,8 @@ export default function AddScreen() {
             {Platform.OS !== 'web' && kind === 'books' && <ScanButton />}
           </View>
           {Platform.OS !== 'web' && kind === 'books' && <RapidScanLink />}
-          {/* Shelf photos find books and LEGO sets. */}
-          {kind !== 'figures' && <ShelfScanLink />}
+          {/* Shelf photos find books and LEGO sets; a figure's box is scanned on its own. */}
+          {kind === 'figures' ? <BoxScanLink /> : <ShelfScanLink />}
           <SearchResults search={search} kind={kind} onAddByHand={() => setByHand(true)} />
         </>
       )}
@@ -267,6 +290,32 @@ function RapidScanLink() {
   );
 }
 
+/** A figure from its box: photograph it, the AI reads it and Fandex finds it (AI). */
+function BoxScanLink() {
+  const colors = useTheme();
+  return (
+    <Link href="/figure-scan" asChild>
+      <Pressable
+        accessibilityRole="link"
+        accessibilityLabel="Scan a box: find a figure from a photo of its box"
+        style={StyleSheet.flatten([styles.shelfLink, { borderColor: colors.border }])}
+      >
+        <SymbolView
+          name={{ ios: 'camera.viewfinder', android: 'photo_camera', web: 'photo_camera' }}
+          tintColor={colors.accent}
+          size={22}
+        />
+        <View style={styles.searchField}>
+          <ThemedText type="smallBold">Scan a box</ThemedText>
+          <ThemedText type="small" themeColor="textSecondary">
+            Find a figure from a photo of its box
+          </ThemedText>
+        </View>
+      </Pressable>
+    </Link>
+  );
+}
+
 /** Adding many items at once: photograph a shelf (AI). */
 function ShelfScanLink() {
   const colors = useTheme();
@@ -380,3 +429,25 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.four,
   },
 });
+
+/** The figure a box scan sent ("Add it by hand"), or null when the Add tab was opened otherwise. */
+function scannedFigure(params: {
+  byHand?: string;
+  title?: string;
+  brand?: string;
+  number?: string;
+  edition?: string;
+  line?: string;
+  scale?: string;
+}): Partial<NewFigure> | null {
+  if (params.byHand !== '1') return null;
+  const { title, brand, number, edition, line, scale } = params;
+  return {
+    ...(title && { title }),
+    ...(brand && { brand }),
+    ...(number && { number }),
+    ...(edition && { edition }),
+    ...(line && { line }),
+    ...(scale && { scale }),
+  };
+}

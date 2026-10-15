@@ -13,6 +13,7 @@ import { createAuthClientFor } from './auth-client';
 import { BetterAuthAccountService } from './better-auth-account-service';
 import { ApiCustomItems } from './custom-items';
 import { ApiFigureCatalog } from './figure-catalog';
+import { ApiFigureScanner } from './figure-scanner';
 import { ApiFigureSuggestions } from './figure-suggestions';
 import { ApiPreorders } from './preorders';
 import { ApiSeriesCatalog } from './series-catalog';
@@ -38,6 +39,7 @@ export function createDefaultServices(): AppServices {
     accountCollection: new ApiCollectionRepository(apiFetch),
     account: new BetterAuthAccountService(authClient),
     shelfScanner: new ApiShelfScanner(apiFetch),
+    figureScanner: new ApiFigureScanner(apiFetch),
     questionAsker: new ApiQuestionAsker(apiFetch),
     customItems: new ApiCustomItems(apiFetch),
     figureSuggestions: new ApiFigureSuggestions(apiFetch),

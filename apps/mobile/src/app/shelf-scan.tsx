@@ -1,5 +1,4 @@
 import type { AiProviderInfo, ShelfScanResponse } from '@fandex/core';
-import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
 import { useState, type ReactNode } from 'react';
 import { ActivityIndicator, FlatList, Platform, StyleSheet, View } from 'react-native';
@@ -15,6 +14,7 @@ import { useCurrentUser } from '@/hooks/use-account';
 import { useAddToCollection } from '@/hooks/use-collection';
 import { useAiQuota, useShelfScan } from '@/hooks/use-shelf-scan';
 import { toShelfScanError, type ShelfPhoto } from '@/services/shelf-scanner';
+import { choosePhoto, privacyNote, takePhoto } from '@/utils/scan-photo';
 import {
   chooseCandidate,
   chosenEntries,
@@ -173,36 +173,11 @@ export default function ShelfScanScreen() {
           {left === 1 ? '1 scan left today' : `${left} scans left today`}
         </ThemedText>
         <ThemedText type="small" themeColor="textSecondary">
-          {privacyNote(quota.data.provider)}
+          {privacyNote(quota.data.provider, 'read the spines')}
         </ThemedText>
       </View>
     </Page>
   );
-}
-
-/** Where the photo goes, as the server reports it. */
-function privacyNote(provider: AiProviderInfo | undefined): string {
-  if (!provider) return 'Your photo is sent to an AI service to read the spines.';
-  const where = provider.usesPhotosForTraining
-    ? `Your photo is sent to ${provider.name}, an AI service, to read the spines. Its free tier may use photos to improve its products, so don't include anything private.`
-    : `Your photo is sent to ${provider.name}, an AI service, to read the spines. It isn't stored or used to train AI.`;
-  return provider.fallbackName
-    ? `${where} If it's busy, ${provider.fallbackName} reads the photo instead.`
-    : where;
-}
-
-async function choosePhoto(onPicked: (photo: ShelfPhoto) => void) {
-  const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: 'images', quality: 1 });
-  const asset = result.canceled ? undefined : result.assets[0];
-  if (asset) onPicked({ uri: asset.uri, width: asset.width, height: asset.height });
-}
-
-async function takePhoto(onPicked: (photo: ShelfPhoto) => void) {
-  const permission = await ImagePicker.requestCameraPermissionsAsync();
-  if (!permission.granted) return choosePhoto(onPicked);
-  const result = await ImagePicker.launchCameraAsync({ mediaTypes: 'images', quality: 1 });
-  const asset = result.canceled ? undefined : result.assets[0];
-  if (asset) onPicked({ uri: asset.uri, width: asset.width, height: asset.height });
 }
 
 function Review({

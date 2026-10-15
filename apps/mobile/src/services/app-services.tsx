@@ -5,6 +5,7 @@ import type { AccountService } from './account-service';
 import type { AdminReviews } from './admin-reviews';
 import type { CustomItems } from './custom-items';
 import type { FigureCatalog } from './figure-catalog';
+import type { FigureScanner } from './figure-scanner';
 import type { FigureSuggestions } from './figure-suggestions';
 import type { Preorders } from './preorders';
 import type { QuestionAsker } from './question-asker';
@@ -24,6 +25,8 @@ export type AppServices = {
   account: AccountService;
   /** Shelf photos read by AI on the Fandex API (signed in only). */
   shelfScanner: ShelfScanner;
+  /** Figure boxes read by AI on the Fandex API (signed in only). */
+  figureScanner: FigureScanner;
   /** "Ask your collection" questions answered on the Fandex API (signed in only). */
   questionAsker: QuestionAsker;
   /** Figures added by hand, saved on the Fandex API (signed in). */
@@ -83,6 +86,10 @@ export function useAccountService(): AccountService {
 
 export function useShelfScanner(): ShelfScanner {
   return useAppServices().shelfScanner;
+}
+
+export function useFigureScanner(): FigureScanner {
+  return useAppServices().figureScanner;
 }
 
 export function useQuestionAsker(): QuestionAsker {

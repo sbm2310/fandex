@@ -264,6 +264,7 @@ model SyncState {
 enum AiUsageKind {
   shelf_scan
   question
+  figure_scan
 }
 
 /// How many AI requests a user made on a day (UTC), for quotas. Nothing about the request

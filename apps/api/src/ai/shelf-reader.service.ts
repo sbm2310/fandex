@@ -1,6 +1,10 @@
 import {
+  boxPrompt,
+  BOX_READING_SETTINGS,
   combineShelfReadings,
+  parseBoxReply,
   parseShelfReply,
+  type BoxReading,
   shelfPrompt,
   SHELF_READING_SETTINGS,
   type CombinedShelfReading,
@@ -27,7 +31,7 @@ function providerFailed(error: unknown): boolean {
 }
 
 /**
- * Reads a shelf photo with the vision model: the parts of one photo go in a single request
+ * Reads photos with the vision model: shelves and figure boxes. A shelf photo: the parts of one photo go in a single request
  * with core's prompt, and the reply is parsed by core (one line per item). With Groq the photo
  * is read twice at once, and core's combineShelfReadings marks what both readings found as
  * sure (its model invents titles, differently each time); Gemini reads once. The results are
@@ -59,16 +63,42 @@ export class ShelfReader {
   }
 
   async read(images: readonly Uint8Array[]): Promise<CombinedShelfReading[]> {
+    return this.withFallback((client, provider, model) =>
+      this.readWith(client, provider, images, model),
+    );
+  }
+
+  /**
+   * Reads a figure's box (one photo, or several sides of one box) once: there's one figure, and
+   * a misread is corrected on the review screen. Null when nothing identifies the figure.
+   */
+  async readBox(images: readonly Uint8Array[]): Promise<BoxReading | null> {
+    return this.withFallback(async (client, { reasoningEffort }, model) => {
+      const result = await client.chat({
+        model,
+        ...(reasoningEffort && { reasoningEffort }),
+        prompt: boxPrompt(images.length),
+        images,
+        ...BOX_READING_SETTINGS,
+      });
+      return parseBoxReply(result.text);
+    });
+  }
+
+  /** Runs a request with the configured provider, and with Groq if that one fails. */
+  private async withFallback<T>(
+    run: (client: ChatModel, provider: AiProvider, model: string) => Promise<T>,
+  ): Promise<T> {
     if (!this.model) throw new Error('No AI provider is configured');
-    const model = this.config.get('AI_VISION_MODEL', { infer: true });
+    const model = this.config.get('AI_VISION_MODEL', { infer: true }) ?? this.provider.visionModel;
     try {
-      return await this.readWith(this.model, this.provider, images, model);
+      return await run(this.model, this.provider, model);
     } catch (error) {
       if (!this.fallback || !providerFailed(error)) throw error;
       this.logger.warn(
         `${this.provider.label} failed (${error instanceof Error ? error.message : String(error)}); reading with Groq instead`,
       );
-      return this.readWith(this.fallback, AI_PROVIDERS.groq, images);
+      return run(this.fallback, AI_PROVIDERS.groq, AI_PROVIDERS.groq.visionModel);
     }
   }
 

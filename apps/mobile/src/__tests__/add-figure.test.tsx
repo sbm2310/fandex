@@ -117,6 +117,7 @@ describe('Add a figure', () => {
       title: 'Darth Vader',
       brand: '',
       number: '',
+      edition: '',
       line: '',
       scale: '',
       coverUrl: 'https://example.com/vader.jpg',

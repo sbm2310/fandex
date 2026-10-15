@@ -12,6 +12,7 @@ import { ASK_MODEL, QuestionAnswerer } from './question-answerer.service.js';
 import { AiQuotaService } from './ai-quota.service.js';
 import { AiController } from './ai.controller.js';
 import { ChatClient } from './chat-client.js';
+import { FigureScanService } from './figure-scan.service.js';
 import { CHAT_MODEL, SHELF_FALLBACK_MODEL, ShelfReader } from './shelf-reader.service.js';
 import { ShelfScanService } from './shelf-scan.service.js';
 
@@ -39,6 +40,7 @@ const keys = (config: ConfigService<Env, true>): ProviderKeys => ({
     AiQuotaService,
     ShelfReader,
     ShelfScanService,
+    FigureScanService,
     {
       provide: CHAT_MODEL,
       inject: [ConfigService],

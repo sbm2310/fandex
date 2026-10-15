@@ -49,6 +49,12 @@ export const envSchema = z.object({
   AI_SHELF_SCANS_PER_USER: z.coerce.number().int().min(0).default(5),
   AI_SHELF_SCANS_PER_DAY: z.coerce.number().int().min(0).default(30),
   /**
+   * Figure boxes a user may scan per day, and all users together. One reading per box; it
+   * uses the shelf provider's daily allowance too (Gemini's free tier: 20 requests a day).
+   */
+  AI_FIGURE_SCANS_PER_USER: z.coerce.number().int().min(0).default(5),
+  AI_FIGURE_SCANS_PER_DAY: z.coerce.number().int().min(0).default(20),
+  /**
    * "Ask" questions per user per day, and for everyone. Each is ~1,000 Groq tokens (a ~600-token
    * prompt plus the reply's 400 maximum), so 100 a day is half the free daily tokens.
    */

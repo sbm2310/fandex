@@ -1,3 +1,4 @@
+import type { NewFigure } from '@fandex/core';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
@@ -20,22 +21,23 @@ const SCALES = ['1/6', '1/4', '1/12', 'Life-size'] as const;
  * mention; the user can fix that later. It's private to its owner.
  */
 export function AddFigureForm({
-  initialTitle = '',
+  initial = {},
   onBack,
 }: {
-  /** What was searched for, as a starting name. */
-  initialTitle?: string;
+  /** What to start with: the search text as a name, or what a box scan read. */
+  initial?: Partial<NewFigure>;
   /** Back to the catalog search. */
   onBack?: () => void;
 }) {
   const colors = useTheme();
   const addFigure = useAddFigure();
   const { data: user } = useCurrentUser();
-  const [title, setTitle] = useState(initialTitle);
-  const [brand, setBrand] = useState('');
-  const [number, setNumber] = useState('');
-  const [line, setLine] = useState('');
-  const [scale, setScale] = useState('');
+  const [title, setTitle] = useState(initial.title ?? '');
+  const [brand, setBrand] = useState(initial.brand ?? '');
+  const [number, setNumber] = useState(initial.number ?? '');
+  const [edition, setEdition] = useState(initial.edition ?? '');
+  const [line, setLine] = useState(initial.line ?? '');
+  const [scale, setScale] = useState(initial.scale ?? '');
   const [coverUrl, setCoverUrl] = useState('');
   const [suggest, setSuggest] = useState(false);
   const suggestFigure = useSuggestFigure();
@@ -53,6 +55,7 @@ export function AddFigureForm({
         title: title.trim(),
         brand,
         number,
+        edition,
         line,
         scale,
         coverUrl: coverUrl.trim(),
@@ -63,14 +66,23 @@ export function AddFigureForm({
   const save = () => {
     if (!canSave) return;
     addFigure.mutate(
-      { title, brand, number, line, scale, coverUrl },
+      { title, brand, number, edition, line, scale, coverUrl },
       {
         onSuccess: (item) => {
           // Signed in only (the checkbox is); the figure's page shows how it went.
           const catalogItemId = item.catalog.catalogId;
           if (suggest && catalogItemId) suggestFigure.mutate({ catalogItemId });
           // Ready for the next one; Back from the figure's page returns here.
-          for (const clear of [setTitle, setBrand, setNumber, setLine, setScale, setCoverUrl]) {
+          const fields = [
+            setTitle,
+            setBrand,
+            setNumber,
+            setEdition,
+            setLine,
+            setScale,
+            setCoverUrl,
+          ];
+          for (const clear of fields) {
             clear('');
           }
           router.push({ pathname: '/book/[id]', params: { id: item.id } });
@@ -121,6 +133,13 @@ export function AddFigureForm({
           placeholder="MMS 279"
           autoCapitalize="characters"
           autoCorrect={false}
+        />
+        <FormField
+          label="Edition (optional)"
+          value={edition}
+          onChangeText={setEdition}
+          placeholder="Deluxe"
+          autoCapitalize="words"
         />
         <FormField
           label="Line or series (optional)"

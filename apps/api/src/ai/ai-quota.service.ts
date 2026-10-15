@@ -10,6 +10,7 @@ import { PrismaService } from '../prisma/prisma.service.js';
 const NAMES: Record<AiUsageKind, string> = {
   shelf_scan: 'shelf scans',
   question: 'questions',
+  figure_scan: 'box scans',
 };
 
 /** The day a request counts towards: midnight UTC (stored as a DATE). */
@@ -43,6 +44,11 @@ export class AiQuotaService {
         return {
           perUser: this.config.get('AI_QUESTIONS_PER_USER', { infer: true }),
           perDay: this.config.get('AI_QUESTIONS_PER_DAY', { infer: true }),
+        };
+      case 'figure_scan':
+        return {
+          perUser: this.config.get('AI_FIGURE_SCANS_PER_USER', { infer: true }),
+          perDay: this.config.get('AI_FIGURE_SCANS_PER_DAY', { infer: true }),
         };
     }
   }

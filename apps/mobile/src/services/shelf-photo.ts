@@ -41,3 +41,21 @@ export async function prepareShelfImages(photo: ShelfPhoto): Promise<ShelfImage[
   }
   return images;
 }
+
+/**
+ * A box photo for box scanning: whole (one figure, and its printed code may be anywhere),
+ * resized to the same long edge as shelf parts.
+ */
+export async function prepareBoxImage(photo: ShelfPhoto): Promise<ShelfImage> {
+  const scale = Math.min(1, MAX_EDGE / Math.max(photo.width, photo.height));
+  const context = ImageManipulator.manipulate(photo.uri);
+  if (scale < 1) {
+    context.resize({
+      width: Math.round(photo.width * scale),
+      height: Math.round(photo.height * scale),
+    });
+  }
+  const rendered = await context.renderAsync();
+  const saved = await rendered.saveAsync({ format: SaveFormat.JPEG, compress: JPEG_QUALITY });
+  return { uri: saved.uri, width: saved.width, height: saved.height };
+}

@@ -3,6 +3,7 @@ import {
   type AiQuotaResponse,
   type AskRequest,
   type AskResponse,
+  type FigureScanResponse,
   type ShelfScanResponse,
 } from '@fandex/core';
 import {
@@ -37,6 +38,7 @@ import type { Response } from 'express';
 import { AiQuotaService } from './ai-quota.service.js';
 import { QuestionAnswerer } from './question-answerer.service.js';
 import { AiProviderError, AiRateLimitError } from './chat-client.js';
+import { FigureScanService } from './figure-scan.service.js';
 import { ShelfScanService } from './shelf-scan.service.js';
 
 /** The parts of one shelf photo (the app sends two halves; the provider accepts up to 3). */
@@ -58,6 +60,7 @@ export class AiController {
     private readonly shelfScans: ShelfScanService,
     private readonly quota: AiQuotaService,
     private readonly questions: QuestionAnswerer,
+    private readonly figureScans: FigureScanService,
   ) {}
 
   @Get('quota')
@@ -68,6 +71,7 @@ export class AiController {
       shelfScans: await this.quota.status(session.user.id, 'shelf_scan'),
       provider: this.shelfScans.provider,
       questions: await this.quota.status(session.user.id, 'question'),
+      figureScans: await this.quota.status(session.user.id, 'figure_scan'),
     };
   }
 
@@ -125,28 +129,90 @@ export class AiController {
     @UploadedFiles() files: Express.Multer.File[] | undefined,
     @Res({ passthrough: true }) response: Response,
   ): Promise<ShelfScanResponse> {
-    const images = (files ?? []).map((file) => new Uint8Array(file.buffer));
-    if (images.length === 0) throw new BadRequestException('Send the photo as JPEG `images`.');
-    if (!images.every(isJpeg)) throw new BadRequestException('Images must be JPEG.');
+    const images = jpegImages(files);
     if (!this.shelfScans.available) {
       throw new ServiceUnavailableException('Shelf scanning is not set up on this server.');
     }
+    return this.unlessBusy('Shelf scanning', response, () =>
+      this.shelfScans.scan(session.user.id, images),
+    );
+  }
+
+  /**
+   * Reads a figure's box: one photo, or up to three of the same box (multipart field `images`),
+   * and finds it in the shared figure catalog. Photos are used for this request only.
+   */
+  @Post('figure-scans')
+  @HttpCode(200)
+  @UseInterceptors(
+    FilesInterceptor('images', MAX_SHELF_IMAGES, {
+      limits: { files: MAX_SHELF_IMAGES, fileSize: MAX_SHELF_IMAGE_BYTES },
+    }),
+  )
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: { images: { type: 'array', items: { type: 'string', format: 'binary' } } },
+    },
+  })
+  @ApiOkResponse({
+    description:
+      "What the model read on the box (null if nothing identifies a figure), the shared figures it may be (best first, marked when you own them), and today's allowance.",
+  })
+  @ApiBadRequestResponse({ description: 'No images, more than 3, or not JPEG.' })
+  @ApiPayloadTooLargeResponse({ description: 'An image is larger than 2 MB.' })
+  @ApiTooManyRequestsResponse({ description: "You've used today's box scans." })
+  @ApiServiceUnavailableResponse({
+    description:
+      'AI is not set up here, it is busy (see Retry-After), or the daily limit for everyone is reached.',
+  })
+  async scanFigure(
+    @Session() session: UserSession,
+    @UploadedFiles() files: Express.Multer.File[] | undefined,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<FigureScanResponse> {
+    const images = jpegImages(files);
+    if (!this.figureScans.available) {
+      throw new ServiceUnavailableException('Box scanning is not set up on this server.');
+    }
+    return this.unlessBusy('Box scanning', response, () =>
+      this.figureScans.scan(session.user.id, images),
+    );
+  }
+
+  /**
+   * A provider failure becomes 503 "busy" with a time to retry; the user isn't charged for it
+   * (the allowance is counted only after a successful reading).
+   */
+  private async unlessBusy<T>(
+    feature: string,
+    response: Response,
+    scan: () => Promise<T>,
+  ): Promise<T> {
     try {
-      return await this.shelfScans.scan(session.user.id, images);
+      return await scan();
     } catch (error) {
       if (!(error instanceof AiProviderError) && !(error instanceof TypeError)) throw error;
-      // The user isn't charged for a failure at the provider; "busy" with a time to retry.
       const retryAfterSeconds =
         error instanceof AiRateLimitError ? Math.ceil(error.retryAfterMs / 1000) : 30;
       this.logger.warn(
-        `Shelf scan failed: ${error instanceof Error ? error.message : String(error)}`,
+        `${feature} failed: ${error instanceof Error ? error.message : String(error)}`,
       );
       response.setHeader('Retry-After', String(retryAfterSeconds));
       throw new ServiceUnavailableException(
         error instanceof AiRateLimitError
-          ? 'Shelf scanning is busy. Try again in a minute.'
-          : 'Shelf scanning is unavailable right now. Try again shortly.',
+          ? `${feature} is busy. Try again in a minute.`
+          : `${feature} is unavailable right now. Try again shortly.`,
       );
     }
   }
+}
+
+/** The uploaded photos, which must be JPEG (checked by their first bytes). */
+function jpegImages(files: Express.Multer.File[] | undefined): Uint8Array[] {
+  const images = (files ?? []).map((file) => new Uint8Array(file.buffer));
+  if (images.length === 0) throw new BadRequestException('Send the photo as JPEG `images`.');
+  if (!images.every(isJpeg)) throw new BadRequestException('Images must be JPEG.');
+  return images;
 }

@@ -6,14 +6,14 @@ import { useCurrentUser } from './use-account';
 import { useShelfScanner } from '@/services/app-services';
 import { toShelfScanError, type ShelfPhoto } from '@/services/shelf-scanner';
 
-const quotaKey = (userId: string | undefined) => ['ai', 'quota', userId] as const;
+export const aiQuotaKey = (userId: string | undefined) => ['ai', 'quota', userId] as const;
 
-/** Whether shelf scanning is available, and today's allowance (signed-in users only). */
+/** Whether AI scanning is available, and today's allowances (signed-in users only). */
 export function useAiQuota() {
   const { data: user } = useCurrentUser();
   const scanner = useShelfScanner();
   return useQuery({
-    queryKey: quotaKey(user?.id),
+    queryKey: aiQuotaKey(user?.id),
     queryFn: () => scanner.quota(),
     enabled: !!user,
     retry: false,
@@ -28,14 +28,16 @@ export function useShelfScan() {
   return useMutation({
     mutationFn: (photo: ShelfPhoto) => scanner.scan(photo),
     onSuccess: ({ quota }) =>
-      queryClient.setQueryData<AiQuotaResponse>(quotaKey(user?.id), (current) => ({
+      // Keep the rest (provider, other allowances): only the shelf allowance changed.
+      queryClient.setQueryData<AiQuotaResponse>(aiQuotaKey(user?.id), (current) => ({
+        ...current,
         available: current?.available ?? true,
         shelfScans: quota,
       })),
     onError: (error) => {
       // "Used up" here means the allowance shown is out of date: re-read it.
       if (toShelfScanError(error).kind === 'quota') {
-        void queryClient.invalidateQueries({ queryKey: quotaKey(user?.id) });
+        void queryClient.invalidateQueries({ queryKey: aiQuotaKey(user?.id) });
       }
     },
   });

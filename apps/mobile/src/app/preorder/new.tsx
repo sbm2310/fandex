@@ -25,6 +25,7 @@ type Params = {
   releaseFrom?: string;
   brand?: string;
   number?: string;
+  edition?: string;
   line?: string;
   scale?: string;
   coverUrl?: string;
@@ -76,6 +77,7 @@ export default function NewPreorderScreen() {
         title,
         ...(params.brand && { brand: params.brand }),
         ...(params.number && { number: params.number }),
+        ...(params.edition && { edition: params.edition }),
         ...(params.line && { line: params.line }),
         ...(params.scale && { scale: params.scale }),
         ...(params.coverUrl && { coverUrl: params.coverUrl }),

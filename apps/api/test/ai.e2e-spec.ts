@@ -175,6 +175,7 @@ describe('AI (e2e)', () => {
       shelfScans: { used: 1, limit: 5 },
       provider: { name: 'Groq', usesPhotosForTraining: false },
       questions: { used: 0, limit: 30 },
+      figureScans: { used: 0, limit: 5 },
     });
   });
 

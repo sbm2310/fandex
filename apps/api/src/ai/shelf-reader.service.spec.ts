@@ -96,6 +96,34 @@ describe('ShelfReader fallback', () => {
     await expect(alone.reader.read([new Uint8Array([0xff])])).rejects.toThrow('overloaded');
     expect(alone.reader.fallbackProvider).toBeNull();
   });
+
+  it('reads a box once, with the box prompt, even with Groq', async () => {
+    const { chat, reader: groq } = reader('groq', [
+      'brand: Hot Toys\nnumber: MMS279\nname: Darth Vader',
+    ]);
+
+    const box = await groq.readBox([new Uint8Array([0xff]), new Uint8Array([0xff])]);
+
+    expect(box).toEqual({ brand: 'Hot Toys', number: 'MMS 279', name: 'Darth Vader' });
+    expect(chat).toHaveBeenCalledTimes(1);
+    expect(chat.mock.calls[0]![0]).toMatchObject({ maxTokens: 300, temperature: 0.2 });
+    expect(chat.mock.calls[0]![0].prompt).toContain('2 images are different sides of the same box');
+  });
+
+  it("reads a box with Groq when Gemini doesn't answer", async () => {
+    const groq = vi
+      .fn<ChatModel['chat']>()
+      .mockResolvedValue(answer('brand: InArt\nname: Gandalf the Grey'));
+    const { chat, reader: gemini } = reader('gemini-free', [], { chat: groq });
+    chat.mockRejectedValue(new AiProviderError('overloaded', 503));
+
+    expect(await gemini.readBox([new Uint8Array([0xff])])).toEqual({
+      brand: 'InArt',
+      name: 'Gandalf the Grey',
+    });
+    expect(groq).toHaveBeenCalledTimes(1);
+    expect(groq.mock.calls[0]![0]).toMatchObject({ model: 'qwen/qwen3.8-27b' });
+  });
 });
 
 describe('createChatModel', () => {

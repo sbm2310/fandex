@@ -63,15 +63,23 @@ async function serverMessage(response: Response): Promise<string | undefined> {
   return typeof body?.message === 'string' ? body.message : undefined;
 }
 
-async function failure(response: Response): Promise<ShelfScanError> {
+/** An error answer as a ShelfScanError (shared with box scanning). */
+export async function failure(
+  response: Response,
+  what = {
+    signIn: 'Sign in to scan a shelf.',
+    usedUp: "You've used today's shelf scans.",
+    busy: 'Shelf scanning is busy. Try again shortly.',
+  },
+): Promise<ShelfScanError> {
   const message = await serverMessage(response);
   switch (response.status) {
     case 401:
-      return new ShelfScanError('signed-out', 'Sign in to scan a shelf.');
+      return new ShelfScanError('signed-out', what.signIn);
     case 429:
-      return new ShelfScanError('quota', message ?? "You've used today's shelf scans.");
+      return new ShelfScanError('quota', message ?? what.usedUp);
     case 503:
-      return new ShelfScanError('busy', message ?? 'Shelf scanning is busy. Try again shortly.');
+      return new ShelfScanError('busy', message ?? what.busy);
     default:
       return new ShelfScanError('failed', "Couldn't read this photo. Try again.");
   }

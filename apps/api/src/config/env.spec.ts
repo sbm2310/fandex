@@ -18,6 +18,8 @@ describe('envSchema', () => {
       AI_ASK_PROVIDER: 'groq',
       AI_QUESTIONS_PER_USER: 30,
       AI_QUESTIONS_PER_DAY: 100,
+      AI_FIGURE_SCANS_PER_USER: 5,
+      AI_FIGURE_SCANS_PER_DAY: 20,
       TRUSTED_ORIGINS: ['http://localhost:8081', 'fandex://'],
       ADMIN_EMAILS: [],
     });
