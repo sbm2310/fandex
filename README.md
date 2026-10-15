@@ -61,7 +61,7 @@ Fandex is a collection app for fans who collect comics, manga, fantasy books, pr
   </tr>
 </table>
 
-## Status: Stage 7 (built, not deployed yet)
+## Status: Stage 7 (live)
 
 **Live demo: [fandex-4mjc.onrender.com](https://fandex-4mjc.onrender.com)** (free hosting: the first visit after a quiet spell takes about a minute while the server wakes up). API docs: [/api/docs](https://fandex-4mjc.onrender.com/api/docs).
 
@@ -83,7 +83,7 @@ Fandex runs on iPhone and the web from one codebase, backed by its own API:
 - **Your collection:** a cover grid sorted by recently added or by title (ignoring "The"/"A"), a detail screen per item, and removal with confirmation.
 - **Account deletion** in the app (required by the App Store), light and dark mode, screen-reader labels, and browser tab titles on web.
 
-Stages 6 and 7 are built and tested locally (including on the iOS Simulator) but not deployed yet; the live demo runs Stage 5. Still open in Stage 7: the owner's spot-check of the curated figure list, and measuring box reading on real box photos (the code and its evaluation script are ready). Next up is Stage 8: launch (see [Roadmap](#roadmap)). What the AI sees and keeps is described under [Privacy and AI](#privacy-and-ai).
+The live demo runs Stage 7. Still open in Stage 7: the owner's spot-check of the curated figure list, and measuring box reading on real box photos (the code and its evaluation script are ready). Next up is Stage 8: launch (see [Roadmap](#roadmap)). What the AI sees and keeps is described under [Privacy and AI](#privacy-and-ai).
 
 ## Architecture
 
@@ -313,7 +313,7 @@ Book data and cover images come from [Open Library](https://openlibrary.org), a 
 | **3. Universe layer** ✅  | Franchise and character pages linking items across categories                      |
 | **4. AI** ✅              | Shelf photo → identified items, rapid barcode scan, questions about the collection |
 | **5. Pre-orders** ✅      | Pre-orders (custom figures too), payments due, release dates and slips, Upcoming   |
-| **6. You're missing…** ✅ | Book series and manga/comic volumes: what's missing and what's next (not deployed) |
+| **6. You're missing…** ✅ | Book series and manga/comic volumes: what's missing and what's next                |
 | **7. Figure catalog** ✅  | Curated Hot Toys and InArt figures, approved user suggestions, AI that reads a box |
 | 8. Launch                 | TestFlight → App Store, shareable public collection pages                          |
 
