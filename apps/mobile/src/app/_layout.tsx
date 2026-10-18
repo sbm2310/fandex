@@ -108,6 +108,8 @@ export default function RootLayout() {
             />
             <Stack.Screen name="series" options={{ title: '', headerBackTitle: 'Back' }} />
             <Stack.Screen name="collection" options={{ title: '', headerBackTitle: 'Back' }} />
+            <Stack.Screen name="privacy" options={{ title: '', headerBackTitle: 'Back' }} />
+            <Stack.Screen name="terms" options={{ title: '', headerBackTitle: 'Back' }} />
             <Stack.Screen
               name="figure-scan"
               options={{ title: 'Scan a box', headerBackTitle: 'Back' }}

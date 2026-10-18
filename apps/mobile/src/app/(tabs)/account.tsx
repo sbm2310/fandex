@@ -2,6 +2,7 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
 
+import { AboutCard } from '@/components/about-card';
 import { AuthForm } from '@/components/auth-form';
 import { Button } from '@/components/button';
 import { FormField } from '@/components/form-field';
@@ -56,6 +57,7 @@ export default function AccountScreen() {
               Without an account, your books stay on this device.
             </ThemedText>
             <AuthForm />
+            <AboutCard />
           </View>
         )}
       </ScrollView>
@@ -74,6 +76,7 @@ function SignedIn({ user, onDeleted }: { user: AccountUser; onDeleted: () => voi
       <ThemedText type="small" themeColor="textSecondary">
         Your collection is saved to your account and stays in sync across your devices.
       </ThemedText>
+      <AboutCard />
       {/* Admins only (the server's ADMIN_EMAILS); everyone else never sees it. */}
       {isAdmin ? (
         <Button
