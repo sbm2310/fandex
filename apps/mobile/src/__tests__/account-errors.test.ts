@@ -7,6 +7,7 @@ describe('toAccountError', () => {
     [{ status: 400, code: 'PASSWORD_TOO_SHORT' }, 'other', 'weak-password'],
     [{ status: 400, code: 'INVALID_PASSWORD' }, 'other', 'wrong-password'],
     [{ status: 400, code: 'INVALID_PASSWORD' }, 'sign-in', 'invalid-credentials'],
+    [{ status: 400, code: 'INVALID_NAME' }, 'other', 'invalid-name'],
     [{ status: 429 }, 'other', 'rate-limited'],
     [{ status: 0 }, 'other', 'network'],
     [{ status: 500, code: 'SOMETHING_ELSE' }, 'other', 'unknown'],

@@ -1,6 +1,8 @@
 import { expo } from '@better-auth/expo';
-import { betterAuth } from 'better-auth';
+import { displayNameSchema } from '@fandex/core';
+import { betterAuth, type BetterAuthOptions } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
+import { APIError, createAuthMiddleware } from 'better-auth/api';
 
 import type { Env } from '../config/env.js';
 import type { PrismaClient } from '../generated/prisma/client.js';
@@ -24,6 +26,31 @@ export function trustedOrigins(
   ];
 }
 
+/** Routes that set the user's display name. */
+const NAME_ROUTES = new Set(['/sign-up/email', '/update-user']);
+
+/**
+ * Better Auth stores any name it's given; ours are trimmed and 1–50 characters (core's
+ * `displayNameSchema`), whether they come from the app or straight from the API.
+ */
+const checkDisplayName = createAuthMiddleware(async (ctx) => {
+  if (!NAME_ROUTES.has(ctx.path)) return;
+  const body = ctx.body as { name?: unknown } | undefined;
+  if (body?.name === undefined && ctx.path === '/update-user') return;
+  const name = displayNameSchema.safeParse(body?.name);
+  if (!name.success) {
+    throw new APIError('BAD_REQUEST', {
+      code: 'INVALID_NAME',
+      message: name.error.issues[0]?.message ?? 'Enter your name.',
+    });
+  }
+  return { context: { ...ctx, body: { ...body, name: name.data } } };
+});
+
+// Typed as Better Auth's option, so `createAuth`'s inferred type doesn't name the middleware's
+// internal types (TS2883).
+const hooks: BetterAuthOptions['hooks'] = { before: checkDisplayName };
+
 /**
  * The Better Auth instance: email + password accounts stored in our PostgreSQL via Prisma.
  * Its routes are mounted under /api/auth (sign-up/email, sign-in/email, sign-out, get-session…).
@@ -44,6 +71,7 @@ export function createAuth(prisma: PrismaClient, env: AuthEnv) {
     plugins: [expo()],
     // In-app account deletion (an App Store requirement). The client must send the password.
     user: { deleteUser: { enabled: true } },
+    hooks,
     // Throttles brute-force attempts on auth routes; off in tests so they can run quickly.
     rateLimit: { enabled: env.NODE_ENV !== 'test' },
     advanced: {

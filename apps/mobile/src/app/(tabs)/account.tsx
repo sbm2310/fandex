@@ -6,6 +6,7 @@ import { AuthForm } from '@/components/auth-form';
 import { Button } from '@/components/button';
 import { FormField } from '@/components/form-field';
 import { PageTitle } from '@/components/page-title';
+import { ProfileCard } from '@/components/profile-card';
 import { Screen } from '@/components/screen';
 import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
@@ -69,10 +70,7 @@ function SignedIn({ user, onDeleted }: { user: AccountUser; onDeleted: () => voi
   return (
     <View style={styles.section}>
       <ThemedText type="subtitle">Account</ThemedText>
-      <View style={styles.identity}>
-        <ThemedText type="smallBold">{user.name}</ThemedText>
-        <ThemedText themeColor="textSecondary">{user.email}</ThemedText>
-      </View>
+      <ProfileCard user={user} />
       <ThemedText type="small" themeColor="textSecondary">
         Your collection is saved to your account and stays in sync across your devices.
       </ThemedText>
@@ -164,9 +162,6 @@ const styles = StyleSheet.create({
   },
   section: {
     gap: Spacing.three,
-  },
-  identity: {
-    gap: Spacing.half,
   },
   danger: {
     gap: Spacing.three,

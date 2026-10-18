@@ -5,6 +5,18 @@ import { z } from 'zod';
  * (which parse responses with them), so both sides agree on one definition.
  */
 
+export const DISPLAY_NAME_MAX = 50;
+
+/**
+ * A display name as people type it: trimmed, 1–50 characters (it will appear on public
+ * collection pages). Checked by the app's forms and by the API on sign-up and rename.
+ */
+export const displayNameSchema = z
+  .string()
+  .trim()
+  .min(1, 'Enter your name.')
+  .max(DISPLAY_NAME_MAX, `Use at most ${DISPLAY_NAME_MAX} characters for your name.`);
+
 /** GET /me: the signed-in user. */
 export const meResponseSchema = z.object({
   id: z.uuid(),

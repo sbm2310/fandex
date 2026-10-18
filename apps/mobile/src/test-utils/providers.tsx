@@ -225,6 +225,32 @@ export class FakeAccountService implements AccountService {
     this.signedInEmail = null;
   }
 
+  async updateName({ name }: { name: string }) {
+    const account = this.signedInEmail ? this.accounts.get(this.signedInEmail) : undefined;
+    if (!account) throw new AccountError('unknown', 'Something went wrong. Try again.');
+    account.user = { ...account.user, name: name.trim() };
+  }
+
+  async changePassword({
+    currentPassword,
+    newPassword,
+  }: {
+    currentPassword: string;
+    newPassword: string;
+    signOutOtherDevices: boolean;
+  }) {
+    const account = this.signedInEmail ? this.accounts.get(this.signedInEmail) : undefined;
+    if (account?.password !== currentPassword) {
+      throw new AccountError('wrong-password', "That password isn't right.");
+    }
+    account.password = newPassword;
+  }
+
+  /** The password an account has now (test assertions). */
+  passwordOf(email: string) {
+    return this.accounts.get(email)?.password;
+  }
+
   async deleteAccount({ password }: { password: string }) {
     const email = this.signedInEmail;
     if (!email || this.accounts.get(email)?.password !== password) {

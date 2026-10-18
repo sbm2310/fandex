@@ -18,6 +18,8 @@ function fakeClient(overrides: Record<string, unknown> = {}) {
     signIn: { email: jest.fn(ok) },
     signOut: jest.fn(ok),
     deleteUser: jest.fn(ok),
+    updateUser: jest.fn(ok),
+    changePassword: jest.fn(ok),
     ...overrides,
   } as unknown as FandexAuthClient;
 }
@@ -68,6 +70,47 @@ describe('BetterAuthAccountService', () => {
       kind: 'invalid-credentials',
     });
     expect(signIn).toHaveBeenCalledWith({ email: 'a@b.co', password: 'pw' });
+  });
+
+  it('renames the user', async () => {
+    const client = fakeClient();
+    const service = new BetterAuthAccountService(client);
+
+    await service.updateName({ name: 'Shalom' });
+
+    expect(client.updateUser).toHaveBeenCalledWith({ name: 'Shalom' });
+  });
+
+  it('changes the password, signing out other devices when asked', async () => {
+    const client = fakeClient();
+    const service = new BetterAuthAccountService(client);
+
+    await service.changePassword({
+      currentPassword: 'old password',
+      newPassword: 'new password',
+      signOutOtherDevices: true,
+    });
+
+    expect(client.changePassword).toHaveBeenCalledWith({
+      currentPassword: 'old password',
+      newPassword: 'new password',
+      revokeOtherSessions: true,
+    });
+  });
+
+  it('maps a wrong current password', async () => {
+    const changePassword = jest.fn(() =>
+      Promise.resolve({ data: null, error: { status: 400, code: 'INVALID_PASSWORD' } }),
+    );
+    const service = new BetterAuthAccountService(fakeClient({ changePassword }));
+
+    await expect(
+      service.changePassword({
+        currentPassword: 'x',
+        newPassword: 'y',
+        signOutOtherDevices: false,
+      }),
+    ).rejects.toMatchObject({ kind: 'wrong-password' });
   });
 
   it('deletes the account with the password', async () => {

@@ -43,6 +43,24 @@ export class BetterAuthAccountService implements AccountService {
     if (error) throw toAccountError(error);
   }
 
+  async updateName(input: { name: string }): Promise<void> {
+    const { error } = await this.authClient.updateUser({ name: input.name });
+    if (error) throw toAccountError(error);
+  }
+
+  async changePassword(input: {
+    currentPassword: string;
+    newPassword: string;
+    signOutOtherDevices: boolean;
+  }): Promise<void> {
+    const { error } = await this.authClient.changePassword({
+      currentPassword: input.currentPassword,
+      newPassword: input.newPassword,
+      revokeOtherSessions: input.signOutOtherDevices,
+    });
+    if (error) throw toAccountError(error);
+  }
+
   async deleteAccount(input: { password: string }): Promise<void> {
     const { error } = await this.authClient.deleteUser(input);
     if (error) throw toAccountError(error);

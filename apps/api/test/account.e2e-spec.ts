@@ -80,6 +80,107 @@ describe('Account (e2e)', () => {
     });
   });
 
+  describe('display name', () => {
+    it('renames the signed-in user, trimmed', async () => {
+      const agent = await signedInBrowser();
+
+      await agent
+        .post('/api/auth/update-user')
+        .set('Origin', WEB)
+        .send({ name: '  Shalom  ' })
+        .expect(200);
+
+      const me = await agent.get('/api/me').expect(200);
+      expect(me.body.name).toBe('Shalom');
+    });
+
+    it.each([
+      ['an empty name', '   '],
+      ['a name over 50 characters', 'a'.repeat(51)],
+      ['a name that is not text', 42],
+    ])('refuses %s', async (_, name) => {
+      const agent = await signedInBrowser();
+
+      const response = await agent.post('/api/auth/update-user').set('Origin', WEB).send({ name });
+
+      expect(response.status).toBe(400);
+      expect(response.body.code).toBe('INVALID_NAME');
+      expect((await agent.get('/api/me').expect(200)).body.name).toBe(reader.name);
+    });
+
+    it('checks names on sign-up too', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/api/auth/sign-up/email')
+        .set('Origin', WEB)
+        .send({ ...reader, name: '' });
+
+      expect(response.status).toBe(400);
+      expect(await prisma.user.count()).toBe(0);
+    });
+
+    it("can't rename without a session", async () => {
+      await request(app.getHttpServer())
+        .post('/api/auth/update-user')
+        .set('Origin', WEB)
+        .send({ name: 'Intruder' })
+        .expect(401);
+    });
+  });
+
+  describe('change password', () => {
+    const newPassword = 'a brand new passphrase';
+
+    it('changes the password; the old one stops working', async () => {
+      const agent = await signedInBrowser();
+
+      await agent
+        .post('/api/auth/change-password')
+        .set('Origin', WEB)
+        .send({ currentPassword: reader.password, newPassword })
+        .expect(200);
+
+      const server = app.getHttpServer();
+      const signIn = (password: string) =>
+        request(server)
+          .post('/api/auth/sign-in/email')
+          .set('Origin', WEB)
+          .send({ email: reader.email, password });
+      expect((await signIn(reader.password)).status).toBe(401);
+      expect((await signIn(newPassword)).status).toBe(200);
+    });
+
+    it('refuses a wrong current password', async () => {
+      const agent = await signedInBrowser();
+
+      const response = await agent
+        .post('/api/auth/change-password')
+        .set('Origin', WEB)
+        .send({ currentPassword: 'not my password', newPassword });
+
+      expect(response.status).toBe(400);
+      expect(response.body.code).toBe('INVALID_PASSWORD');
+    });
+
+    it('signs out other devices when asked', async () => {
+      const agent = await signedInBrowser();
+      const other = request.agent(app.getHttpServer());
+      await other
+        .post('/api/auth/sign-in/email')
+        .set('Origin', WEB)
+        .send({ email: reader.email, password: reader.password })
+        .expect(200);
+
+      await agent
+        .post('/api/auth/change-password')
+        .set('Origin', WEB)
+        .send({ currentPassword: reader.password, newPassword, revokeOtherSessions: true })
+        .expect(200);
+
+      await other.get('/api/me').expect(401);
+      await agent.get('/api/me').expect(200);
+    });
+  });
+
   describe('delete account', () => {
     it('deletes the user, their sessions and sign-in methods', async () => {
       const agent = await signedInBrowser();

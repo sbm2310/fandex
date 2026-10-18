@@ -107,6 +107,94 @@ describe('Account screen', () => {
     expect(await screen.findByRole('button', { name: 'Sign in' })).toBeOnTheScreen();
   });
 
+  describe('profile', () => {
+    async function renderSignedIn() {
+      const account = new FakeAccountService();
+      account.register('Reader', 'reader@example.com', PASSWORD);
+      await account.signIn({ email: 'reader@example.com', password: PASSWORD });
+      await renderAccount(account);
+      await screen.findByText('reader@example.com');
+      await expectNoAdminTools();
+      return account;
+    }
+
+    it('renames the user', async () => {
+      await renderSignedIn();
+
+      await press('Edit name');
+      await fill('Name', '  Shalom  ');
+      await press('Save name');
+
+      expect(await screen.findByText('Name saved.')).toBeOnTheScreen();
+      expect(screen.getByText('Shalom')).toBeOnTheScreen();
+      expect(screen.queryByLabelText('Name')).toBeNull();
+    });
+
+    it('checks the name before saving', async () => {
+      await renderSignedIn();
+
+      await press('Edit name');
+      await fill('Name', '   ');
+      await press('Save name');
+
+      expect(screen.getByRole('alert')).toHaveTextContent('Enter your name.');
+      await press('Cancel');
+      expect(screen.getByText('Reader')).toBeOnTheScreen();
+    });
+
+    it('changes the password', async () => {
+      const account = await renderSignedIn();
+
+      await press('Change password');
+      await fill('Current password', PASSWORD);
+      await fill('New password', 'a brand new passphrase');
+      await fill('New password again', 'a brand new passphrase');
+      await press('Save password');
+
+      expect(
+        await screen.findByText('Password changed. Your other devices are signed out.'),
+      ).toBeOnTheScreen();
+      expect(account.passwordOf('reader@example.com')).toBe('a brand new passphrase');
+    });
+
+    it('explains a wrong current password', async () => {
+      const account = await renderSignedIn();
+
+      await press('Change password');
+      await fill('Current password', 'not my password');
+      await fill('New password', 'a brand new passphrase');
+      await fill('New password again', 'a brand new passphrase');
+      await press('Save password');
+
+      expect(await screen.findByRole('alert')).toHaveTextContent("That password isn't right.");
+      expect(account.passwordOf('reader@example.com')).toBe(PASSWORD);
+    });
+
+    it.each([
+      ['a short new password', 'short', 'short', /at least 8 characters/],
+      ['new passwords that differ', 'a brand new passphrase', 'a different one', /don't match/],
+    ])('refuses %s before contacting the server', async (_, newPassword, repeated, message) => {
+      const account = await renderSignedIn();
+
+      await press('Change password');
+      await fill('Current password', PASSWORD);
+      await fill('New password', newPassword);
+      await fill('New password again', repeated);
+      await press('Save password');
+
+      expect(screen.getByRole('alert')).toHaveTextContent(message);
+      expect(account.passwordOf('reader@example.com')).toBe(PASSWORD);
+    });
+
+    it('says a forgotten password cannot be recovered yet', async () => {
+      await renderSignedIn();
+
+      await press('Change password');
+
+      expect(screen.getByText(/Recovery by email isn't available yet/)).toBeOnTheScreen();
+    });
+  });
+
   describe('delete account', () => {
     async function renderSignedIn() {
       const account = new FakeAccountService();

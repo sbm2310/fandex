@@ -12,6 +12,14 @@ export interface AccountService {
   signUp(input: { name: string; email: string; password: string }): Promise<void>;
   signIn(input: { email: string; password: string }): Promise<void>;
   signOut(): Promise<void>;
+  /** Changes the display name (core's `displayNameSchema` rules; the server checks them too). */
+  updateName(input: { name: string }): Promise<void>;
+  /** Changes the password; optionally signs out every other device. */
+  changePassword(input: {
+    currentPassword: string;
+    newPassword: string;
+    signOutOtherDevices: boolean;
+  }): Promise<void>;
   /** Permanently deletes the account; the password confirms it's really the owner. */
   deleteAccount(input: { password: string }): Promise<void>;
 }
@@ -21,6 +29,7 @@ export type AccountErrorKind =
   | 'email-taken'
   | 'weak-password'
   | 'wrong-password'
+  | 'invalid-name'
   | 'rate-limited'
   | 'network'
   | 'unknown';

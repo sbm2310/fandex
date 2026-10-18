@@ -39,6 +39,19 @@ export function useSignOut() {
   return useAccountMutation(() => account.signOut());
 }
 
+export function useUpdateName() {
+  const account = useAccountService();
+  return useAccountMutation((input: { name: string }) => account.updateName(input));
+}
+
+export function useChangePassword() {
+  const account = useAccountService();
+  return useMutation({
+    mutationFn: (input: Parameters<typeof account.changePassword>[0]) =>
+      account.changePassword(input),
+  });
+}
+
 export function useDeleteAccount() {
   const account = useAccountService();
   return useAccountMutation((input: { password: string }) => account.deleteAccount(input));

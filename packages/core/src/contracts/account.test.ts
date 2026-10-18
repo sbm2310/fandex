@@ -1,4 +1,4 @@
-import { meResponseSchema } from './account';
+import { DISPLAY_NAME_MAX, displayNameSchema, meResponseSchema } from './account';
 
 describe('meResponseSchema', () => {
   const valid = {
@@ -20,5 +20,23 @@ describe('meResponseSchema', () => {
     ['a non-ISO date', { createdAt: 'yesterday' }],
   ])('rejects %s', (_, override) => {
     expect(meResponseSchema.safeParse({ ...valid, ...override }).success).toBe(false);
+  });
+});
+
+describe('displayNameSchema', () => {
+  it('trims the name', () => {
+    expect(displayNameSchema.parse('  Shalom  ')).toBe('Shalom');
+  });
+
+  it('accepts up to the maximum length', () => {
+    expect(displayNameSchema.safeParse('a'.repeat(DISPLAY_NAME_MAX)).success).toBe(true);
+  });
+
+  it.each([
+    ['an empty name', ''],
+    ['only spaces', '   '],
+    ['a name that is too long', 'a'.repeat(DISPLAY_NAME_MAX + 1)],
+  ])('rejects %s', (_, name) => {
+    expect(displayNameSchema.safeParse(name).success).toBe(false);
   });
 });
