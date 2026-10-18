@@ -1,5 +1,4 @@
 import {
-  CURRENCIES,
   formatMoney,
   moneyInputValue,
   parseMoney,
@@ -9,9 +8,10 @@ import {
   type ReleaseDate,
 } from '@fandex/core';
 import { useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { Button } from './button';
+import { CurrencyChips } from './currency-chips';
 import { FormField } from './form-field';
 import { ReleaseDateField } from './release-date-field';
 import { ThemedText } from './themed-text';
@@ -32,6 +32,8 @@ type Props = {
    */
   suggestedRelease?: ReleaseDate;
   suggestedReleaseFrom?: 'openlibrary' | 'fandex';
+  /** A new pre-order's currency: the user's preference (Account tab). */
+  defaultCurrency?: Currency;
   submitLabel: string;
   busy: boolean;
   /** Shown above the button when saving failed. */
@@ -47,13 +49,14 @@ export function PreorderForm({
   initial,
   suggestedRelease,
   suggestedReleaseFrom = 'openlibrary',
+  defaultCurrency,
   submitLabel,
   busy,
   error,
   onSubmit,
 }: Props) {
   const colors = useTheme();
-  const [currency, setCurrency] = useState<Currency>(initial?.currency ?? 'USD');
+  const [currency, setCurrency] = useState<Currency>(initial?.currency ?? defaultCurrency ?? 'USD');
   const [price, setPrice] = useState(
     initial?.price !== undefined ? moneyInputValue(initial.price, initial.currency) : '',
   );
@@ -108,28 +111,7 @@ export function PreorderForm({
 
   return (
     <View style={styles.form}>
-      <View style={styles.section}>
-        <ThemedText type="smallBold" themeColor="textSecondary">
-          Currency
-        </ThemedText>
-        <View style={styles.wrap}>
-          {CURRENCIES.map((option) => (
-            <Pressable
-              key={option}
-              accessibilityRole="radio"
-              accessibilityLabel={option}
-              accessibilityState={{ checked: currency === option }}
-              onPress={() => setCurrency(option)}
-              style={StyleSheet.flatten([
-                styles.chip,
-                { borderColor: currency === option ? colors.accent : colors.border },
-              ])}
-            >
-              <ThemedText type="small">{option}</ThemedText>
-            </Pressable>
-          ))}
-        </View>
-      </View>
+      <CurrencyChips label="Currency" value={currency} onChange={setCurrency} />
       <FormField
         label="Price (optional)"
         value={price}
@@ -211,19 +193,5 @@ export function PreorderForm({
 const styles = StyleSheet.create({
   form: {
     gap: Spacing.three,
-  },
-  section: {
-    gap: Spacing.two,
-  },
-  wrap: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: Spacing.two,
-  },
-  chip: {
-    borderWidth: 1,
-    borderRadius: Spacing.four,
-    paddingVertical: Spacing.one,
-    paddingHorizontal: Spacing.three,
   },
 });

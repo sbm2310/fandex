@@ -1,4 +1,4 @@
-import type { MeResponse } from '@fandex/core';
+import { meResponseSchema, type MeResponse } from '@fandex/core';
 import { Controller, Get } from '@nestjs/common';
 import { ApiCookieAuth, ApiOkResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { Session, type UserSession } from '@thallesp/nestjs-better-auth';
@@ -17,13 +17,15 @@ export class MeController {
   @ApiUnauthorizedResponse({ description: 'Not signed in.' })
   me(@Session() session: UserSession): MeResponse {
     const { id, email, name, emailVerified, createdAt } = session.user;
-    return {
+    return meResponseSchema.parse({
       id,
       email,
       name,
       emailVerified,
       createdAt: new Date(createdAt).toISOString(),
+      // An additional field (auth.ts); the session type doesn't know it.
+      preferredCurrency: (session.user as { preferredCurrency?: string }).preferredCurrency,
       isAdmin: this.admin.isAdmin(email),
-    };
+    });
   }
 }

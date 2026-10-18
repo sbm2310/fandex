@@ -1,4 +1,4 @@
-import { meResponseSchema } from '@fandex/core';
+import { meResponseSchema, type Currency } from '@fandex/core';
 
 import { toAccountError } from './account-errors';
 import type { AccountService, AccountUser } from './account-service';
@@ -18,12 +18,13 @@ export class BetterAuthAccountService implements AccountService {
     const { data, error } = await this.authClient.getSession();
     if (error) throw toAccountError(error);
     if (!data) return null;
-    const { id, email, name, emailVerified, createdAt } = data.user;
+    const { id, email, name, emailVerified, createdAt, preferredCurrency } = data.user;
     return meResponseSchema.parse({
       id,
       email,
       name,
       emailVerified,
+      preferredCurrency,
       createdAt: new Date(createdAt).toISOString(),
     });
   }
@@ -45,6 +46,11 @@ export class BetterAuthAccountService implements AccountService {
 
   async updateName(input: { name: string }): Promise<void> {
     const { error } = await this.authClient.updateUser({ name: input.name });
+    if (error) throw toAccountError(error);
+  }
+
+  async setPreferredCurrency(currency: Currency): Promise<void> {
+    const { error } = await this.authClient.updateUser({ preferredCurrency: currency });
     if (error) throw toAccountError(error);
   }
 

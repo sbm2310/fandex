@@ -1,4 +1,5 @@
 import { expoClient } from '@better-auth/expo/client';
+import { inferAdditionalFields } from 'better-auth/client/plugins';
 import { createAuthClient } from 'better-auth/react';
 import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
@@ -10,7 +11,11 @@ export function createAuthClientFor(apiUrl: string) {
     // iOS/Android: the session cookie lives in the Keychain/Keystore (expo-secure-store) and
     // is attached to requests by the plugin. Web: the browser keeps it; cross-origin requests
     // need credentials included.
-    plugins: [expoClient({ scheme: 'fandex', storagePrefix: 'fandex', storage: SecureStore })],
+    plugins: [
+      expoClient({ scheme: 'fandex', storagePrefix: 'fandex', storage: SecureStore }),
+      // The server's extra user field (apps/api/src/auth/auth.ts), for typed updateUser/getSession.
+      inferAdditionalFields({ user: { preferredCurrency: { type: 'string', required: false } } }),
+    ],
     ...(Platform.OS === 'web' && { fetchOptions: { credentials: 'include' as const } }),
   });
 }

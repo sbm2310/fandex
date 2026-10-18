@@ -10,8 +10,21 @@ describe('meResponseSchema', () => {
   };
 
   it('accepts a valid response, not an admin unless it says so', () => {
-    expect(meResponseSchema.parse(valid)).toEqual({ ...valid, isAdmin: false });
+    expect(meResponseSchema.parse(valid)).toEqual({
+      ...valid,
+      preferredCurrency: 'USD',
+      isAdmin: false,
+    });
     expect(meResponseSchema.parse({ ...valid, isAdmin: true }).isAdmin).toBe(true);
+  });
+
+  it('keeps a known preferred currency and falls back to USD otherwise', () => {
+    expect(meResponseSchema.parse({ ...valid, preferredCurrency: 'ILS' }).preferredCurrency).toBe(
+      'ILS',
+    );
+    expect(meResponseSchema.parse({ ...valid, preferredCurrency: 'XYZ' }).preferredCurrency).toBe(
+      'USD',
+    );
   });
 
   it.each([

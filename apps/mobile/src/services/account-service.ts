@@ -1,4 +1,4 @@
-import type { MeResponse } from '@fandex/core';
+import type { Currency, MeResponse } from '@fandex/core';
 
 export type AccountUser = MeResponse;
 
@@ -14,6 +14,8 @@ export interface AccountService {
   signOut(): Promise<void>;
   /** Changes the display name (core's `displayNameSchema` rules; the server checks them too). */
   updateName(input: { name: string }): Promise<void>;
+  /** Sets the currency new pre-orders start in. */
+  setPreferredCurrency(currency: Currency): Promise<void>;
   /** Changes the password; optionally signs out every other device. */
   changePassword(input: {
     currentPassword: string;

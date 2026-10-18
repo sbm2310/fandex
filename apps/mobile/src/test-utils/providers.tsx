@@ -16,6 +16,7 @@ import {
   type FigureSuggestionResponse,
   type AdminFigureSuggestion,
   type CatalogSet,
+  type Currency,
   type CollectionRepository,
   type KeyValueStore,
   type LegoCatalog,
@@ -191,6 +192,7 @@ export class FakeAccountService implements AccountService {
       email,
       emailVerified: false,
       createdAt: '2026-10-05T09:00:00.000Z',
+      preferredCurrency: 'USD',
       isAdmin: false,
     };
     this.accounts.set(email, { user, password });
@@ -229,6 +231,12 @@ export class FakeAccountService implements AccountService {
     const account = this.signedInEmail ? this.accounts.get(this.signedInEmail) : undefined;
     if (!account) throw new AccountError('unknown', 'Something went wrong. Try again.');
     account.user = { ...account.user, name: name.trim() };
+  }
+
+  async setPreferredCurrency(currency: Currency) {
+    const account = this.signedInEmail ? this.accounts.get(this.signedInEmail) : undefined;
+    if (!account) throw new AccountError('unknown', 'Something went wrong. Try again.');
+    account.user = { ...account.user, preferredCurrency: currency };
   }
 
   async changePassword({

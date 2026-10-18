@@ -102,6 +102,7 @@ export default function NewPreorderScreen() {
           </View>
           <PreorderForm
             submitLabel="Save pre-order"
+            defaultCurrency={user.preferredCurrency}
             {...(suggestedRelease && { suggestedRelease })}
             suggestedReleaseFrom={params.releaseFrom === 'fandex' ? 'fandex' : 'openlibrary'}
             busy={create.isPending}

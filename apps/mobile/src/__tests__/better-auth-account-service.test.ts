@@ -35,7 +35,28 @@ describe('BetterAuthAccountService', () => {
     });
     const service = new BetterAuthAccountService(client);
 
-    await expect(service.getCurrentUser()).resolves.toEqual({ ...user, isAdmin: false });
+    await expect(service.getCurrentUser()).resolves.toEqual({
+      ...user,
+      preferredCurrency: 'USD',
+      isAdmin: false,
+    });
+  });
+
+  it("reads the user's preferred currency", async () => {
+    const service = new BetterAuthAccountService(
+      sessionReturning({ data: { user: { ...user, preferredCurrency: 'ILS' } }, error: null }),
+    );
+
+    await expect(service.getCurrentUser()).resolves.toMatchObject({ preferredCurrency: 'ILS' });
+  });
+
+  it('sets the preferred currency', async () => {
+    const client = fakeClient();
+    const service = new BetterAuthAccountService(client);
+
+    await service.setPreferredCurrency('EUR');
+
+    expect(client.updateUser).toHaveBeenCalledWith({ preferredCurrency: 'EUR' });
   });
 
   it('returns null when signed out', async () => {

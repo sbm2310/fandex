@@ -122,6 +122,25 @@ describe('New pre-order', () => {
     );
   });
 
+  it('starts in the currency chosen on the Account tab', async () => {
+    const preorders = createFakePreorders();
+    const account = await signedIn();
+    await account.setPreferredCurrency('ILS');
+    await open('/preorder/new?figure=1&title=Darth%20Vader&brand=Hot%20Toys', {
+      preorders,
+      account,
+    });
+
+    expect(await screen.findByRole('radio', { name: 'ILS' })).toBeChecked();
+    await type('Price (optional)', '1650');
+    await fireEvent.press(screen.getByRole('button', { name: 'Save pre-order' }));
+
+    expect(await screen.findByText('On order')).toBeOnTheScreen();
+    expect(preorders.create).toHaveBeenCalledWith(
+      expect.objectContaining({ currency: 'ILS', price: 165000 }),
+    );
+  });
+
   it('saves with the optional fields empty (an empty field is not a problem)', async () => {
     const preorders = createFakePreorders({ [book.id]: book });
     await open(`/preorder/new?catalogId=${book.id}&title=Wind%20and%20Truth`, {

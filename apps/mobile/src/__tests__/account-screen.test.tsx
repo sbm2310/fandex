@@ -3,7 +3,12 @@ import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-
 import AccountScreen from '@/app/(tabs)/account';
 import { validateAuthInput } from '@/components/auth-form';
 import { AccountError } from '@/services/account-service';
-import { createFakeAdminReviews, createWrapper, FakeAccountService } from '@/test-utils/providers';
+import {
+  createFakeAdminReviews,
+  createFakeShelfScanner,
+  createWrapper,
+  FakeAccountService,
+} from '@/test-utils/providers';
 import { confirm } from '@/utils/confirm';
 
 jest.mock('@/utils/confirm', () => ({ confirm: jest.fn() }));
@@ -11,8 +16,13 @@ const mockConfirm = jest.mocked(confirm);
 
 const PASSWORD = 'correct horse battery';
 
-async function renderAccount(account = new FakeAccountService()) {
-  await render(<AccountScreen />, { wrapper: createWrapper({ account, adminReviews }) });
+async function renderAccount(
+  account = new FakeAccountService(),
+  shelfScanner = createFakeShelfScanner(),
+) {
+  await render(<AccountScreen />, {
+    wrapper: createWrapper({ account, adminReviews, shelfScanner }),
+  });
   return account;
 }
 
@@ -192,6 +202,77 @@ describe('Account screen', () => {
       await press('Change password');
 
       expect(screen.getByText(/Recovery by email isn't available yet/)).toBeOnTheScreen();
+    });
+  });
+
+  describe('preferences and AI allowance', () => {
+    async function renderSignedIn(shelfScanner = createFakeShelfScanner()) {
+      const account = new FakeAccountService();
+      account.register('Reader', 'reader@example.com', PASSWORD);
+      await account.signIn({ email: 'reader@example.com', password: PASSWORD });
+      await renderAccount(account, shelfScanner);
+      await screen.findByText('reader@example.com');
+      await expectNoAdminTools();
+      return account;
+    }
+
+    it('sets the currency new pre-orders start in', async () => {
+      const account = await renderSignedIn();
+      expect(screen.getByRole('radio', { name: 'USD' })).toBeChecked();
+
+      await fireEvent.press(screen.getByRole('radio', { name: 'EUR' }));
+
+      await waitFor(() => expect(screen.getByRole('radio', { name: 'EUR' })).toBeChecked());
+      expect((await account.getCurrentUser())?.preferredCurrency).toBe('EUR');
+      expect(screen.getByRole('radio', { name: 'USD' })).not.toBeChecked();
+    });
+
+    it("shows today's allowance and who reads the photos", async () => {
+      const shelfScanner = createFakeShelfScanner({
+        quota: jest.fn(() =>
+          Promise.resolve({
+            available: true,
+            shelfScans: { used: 2, limit: 5 },
+            figureScans: { used: 5, limit: 5 },
+            questions: { used: 0, limit: 30 },
+            provider: { name: 'Google Gemini', usesPhotosForTraining: true, fallbackName: 'Groq' },
+          }),
+        ),
+      });
+      await renderSignedIn(shelfScanner);
+
+      expect(await screen.findByLabelText('Shelf scans: 2 of 5 used today')).toBeOnTheScreen();
+      expect(screen.getByLabelText('Box scans: 5 of 5 used today')).toBeOnTheScreen();
+      expect(screen.getByLabelText('Questions: 0 of 30 used today')).toBeOnTheScreen();
+      expect(screen.getByText(/Resets at midnight UTC/)).toBeOnTheScreen();
+      expect(
+        screen.getByText(/sent to Google Gemini.*free tier may use photos.*Groq/),
+      ).toBeOnTheScreen();
+    });
+
+    it('says when AI is unavailable', async () => {
+      const shelfScanner = createFakeShelfScanner({
+        quota: jest.fn(() =>
+          Promise.resolve({ available: false, shelfScans: { used: 0, limit: 0 } }),
+        ),
+      });
+      await renderSignedIn(shelfScanner);
+
+      expect(await screen.findByText(/AI features are unavailable right now/)).toBeOnTheScreen();
+      expect(screen.queryByLabelText(/used today/)).toBeNull();
+    });
+
+    it("offers to try again when the allowance couldn't load", async () => {
+      const quota = jest
+        .fn()
+        .mockRejectedValueOnce(new Error('offline'))
+        .mockResolvedValue({ available: true, shelfScans: { used: 1, limit: 5 } });
+      await renderSignedIn(createFakeShelfScanner({ quota }));
+
+      expect(await screen.findByText("Couldn't load your AI allowance.")).toBeOnTheScreen();
+      await press('Try again');
+
+      expect(await screen.findByLabelText('Shelf scans: 1 of 5 used today')).toBeOnTheScreen();
     });
   });
 

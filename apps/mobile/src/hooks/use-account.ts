@@ -1,3 +1,4 @@
+import type { Currency } from '@fandex/core';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { useAccountService } from '@/services/app-services';
@@ -42,6 +43,11 @@ export function useSignOut() {
 export function useUpdateName() {
   const account = useAccountService();
   return useAccountMutation((input: { name: string }) => account.updateName(input));
+}
+
+export function useSetPreferredCurrency() {
+  const account = useAccountService();
+  return useAccountMutation((currency: Currency) => account.setPreferredCurrency(currency));
 }
 
 export function useChangePassword() {

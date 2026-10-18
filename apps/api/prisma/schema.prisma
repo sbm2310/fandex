@@ -130,6 +130,8 @@ model User {
   email             String             @unique
   emailVerified     Boolean            @default(false) @map("email_verified")
   image             String?
+  /// Currency new pre-orders start in (one of core's CURRENCIES); set on the Account tab.
+  preferredCurrency String             @default("USD") @map("preferred_currency") @db.Char(3)
   createdAt         DateTime           @default(now()) @map("created_at") @db.Timestamptz
   updatedAt         DateTime           @updatedAt @map("updated_at") @db.Timestamptz
   sessions          Session[]

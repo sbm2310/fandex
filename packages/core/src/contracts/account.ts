@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { CURRENCIES } from '../preorders/money';
+
 /**
  * API contracts: zod schemas shared by the API (which returns these shapes) and the apps
  * (which parse responses with them), so both sides agree on one definition.
@@ -24,6 +26,8 @@ export const meResponseSchema = z.object({
   name: z.string(),
   emailVerified: z.boolean(),
   createdAt: z.iso.datetime(),
+  /** Currency new pre-orders start in (absent from servers before the account page). */
+  preferredCurrency: z.enum(CURRENCIES).catch('USD').default('USD'),
   /** Reviews figure suggestions (listed in the server's ADMIN_EMAILS). */
   isAdmin: z.boolean().default(false),
 });

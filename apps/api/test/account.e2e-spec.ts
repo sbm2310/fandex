@@ -127,6 +127,40 @@ describe('Account (e2e)', () => {
     });
   });
 
+  describe('preferred currency', () => {
+    it('is USD until the user picks another', async () => {
+      const agent = await signedInBrowser();
+      expect((await agent.get('/api/me').expect(200)).body.preferredCurrency).toBe('USD');
+
+      await agent
+        .post('/api/auth/update-user')
+        .set('Origin', WEB)
+        .send({ preferredCurrency: 'ILS' })
+        .expect(200);
+
+      const me = await agent.get('/api/me').expect(200);
+      expect(me.body.preferredCurrency).toBe('ILS');
+      expect(me.body.name).toBe(reader.name);
+    });
+
+    it.each([
+      ['an unknown currency', 'XYZ'],
+      ['lower case', 'ils'],
+      ['not text', 7],
+    ])('refuses %s', async (_, preferredCurrency) => {
+      const agent = await signedInBrowser();
+
+      const response = await agent
+        .post('/api/auth/update-user')
+        .set('Origin', WEB)
+        .send({ preferredCurrency });
+
+      expect(response.status).toBe(400);
+      expect(response.body.code).toBe('INVALID_CURRENCY');
+      expect((await agent.get('/api/me').expect(200)).body.preferredCurrency).toBe('USD');
+    });
+  });
+
   describe('change password', () => {
     const newPassword = 'a brand new passphrase';
 

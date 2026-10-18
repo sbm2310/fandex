@@ -1,5 +1,5 @@
 import { expo } from '@better-auth/expo';
-import { displayNameSchema } from '@fandex/core';
+import { CURRENCIES, displayNameSchema } from '@fandex/core';
 import { betterAuth, type BetterAuthOptions } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { APIError, createAuthMiddleware } from 'better-auth/api';
@@ -26,16 +26,26 @@ export function trustedOrigins(
   ];
 }
 
-/** Routes that set the user's display name. */
-const NAME_ROUTES = new Set(['/sign-up/email', '/update-user']);
+/** Routes that set the user's profile (name, preferred currency). */
+const PROFILE_ROUTES = new Set(['/sign-up/email', '/update-user']);
 
 /**
- * Better Auth stores any name it's given; ours are trimmed and 1–50 characters (core's
- * `displayNameSchema`), whether they come from the app or straight from the API.
+ * Better Auth stores any value it's given. Ours: names trimmed and 1–50 characters (core's
+ * `displayNameSchema`), currencies one of core's `CURRENCIES` — whether they come from the app
+ * or straight from the API.
  */
-const checkDisplayName = createAuthMiddleware(async (ctx) => {
-  if (!NAME_ROUTES.has(ctx.path)) return;
-  const body = ctx.body as { name?: unknown } | undefined;
+const checkProfile = createAuthMiddleware(async (ctx) => {
+  if (!PROFILE_ROUTES.has(ctx.path)) return;
+  const body = ctx.body as { name?: unknown; preferredCurrency?: unknown } | undefined;
+  if (
+    body?.preferredCurrency !== undefined &&
+    !(CURRENCIES as readonly unknown[]).includes(body.preferredCurrency)
+  ) {
+    throw new APIError('BAD_REQUEST', {
+      code: 'INVALID_CURRENCY',
+      message: `Choose one of ${CURRENCIES.join(', ')}.`,
+    });
+  }
   if (body?.name === undefined && ctx.path === '/update-user') return;
   const name = displayNameSchema.safeParse(body?.name);
   if (!name.success) {
@@ -49,7 +59,7 @@ const checkDisplayName = createAuthMiddleware(async (ctx) => {
 
 // Typed as Better Auth's option, so `createAuth`'s inferred type doesn't name the middleware's
 // internal types (TS2883).
-const hooks: BetterAuthOptions['hooks'] = { before: checkDisplayName };
+const hooks: BetterAuthOptions['hooks'] = { before: checkProfile };
 
 /**
  * The Better Auth instance: email + password accounts stored in our PostgreSQL via Prisma.
@@ -70,7 +80,13 @@ export function createAuth(prisma: PrismaClient, env: AuthEnv) {
     // Native apps don't send an Origin header; the Expo plugin uses the app's scheme instead.
     plugins: [expo()],
     // In-app account deletion (an App Store requirement). The client must send the password.
-    user: { deleteUser: { enabled: true } },
+    user: {
+      deleteUser: { enabled: true },
+      // Settable through /update-user (and sign-up); checked in `checkProfile`.
+      additionalFields: {
+        preferredCurrency: { type: 'string', required: false, defaultValue: 'USD', input: true },
+      },
+    },
     hooks,
     // Throttles brute-force attempts on auth routes; off in tests so they can run quickly.
     rateLimit: { enabled: env.NODE_ENV !== 'test' },

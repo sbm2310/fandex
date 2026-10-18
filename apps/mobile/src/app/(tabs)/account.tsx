@@ -3,10 +3,12 @@ import { useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
 
 import { AboutCard } from '@/components/about-card';
+import { AiAllowanceCard } from '@/components/ai-allowance-card';
 import { AuthForm } from '@/components/auth-form';
 import { Button } from '@/components/button';
 import { FormField } from '@/components/form-field';
 import { PageTitle } from '@/components/page-title';
+import { PreferencesCard } from '@/components/preferences-card';
 import { ProfileCard } from '@/components/profile-card';
 import { Screen } from '@/components/screen';
 import { ThemedText } from '@/components/themed-text';
@@ -76,6 +78,8 @@ function SignedIn({ user, onDeleted }: { user: AccountUser; onDeleted: () => voi
       <ThemedText type="small" themeColor="textSecondary">
         Your collection is saved to your account and stays in sync across your devices.
       </ThemedText>
+      <PreferencesCard currency={user.preferredCurrency} />
+      <AiAllowanceCard />
       <AboutCard />
       {/* Admins only (the server's ADMIN_EMAILS); everyone else never sees it. */}
       {isAdmin ? (
