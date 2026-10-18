@@ -425,7 +425,11 @@ export function createWrapper({
   seriesCatalog?: SeriesCatalog;
 } = {}) {
   const queryClient = new QueryClient({
-    defaultOptions: { queries: { retry: false, gcTime: Infinity } },
+    // gcTime Infinity for mutations too: their default 5-minute timer keeps Jest from exiting.
+    defaultOptions: {
+      queries: { retry: false, gcTime: Infinity },
+      mutations: { gcTime: Infinity },
+    },
   });
 
   return function Wrapper({ children }: { children: ReactNode }) {
