@@ -4,18 +4,21 @@
 typing, scrolling — and checks what's on screen. It complements the Jest tests, which render
 screens without iOS (they can't see native pieces such as the tab bar or system alerts).
 
-| Flow                         | What it covers                                                                                                                 |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `add-and-remove-a-book.yaml` | Guest: search, add, the item in the collection with its universe and characters, remove (native alert)                         |
-| `ask.yaml`                   | Guest: a question answered on the device, the matching item, a pre-order question needing an account                           |
-| `book-series.yaml`           | Guest: a book's page shows its series and the books missing from it (live Wikidata and Open Library)                           |
-| `series-view.yaml`           | Guest: the Series view lists a book series and a manga series with what's missing and the next volume (live data)              |
-| `figure-catalog.yaml`        | Guest: a figure found by its box number ("mms279"), added, its facts and sources, removed; "Add it by hand" for one not found  |
-| `preorder-lifecycle.yaml`    | Account: sign in, pre-order an upcoming book with Open Library's date, amounts, Upcoming's total, "It arrived", delete account |
+| Flow                         | What it covers                                                                                                                         |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `add-and-remove-a-book.yaml` | Guest: search, add, the item in the collection with its universe and characters, remove (native alert)                                 |
+| `ask.yaml`                   | Guest: a question answered on the device, the matching item, a pre-order question needing an account                                   |
+| `book-series.yaml`           | Guest: a book's page shows its series and the books missing from it (live Wikidata and Open Library)                                   |
+| `series-view.yaml`           | Guest: the Series view lists a book series and a manga series with what's missing and the next volume (live data)                      |
+| `figure-catalog.yaml`        | Guest: a figure found by its box number ("mms279"), added, its facts and sources, removed; "Add it by hand" for one not found          |
+| `preorder-lifecycle.yaml`    | Account: sign in, pre-order an upcoming book with Open Library's date, amounts, Upcoming's total, "It arrived", delete account         |
+| `account-page.yaml`          | Account: rename, the pre-order currency, the AI allowance, this iPhone among the signed-in devices, the privacy policy, delete account |
 
 Every flow starts from a clean slate (`common/open.yaml`: keychain and app data cleared, so
-signed out with nothing saved). The account flow creates a throwaway account through the local
-API (`scripts/create-account.js`) and deletes it through the app at the end.
+signed out with nothing saved). The account flows create a throwaway account through the local
+API (`scripts/create-account.js`), sign in with `common/sign-in.yaml` and delete it through the
+app at the end. Changing the password isn't covered here: iOS replaces a typed new password with
+its "Automatic Strong Password".
 
 ## Running them
 
@@ -48,6 +51,9 @@ patterns, but if a source changes a date or a title, a flow's expectation change
 - **Centre what you tap near the bottom:** an item half under the tab bar counts as visible,
   so `scrollUntilVisible` doesn't move and the tap lands on the list's edge; add
   `centerElement: true` (the home screen's "Recently added" sits that low).
+- **At the end of a page, scroll once more instead:** the last element can't be centred, so
+  `centerElement` fails; `scrollUntilVisible` then a plain `scroll` brings the page's end (which
+  clears the tab bar) into view. The Account tab's "Delete account" needs this since its cards grew.
 - **Below the fold means scroll, not wait:** `extendedWaitUntil` only sees what's on screen, so
   when a page grows (the redesigned item page pushed the series section down), wait with
   `scrollUntilVisible` and a long timeout instead.

@@ -12,31 +12,11 @@ tags:
     file: common/open.yaml
     env:
       ROUTE: account
-- tapOn: 'Email'
-- inputText: ${output.email}
-- tapOn: 'Password'
-- inputText: ${output.password}
-# With the keyboard up, the first tap on a button only ends the editing: end it by tapping plain
-# text. (Not hideKeyboard: on a password field iOS keeps its AutoFill bar up, which Maestro can't
-# swipe away, and with the Simulator's hardware keyboard connected there's no keyboard at all.)
-- tapOn: 'Sign in to keep your collection.*'
-# The button, not the heading of the same name.
-- tapOn:
-    text: 'Sign in'
-    below: 'Password'
-# iOS may offer to save the password, a moment after signing in.
-- extendedWaitUntil:
-    visible:
-      text: 'Not Now|Sign out'
-    timeout: 20000
 - runFlow:
-    when:
-      visible: 'Not Now'
-    commands:
-      - tapOn: 'Not Now'
-- extendedWaitUntil:
-    visible: 'Sign out'
-    timeout: 20000
+    file: common/sign-in.yaml
+    env:
+      EMAIL: ${output.email}
+      PASSWORD: ${output.password}
 
 # Clara & the Devil, Volume 2: Open Library lists it for March 2, 2027 (see CLAUDE.md, Task 6).
 # The search goes in the link: typing on the slow Simulator once produced "devily". (No "&"
@@ -83,9 +63,14 @@ tags:
 
 # Clean up: delete the account (and its collection and pre-orders).
 - openLink: ${APP_URL}/--/account
+# Maestro counts a button under the floating tab bar as visible, and the tab bar then takes the
+# tap: scroll on to the end of the page, where the last card clears the tab bar.
 - scrollUntilVisible:
     element: 'Delete account'
+- scroll
 - tapOn: 'Delete account'
+# The box opens at the end of the page: scroll there again before typing.
+- scroll
 - tapOn: 'Password'
 - inputText: ${output.password}
 # End the editing by tapping plain text, as when signing in.

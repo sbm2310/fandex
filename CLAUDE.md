@@ -52,7 +52,7 @@ New gotchas go in the area's file; keep this one short.
 | 7. Figure catalog ✅ (v0.7.0)    | Month 6   | Curated Hot Toys and InArt figures, approved user suggestions, AI that reads a figure's box                          |
 | 8. Launch                        | After     | TestFlight → App Store, shareable public collection pages, beta users from collector communities                     |
 
-**Status (2026-10-15):** Stages 1–7 and the UI redesign are built; Stages 6 and 7 are deployed. Stage 8 waits on the owner's cost decisions. Next: the account page ([`docs/plans/account.md`](docs/plans/account.md), planned 2026-10-18). Open: the owner's spot-check of the curated figure list, the box-reading evaluation and a live box-scan demo (need the owner's box photos).
+**Status (2026-10-19):** Stages 1–7, the UI redesign and the account page ([`docs/plans/account.md`](docs/plans/account.md)) are built and deployed. Stage 8 waits on the owner's cost decisions. Open: the owner's spot-check of the curated figure list, the box-reading evaluation and a live box-scan demo (need the owner's box photos).
 
 ## Rules that apply everywhere
 

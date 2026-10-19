@@ -38,7 +38,7 @@ Sections are `Card`s with `section` headings, in the redesign's style. Keep the 
 
 **5. Signed-in devices.** ✅ Better Auth `listSessions`, `revokeSession`, `revokeOtherSessions` through `AccountService`. Each row: a device name from the user agent (iPhone app / Expo Go, Safari on Mac, Chrome…; unknown → "Unknown device"), signed in and last active dates, "This device" for the current session; no IP addresses shown. "Sign out" per row and "Sign out everywhere else" (with `confirm`). Check what user agent the native app sends (Expo's `fetch`) and adjust the labels. e2e: one user can't see or revoke another's sessions. _Demo:_ signed in on the phone and the web, sign the web out from the phone; the web returns to the sign-in form on its next request.
 
-**6. Polish.** Light and dark mode pass, phone width on the web (`scrollWidth === innerWidth`), loading and error states (no flashes, no `act` warnings), a Maestro flow for the account page (rename and change the password back; Keychain and password prompts per `apps/mobile/e2e/README.md`), README section and screenshot, CLAUDE.md notes in `apps/mobile/CLAUDE.md` / `apps/api/CLAUDE.md`, EAS Update to the phone and a Render deploy. _Demo:_ the demo above.
+**6. Polish.** ✅ Light and dark mode pass, phone width on the web (`scrollWidth === innerWidth`), loading and error states (no flashes, no `act` warnings), a Maestro flow for the account page (rename and change the password back; Keychain and password prompts per `apps/mobile/e2e/README.md`), README section and screenshot, CLAUDE.md notes in `apps/mobile/CLAUDE.md` / `apps/api/CLAUDE.md`, EAS Update to the phone and a Render deploy. _Demo:_ the demo above.
 
 ## How to work
 

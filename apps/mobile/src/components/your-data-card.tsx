@@ -1,3 +1,4 @@
+import type { CollectionItem } from '@fandex/core';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
@@ -25,18 +26,19 @@ export function YourDataCard() {
   const items = collection.data;
   // Signed in, the JSON file includes pre-orders, so it waits for them too.
   const preordersReady = !preorders.signedIn || preorders.isSuccess;
-  const ready = !!items && !preorders.userPending && preordersReady;
   const where = collection.mode === 'device' ? ' on this device' : ' in your account';
 
-  async function exportAs(format: ExportFormat) {
-    if (!items) return;
+  // Nothing until the collection is known (its count is in the text: no flash of other text).
+  if (!items) return null;
+
+  async function exportAs(format: ExportFormat, list: readonly CollectionItem[]) {
     setBusy(format);
     setProblem(null);
     try {
       const content =
         format === 'json'
-          ? collectionJson(items, preorders.data ?? [], new Date())
-          : collectionCsv(items);
+          ? collectionJson(list, preorders.data ?? [], new Date())
+          : collectionCsv(list);
       await saveExport(exportFileName(format, localToday()), content, format);
     } catch (error) {
       setProblem(
@@ -51,9 +53,9 @@ export function YourDataCard() {
     <Card style={styles.card}>
       <ThemedText type="section">Your data</ThemedText>
       <ThemedText type="small" themeColor="textSecondary">
-        {items?.length === 0
+        {items.length === 0
           ? 'Nothing to export yet: add something to your collection first.'
-          : `${items ? `${itemsText(items.length)}${where}. ` : ''}JSON keeps everything${
+          : `${itemsText(items.length)}${where}. JSON keeps everything${
               preorders.signedIn ? ', pre-orders too' : ''
             }; CSV opens in a spreadsheet.`}
       </ThemedText>
@@ -67,15 +69,15 @@ export function YourDataCard() {
           label="Export as JSON"
           variant="secondary"
           busy={busy === 'json'}
-          disabled={!ready || busy !== null || items.length === 0}
-          onPress={() => void exportAs('json')}
+          disabled={preorders.userPending || !preordersReady || busy !== null || items.length === 0}
+          onPress={() => void exportAs('json', items)}
         />
         <Button
           label="Export as CSV"
           variant="secondary"
           busy={busy === 'csv'}
-          disabled={!items || busy !== null || items.length === 0}
-          onPress={() => void exportAs('csv')}
+          disabled={busy !== null || items.length === 0}
+          onPress={() => void exportAs('csv', items)}
         />
       </View>
       {problem && (

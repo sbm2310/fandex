@@ -1,0 +1,83 @@
+appId: host.exp.Exponent
+name: >-
+  An account renames itself, picks a currency, sees its AI allowance, its devices and About,
+  and is deleted
+tags:
+  - account
+---
+# A throwaway account on the local API, deleted at the end.
+- runScript: ../scripts/create-account.js
+- runFlow:
+    file: common/open.yaml
+    env:
+      ROUTE: account
+- runFlow:
+    file: common/sign-in.yaml
+    env:
+      EMAIL: ${output.email}
+      PASSWORD: ${output.password}
+
+# Rename. (Changing the password isn't in this flow: iOS replaces a typed new password with its
+# "Automatic Strong Password"; Jest, the API's e2e tests and a manual check cover it.)
+- tapOn: 'Edit name'
+- tapOn: 'Name'
+- eraseText: 20
+- inputText: 'Maestro Collector'
+- tapOn: 'Profile'
+- tapOn: 'Save name'
+- extendedWaitUntil:
+    visible: 'Name saved.'
+    timeout: 20000
+- assertVisible: 'Maestro Collector'
+
+# The currency new pre-orders start in, kept on the account.
+- scrollUntilVisible:
+    element: 'Currency for new pre-orders'
+- tapOn: 'ILS'
+# iOS reports a chosen radio in its value ("radio button, checked"), not as Maestro's `checked`.
+- extendedWaitUntil:
+    visible:
+      text: 'radio button, checked'
+      rightOf: 'JPY'
+    timeout: 20000
+
+# Today's AI allowance (each label is one element).
+- scrollUntilVisible:
+    element: 'Shelf scans: .* used today'
+    timeout: 20000
+
+# This iPhone among the signed-in devices (Expo Go's User-Agent: "Expo/… CFNetwork/…").
+- scrollUntilVisible:
+    element: 'Signed-in devices'
+- scrollUntilVisible:
+    element: 'This device'
+- assertVisible: 'Fandex on iPhone'
+
+# About: the privacy policy opens and reads (it slides over the tabs).
+- scrollUntilVisible:
+    element: 'Privacy policy'
+    centerElement: true
+- tapOn: 'Privacy policy'
+- extendedWaitUntil:
+    visible: 'Last updated .*'
+    timeout: 20000
+
+# Clean up: delete the account.
+- openLink: ${APP_URL}/--/account
+# Maestro counts a button under the floating tab bar as visible, and the tab bar then takes the
+# tap: scroll on to the end of the page, where the last card clears the tab bar.
+- scrollUntilVisible:
+    element: 'Delete account'
+- scroll
+- tapOn: 'Delete account'
+# The box opens at the end of the page: scroll there again before typing.
+- scroll
+- tapOn: 'Password'
+- inputText: ${output.password}
+# End the editing by tapping plain text, as when signing in.
+- tapOn: "Enter your password to confirm. This can't be undone."
+- tapOn: 'Delete permanently'
+- tapOn: 'Delete'
+- extendedWaitUntil:
+    visible: 'New to Fandex? Create an account'
+    timeout: 20000

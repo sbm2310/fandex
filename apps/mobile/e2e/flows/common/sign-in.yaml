@@ -1,0 +1,29 @@
+# Signs in on the Account tab (already open) with EMAIL and PASSWORD, and waits until signed in.
+appId: host.exp.Exponent
+---
+- tapOn: 'Email'
+- inputText: ${EMAIL}
+- tapOn: 'Password'
+- inputText: ${PASSWORD}
+# With the keyboard up, the first tap on a button only ends the editing: end it by tapping plain
+# text. (Not hideKeyboard: on a password field iOS keeps its AutoFill bar up, which Maestro can't
+# swipe away, and with the Simulator's hardware keyboard connected there's no keyboard at all.)
+- tapOn: 'Sign in to keep your collection.*'
+# The button, not the heading of the same name.
+- tapOn:
+    text: 'Sign in'
+    below: 'Password'
+# iOS may offer to save the password, a moment after signing in.
+- extendedWaitUntil:
+    visible:
+      text: 'Not Now|Edit name'
+    timeout: 20000
+- runFlow:
+    when:
+      visible: 'Not Now'
+    commands:
+      - tapOn: 'Not Now'
+# The Profile card's button: "Sign out" is further down, below the Account tab's other cards.
+- extendedWaitUntil:
+    visible: 'Edit name'
+    timeout: 20000

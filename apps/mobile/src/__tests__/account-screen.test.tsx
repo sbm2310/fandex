@@ -282,6 +282,8 @@ describe('Account screen', () => {
       account.register('Reader', 'reader@example.com', PASSWORD);
       await account.signIn({ email: 'reader@example.com', password: PASSWORD });
       await renderAccount(account);
+      // Let the page settle (the Your data card waits for the collection).
+      await screen.findByText('Your data');
       await fireEvent.press(await screen.findByRole('button', { name: 'Delete account' }));
       return account;
     }
@@ -296,6 +298,8 @@ describe('Account screen', () => {
       expect(await screen.findByText('Your account has been deleted.')).toBeOnTheScreen();
       expect(mockConfirm).toHaveBeenCalledWith(expect.objectContaining({ destructive: true }));
       await expect(account.getCurrentUser()).resolves.toBeNull();
+      // Signed out, the page shows the device's (empty) collection.
+      expect(await screen.findByText(/Nothing to export yet/)).toBeOnTheScreen();
     });
 
     it('keeps the account when the confirmation is cancelled', async () => {

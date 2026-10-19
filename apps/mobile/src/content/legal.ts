@@ -17,7 +17,7 @@ export const FEEDBACK_URL = `${REPOSITORY_URL}/issues/new`;
 
 export const PRIVACY_POLICY: LegalDocument = {
   title: 'Privacy policy',
-  updated: 'October 18, 2026',
+  updated: 'October 19, 2026',
   intro:
     'Fandex is a small, independent app for keeping track of a collection. This page explains what it stores about you, who else handles it, and how to take it with you or delete it. There are no ads and no tracking.',
   sections: [
@@ -30,7 +30,7 @@ export const PRIVACY_POLICY: LegalDocument = {
     {
       heading: 'What we store when you have an account',
       paragraphs: [
-        'Your name and email address, and your password, which is stored only as a one-way hash.',
+        'Your name and email address, your password, which is stored only as a one-way hash, and the currency you chose for new pre-orders.',
         'Your sessions: when you signed in, the device’s browser or app description (user agent) and its IP address, so you stay signed in and can be protected against abuse.',
         'Your collection: the items you add, the corrections you make to them, figures you create by hand (including any image link you give), your pre-orders with their prices, payments, dates and notes, and figure suggestions you send for the shared catalog.',
         'How many AI features you used each day (counts only), to enforce the daily allowance.',
@@ -62,7 +62,8 @@ export const PRIVACY_POLICY: LegalDocument = {
       heading: 'Your choices',
       paragraphs: [
         'You can change your name and password on the Account tab, and delete your account there at any time. Deleting it removes your account, sessions, collection, pre-orders, hand-made figures and usage counts right away. Figures you suggested that were accepted into the shared catalog stay in it, without your name.',
-        'A way to export your collection is coming to the Account tab.',
+        'You can download your collection from the Account tab at any time, as a JSON file (everything, pre-orders too) or a CSV file for spreadsheets.',
+        'The Account tab also lists the devices you are signed in on (by device type, without IP addresses) and lets you sign any of them out.',
       ],
     },
     {
