@@ -1,4 +1,4 @@
-import { createApiFetch } from '@/services/api-fetch';
+import { createApiFetch, onApiUnauthorized } from '@/services/api-fetch';
 
 const ok = () => Promise.resolve(new Response('{}', { status: 200 }));
 const fakeFetch = () => jest.fn<Promise<Response>, [RequestInfo | URL, RequestInit?]>(ok);
@@ -43,5 +43,26 @@ describe('createApiFetch', () => {
     expect(init.credentials).toBe('include');
     expect(new Headers(init.headers).has('Cookie')).toBe(false);
     expect(getCookie).not.toHaveBeenCalled();
+  });
+
+  it('tells listeners when the API answers 401 (the session ended elsewhere)', async () => {
+    const statuses = [200, 401];
+    const fetch = jest.fn<Promise<Response>, [RequestInfo | URL, RequestInit?]>(() =>
+      Promise.resolve(new Response('{}', { status: statuses.shift() ?? 200 })),
+    );
+    const apiFetch = createApiFetch('http://api.test', () => null, { fetch, platform: 'web' });
+    const listener = jest.fn();
+    const unsubscribe = onApiUnauthorized(listener);
+
+    await apiFetch('/collection');
+    expect(listener).not.toHaveBeenCalled();
+    const response = await apiFetch('/collection');
+    expect(response.status).toBe(401);
+    expect(listener).toHaveBeenCalledTimes(1);
+
+    unsubscribe();
+    statuses.push(401);
+    await apiFetch('/collection');
+    expect(listener).toHaveBeenCalledTimes(1);
   });
 });

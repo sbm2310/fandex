@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { randomUUID } from 'expo-crypto';
 
 import { ApiAdminReviews } from './admin-reviews';
+import { ApiDeviceSessions } from './device-sessions';
 import { ApiCatalog } from './api-catalog';
 import { ApiCollectionRepository } from './api-collection-repository';
 import { ApiLegoCatalog } from './api-lego-catalog';
@@ -44,6 +45,7 @@ export function createDefaultServices(): AppServices {
     customItems: new ApiCustomItems(apiFetch),
     figureSuggestions: new ApiFigureSuggestions(apiFetch),
     adminReviews: new ApiAdminReviews(apiFetch),
+    deviceSessions: new ApiDeviceSessions(apiFetch),
     preorders: new ApiPreorders(apiFetch),
     seriesCatalog: new ApiSeriesCatalog(apiFetch),
   };

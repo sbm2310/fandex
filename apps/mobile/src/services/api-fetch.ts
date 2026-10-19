@@ -5,6 +5,18 @@ export type GetSessionCookie = () => Promise<string | null | undefined> | string
 
 export type ApiFetch = (path: string, init?: RequestInit) => Promise<Response>;
 
+const unauthorizedListeners = new Set<() => void>();
+
+/**
+ * Called when the API answers 401: the session ended elsewhere (signed out from another
+ * device, password changed). The root layout re-reads the current user, so the app shows
+ * itself signed out at once instead of failing requests until the next check.
+ */
+export function onApiUnauthorized(listener: () => void): () => void {
+  unauthorizedListeners.add(listener);
+  return () => unauthorizedListeners.delete(listener);
+}
+
 /**
  * Fetches the Fandex API (routes under /api) with the session attached the right way for
  * each platform:
@@ -26,10 +38,12 @@ export function createApiFetch(
       const cookie = await getSessionCookie();
       if (cookie) headers.set('Cookie', cookie);
     }
-    return fetchImpl(`${apiUrl}/api${path}`, {
+    const response = await fetchImpl(`${apiUrl}/api${path}`, {
       ...init,
       headers,
       credentials: platform === 'web' ? 'include' : 'omit',
     });
+    if (response.status === 401) unauthorizedListeners.forEach((listener) => listener());
+    return response;
   };
 }

@@ -10,6 +10,7 @@ import { FigureSuggestionsModule } from './figure-suggestions/figure-suggestions
 import { envSchema, type Env } from './config/env.js';
 import { HealthModule } from './health/health.module.js';
 import { MeModule } from './me/me.module.js';
+import { SessionsModule } from './sessions/sessions.module.js';
 import { PreordersModule } from './preorders/preorders.module.js';
 import { PrismaModule } from './prisma/prisma.module.js';
 import { SeriesModule } from './series/series.module.js';
@@ -43,6 +44,7 @@ import { UniversesModule } from './universes/universes.module.js';
     }),
     HealthModule,
     MeModule,
+    SessionsModule,
     UniversesModule,
     CatalogModule,
     CollectionModule,

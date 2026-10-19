@@ -6,6 +6,7 @@ import { AboutCard } from '@/components/about-card';
 import { AiAllowanceCard } from '@/components/ai-allowance-card';
 import { AuthForm } from '@/components/auth-form';
 import { Button } from '@/components/button';
+import { DevicesCard } from '@/components/devices-card';
 import { FormField } from '@/components/form-field';
 import { PageTitle } from '@/components/page-title';
 import { PreferencesCard } from '@/components/preferences-card';
@@ -83,6 +84,7 @@ function SignedIn({ user, onDeleted }: { user: AccountUser; onDeleted: () => voi
       <PreferencesCard currency={user.preferredCurrency} />
       <AiAllowanceCard />
       <YourDataCard />
+      <DevicesCard />
       <AboutCard />
       {/* Admins only (the server's ADMIN_EMAILS); everyone else never sees it. */}
       {isAdmin ? (

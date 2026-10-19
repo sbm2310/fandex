@@ -17,6 +17,7 @@ import {
   type AdminFigureSuggestion,
   type CatalogSet,
   type Currency,
+  type DeviceSession,
   type CollectionRepository,
   type KeyValueStore,
   type LegoCatalog,
@@ -26,6 +27,7 @@ import type { ReactNode } from 'react';
 
 import { AccountError, type AccountService, type AccountUser } from '@/services/account-service';
 import type { AdminReviews } from '@/services/admin-reviews';
+import type { DeviceSessions } from '@/services/device-sessions';
 import { AppServicesProvider } from '@/services/app-services';
 import type { CustomItems } from '@/services/custom-items';
 import type { FigureCatalog } from '@/services/figure-catalog';
@@ -128,6 +130,35 @@ export function createFakeAdminReviews({
       decide(id, { status: 'rejected', reviewNote: note }),
     ),
   } satisfies AdminReviews & { queue: AdminFigureSuggestion[] };
+}
+
+/** Signed-in devices kept in memory; by default only this one. */
+export function createFakeDeviceSessions(
+  initial: DeviceSession[] = [
+    {
+      id: '0199b5a0-0000-7000-8000-00000000d001',
+      device: 'Chrome on Mac',
+      signedInAt: '2026-10-01T09:00:00.000Z',
+      lastActiveAt: '2026-10-19T09:00:00.000Z',
+      current: true,
+    },
+  ],
+) {
+  let sessions = [...initial];
+  return {
+    get sessions() {
+      return sessions;
+    },
+    list: jest.fn(async () => [...sessions]),
+    signOut: jest.fn(async (id: string) => {
+      sessions = sessions.filter((session) => session.id !== id);
+    }),
+    signOutOthers: jest.fn(async () => {
+      const before = sessions.length;
+      sessions = sessions.filter((session) => session.current);
+      return before - sessions.length;
+    }),
+  } satisfies DeviceSessions & { sessions: DeviceSession[] };
 }
 
 /** A box scanner whose scan is a Jest mock; by default it reads nothing. */
@@ -414,6 +445,7 @@ export function createWrapper({
   customItems = createFakeCustomItems(),
   figureSuggestions = createFakeFigureSuggestions(),
   adminReviews = createFakeAdminReviews(),
+  deviceSessions = createFakeDeviceSessions(),
   preorders = createFakePreorders(),
   seriesCatalog = createFakeSeriesCatalog(),
 }: {
@@ -429,6 +461,7 @@ export function createWrapper({
   customItems?: CustomItems;
   figureSuggestions?: FigureSuggestions;
   adminReviews?: AdminReviews;
+  deviceSessions?: DeviceSessions;
   preorders?: Preorders;
   seriesCatalog?: SeriesCatalog;
 } = {}) {
@@ -457,6 +490,7 @@ export function createWrapper({
             customItems,
             figureSuggestions,
             adminReviews,
+            deviceSessions,
             preorders,
             seriesCatalog,
           }}

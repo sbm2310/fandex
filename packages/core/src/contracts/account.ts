@@ -33,3 +33,17 @@ export const meResponseSchema = z.object({
 });
 
 export type MeResponse = z.infer<typeof meResponseSchema>;
+
+/** GET /sessions: a device the user is signed in on (no tokens or IP addresses). */
+export const deviceSessionSchema = z.object({
+  id: z.uuid(),
+  /** "Chrome on Mac", from core's `deviceName`. */
+  device: z.string(),
+  signedInAt: z.iso.datetime(),
+  lastActiveAt: z.iso.datetime(),
+  /** The session this request came from. */
+  current: z.boolean(),
+});
+export type DeviceSession = z.infer<typeof deviceSessionSchema>;
+
+export const deviceSessionsResponseSchema = z.array(deviceSessionSchema);

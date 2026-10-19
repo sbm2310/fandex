@@ -8,7 +8,9 @@ import { useEffect, useState } from 'react';
 import { AppState, Platform } from 'react-native';
 
 import { Colors, FontFiles, Fonts } from '@/constants/theme';
+import { CURRENT_USER_KEY } from '@/hooks/use-account';
 import { useThemeScheme } from '@/hooks/use-theme';
+import { onApiUnauthorized } from '@/services/api-fetch';
 import { AppServicesProvider } from '@/services/app-services';
 import { createDefaultServices } from '@/services/default-services';
 import { createQueryClient } from '@/services/query-client';
@@ -63,6 +65,13 @@ export default function RootLayout() {
   useEffect(() => {
     if (ready) SplashScreen.hide();
   }, [ready]);
+
+  // A 401 means the session ended elsewhere: re-read who is signed in (null → signed out).
+  useEffect(
+    () =>
+      onApiUnauthorized(() => void queryClient.invalidateQueries({ queryKey: CURRENT_USER_KEY })),
+    [queryClient],
+  );
 
   if (!ready) return null;
 

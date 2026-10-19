@@ -3,6 +3,7 @@ import { createContext, use, type ReactNode } from 'react';
 
 import type { AccountService } from './account-service';
 import type { AdminReviews } from './admin-reviews';
+import type { DeviceSessions } from './device-sessions';
 import type { CustomItems } from './custom-items';
 import type { FigureCatalog } from './figure-catalog';
 import type { FigureScanner } from './figure-scanner';
@@ -35,6 +36,8 @@ export type AppServices = {
   figureSuggestions: FigureSuggestions;
   /** Reviewing figure suggestions (admins only). */
   adminReviews: AdminReviews;
+  /** The devices the user is signed in on (signed in only). */
+  deviceSessions: DeviceSessions;
   /** The signed-in user's pre-orders on the Fandex API. */
   preorders: Preorders;
   /** Book series and the books missing from them (public, also for guests). */
@@ -106,6 +109,10 @@ export function useFigureSuggestionService(): FigureSuggestions {
 
 export function useAdminReviews(): AdminReviews {
   return useAppServices().adminReviews;
+}
+
+export function useDeviceSessions(): DeviceSessions {
+  return useAppServices().deviceSessions;
 }
 
 export function usePreorderService(): Preorders {

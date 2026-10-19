@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { useAccountService } from '@/services/app-services';
 
-const CURRENT_USER_KEY = ['account', 'me'] as const;
+export const CURRENT_USER_KEY = ['account', 'me'] as const;
 
 /** The signed-in user (`null` when signed out). */
 export function useCurrentUser() {
