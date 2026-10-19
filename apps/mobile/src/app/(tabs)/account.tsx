@@ -12,6 +12,7 @@ import { PreferencesCard } from '@/components/preferences-card';
 import { ProfileCard } from '@/components/profile-card';
 import { Screen } from '@/components/screen';
 import { ThemedText } from '@/components/themed-text';
+import { YourDataCard } from '@/components/your-data-card';
 import { Spacing } from '@/constants/theme';
 import { useCurrentUser, useDeleteAccount, useSignOut } from '@/hooks/use-account';
 import { useIsAdmin } from '@/hooks/use-admin';
@@ -59,6 +60,7 @@ export default function AccountScreen() {
               Without an account, your books stay on this device.
             </ThemedText>
             <AuthForm />
+            <YourDataCard />
             <AboutCard />
           </View>
         )}
@@ -80,6 +82,7 @@ function SignedIn({ user, onDeleted }: { user: AccountUser; onDeleted: () => voi
       </ThemedText>
       <PreferencesCard currency={user.preferredCurrency} />
       <AiAllowanceCard />
+      <YourDataCard />
       <AboutCard />
       {/* Admins only (the server's ADMIN_EMAILS); everyone else never sees it. */}
       {isAdmin ? (
