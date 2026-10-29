@@ -402,9 +402,10 @@ describe('Ask (e2e)', () => {
         method: 'ai',
       });
       const sent = fakeModel.chat.mock.calls[0]![0].prompt;
-      // (The prompt's own examples mention Stormlight; the collection's titles aren't sent.)
-      expect(sent).not.toContain('One Piece');
-      expect(sent).not.toContain('ONE PIECE');
+      // The collection's titles aren't sent. (The prompt's examples mention Stormlight and The
+      // Way of Kings, and its universe list One Piece.)
+      expect(sent).not.toContain('One Piece, Vol. 1');
+      expect(sent).not.toContain('ONE PIECE 3');
     });
 
     it('answers with keywords too', async () => {

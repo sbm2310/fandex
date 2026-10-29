@@ -1100,5 +1100,210 @@
       "authors": ["Jill Sherman"],
       "subjects": ["Chemistry, juvenile literature", "Chemistry"]
     }
+  },
+  "one-piece-vol-1-viz": {
+    "recordedFrom": "Open Library edition OL60495965M → OL60495965M (2026-10-29)",
+    "signals": {
+      "title": "One Piece, Vol. 1: Romance Dawn: ROMANCE DAWN —冒険の夜明け—",
+      "authors": ["尾田栄一郎"],
+      "people": ["Luffy (Fictional character)"],
+      "places": ["East Blue (Fictional sea)"],
+      "subjects": [
+        "franchise:ONE PIECE",
+        "series:ONE PIECE",
+        "form:manga",
+        "form:manga volume",
+        "form:graphic novel",
+        "genre:adventure",
+        "genre:comedy drama",
+        "genre:science fantasy",
+        "intended public:shōnen",
+        "universe:ONE PIECE",
+        "Pirates",
+        "Treasure troves"
+      ]
+    }
+  },
+  "pokemon-adventures-1": {
+    "recordedFrom": "Open Library edition OL8692751M → OL8692751M (2026-10-29)",
+    "signals": {
+      "title": "Pokemon Adventures, Volume 1: Desperado Pikachu (Pokémon Adventures)",
+      "authors": ["日下秀憲"],
+      "places": ["Japan"],
+      "subjects": [
+        "Juvenile fiction",
+        "Graphic novels",
+        "Fiction",
+        "Pokémon (Game)",
+        "Pokémon (Fictitious characters)",
+        "Comic books, strips",
+        "Good and evil",
+        "Comics & graphic novels, east asian style, manga, science fiction",
+        "Pokemon (fictitious characters), fiction",
+        "Comics & graphic novels, east asian style, manga, fantasy",
+        "Adventure and adventurers, fiction",
+        "Cartoons and comics",
+        "Comic books, strips, etc.",
+        "Manga ab 8 Jahren",
+        "Comic ab 8 Jahren",
+        "Junge",
+        "Pokémon",
+        "aufregend",
+        "Reise",
+        "Gschick",
+        "Mut",
+        "großes Herz",
+        "Abenteuer",
+        "Ziel",
+        "Trainer"
+      ]
+    }
+  },
+  "pokemon-essential-handbook": {
+    "recordedFrom": "Open Library edition OL26629981M → OL26629981M (2026-10-29)",
+    "signals": {
+      "title": "Pokémon Deluxe Essential Handbook: The Need-to-Know Stats and Facts on Over 700 Pokémon",
+      "authors": ["Scholastic"],
+      "subjects": [
+        "Pokémon (Fictitious characters)",
+        "Pokémon (Game)",
+        "Pokemon (game)",
+        "Games, juvenile literature"
+      ]
+    }
+  },
+  "pokemon-ultra-sun-guide": {
+    "recordedFrom": "Open Library edition OL26861312M → OL26861312M (2026-10-29)",
+    "signals": {
+      "title": "Pokémon Ultra Sun & Pokémon Ultra Moon: The Official Alola Region Strategy Guide (Pokemon (Prima Official Guide/Official Pokedex Guide))",
+      "authors": ["Pokemon Company International"],
+      "subjects": [
+        "Pokémon (Fictitious characters)",
+        "Pokémon (Game)",
+        "Computer games",
+        "Juvenile literature"
+      ]
+    }
+  },
+  "all-in-one-piece": {
+    "recordedFrom": "Open Library edition OL9495700M → OL9495700M (2026-10-29)",
+    "signals": {
+      "title": "All in One Piece",
+      "authors": ["Jill Murphy"],
+      "subjects": [
+        "Elefantes",
+        "Elephants",
+        "Family life",
+        "Ficción juvenil",
+        "Fiction",
+        "Vida familiar",
+        "Children's fiction",
+        "Elephants, fiction"
+      ]
+    }
+  },
+  "one-piece-wearables": {
+    "recordedFrom": "Open Library edition OL24297149M → OL24297149M (2026-10-29)",
+    "signals": {
+      "title": "One-Piece Wearables",
+      "authors": ["Sheila Brennan"],
+      "subjects": ["Sewing", "Patterns", "Nonfiction", "Crafts", "Dressmaking"]
+    }
+  },
+  "misty-of-chincoteague": {
+    "recordedFrom": "Open Library edition OL51003878M → OL51003878M (2026-10-29)",
+    "signals": {
+      "title": "Misty of Chincoteague",
+      "authors": ["Marguerite Henry"],
+      "places": [
+        "Chincoteague Island (Va.)",
+        "Chincoteague, Isla (Virginia)",
+        "Isla (Virginia) Chincoteague",
+        "Ponies",
+        "Chincoteaque Island",
+        "Mei guo",
+        "Chincoteague Island",
+        "Virginia"
+      ],
+      "subjects": [
+        "Children's fiction",
+        "Ponies, fiction",
+        "Brothers and sisters, fiction",
+        "Virginia, fiction",
+        "Chincoteague pony",
+        "Legends and stories",
+        "Ponies",
+        "Brothers and sisters",
+        "Ficción juvenil",
+        "Fiction",
+        "Juvenile fiction",
+        "Poni chincoteague",
+        "Children's stories",
+        "Newbery Honor",
+        "Large type books",
+        "Chincoteague (Va.)",
+        "Horses",
+        "Chincoteague Island",
+        "Zhong pian xiao shuo",
+        "Er tong wen xue",
+        "Spanish language materials",
+        "Ponis",
+        "Novela juvenil",
+        "Hermanos",
+        "Chincoteague Island (Va.)",
+        "Siblings, fiction",
+        "award:Newbery_award",
+        "lexile:750",
+        "lexile_range:701-800",
+        "age:min:7",
+        "age:max:10",
+        "grade:min:3",
+        "grade:max:7"
+      ]
+    }
+  },
+  "battle-at-arlong-park": {
+    "recordedFrom": "Rebrickable set 75638-1 + minifigs (2026-10-29)",
+    "signals": {
+      "title": "Battle at Arlong Park",
+      "legoThemeIds": [775],
+      "minifigs": [
+        "Arlong",
+        "Chu",
+        "Monkey D. Luffy, Long Arms",
+        "Nami, Yellowish Green Tank Top",
+        "Usopp, Dark Green Hat"
+      ]
+    }
+  },
+  "going-merry": {
+    "recordedFrom": "Rebrickable set 75639-1 + minifigs (2026-10-29)",
+    "signals": {
+      "title": "The Going Merry Pirate Ship",
+      "legoThemeIds": [775],
+      "minifigs": [
+        "Monkey D. Luffy, Hat, Closed Mouth",
+        "Nami",
+        "Roronoa Zoro, Hair, Angry",
+        "Sanji, Black Suit",
+        "Usopp"
+      ]
+    }
+  },
+  "training-house-with-pikachu": {
+    "recordedFrom": "Rebrickable set 72164-1 + minifigs (2026-10-29)",
+    "signals": {
+      "title": "Training House with Pikachu",
+      "legoThemeIds": [776],
+      "minifigs": []
+    }
+  },
+  "charizard-vs-jolteon": {
+    "recordedFrom": "Rebrickable set 72167-1 + minifigs (2026-10-29)",
+    "signals": {
+      "title": "Charizard vs. Jolteon Ultimate Battle",
+      "legoThemeIds": [776],
+      "minifigs": []
+    }
   }
 }

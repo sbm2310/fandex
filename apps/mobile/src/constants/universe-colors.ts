@@ -47,6 +47,14 @@ export const UniverseColorTable: Record<string, Record<Scheme, Omit<UniverseColo
     dark: { ground: '#33241A', accent: '#E39A5B', onGround: '#F4F0EA' },
     light: { ground: '#F5E3D3', accent: '#9A5420', onGround: '#1A1720' },
   },
+  'one-piece': {
+    dark: { ground: '#10302F', accent: '#FF7A6B', onGround: '#F4F0EA' },
+    light: { ground: '#D9F0EE', accent: '#B23A2E', onGround: '#1A1720' },
+  },
+  pokemon: {
+    dark: { ground: '#1A2547', accent: '#FFD23F', onGround: '#F4F0EA' },
+    light: { ground: '#E3E9F8', accent: '#2F4BA0', onGround: '#1A1720' },
+  },
 };
 
 /** The colours for a universe in a colour scheme; a neutral surface and violet when unknown. */

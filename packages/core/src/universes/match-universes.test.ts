@@ -60,9 +60,70 @@ describe('matchUniverses on recorded books', () => {
       characters: [{ universe: 'marvel', character: 'spider-man' }],
     });
   });
+});
 
-  it('matches nothing for a universe that is not in the seed (One Piece)', () => {
-    expect(match('one-piece-1')).toEqual({ universes: [], characters: [] });
+describe('matchUniverses on recorded items: One Piece and Pokémon', () => {
+  it('One Piece vol. 1, in Japanese and from VIZ: One Piece with Luffy', () => {
+    for (const name of ['one-piece-1', 'one-piece-vol-1-viz'] as const)
+      expect([name, match(name)]).toEqual([
+        name,
+        {
+          universes: ['one-piece'],
+          characters: [{ universe: 'one-piece', character: 'monkey-d-luffy' }],
+        },
+      ]);
+  });
+
+  it('One Piece LEGO sets: the theme, and the crew from minifig names', () => {
+    expect(fixtures['going-merry'].signals.legoThemeIds).toEqual([775]);
+    expect(charactersOf('going-merry')).toEqual([
+      'monkey-d-luffy',
+      'roronoa-zoro',
+      'nami',
+      'sanji',
+      'usopp',
+    ]);
+    expect(charactersOf('battle-at-arlong-park')).toEqual([
+      'monkey-d-luffy',
+      'nami',
+      'usopp',
+      'arlong',
+    ]);
+  });
+
+  it('Pokémon books with or without the accent, and Pikachu from a title', () => {
+    expect(fixtures['pokemon-adventures-1'].signals.title).toMatch(/^Pokemon Adventures/);
+    expect(match('pokemon-adventures-1')).toEqual({
+      universes: ['pokemon'],
+      characters: [{ universe: 'pokemon', character: 'pikachu' }],
+    });
+    for (const name of ['pokemon-essential-handbook', 'pokemon-ultra-sun-guide'] as const)
+      expect([name, match(name).universes]).toEqual([name, ['pokemon']]);
+  });
+
+  it('Pokémon LEGO sets (no minifigs): the theme, and the Pokémon named in the title', () => {
+    expect(fixtures['charizard-vs-jolteon'].signals.minifigs).toEqual([]);
+    expect(match('charizard-vs-jolteon')).toEqual({
+      universes: ['pokemon'],
+      characters: [{ universe: 'pokemon', character: 'charizard' }],
+    });
+    expect(charactersOf('training-house-with-pikachu')).toEqual(['pikachu']);
+  });
+
+  it('"in one piece", one-piece sewing and Misty the pony match nothing', () => {
+    expect(match('all-in-one-piece').universes).toEqual([]);
+    expect(fixtures['one-piece-wearables'].signals.subjects).toContain('Sewing');
+    expect(match('one-piece-wearables').universes).toEqual([]);
+    expect(match('misty-of-chincoteague').universes).toEqual([]);
+    for (const title of ['One Piece at a Time', 'The Classic One-Piece Swimsuit'])
+      expect([title, matchUniverses({ title }).universes]).toEqual([title, []]);
+  });
+
+  it('Kanto, Misty, Brock and Ash alone are not Pokémon', () => {
+    expect(matchUniverses({ title: 'Walking Tokyo', places: ['Kanto'] }).universes).toEqual([]);
+    expect(
+      matchUniverses({ title: 'Ponies', people: ['Misty', 'Brock', 'Ash'] }).universes,
+    ).toEqual([]);
   });
 });
 

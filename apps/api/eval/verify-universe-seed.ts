@@ -22,6 +22,8 @@ const BATCH = 50;
 const REVIEWED: Record<string, string> = {
   Q81738: "Tolkien's legendarium", // Middle-earth: "fictional universe by J. R. R. Tolkien"
   Q19786052: 'Star Wars universe', // "fictional background of Star Wars"
+  Q16682047: 'One Piece universe', // "fictional narrative universe of One Piece"
+  Q17562848: 'Pokémon universe', // "fictional universe"
 };
 
 type SeedId = { id: string; what: string; names: string[] };
