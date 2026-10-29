@@ -109,7 +109,7 @@ Full plan and task list: [`docs/plans/redesign.md`](docs/plans/redesign.md); moc
 
 ## More universes decisions (settled 2026-10-29)
 
-Full plan and task list: [`docs/plans/universes.md`](docs/plans/universes.md). Built 2026-10-29 (Tasks 1–5).
+Full plan and task list: [`docs/plans/universes.md`](docs/plans/universes.md). Built and deployed 2026-10-29 (Tasks 1–5; Render re-matched 1,945 catalog items in about 10 s; iOS republished with EAS Update).
 
 - **Six more universes,** chosen by the owner: A Song of Ice and Fire, Cosmere, One Piece, Pokémon, Jurassic Park, Disney & Pixar (one universe for Disney and Pixar animation). Same curated seed and sources (Wikidata CC0, Rebrickable themes); no schema change.
 - **Data is checked by script, never typed from memory:** `eval:verify-seed` (every Wikidata id against its label), `eval:record-signals` (real Open Library and Rebrickable signals for the tests, negatives included) and `eval:universe-diff` (every link that would change across the local catalog). A title phrase is kept only when nearly every Open Library title containing it is about the universe.
