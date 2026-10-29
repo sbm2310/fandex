@@ -34,7 +34,8 @@ describe('UNIVERSE_SEED', () => {
   it('only lists LEGO themes that exist on Rebrickable', () => {
     const themeIds = new Set(themesFixture.results.map((theme) => theme.id));
     for (const universe of UNIVERSE_SEED)
-      for (const id of universe.legoThemeIds) expect(themeIds).toContain(id);
+      for (const id of [...universe.legoThemeIds, ...(universe.excludeLegoThemeIds ?? [])])
+        expect(themeIds).toContain(id);
   });
 
   it('never uses the same title phrase for two universes', () => {

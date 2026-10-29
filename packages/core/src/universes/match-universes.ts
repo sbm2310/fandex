@@ -15,7 +15,7 @@ import { UNIVERSE_SEED, type UniverseSeed } from './universe-seed';
  * Bump when the matching rules change, so stored links are recomputed (the API re-matches
  * every catalog item when this or the seed changes).
  */
-export const UNIVERSE_MATCHER_VERSION = 1;
+export const UNIVERSE_MATCHER_VERSION = 2;
 
 export type CharacterRef = { universe: string; character: string };
 
@@ -122,7 +122,8 @@ export function matchUniverses(
     const names = namesByUniverse.get(universe.slug) ?? new Map<string, NameEntry>();
 
     const matched =
-      universe.legoThemeIds.some((id) => themeIds.has(id)) ||
+      (universe.legoThemeIds.some((id) => themeIds.has(id)) &&
+        !universe.excludeLegoThemeIds?.some((id) => themeIds.has(id))) ||
       universe.titleAliases.some(inTitlesOrSubjects) ||
       universe.places.some((place) => places.has(normalizeName(place))) ||
       universe.characters.some((character) => character.titleNames?.some(inTitles)) ||

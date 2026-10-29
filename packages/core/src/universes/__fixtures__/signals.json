@@ -1305,5 +1305,467 @@
       "legoThemeIds": [776],
       "minifigs": []
     }
+  },
+  "jurassic-park-novel": {
+    "recordedFrom": "Open Library edition OL18336594M → OL18336594M (2026-10-29)",
+    "signals": {
+      "title": "Jurassic Park: a novel",
+      "authors": ["Michael Crichton"],
+      "people": [
+        "Alan Grant",
+        "Ellie Sattler",
+        "John Hammond",
+        "Ian Malcolm",
+        "Donald Gennaro",
+        "Tim Murphy",
+        "Alexis Murphy",
+        "Dennis Dedry",
+        "Lewis Dodgson",
+        "John Arnold",
+        "Henry Wu",
+        "Muldoon",
+        "Dr. Harding",
+        "Martin Guiterrez"
+      ],
+      "places": [
+        "Jurassic Park",
+        "Costa Rica",
+        "Isla Nubar",
+        "United States",
+        "Xian dai",
+        "mei guo"
+      ],
+      "subjects": [
+        "dichogamy",
+        "corporate espionage",
+        "science fiction",
+        "cautionary tale",
+        "genetic engineering",
+        "amusement parks",
+        "dinosaurs",
+        "chaos theory",
+        "Procompsognathus",
+        "paleontologists",
+        "paleobotanists",
+        "theme parks",
+        "cloning",
+        "ancient DNA",
+        "lysine",
+        "auxotrophy",
+        "chaos theorists",
+        "complex systems",
+        "velociraptors",
+        "backdoor",
+        "Tyrannosaurus",
+        "biotechnologists",
+        "napalm",
+        "Clones and cloning",
+        "Fiction",
+        "Large type books",
+        "Fiction, science fiction, action & adventure",
+        "Fiction, technological",
+        "Fiction, thrillers, general",
+        "Jurassic park (imaginary place), fiction",
+        "Malcolm, ian (fictitious character), fiction",
+        "Dinosaurs, fiction",
+        "Fiction, suspense",
+        "Zhang pian xiao shuo",
+        "Ke xue huan xiang xiao shuo",
+        "Fiction, thrillers, technological",
+        "Dinosaurios",
+        "Novela",
+        "Parques de diversiones",
+        "Spanish language materials",
+        "Animal genetic engineering",
+        "Suspense fiction",
+        "Thrillers (Fiction)",
+        "American fiction",
+        "Translations into Chinese",
+        "Chang pian xiao shuo",
+        "Juvenile fiction",
+        "Amusement parks, fiction",
+        "Brothers and sisters, fiction",
+        "Scientists, fiction",
+        "Long Now Manual for Civilization"
+      ]
+    }
+  },
+  "the-lost-world-crichton": {
+    "recordedFrom": "Open Library edition OL39479436M → OL39479436M (2026-10-29)",
+    "signals": {
+      "title": "The Lost World",
+      "authors": ["Michael Crichton"],
+      "people": [
+        "Ian Malcolm",
+        "Richard Levine",
+        "Diego",
+        "Jack Thorne",
+        "Eddie Carr",
+        "R.B. Benton",
+        "Kelly Curtis",
+        "Sarah Harding",
+        "Lewis Dodgson",
+        "Howard King",
+        "George Baselton"
+      ],
+      "places": [
+        "Jurassic Park",
+        "Costa Rica",
+        "Site B",
+        "Isla Sorna",
+        "Isla Nublar",
+        "InGen",
+        "Santa Fe Institute",
+        "Canyon Road"
+      ],
+      "subjects": [
+        "prions",
+        "scrapie",
+        "Ornitholestes",
+        "Mussaurus",
+        "Procompsognathus",
+        "Triceratops",
+        "Dryosaurus",
+        "Hypsilophodon",
+        "Parasaurolophus",
+        "Maiasaura",
+        "Stegosaurus",
+        "Apatosaurus",
+        "Gallimimus",
+        "Pachycephalosaurus",
+        "Tyrannosaurus",
+        "Velociraptors",
+        "geothermal gradient",
+        "Carnotaurus",
+        "paleontologists",
+        "Science fiction",
+        "Fiction",
+        "Dinosaurs",
+        "Cloning",
+        "Thriller",
+        "techno-thriller",
+        "American fiction",
+        "Fiction, thrillers",
+        "Fiction, espionage",
+        "Large type books",
+        "Fiction, science fiction, action & adventure",
+        "Fiction, thrillers, general",
+        "Fiction, technological",
+        "Jurassic park (imaginary place), fiction",
+        "Malcolm, ian (fictitious character), fiction",
+        "Fiction, science fiction, general",
+        "Fiction, media tie-in",
+        "Molecular cloning",
+        "Action & Adventure",
+        "Thrillers",
+        "Readers",
+        "Fiction, suspense",
+        "American Science fiction",
+        "New York Times reviewed",
+        "Dinosaures",
+        "Romans, nouvelles, etc. pour la jeunesse",
+        "Fiction, thrillers, espionage",
+        "Fiction, thrillers, technological",
+        "Children's fiction",
+        "Dinosaurs, fiction"
+      ]
+    }
+  },
+  "jurassic-world-junior": {
+    "recordedFrom": "Open Library edition OL26960221M → OL26960221M (2026-10-29)",
+    "signals": {
+      "title": "Jurassic world: fallen kingdom : the junior novelization",
+      "authors": ["David Lewman"],
+      "subjects": [
+        "Dinosaurs",
+        "Volcanoes",
+        "Wildlife conservation",
+        "Islands",
+        "Juvenile fiction",
+        "Amusement parks",
+        "Fiction",
+        "Children's fiction",
+        "Dinosaurs, fiction",
+        "Adventure and adventurers, fiction",
+        "Science fiction"
+      ]
+    }
+  },
+  "the-lost-world-doyle": {
+    "recordedFrom": "Open Library edition OL47306378M → OL47306378M (2026-10-29)",
+    "signals": {
+      "title": "The Lost World",
+      "authors": ["Arthur Conan Doyle"],
+      "people": [
+        "Arthur Conan Doyle Sir (1859-1930)",
+        "Charles Darwin (1809-1882)",
+        "Arthur Conan Doyle (1859-1930)"
+      ],
+      "places": ["South America", "England", "London"],
+      "subjects": [
+        "Adventure stories",
+        "Atlantis",
+        "Dinosaurs",
+        "Discovery and exploration",
+        "English Detective and mystery stories",
+        "Fiction",
+        "Fiction in French",
+        "Prehistoric peoples",
+        "Professor Challenger (Fictitious character)",
+        "Scientific expeditions",
+        "Translations into Czech",
+        "Translations into Russian",
+        "Science fiction",
+        "Fantasy",
+        "Discoveries in geography",
+        "Children's fiction",
+        "Dinosaurs, fiction",
+        "Fiction, fantasy, general",
+        "Fiction, action & adventure",
+        "Challenger, professor (fictitious character), fiction",
+        "South america, fiction",
+        "Books and reading",
+        "Public libraries",
+        "Activity programs",
+        "Criticism and interpretation",
+        "Reading promotion",
+        "Young adults' libraries",
+        "Westminster Libraries and Archives",
+        "Youth",
+        "Lost world (Doyle, Arthur Conan)",
+        "Children",
+        "British and irish fiction (fictional works by one author)",
+        "Fiction, science fiction, general",
+        "Scientists, fiction",
+        "English literature",
+        "Fiction, historical, general",
+        "Romans, nouvelles",
+        "Dinosaures",
+        "Challenger, Professor (Personaje literario)",
+        "Novela",
+        "Pueblos prehistóricos",
+        "Dinosaurios",
+        "Adventure and adventurers, fiction",
+        "Fiction, general",
+        "Challenger, Professor (Fictitious character) -- Fiction",
+        "Fantasy fiction",
+        "South America -- Fiction",
+        "Prehistoric peoples -- Fiction",
+        "Dinosaurs -- Fiction",
+        "Literature and fiction, action and adventure",
+        "New York Times reviewed",
+        "Prehistoric peoples, fiction",
+        "Scientific expeditions, fiction",
+        "South America",
+        "English Fantasy fiction",
+        "Long now manual for civilization"
+      ]
+    }
+  },
+  "dinosaur-encyclopedia": {
+    "recordedFrom": "Open Library edition OL7649212M → OL7649212M (2026-10-29)",
+    "signals": {
+      "title": "The Dinosaur Encyclopedia",
+      "authors": ["Michael George Benton"]
+    }
+  },
+  "toy-story-golden-book": {
+    "recordedFrom": "Open Library edition OL24590506M → OL24590506M (2026-10-29)",
+    "signals": {
+      "title": "Toy Story Little Golden Book Favorites",
+      "authors": ["Golden Books"],
+      "subjects": [
+        "Children's fiction",
+        "Toys, fiction",
+        "Juvenile fiction",
+        "Toys",
+        "Friendship",
+        "Fiction"
+      ]
+    }
+  },
+  "frozen-junior-novel": {
+    "recordedFrom": "Open Library edition OL25443591M → OL25443591M (2026-10-29)",
+    "signals": {
+      "title": "Frozen : The Junior Novelization: The Junior Novelization",
+      "authors": ["Random House Disney"],
+      "subjects": [
+        "Movie novels",
+        "Magic",
+        "Winter",
+        "Fantasy fiction",
+        "Juvenile fiction",
+        "Quests (Expeditions)",
+        "Fiction",
+        "Fantasy",
+        "Princesses",
+        "Sisters",
+        "nyt:childrens-middle-grade=2013-12-15",
+        "New York Times bestseller",
+        "Disney Frozen",
+        "Children's fiction",
+        "Humorous stories",
+        "Adventure and adventurers, fiction"
+      ]
+    }
+  },
+  "lion-king-golden-book": {
+    "recordedFrom": "Open Library edition OL1132040M → OL1132040M (2026-10-29)",
+    "signals": {
+      "title": "No Worries (The Lion King: A Little Golden Book): No Worries (A little golden book)",
+      "authors": ["Justine Fontes"],
+      "places": ["Africa"],
+      "subjects": [
+        "Fiction",
+        "Lion King (Fictitious character)",
+        "Lion",
+        "Lions",
+        "Children's fiction",
+        "Lion, fiction",
+        "Warthog",
+        "Animals",
+        "Meerkat",
+        "Habitations",
+        "Animals, fiction",
+        "Juvenile fiction"
+      ]
+    }
+  },
+  "star-wars-ahsoka": {
+    "recordedFrom": "Open Library edition OL26781220M → OL26781220M (2026-10-29)",
+    "signals": {
+      "title": "Star Wars: Ahsoka",
+      "authors": ["E. K. Johnston"],
+      "subjects": [
+        "Space warfare",
+        "Juvenile fiction",
+        "Life on other planets",
+        "Star Wars fiction",
+        "Imaginary wars and battles",
+        "Children's fiction",
+        "Good and evil, fiction",
+        "Life on other planets, fiction",
+        "Identity, fiction",
+        "Science fiction",
+        "Star Wars",
+        "nyt:young-adult-e-book=2016-10-30",
+        "New York Times bestseller",
+        "collectionID:swOTa",
+        "Fantasy fiction",
+        "Adventure and adventurers, fiction"
+      ]
+    }
+  },
+  "ultimate-spider-man-iron-spider": {
+    "recordedFrom": "Open Library edition OL38025085M → OL38025085M (2026-10-29)",
+    "signals": {
+      "title": "Ultimate Spider-Man Flight of the Iron Spider!: Based on the Hit TV Show from Marvel Animation",
+      "authors": ["DBG"],
+      "subjects": [
+        "Children's fiction",
+        "Spider-man (fictitious character), fiction",
+        "Heroes, fiction",
+        "Fantasy fiction",
+        "Cartoons and comics",
+        "Juvenile fiction",
+        "Good and evil",
+        "Superheroes",
+        "Spider-Man (Fictitious character)",
+        "Fiction",
+        "Superhéros",
+        "Romans, nouvelles, etc. pour la jeunesse",
+        "Radio and television novels",
+        "Science fiction",
+        "Spider-Man (Fictional character)",
+        "Adventure fiction",
+        "Marvel Press"
+      ]
+    }
+  },
+  "jurassic-park-jeep-wrangler": {
+    "recordedFrom": "Rebrickable set 77984-1 + minifigs (2026-10-29)",
+    "signals": {
+      "title": "Jurassic Park Jeep Wrangler",
+      "legoThemeIds": [602],
+      "minifigs": ["Dennis Nedry, Yellow Hood"]
+    }
+  },
+  "raptor-titanosaurus-tracking": {
+    "recordedFrom": "Rebrickable set 76973-1 + minifigs (2026-10-29)",
+    "signals": {
+      "title": "Raptor & Titanosaurus Tracking Mission",
+      "legoThemeIds": [602],
+      "minifigs": ["Dr. Henry Loomis, Backpack", "Martin Krebs", "Zora Bennett, Hair"]
+    }
+  },
+  "buzz-and-woodys-carnival-mania": {
+    "recordedFrom": "Rebrickable set 10770-1 + minifigs (2026-10-29)",
+    "signals": {
+      "title": "Buzz & Woody's Carnival Mania!",
+      "legoThemeIds": [275, 608],
+      "minifigs": ["Bo Peep", "Bunny", "Buzz Lightyear", "Woody, Scared / Happy"]
+    }
+  },
+  "disney-castle": {
+    "recordedFrom": "Rebrickable set 43222-1 + minifigs (2026-10-29)",
+    "signals": {
+      "title": "Disney Castle",
+      "legoThemeIds": [608],
+      "minifigs": [
+        "Cinderella - Minifig",
+        "Flynn Rider - Minifig",
+        "Prince Charming (Henry) - Minifig",
+        "Prince Florian",
+        "Prince Naveen",
+        "Rapunzel - Minifig",
+        "Snow White - Minifig",
+        "Tiana - Minifig"
+      ]
+    }
+  },
+  "elsas-ice-palace": {
+    "recordedFrom": "Rebrickable set 43244-1 + minifigs (2026-10-29)",
+    "signals": {
+      "title": "Elsa's Ice Palace",
+      "legoThemeIds": [687, 608],
+      "minifigs": [
+        "Anna - Magenta Hat, Cape, Big Eyes",
+        "Elsa, Medium Azure Dress, Cape, Big Eyes",
+        "Kristoff, Dark Blue Outfit",
+        "Olaf, Micro-Doll Arms, Stick Hair, Medium Blue Mouth"
+      ]
+    }
+  },
+  "ultimate-build-lightning-mcqueen": {
+    "recordedFrom": "Rebrickable set 8484-1 + minifigs (2026-10-29)",
+    "signals": {
+      "title": "Ultimate Build Lightning McQueen",
+      "legoThemeIds": [269],
+      "minifigs": ["Guido, Light Aqua"]
+    }
+  },
+  "stitch": {
+    "recordedFrom": "Rebrickable set 43249-1 + minifigs (2026-10-29)",
+    "signals": {
+      "title": "Stitch",
+      "legoThemeIds": [608],
+      "minifigs": []
+    }
+  },
+  "black-pearl": {
+    "recordedFrom": "Rebrickable set 4184-1 + minifigs (2026-10-29)",
+    "signals": {
+      "title": "Black Pearl",
+      "legoThemeIds": [263, 608],
+      "minifigs": [
+        "Black Figurehead",
+        "Bootstrap Bill",
+        "Captain Jack Sparrow with Open Jacket",
+        "Davy Jones",
+        "Joshamee Gibbs",
+        "Maccus",
+        "Will Turner"
+      ]
+    }
   }
 }

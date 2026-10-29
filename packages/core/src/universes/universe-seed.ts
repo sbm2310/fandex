@@ -39,6 +39,11 @@ export type UniverseSeed = {
   places: string[];
   /** Rebrickable theme ids; a set matches if its theme or any parent theme is listed. */
   legoThemeIds: number[];
+  /**
+   * Themes under a listed one that don't belong to the universe: Disney's theme also holds
+   * Pirates of the Caribbean. A set in (or under) one of these doesn't match by theme.
+   */
+  excludeLegoThemeIds?: number[];
   /** Phrases that rule the universe out ("strategic defense initiative" isn't Star Wars). */
   excludePhrases?: string[];
   characters: CharacterSeed[];
@@ -957,6 +962,172 @@ export const UNIVERSE_SEED: readonly UniverseSeed[] = [
       { slug: 'mudkip', name: 'Mudkip', wikidataId: 'Q1253950', titleNames: ['Mudkip'] },
       { slug: 'raichu', name: 'Raichu', wikidataId: 'Q1647331', titleNames: ['Raichu'] },
       { slug: 'rayquaza', name: 'Rayquaza', wikidataId: 'Q1149899', titleNames: ['Rayquaza'] },
+    ],
+  },
+  {
+    slug: 'jurassic-park',
+    name: 'Jurassic Park',
+    wikidataId: 'Q17862095',
+    description:
+      "Michael Crichton's dinosaur parks: the novels and the Jurassic Park and Jurassic World films.",
+    // Not "The Lost World": Conan Doyle's novel shares the title. Crichton's lists Isla Sorna
+    // and Ian Malcolm, and its subjects name Jurassic Park.
+    titleAliases: ['Jurassic Park', 'Jurassic World', 'Camp Cretaceous'],
+    places: ['Isla Nublar', 'Isla Sorna'],
+    // Jurassic World, Jurassic Park III, Juniors Fallen Kingdom, Duplo Jurassic World
+    legoThemeIds: [602, 274, 620, 722],
+    // Wikidata lists 12 characters; these are its people and named dinosaurs.
+    characters: [
+      {
+        slug: 'ian-malcolm',
+        name: 'Ian Malcolm',
+        wikidataId: 'Q14916129',
+        aliases: ['Dr. Ian Malcolm'],
+      },
+      // Also a Scottish comics writer, and a blues musician and record producer.
+      { slug: 'alan-grant', name: 'Alan Grant', wikidataId: 'Q2543708', ambiguous: true },
+      { slug: 'john-hammond', name: 'John Hammond', wikidataId: 'Q324322', ambiguous: true },
+      { slug: 'ellie-sattler', name: 'Ellie Sattler', wikidataId: 'Q14916141' },
+      { slug: 'owen-grady', name: 'Owen Grady', wikidataId: 'Q20890036' },
+      { slug: 'claire-dearing', name: 'Claire Dearing', wikidataId: 'Q113549459' },
+      { slug: 'maisie-lockwood', name: 'Maisie Lockwood', wikidataId: 'Q113853555' },
+      {
+        slug: 'robert-muldoon',
+        name: 'Robert Muldoon',
+        wikidataId: 'Q12049518',
+        aliases: ['Muldoon'],
+      },
+      { slug: 'dennis-nedry', name: 'Dennis Nedry', wikidataId: 'Q13221658' },
+      { slug: 'rexy', name: 'Rexy', wikidataId: 'Q114656241', ambiguous: true },
+      { slug: 'blue', name: 'Blue', wikidataId: 'Q126189797', ambiguous: true },
+    ],
+  },
+  {
+    slug: 'disney-pixar',
+    name: 'Disney & Pixar',
+    wikidataId: 'Q3551225',
+    description:
+      'Walt Disney Animation and Pixar: Mickey Mouse, the princesses, Toy Story, Frozen, Cars and more.',
+    // Never "Disney" alone: Disney publishes Star Wars and Marvel books and owns both. Not
+    // film titles that are fairy tales ("The Little Mermaid", "Beauty and the Beast") or other
+    // books' words ("Tangled", "Encanto", "Ratatouille", "Cars", "Frozen", "Moana").
+    titleAliases: [
+      'Disney Pixar',
+      'Disney Princess',
+      'Disney Frozen',
+      'Frozen II',
+      'Toy Story',
+      'Finding Nemo',
+      'Finding Dory',
+      'Monsters, Inc.',
+      'Monsters University',
+      'The Incredibles',
+      'Incredibles 2',
+      'The Lion King',
+      'Lilo & Stitch',
+      'Lilo and Stitch',
+      'Zootopia',
+      'Wreck-It Ralph',
+      'Raya and the Last Dragon',
+      'Lady and the Tramp',
+      'WALL-E',
+    ],
+    places: ['Arendelle', 'Pride Rock', 'Radiator Springs', 'Monstropolis', 'Agrabah', 'Motunui'],
+    // Disney, Cars, Juniors Cars / Incredibles 2 / Disney Princess, Disney minifigure series
+    // 1, 2 and 100, Disney Advent, Duplo Disney
+    legoThemeIds: [608, 269, 615, 783, 593, 555, 677, 745, 780, 754],
+    // Live-action: Pirates of the Caribbean, Prince of Persia (both under Disney)
+    excludeLegoThemeIds: [263, 271],
+    // Most of Disney's leads share their name with a fairy tale, a legend or a person, so
+    // they only count where something else says Disney.
+    characters: [
+      {
+        slug: 'mickey-mouse',
+        name: 'Mickey Mouse',
+        wikidataId: 'Q11934',
+        aliases: ['Mickey'],
+        titleNames: ['Mickey Mouse'],
+      },
+      {
+        slug: 'minnie-mouse',
+        name: 'Minnie Mouse',
+        wikidataId: 'Q11936',
+        aliases: ['Minnie'],
+        titleNames: ['Minnie Mouse'],
+      },
+      {
+        slug: 'donald-duck',
+        name: 'Donald Duck',
+        wikidataId: 'Q6550',
+        titleNames: ['Donald Duck'],
+      },
+      { slug: 'goofy', name: 'Goofy', wikidataId: 'Q111135', ambiguous: true },
+      {
+        slug: 'elsa',
+        name: 'Elsa',
+        wikidataId: 'Q15620419',
+        aliases: ['Queen Elsa'],
+        ambiguous: true,
+      },
+      {
+        slug: 'anna',
+        name: 'Anna',
+        wikidataId: 'Q15614636',
+        aliases: ['Princess Anna'],
+        ambiguous: true,
+      },
+      { slug: 'olaf', name: 'Olaf', wikidataId: 'Q16253807', ambiguous: true },
+      { slug: 'simba', name: 'Simba', wikidataId: 'Q1649583', ambiguous: true },
+      {
+        slug: 'woody',
+        name: 'Woody',
+        wikidataId: 'Q2290907',
+        aliases: ['Sheriff Woody'],
+        ambiguous: true,
+      },
+      {
+        slug: 'buzz-lightyear',
+        name: 'Buzz Lightyear',
+        wikidataId: 'Q1986193',
+        titleNames: ['Buzz Lightyear'],
+      },
+      { slug: 'jessie', name: 'Jessie', wikidataId: 'Q2200623', ambiguous: true },
+      {
+        slug: 'lightning-mcqueen',
+        name: 'Lightning McQueen',
+        wikidataId: 'Q864418',
+        titleNames: ['Lightning McQueen'],
+      },
+      {
+        slug: 'mater',
+        name: 'Mater',
+        wikidataId: 'Q6786487',
+        aliases: ['Tow Mater'],
+        ambiguous: true,
+      },
+      { slug: 'ariel', name: 'Ariel', wikidataId: 'Q892442', ambiguous: true },
+      { slug: 'belle', name: 'Belle', wikidataId: 'Q2502489', ambiguous: true },
+      { slug: 'maleficent', name: 'Maleficent', wikidataId: 'Q1660555' },
+      { slug: 'stitch', name: 'Stitch', wikidataId: 'Q602854', ambiguous: true },
+      { slug: 'moana', name: 'Moana', wikidataId: 'Q21233695', ambiguous: true },
+      { slug: 'rapunzel', name: 'Rapunzel', wikidataId: 'Q4902053', ambiguous: true },
+      { slug: 'mulan', name: 'Mulan', wikidataId: 'Q246838', ambiguous: true },
+      // Dodie Smith's novel came first.
+      { slug: 'cruella-de-vil', name: 'Cruella de Vil', wikidataId: 'Q388605', ambiguous: true },
+      {
+        slug: 'mr-incredible',
+        name: 'Mr. Incredible',
+        wikidataId: 'Q616658',
+        aliases: ['Bob Parr'],
+      },
+      { slug: 'elastigirl', name: 'Elastigirl', wikidataId: 'Q3134305', aliases: ['Helen Parr'] },
+      { slug: 'mike-wazowski', name: 'Mike Wazowski', wikidataId: 'Q2907795' },
+      {
+        slug: 'james-p-sullivan',
+        name: 'James P. Sullivan',
+        wikidataId: 'Q3160045',
+        aliases: ['Sulley'],
+      },
     ],
   },
 ];

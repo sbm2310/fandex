@@ -27,6 +27,24 @@
     "battle-at-arlong-park": { "rebrickable": "75638-1" },
     "going-merry": { "rebrickable": "75639-1" },
     "training-house-with-pikachu": { "rebrickable": "72164-1" },
-    "charizard-vs-jolteon": { "rebrickable": "72167-1" }
+    "charizard-vs-jolteon": { "rebrickable": "72167-1" },
+    "jurassic-park-novel": { "openLibrary": "OL18336594M" },
+    "the-lost-world-crichton": { "openLibrary": "OL39479436M" },
+    "jurassic-world-junior": { "openLibrary": "OL26960221M" },
+    "the-lost-world-doyle": { "openLibrary": "OL47306378M" },
+    "dinosaur-encyclopedia": { "openLibrary": "OL7649212M" },
+    "toy-story-golden-book": { "openLibrary": "OL24590506M" },
+    "frozen-junior-novel": { "openLibrary": "OL25443591M" },
+    "lion-king-golden-book": { "openLibrary": "OL1132040M" },
+    "star-wars-ahsoka": { "openLibrary": "OL26781220M" },
+    "ultimate-spider-man-iron-spider": { "openLibrary": "OL38025085M" },
+    "jurassic-park-jeep-wrangler": { "rebrickable": "77984-1" },
+    "raptor-titanosaurus-tracking": { "rebrickable": "76973-1" },
+    "buzz-and-woodys-carnival-mania": { "rebrickable": "10770-1" },
+    "disney-castle": { "rebrickable": "43222-1" },
+    "elsas-ice-palace": { "rebrickable": "43244-1" },
+    "ultimate-build-lightning-mcqueen": { "rebrickable": "8484-1" },
+    "stitch": { "rebrickable": "43249-1" },
+    "black-pearl": { "rebrickable": "4184-1" }
   }
 }

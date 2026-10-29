@@ -190,6 +190,83 @@ describe('matchUniverses on recorded books: A Song of Ice and Fire and Cosmere',
   });
 });
 
+describe('matchUniverses on recorded items: Jurassic Park and Disney & Pixar', () => {
+  it("Crichton's novels: Jurassic Park, with its people", () => {
+    expect(match('jurassic-park-novel').universes).toEqual(['jurassic-park']);
+    expect(charactersOf('jurassic-park-novel')).toEqual(
+      expect.arrayContaining(['ian-malcolm', 'alan-grant', 'john-hammond', 'ellie-sattler']),
+    );
+    // The Lost World's title says nothing; its places and subjects do.
+    expect(fixtures['the-lost-world-crichton'].signals.title).toBe('The Lost World');
+    expect(match('the-lost-world-crichton')).toEqual({
+      universes: ['jurassic-park'],
+      characters: [{ universe: 'jurassic-park', character: 'ian-malcolm' }],
+    });
+    expect(match('jurassic-world-junior').universes).toEqual(['jurassic-park']);
+  });
+
+  it("Conan Doyle's The Lost World and a dinosaur encyclopedia are not Jurassic Park", () => {
+    expect(match('the-lost-world-doyle').universes).toEqual([]);
+    expect(match('dinosaur-encyclopedia').universes).toEqual([]);
+  });
+
+  it('Jurassic World LEGO: the theme, and Nedry from a minifig', () => {
+    expect(match('jurassic-park-jeep-wrangler')).toEqual({
+      universes: ['jurassic-park'],
+      characters: [{ universe: 'jurassic-park', character: 'dennis-nedry' }],
+    });
+    expect(match('raptor-titanosaurus-tracking').universes).toEqual(['jurassic-park']);
+  });
+
+  it('Disney books: a film title or the "Disney Frozen" subject', () => {
+    for (const name of [
+      'toy-story-golden-book',
+      'frozen-junior-novel',
+      'lion-king-golden-book',
+    ] as const)
+      expect([name, match(name).universes]).toEqual([name, ['disney-pixar']]);
+  });
+
+  it('Disney LEGO: characters, ambiguous names included, once the theme says Disney', () => {
+    expect(charactersOf('elsas-ice-palace')).toEqual(['elsa', 'anna', 'olaf']);
+    expect(charactersOf('buzz-and-woodys-carnival-mania')).toEqual(['woody', 'buzz-lightyear']);
+    expect(charactersOf('disney-castle')).toEqual(['rapunzel']);
+    // Cars is its own top-level theme; Lightning McQueen is named in the title.
+    expect(match('ultimate-build-lightning-mcqueen')).toEqual({
+      universes: ['disney-pixar'],
+      characters: [{ universe: 'disney-pixar', character: 'lightning-mcqueen' }],
+    });
+    expect(match('stitch').universes).toEqual(['disney-pixar']);
+  });
+
+  it('Pirates of the Caribbean, under the Disney theme, is not Disney & Pixar', () => {
+    expect(fixtures['black-pearl'].signals.legoThemeIds).toEqual([263, 608]);
+    expect(match('black-pearl')).toEqual({ universes: [], characters: [] });
+  });
+
+  it('Disney as a publisher or a word is never enough', () => {
+    // Published by Disney Lucasfilm Press and from Marvel Animation.
+    expect(match('star-wars-ahsoka').universes).toEqual(['star-wars']);
+    expect(match('ultimate-spider-man-iron-spider').universes).toEqual(['marvel']);
+    for (const title of [
+      'Disney: The Biography',
+      'The Walt Disney Company: A Corporate History',
+      'Frozen Planet',
+      'Tangled Hearts',
+      'Cars of the 1950s',
+    ])
+      expect([title, matchUniverses({ title }).universes]).toEqual([title, []]);
+  });
+
+  it('fairy tales, legends and people with Disney names stay unlinked', () => {
+    const people = ['Ariel', 'Belle', 'Rapunzel', 'Mulan', 'Simba', 'Woody', 'John Hammond'];
+    expect(matchUniverses({ title: 'Stories', people }).universes).toEqual([]);
+    expect(matchUniverses({ title: 'Blues Legends', people: ['John Hammond'] }).universes).toEqual(
+      [],
+    );
+  });
+});
+
 describe('matchUniverses false positives', () => {
   it('a book about the "Star Wars" missile defense program is not Star Wars', () => {
     expect(fixtures['star-wars-missile-defense'].signals.title).toBe('Star wars');

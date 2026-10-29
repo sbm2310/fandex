@@ -55,6 +55,14 @@ export const UniverseColorTable: Record<string, Record<Scheme, Omit<UniverseColo
     dark: { ground: '#1A2547', accent: '#FFD23F', onGround: '#F4F0EA' },
     light: { ground: '#E3E9F8', accent: '#2F4BA0', onGround: '#1A1720' },
   },
+  'jurassic-park': {
+    dark: { ground: '#2A1E14', accent: '#F2B233', onGround: '#F4F0EA' },
+    light: { ground: '#F3E6D0', accent: '#8A5A00', onGround: '#1A1720' },
+  },
+  'disney-pixar': {
+    dark: { ground: '#3A1630', accent: '#FF7AC6', onGround: '#F4F0EA' },
+    light: { ground: '#F7DDEC', accent: '#A3246F', onGround: '#1A1720' },
+  },
 };
 
 /** The colours for a universe in a colour scheme; a neutral surface and violet when unknown. */
