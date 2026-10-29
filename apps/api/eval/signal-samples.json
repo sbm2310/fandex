@@ -6,6 +6,16 @@
     "batmobile-tumbler": { "rebrickable": "76240-1" },
     "daily-bugle": { "rebrickable": "76178-1" },
     "hogwarts-castle": { "rebrickable": "71043-1" },
-    "the-hobbit": { "openLibrary": "OL27482W" }
+    "the-hobbit": { "openLibrary": "OL27482W" },
+    "a-game-of-thrones": { "openLibrary": "OL7259157M" },
+    "game-of-thrones-graphic-novel-2": { "openLibrary": "OL37270550M" },
+    "fire-and-blood": { "openLibrary": "OL18016709W" },
+    "knight-of-the-seven-kingdoms": { "openLibrary": "OL27188623M" },
+    "science-of-game-of-thrones": { "openLibrary": "OL27224908M" },
+    "the-way-of-kings": { "openLibrary": "OL24383834M" },
+    "mistborn-final-empire": { "openLibrary": "OL60101225M" },
+    "hero-of-ages": { "openLibrary": "OL28932916M" },
+    "song-of-songs": { "openLibrary": "OL18346029M" },
+    "fire-and-ice-temperatures": { "openLibrary": "OL29886153M" }
   }
 }

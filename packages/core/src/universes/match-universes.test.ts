@@ -66,6 +66,69 @@ describe('matchUniverses on recorded books', () => {
   });
 });
 
+describe('matchUniverses on recorded books: A Song of Ice and Fire and Cosmere', () => {
+  it('A Game of Thrones: its main characters, from the people Open Library lists', () => {
+    expect(match('a-game-of-thrones').universes).toEqual(['a-song-of-ice-and-fire']);
+    expect(charactersOf('a-game-of-thrones')).toEqual(
+      expect.arrayContaining([
+        'jon-snow',
+        'daenerys-targaryen',
+        'tyrion-lannister',
+        'eddard-stark',
+        'arya-stark',
+      ]),
+    );
+  });
+
+  it('books without characters still match on subjects, places and titles', () => {
+    // Graphic novel: "Seven kingdoms (imaginary place), fiction". Fire & Blood: "Westeros".
+    // The science book: "Game of thrones (Television program)".
+    for (const name of [
+      'game-of-thrones-graphic-novel-2',
+      'fire-and-blood',
+      'knight-of-the-seven-kingdoms',
+      'science-of-game-of-thrones',
+    ] as const)
+      expect([name, match(name).universes]).toEqual([name, ['a-song-of-ice-and-fire']]);
+  });
+
+  it('The Way of Kings and Mistborn: Cosmere, from a series subject or the title', () => {
+    expect(fixtures['the-way-of-kings'].signals.subjects).toContain('series:Stormlight Archive');
+    for (const name of ['the-way-of-kings', 'mistborn-final-empire', 'hero-of-ages'] as const)
+      expect([name, match(name).universes]).toEqual([name, ['cosmere']]);
+  });
+
+  it('a Song of Songs commentary and a book on fire and ice match nothing', () => {
+    expect(match('song-of-songs').universes).toEqual([]);
+    expect(match('fire-and-ice-temperatures').universes).toEqual([]);
+  });
+
+  it('titles other authors share stay unlinked', () => {
+    for (const title of [
+      'Fire and Blood: A History of Mexico',
+      'The Winds of Winter',
+      'Clash of Kings Game Guide',
+      'Way of Kings',
+      'The Final Empire',
+    ])
+      expect([title, matchUniverses({ title }).universes]).toEqual([title, []]);
+  });
+
+  it('Jon Snow the newsreader, Vin and Hoid only count inside their universe', () => {
+    expect(matchUniverses({ title: 'Shooting History', people: ['Jon Snow'] }).universes).toEqual(
+      [],
+    );
+    expect(matchUniverses({ title: 'Wine', people: ['Vin'] }).universes).toEqual([]);
+    expect(matchUniverses({ title: 'Mistborn', people: ['Vin', 'Hoid'] })).toEqual({
+      universes: ['cosmere'],
+      characters: [
+        { universe: 'cosmere', character: 'vin' },
+        { universe: 'cosmere', character: 'hoid' },
+      ],
+    });
+  });
+});
+
 describe('matchUniverses false positives', () => {
   it('a book about the "Star Wars" missile defense program is not Star Wars', () => {
     expect(fixtures['star-wars-missile-defense'].signals.title).toBe('Star wars');

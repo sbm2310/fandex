@@ -39,6 +39,14 @@ export const UniverseColorTable: Record<string, Record<Scheme, Omit<UniverseColo
     dark: { ground: '#3A1616', accent: '#FF6B5B', onGround: '#F4F0EA' },
     light: { ground: '#F6DCD8', accent: '#C2362A', onGround: '#1A1720' },
   },
+  'a-song-of-ice-and-fire': {
+    dark: { ground: '#1B2830', accent: '#8FC7DB', onGround: '#F4F0EA' },
+    light: { ground: '#DCEAF0', accent: '#2D6A82', onGround: '#1A1720' },
+  },
+  cosmere: {
+    dark: { ground: '#33241A', accent: '#E39A5B', onGround: '#F4F0EA' },
+    light: { ground: '#F5E3D3', accent: '#9A5420', onGround: '#1A1720' },
+  },
 };
 
 /** The colours for a universe in a colour scheme; a neutral surface and violet when unknown. */
