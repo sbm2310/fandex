@@ -23,7 +23,13 @@
     "eval:shelf": "tsx eval/eval-shelf.ts",
     "preeval:shelf": "npm run build -w @fandex/core",
     "eval:boxes": "tsx eval/eval-boxes.ts",
-    "preeval:boxes": "npm run build -w @fandex/core"
+    "preeval:boxes": "npm run build -w @fandex/core",
+    "eval:verify-seed": "tsx eval/verify-universe-seed.ts",
+    "preeval:verify-seed": "npm run build -w @fandex/core",
+    "eval:record-signals": "tsx eval/record-signals.ts",
+    "preeval:record-signals": "npm run build -w @fandex/core",
+    "eval:universe-diff": "tsx eval/universe-diff.ts",
+    "preeval:universe-diff": "npm run build -w @fandex/core"
   },
   "dependencies": {
     "@better-auth/expo": "^1.7.7",

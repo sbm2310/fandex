@@ -1,0 +1,11 @@
+{
+  "$comment": "Sample items whose real match signals core's universe tests use. `npx tsx eval/record-signals.ts` records each one missing from packages/core/src/universes/__fixtures__/signals.json. openLibrary: an edition (OL…M) or a work (OL…W); rebrickable: a set number. Earlier entries in the fixture were recorded by search and aren't all listed here.",
+  "samples": {
+    "rivendell": { "rebrickable": "10316-1" },
+    "millennium-falcon": { "rebrickable": "75192-1" },
+    "batmobile-tumbler": { "rebrickable": "76240-1" },
+    "daily-bugle": { "rebrickable": "76178-1" },
+    "hogwarts-castle": { "rebrickable": "71043-1" },
+    "the-hobbit": { "openLibrary": "OL27482W" }
+  }
+}
