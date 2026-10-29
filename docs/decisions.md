@@ -106,3 +106,13 @@ Full plan and task list: [`docs/plans/redesign.md`](docs/plans/redesign.md); moc
 - **Look and layout only,** plus "I've paid it" on a pre-order needing attention and "N of M characters" on universe cards. Accessibility labels stay unchanged (tests and Maestro flows select by them).
 
 - **Stage 7 status** (Task 9, 2026-10-15): built, tested, documented and **deployed with Stage 6 on 2026-10-15** (Render: all four migrations applied, "Figure catalog synced: 163 figures"; `ADMIN_EMAILS` set to the owner's email in the dashboard; iPhone app republished with EAS Update). Open: the owner's spot-check of the curated figure list, the box-reading evaluation (`eval:boxes`) and the live box-scan demo — both need the owner's box photos. Collection grid items are labelled "Title, category, by …" (Maestro flows must include the category for figures).
+
+## More universes decisions (settled 2026-10-29)
+
+Full plan and task list: [`docs/plans/universes.md`](docs/plans/universes.md). Built 2026-10-29 (Tasks 1–5).
+
+- **Six more universes,** chosen by the owner: A Song of Ice and Fire, Cosmere, One Piece, Pokémon, Jurassic Park, Disney & Pixar (one universe for Disney and Pixar animation). Same curated seed and sources (Wikidata CC0, Rebrickable themes); no schema change.
+- **Data is checked by script, never typed from memory:** `eval:verify-seed` (every Wikidata id against its label), `eval:record-signals` (real Open Library and Rebrickable signals for the tests, negatives included) and `eval:universe-diff` (every link that would change across the local catalog). A title phrase is kept only when nearly every Open Library title containing it is about the universe.
+- **Never "Disney" alone** as a matching signal (Disney publishes Star Wars and Marvel books); in questions to Ask, "Disney" and "Pixar" do name the universe.
+- **One matcher rule added** (`excludeLegoThemeIds`, matcher version 2): Rebrickable's Disney theme holds the animation sets but also Pirates of the Caribbean and Prince of Persia, which aren't linked.
+- **Figures stay out of scope:** the curated list is still Star Wars, Marvel and DC; Jurassic Park or Disney figures are possible later.

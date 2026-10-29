@@ -50,6 +50,7 @@ function set(title: string, setNumber: string, addedAt: string, links: Links = {
 }
 
 const dc = { universes: ['dc'] };
+const cosmere = { universes: ['cosmere'] };
 const collection: CollectionItem[] = [
   book('Batman: Year One', 'comic', '2026-09-01', {
     ...dc,
@@ -67,8 +68,8 @@ const collection: CollectionItem[] = [
     authors: ['Mark Millar'],
     characters: [ref('dc', 'superman')],
   }),
-  book('The Way of Kings', 'book', '2026-07-01', { authors: ['Brandon Sanderson'] }),
-  book('Words of Radiance', 'book', '2026-07-01', { authors: ['Brandon Sanderson'] }),
+  book('The Way of Kings', 'book', '2026-07-01', { ...cosmere, authors: ['Brandon Sanderson'] }),
+  book('Words of Radiance', 'book', '2026-07-01', { ...cosmere, authors: ['Brandon Sanderson'] }),
   book('Vagabond, Vol. 1', 'manga', '2026-10-06', { authors: ['Takehiko Inoue'] }),
   set('Millennium Falcon', '75375', '2026-10-07', {
     universes: ['star-wars'],
@@ -83,6 +84,31 @@ const collection: CollectionItem[] = [
     universes: ['wizarding-world'],
     authors: ['J. K. Rowling'],
     characters: [ref('wizarding-world', 'harry-potter')],
+  }),
+  // One from each universe added in October 2026, from well before the date questions.
+  book('A Game of Thrones', 'book', '2025-05-01', {
+    universes: ['a-song-of-ice-and-fire'],
+    authors: ['George R. R. Martin'],
+    characters: [
+      ref('a-song-of-ice-and-fire', 'jon-snow'),
+      ref('a-song-of-ice-and-fire', 'tyrion-lannister'),
+    ],
+  }),
+  book('One Piece, Vol. 1', 'manga', '2025-05-02', {
+    universes: ['one-piece'],
+    authors: ['Eiichiro Oda'],
+    characters: [ref('one-piece', 'monkey-d-luffy')],
+  }),
+  set('Charizard vs. Jolteon Ultimate Battle', '72167', '2025-05-03', {
+    universes: ['pokemon'],
+    characters: [ref('pokemon', 'charizard')],
+  }),
+  set('Jurassic Park Jeep Wrangler', '77984', '2025-05-04', {
+    universes: ['jurassic-park'],
+    characters: [ref('jurassic-park', 'dennis-nedry')],
+  }),
+  book('Toy Story Little Golden Book Favorites', 'book', '2025-05-05', {
+    universes: ['disney-pixar'],
   }),
 ];
 // The user linked Watchmen to DC by hand, and filed a manga-looking trade as a comic.
@@ -238,7 +264,8 @@ describe('runCollectionQuery', () => {
     expect(titles(dcComics.items)).toContain('Watchmen');
 
     const manga = runCollectionQuery(collection, collectionQuery({ categories: ['manga'] }));
-    expect(titles(manga.items)).toEqual(['Vagabond, Vol. 1']); // Akira was refiled as a comic
+    // Akira was refiled as a comic.
+    expect(titles(manga.items)).toEqual(['Vagabond, Vol. 1', 'One Piece, Vol. 1']);
   });
 
   it('filters by title words, author and when items were added', () => {
@@ -284,7 +311,7 @@ describe('describeAnswer', () => {
       'You own 1 Star Wars LEGO set.',
     );
     expect(describe_({})).toBe(
-      'You own 12 items: 4 books, 1 manga volume, 5 comics and 2 LEGO sets.',
+      'You own 17 items: 6 books, 2 manga volumes, 5 comics and 4 LEGO sets.',
     );
   });
 
@@ -385,8 +412,27 @@ describe('parseQuestionLocally', () => {
     });
   });
 
+  it('reads the newer universes, by name or a question-only alias', () => {
+    const universesOf = (question: string) => ask(question).query.universes;
+    expect(universesOf('How many ASOIAF books have I got?')).toEqual(['a-song-of-ice-and-fire']);
+    expect(universesOf('What Game of Thrones stuff do I own?')).toEqual(['a-song-of-ice-and-fire']);
+    expect(universesOf('What Stormlight books do I own?')).toEqual(['cosmere']);
+    expect(universesOf('What Pokemon LEGO do I have?')).toEqual(['pokemon']);
+    expect(universesOf('How many One Piece manga do I have?')).toEqual(['one-piece']);
+    expect(universesOf('Show me my Jurassic sets')).toEqual(['jurassic-park']);
+    expect(universesOf('Do I have any Disney LEGO?')).toEqual(['disney-pixar']);
+    expect(universesOf('What Pixar stuff do I have?')).toEqual(['disney-pixar']);
+    // "got" isn't Game of Thrones; a series question stays one.
+    expect(universesOf('Which LEGO sets have I got?')).toEqual([]);
+    expect(ask('What am I missing from Stormlight?').query).toMatchObject({
+      scope: 'series',
+      titleWords: ['stormlight'],
+    });
+  });
+
   it('ignores names that are everyday words', () => {
     expect(ask('Which of my books are for my child?').query.characters).toEqual([]);
+    expect(ask('Do I have my blue LEGO sets?').query.characters).toEqual([]);
   });
 
   it('reads simple dates relative to today', () => {
@@ -402,7 +448,7 @@ describe('parseQuestionLocally', () => {
   });
 
   it('answers questions about the whole collection', () => {
-    expect(ask('How many items do I have?').text).toMatch(/^You own 12 items/);
+    expect(ask('How many items do I have?').text).toMatch(/^You own 17 items/);
     expect(ask('What do I own?').query.answer).toBe('list');
   });
 
@@ -588,8 +634,15 @@ describe('real model replies (Groq, recorded)', () => {
     ['Do I have anything with Darth Vader or Han Solo?', 'You own 1 Darth Vader or Han Solo item.'],
     ['Books by Brandon Sanderson', 'You own 2 books by Brandon Sanderson.'],
     ['Which Harry Potter books do I have, alphabetically?', 'You own 1 Wizarding World book.'],
-    ['Do I own The Way of Kings?', 'You own 1 item with “way kings” in the title.'],
+    ['Do I own The Way of Kings?', 'You own 1 Cosmere item with “way kings” in the title.'],
     ['Which Hot Toys figures do I have?', "You don't own any figures yet."],
+    // The universes added in October 2026.
+    ['What Game of Thrones books do I have?', 'You own 1 A Song of Ice and Fire book.'],
+    ['How many Cosmere books do I own?', 'You own 2 Cosmere books.'],
+    ['Which One Piece manga do I have?', 'You own 1 One Piece manga volume.'],
+    ['Do I have any Pikachu or Charizard LEGO?', 'You own 1 Pikachu or Charizard LEGO set.'],
+    ['What Jurassic Park sets do I own?', 'You own 1 Jurassic Park LEGO set.'],
+    ['What Disney stuff do I have?', 'You own 1 Disney & Pixar item.'],
     // Series.
     ['Which manga series am I missing volumes of?', "You're missing volume 2 of One Piece."],
     [

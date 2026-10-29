@@ -17,6 +17,12 @@ const QUESTION_ALIASES: Record<string, string[]> = {
   'middle-earth': ['Tolkien', 'LOTR'],
   'wizarding-world': ['Hogwarts'],
   dc: ['DC Comics'],
+  // Not "GoT": in a question it's the word "got". Not "Sanderson": he writes more than Cosmere.
+  'a-song-of-ice-and-fire': ['ASOIAF'],
+  cosmere: ['Stormlight'],
+  'jurassic-park': ['Jurassic'],
+  // Safe in a question, never when matching items (Disney publishes Star Wars and Marvel).
+  'disney-pixar': ['Disney', 'Pixar'],
 };
 
 const CATEGORY_WORDS: [Category, string[]][] = [
@@ -74,7 +80,20 @@ const OWED_WORDS = ['owe', 'owed', 'balance', 'left to pay', 'due', 'pay'];
 const DELAYED_WORDS = ['delayed', 'slipped', 'pushed back', 'late'];
 
 /** One-word character names that are everyday words in a question ("my child's books"). */
-const COMMON_WORDS = new Set(['child', 'merry']);
+const COMMON_WORDS = new Set([
+  'child',
+  'merry',
+  'blue',
+  'wax',
+  'chopper',
+  'crocodile',
+  'smoker',
+  'buggy',
+  'hound',
+  'mater',
+  'reek',
+  'brook',
+]);
 
 const ALL_ITEMS = ['everything', 'my collection', 'what do i own', 'what do i have', 'all my'];
 

@@ -43,7 +43,7 @@
     },
     {
       "question": "Do I own The Way of Kings?",
-      "reply": "{\"addedAfter\": null, \"addedBefore\": null, \"answer\": \"list\", \"arrivingAfter\": null, \"arrivingBefore\": null, \"balanceDue\": false, \"categories\": [], \"characters\": [], \"creator\": null, \"delayed\": false, \"scope\": \"collection\", \"sort\": \"recent\", \"titleWords\": [\"way\", \"kings\"], \"universes\": [], \"unsupported\": null}"
+      "reply": "{\"addedAfter\": null, \"addedBefore\": null, \"answer\": \"list\", \"arrivingAfter\": null, \"arrivingBefore\": null, \"balanceDue\": false, \"categories\": [], \"characters\": [], \"creator\": null, \"delayed\": false, \"scope\": \"collection\", \"sort\": \"recent\", \"titleWords\": [\"way\", \"kings\"], \"universes\": [\"cosmere\"], \"unsupported\": null}"
     },
     {
       "question": "Which Hot Toys figures do I have?",
@@ -51,7 +51,7 @@
     },
     {
       "question": "What am I missing from The Stormlight Archive?",
-      "reply": "{\"addedAfter\": null, \"addedBefore\": null, \"answer\": \"list\", \"arrivingAfter\": null, \"arrivingBefore\": null, \"balanceDue\": false, \"categories\": [], \"characters\": [], \"creator\": null, \"delayed\": false, \"scope\": \"series\", \"sort\": \"recent\", \"titleWords\": [\"stormlight\", \"archive\"], \"universes\": [], \"unsupported\": null}"
+      "reply": "{\"addedAfter\": null, \"addedBefore\": null, \"answer\": \"list\", \"arrivingAfter\": null, \"arrivingBefore\": null, \"balanceDue\": false, \"categories\": [], \"characters\": [], \"creator\": null, \"delayed\": false, \"scope\": \"series\", \"sort\": \"recent\", \"titleWords\": [\"stormlight\", \"archive\"], \"universes\": [\"cosmere\"], \"unsupported\": null}"
     },
     {
       "question": "How many of my series are incomplete?",
@@ -72,6 +72,30 @@
     {
       "question": "What did I pre-order this year?",
       "reply": "{\"addedAfter\": \"2026-01-01\", \"addedBefore\": \"2026-10-09\", \"answer\": \"list\", \"arrivingAfter\": null, \"arrivingBefore\": null, \"balanceDue\": false, \"categories\": [], \"characters\": [], \"creator\": null, \"delayed\": false, \"scope\": \"preorders\", \"sort\": \"recent\", \"titleWords\": [], \"universes\": [], \"unsupported\": null}"
+    },
+    {
+      "question": "What Game of Thrones books do I have?",
+      "reply": "{\"addedAfter\": null, \"addedBefore\": null, \"answer\": \"list\", \"arrivingAfter\": null, \"arrivingBefore\": null, \"balanceDue\": false, \"categories\": [\"book\"], \"characters\": [], \"creator\": null, \"delayed\": false, \"scope\": \"collection\", \"sort\": \"recent\", \"titleWords\": [], \"universes\": [\"a-song-of-ice-and-fire\"], \"unsupported\": null}"
+    },
+    {
+      "question": "How many Cosmere books do I own?",
+      "reply": "{\"addedAfter\": null, \"addedBefore\": null, \"answer\": \"count\", \"arrivingAfter\": null, \"arrivingBefore\": null, \"balanceDue\": false, \"categories\": [\"book\"], \"characters\": [], \"creator\": null, \"delayed\": false, \"scope\": \"collection\", \"sort\": \"recent\", \"titleWords\": [], \"universes\": [\"cosmere\"], \"unsupported\": null}"
+    },
+    {
+      "question": "Which One Piece manga do I have?",
+      "reply": "{\"addedAfter\": null, \"addedBefore\": null, \"answer\": \"list\", \"arrivingAfter\": null, \"arrivingBefore\": null, \"balanceDue\": false, \"categories\": [\"manga\"], \"characters\": [], \"creator\": null, \"delayed\": false, \"scope\": \"collection\", \"sort\": \"recent\", \"titleWords\": [], \"universes\": [\"one-piece\"], \"unsupported\": null}"
+    },
+    {
+      "question": "Do I have any Pikachu or Charizard LEGO?",
+      "reply": "{\"addedAfter\": null, \"addedBefore\": null, \"answer\": \"list\", \"arrivingAfter\": null, \"arrivingBefore\": null, \"balanceDue\": false, \"categories\": [\"lego\"], \"characters\": [\"Pikachu\", \"Charizard\"], \"creator\": null, \"delayed\": false, \"scope\": \"collection\", \"sort\": \"recent\", \"titleWords\": [], \"universes\": [\"pokemon\"], \"unsupported\": null}"
+    },
+    {
+      "question": "What Jurassic Park sets do I own?",
+      "reply": "{\"addedAfter\": null, \"addedBefore\": null, \"answer\": \"list\", \"arrivingAfter\": null, \"arrivingBefore\": null, \"balanceDue\": false, \"categories\": [\"lego\"], \"characters\": [], \"creator\": null, \"delayed\": false, \"scope\": \"collection\", \"sort\": \"recent\", \"titleWords\": [], \"universes\": [\"jurassic-park\"], \"unsupported\": null}"
+    },
+    {
+      "question": "What Disney stuff do I have?",
+      "reply": "{\"addedAfter\": null, \"addedBefore\": null, \"answer\": \"list\", \"arrivingAfter\": null, \"arrivingBefore\": null, \"balanceDue\": false, \"categories\": [], \"characters\": [], \"creator\": null, \"delayed\": false, \"scope\": \"collection\", \"sort\": \"recent\", \"titleWords\": [], \"universes\": [\"disney-pixar\"], \"unsupported\": null}"
     },
     {
       "question": "What's my most valuable item?",

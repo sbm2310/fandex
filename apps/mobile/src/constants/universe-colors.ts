@@ -44,8 +44,8 @@ export const UniverseColorTable: Record<string, Record<Scheme, Omit<UniverseColo
     light: { ground: '#DCEAF0', accent: '#2D6A82', onGround: '#1A1720' },
   },
   cosmere: {
-    dark: { ground: '#33241A', accent: '#E39A5B', onGround: '#F4F0EA' },
-    light: { ground: '#F5E3D3', accent: '#9A5420', onGround: '#1A1720' },
+    dark: { ground: '#262040', accent: '#A99BFF', onGround: '#F4F0EA' },
+    light: { ground: '#EADDF7', accent: '#5A47B8', onGround: '#1A1720' },
   },
   'one-piece': {
     dark: { ground: '#10302F', accent: '#FF7A6B', onGround: '#F4F0EA' },
